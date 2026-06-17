@@ -10,11 +10,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.smach.zapmancer.features.detail.screen.DetailScreen
 import com.smach.zapmancer.features.home.screen.HomeScreen
 import com.smach.zapmancer.features.profile.screen.ProfileScreen
-import com.smach.zapmancer.features.search.screen.SearchScreen
-import com.smach.zapmancer.features.writing.ui.WritingScreen
 
 /**
  * MainGraph is the entry point for authenticated app content.

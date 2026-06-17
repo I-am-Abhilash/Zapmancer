@@ -1,26 +1,30 @@
 package com.smach.zapmancer.features.auth.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -31,17 +35,31 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.VerificationUiState
 import com.smach.zapmancer.features.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
+
+// Flip7 Palette
+private val ZapTeal = Color(0xFF2BA8A2)
+private val ZapGold = Color(0xFFFFD23F)
+private val ZapBg = Color(0xFFEFF8F7)
+private val ZapSurface = Color(0xFFFFFFFF)
+private val ZapOnSurface = Color(0xFF1A1C1E)
+private val ZapOnSurfaceVariant = Color(0xFF404948)
+private val ZapOutline = Color(0xFFD1DBDA)
+private val ZapCream = Color(0xFFFFF8E7)
 
 @Composable
 fun VerificationScreen(
@@ -76,82 +94,86 @@ private fun VerificationContent(
     onBack: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-
-    // We'll use a single string but display it in separate boxes for better UX
-    // Assuming 6-digit code
     val codeLength = 6
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(ZapBg)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp),
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-
             AuthHeader(
                 title = "Verify Email",
                 subtitle = "We've sent a 6-digit code to $email",
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // OTP Input Area
-            OtpInputField(
-                code = state.code,
-                onCodeChanged = onCodeChanged,
-                length = codeLength,
-                enabled = !state.isLoading,
-            )
-
-            if (state.error != null) {
-                Text(
-                    text = state.error,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
-            }
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            Button(
-                onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = !state.isLoading && state.code.length == codeLength,
+            // Verification Form Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = ZapSurface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // OTP Input Area
+                    OtpInputField(
+                        code = state.code,
+                        onCodeChanged = onCodeChanged,
+                        length = codeLength,
+                        enabled = !state.isLoading,
                     )
-                } else {
-                    Text("Verify & Continue")
+
+                    if (state.error != null) {
+                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                    }
+
+                    // Verify Button
+                    Button(
+                        onClick = onSubmit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        shape = RoundedCornerShape(100.dp),
+                        enabled = !state.isLoading && state.code.length == codeLength
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Verify & Continue", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            }
+                        }
+                    }
+
+                    TextButton(onClick = { /* Resend */ }) {
+                        Text("Didn't receive code? Resend", color = ZapTeal, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            TextButton(onClick = { /* TODO: Resend logic */ }) {
-                Text("Didn't receive code? Resend")
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            TextButton(onClick = onBack) {
-                Text("Change Email")
-            }
+            // Footer
+            Text(
+                "Change Email",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = ZapOnSurfaceVariant,
+                modifier = Modifier.clickable { onBack() }.alpha(0.6f)
+            )
         }
     }
 }
@@ -163,8 +185,6 @@ fun OtpInputField(
     length: Int,
     enabled: Boolean,
 ) {
-    // Hidden TextField to capture actual input
-    // This is easier than managing 6 individual focus states manually in KMP
     Box(contentAlignment = Alignment.Center) {
         OutlinedTextField(
             value = code,
@@ -173,7 +193,7 @@ fun OtpInputField(
                     onCodeChanged(it)
                 }
             },
-            modifier = Modifier.size(0.dp), // Hide it
+            modifier = Modifier.size(0.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             enabled = enabled,
         )
@@ -190,34 +210,28 @@ fun OtpInputField(
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f),
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (enabled) 1f else 0.5f),
-                    border = if (isFocused) {
-                        androidx.compose.foundation.BorderStroke(
-                            2.dp,
-                            MaterialTheme.colorScheme.primary,
-                        )
+                    shape = RoundedCornerShape(8.dp),
+                    color = ZapCream,
+                    border = if (isFocused && enabled) {
+                        androidx.compose.foundation.BorderStroke(2.dp, ZapTeal)
                     } else {
-                        androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                        )
+                        androidx.compose.foundation.BorderStroke(1.dp, ZapOutline)
                     },
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = char,
-                            style = MaterialTheme.typography.headlineMedium,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
+                            color = ZapOnSurface
                         )
-                        // Show a cursor-like indicator if focused
                         if (isFocused && enabled) {
                             Box(
                                 modifier = Modifier
                                     .width(2.dp)
                                     .height(24.dp)
-                                    .background(MaterialTheme.colorScheme.primary),
+                                    .background(ZapTeal),
                             )
                         }
                     }
@@ -233,11 +247,7 @@ private fun VerificationContentPreview() {
     MaterialTheme {
         VerificationContent(
             email = "test@example.com",
-            state = VerificationUiState(
-                code = "123456",
-                isLoading = false,
-                error = null,
-            ),
+            state = VerificationUiState(),
             onCodeChanged = {},
             onSubmit = {},
             onBack = {},

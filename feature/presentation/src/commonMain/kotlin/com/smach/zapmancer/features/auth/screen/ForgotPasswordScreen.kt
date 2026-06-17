@@ -1,41 +1,46 @@
 package com.smach.zapmancer.features.auth.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordViewModel
-import com.smach.zapmancer.features.common.components.AuthHeader
-import com.smach.zapmancer.features.common.components.AuthTextField
+import com.smach.zapmancer.features.common.components.*
 import org.koin.compose.viewmodel.koinViewModel
+
+// Flip7 Palette
+private val ZapTeal = Color(0xFF2BA8A2)
+private val ZapGold = Color(0xFFFFD23F)
+private val ZapBg = Color(0xFFEFF8F7)
+private val ZapSurface = Color(0xFFFFFFFF)
+private val ZapOnSurface = Color(0xFF1A1C1C)
+private val ZapOnSurfaceVariant = Color(0xFF404948)
+private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun ForgotPasswordScreen(
@@ -64,91 +69,108 @@ private fun ForgotPasswordContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(ZapBg)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp),
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-
             AuthHeader(
                 title = "Forgot Password",
                 subtitle = "Enter your email to receive a recovery link",
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
-
-            AuthTextField(
-                value = state.email,
-                onValueChange = onEmailChange,
-                label = "Email",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { onSubmit() },
-                ),
-                error = state.error,
-            )
-
-            if (state.isSuccess) {
-                Text(
-                    text = "Recovery email sent! Check your inbox.",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = !state.isLoading && !state.isSuccess,
+            // Form Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = ZapSurface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                } else {
-                    Text("Send Recovery Link")
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Email Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Email Address", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        ZapTextField(
+                            value = state.email,
+                            onValueChange = onEmailChange,
+                            placeholder = "name@company.com",
+                            leadingIcon = Icons.Default.Mail,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+                        )
+                    }
+
+                    if (state.error != null) {
+                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                    }
+
+                    if (state.isSuccess) {
+                        Surface(
+                            color = ZapTeal.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Recovery email sent! Check your inbox.",
+                                color = ZapTeal,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(12.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    // Submit Button
+                    Button(
+                        onClick = onSubmit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        shape = RoundedCornerShape(100.dp),
+                        enabled = !state.isLoading && !state.isSuccess
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Send Recovery Link", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            }
+                        }
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            TextButton(
-                onClick = onBackToLogin,
-                modifier = Modifier.padding(bottom = 16.dp),
-            ) {
-                Text("Back to Login")
-            }
+            // Footer
+            Text(
+                "Back to Login",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = ZapTeal,
+                modifier = Modifier.clickable { onBackToLogin() }
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ForgotPasswordLoadingPreview() {
+private fun ForgotPasswordPreview() {
     MaterialTheme {
         ForgotPasswordContent(
-            state = ForgotPasswordUiState(
-                email = "test@example.com",
-                isLoading = false,
-                error = null,
-            ),
+            state = ForgotPasswordUiState(),
             onEmailChange = {},
             onSubmit = {},
             onBackToLogin = {},

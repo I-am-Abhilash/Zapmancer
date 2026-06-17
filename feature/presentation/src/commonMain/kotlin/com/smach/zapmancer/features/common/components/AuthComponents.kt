@@ -1,35 +1,32 @@
 package com.smach.zapmancer.features.common.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// Flip7 Palette for Auth Components
+private val ZapTeal = Color(0xFF2BA8A2)
+private val ZapOnSurfaceVariant = Color(0xFF404948)
+private val ZapOutline = Color(0xFFD1DBDA)
+private val ZapCream = Color(0xFFFFF8E7)
 
 @Composable
 fun AuthHeader(
@@ -40,33 +37,44 @@ fun AuthHeader(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .background(ZapTeal, RoundedCornerShape(8.dp))
+                .shadow(2.dp, RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.Bolt, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
+        }
         Text(
-            text = "ScriptSide",
-            style = MaterialTheme.typography.displaySmall,
+            text = "Zapmancer",
+            fontSize = 24.sp,
             fontWeight = FontWeight.ExtraBold,
-            color = MaterialTheme.colorScheme.primary,
+            color = Color(0xFF1A1C1C),
+            letterSpacing = (-0.5).sp
         )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = ZapOnSurfaceVariant,
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthTextField(
+fun ZapTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    placeholder: String,
+    leadingIcon: ImageVector,
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
     isPasswordVisible: Boolean = true,
@@ -75,37 +83,44 @@ fun AuthTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     error: String? = null,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(label) },
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
-            trailingIcon = if (isPassword && onTogglePassword != null) {
+            placeholder = { Text(placeholder, color = ZapOnSurfaceVariant.copy(alpha = 0.5f)) },
+            leadingIcon = { Icon(leadingIcon, contentDescription = null, tint = ZapOnSurfaceVariant, modifier = Modifier.size(18.dp)) },
+            trailingIcon = if (isPassword) {
                 {
-                    IconButton(onClick = onTogglePassword) {
+                    IconButton(onClick = onTogglePassword ?: {}) {
                         Icon(
-                            imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = if (isPasswordVisible) "Hide password" else "Show password",
+                            if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
-            } else {
-                null
-            },
+            } else null,
+            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = ZapCream,
+                unfocusedContainerColor = ZapCream,
+                focusedBorderColor = ZapTeal,
+                unfocusedBorderColor = ZapOutline,
+                focusedLeadingIconColor = ZapTeal
+            ),
+            shape = RoundedCornerShape(8.dp),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             isError = error != null,
-            singleLine = true,
+            singleLine = true
         )
         if (error != null) {
             Text(
                 text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
     }
@@ -123,9 +138,10 @@ fun SocialAuthButton(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = RoundedCornerShape(8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface,
+            contentColor = Color(0xFF1A1C1C),
         ),
     ) {
         Row(
@@ -155,13 +171,14 @@ fun AuthDivider(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        HorizontalDivider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f), color = ZapOutline)
         Text(
             text = "OR",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 16.dp),
-            color = MaterialTheme.colorScheme.outline,
+            color = ZapOnSurfaceVariant,
+            fontWeight = FontWeight.Bold
         )
-        HorizontalDivider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f), color = ZapOutline)
     }
 }

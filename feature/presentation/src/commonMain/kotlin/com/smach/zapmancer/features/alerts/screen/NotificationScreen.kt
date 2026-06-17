@@ -88,7 +88,6 @@ fun NotificationScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-//                        Icon(Icons.Default.Search, contentDescription = null, tint = ZapTeal)
                         Text(
                             "Zapmancer",
                             fontWeight = FontWeight.ExtraBold,

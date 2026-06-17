@@ -1,36 +1,28 @@
 package com.smach.zapmancer.features.auth.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,15 +30,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
-import com.smach.zapmancer.features.common.components.AuthDivider
-import com.smach.zapmancer.features.common.components.AuthHeader
-import com.smach.zapmancer.features.common.components.AuthTextField
-import com.smach.zapmancer.features.common.components.SocialAuthButton
+import com.smach.zapmancer.features.common.components.*
 import org.koin.compose.viewmodel.koinViewModel
+
+// Flip7 Palette
+private val ZapTeal = Color(0xFF2BA8A2)
+private val ZapGold = Color(0xFFFFD23F)
+private val ZapBg = Color(0xFFEFF8F7)
+private val ZapSurface = Color(0xFFFFFFFF)
+private val ZapOnSurface = Color(0xFF1A1C1E)
+private val ZapOnSurfaceVariant = Color(0xFF404948)
+private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun SignupScreen(
@@ -68,7 +67,7 @@ fun SignupScreen(
         onPasswordChanged = { viewModel.onEvent(SignupEvent.PasswordChanged(it)) },
         onSubmit = { viewModel.onEvent(SignupEvent.Submit) },
         onNavigateToLogin = onNavigateToLogin,
-        onUsernameChanged = {viewModel.onEvent(SignupEvent.UsernameChanged(it))},
+        onUsernameChanged = { viewModel.onEvent(SignupEvent.UsernameChanged(it)) },
     )
 }
 
@@ -87,153 +86,119 @@ private fun SignupContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(ZapBg)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp),
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-
             AuthHeader(
                 title = "Create Account",
                 subtitle = "Join our community of passionate writers",
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Form Section
-            AuthTextField(
-                value = state.email,
-                onValueChange = onEmailChanged,
-                label = "Email",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
-                ),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AuthTextField(
-                value = state.username,
-                onValueChange = onUsernameChanged,
-                label = "Name",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
-                ),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AuthTextField(
-                value = state.password,
-                onValueChange = onPasswordChanged,
-                label = "Password",
-                isPassword = true,
-                isPasswordVisible = false, // Always hidden on signup initial entry
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        onSubmit()
-                    },
-                ),
-            )
-
-            if (state.error != null) {
-                Text(
-                    text = state.error,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = !state.isLoading,
+            // Signup Form Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = ZapSurface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                } else {
-                    Text("Sign Up")
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Name Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Full Name", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        ZapTextField(
+                            value = state.username,
+                            onValueChange = onUsernameChanged,
+                            placeholder = "Alex Rivera",
+                            leadingIcon = Icons.Default.Person,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                        )
+                    }
 
-            AuthDivider()
+                    // Email Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Email Address", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        ZapTextField(
+                            value = state.email,
+                            onValueChange = onEmailChanged,
+                            placeholder = "name@company.com",
+                            leadingIcon = Icons.Default.Mail,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                        )
+                    }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                    // Password Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Password", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        ZapTextField(
+                            value = state.password,
+                            onValueChange = onPasswordChanged,
+                            placeholder = "••••••••",
+                            leadingIcon = Icons.Default.Lock,
+                            isPassword = true,
+                            isPasswordVisible = false,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+                        )
+                    }
 
-            // Social Signup Section
-            SocialAuthButton(
-                onClick = { /* TODO */ },
-                text = "Sign up with Google",
-                icon = Icons.Default.AccountCircle,
-            )
+                    if (state.error != null) {
+                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                    }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    // Sign Up Button
+                    Button(
+                        onClick = onSubmit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        shape = RoundedCornerShape(100.dp),
+                        enabled = !state.isLoading
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Create Account", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            }
+                        }
+                    }
 
-            SocialAuthButton(
-                onClick = { /* TODO */ },
-                text = "Sign up with Apple",
-                icon = Icons.Default.AccountCircle,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "By signing up, you agree to our Terms of Service and Privacy Policy.",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Already have an account?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                TextButton(onClick = onNavigateToLogin) {
                     Text(
-                        text = "Sign In",
-                        fontWeight = FontWeight.Bold,
+                        "By signing up, you agree to our Terms of Service and Privacy Policy.",
+                        fontSize = 11.sp,
+                        color = ZapOnSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
+            }
+
+            // Footer
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("Already have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
+                Text(
+                    "Sign In",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ZapTeal,
+                    modifier = Modifier.clickable { onNavigateToLogin() }
+                )
             }
         }
     }
@@ -244,13 +209,7 @@ private fun SignupContent(
 private fun SignupContentPreview() {
     MaterialTheme {
         SignupContent(
-            state = SignupUiState(
-                email = "test@example.com",
-                password = "password123",
-                isLoading = false,
-                error = null,
-                isSuccess = false,
-            ),
+            state = SignupUiState(),
             onEmailChanged = {},
             onPasswordChanged = {},
             onSubmit = {},

@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.messages.screen
 
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,7 +30,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Videocam
@@ -41,6 +42,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.components.AppImage
@@ -154,7 +157,23 @@ fun MessageDetailScreen(
             reverseLayout = true
         ) {
             if (state.isContactTyping) {
-                item { TypingIndicator() }
+                item { 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        AppImage(
+                            model = state.contactAvatarUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(ZapBg)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TypingIndicator()
+                    }
+                }
             }
             
             items(state.messages.reversed()) { message ->
@@ -242,7 +261,7 @@ fun MessageBubble(message: MessageItem) {
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
-                        imageVector = if (message.status == MessageStatus.READ) Icons.Default.DoneAll else Icons.Default.Done,
+                        imageVector = Icons.Default.DoneAll,
                         contentDescription = null,
                         tint = ZapTeal,
                         modifier = Modifier.size(14.dp)
@@ -326,27 +345,62 @@ fun TypingIndicator() {
     val infiniteTransition = rememberInfiniteTransition()
 
     Row(
-        modifier = Modifier.padding(start = 40.dp),
+        modifier = Modifier.padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         repeat(3) { index ->
-            val alpha by infiniteTransition.animateFloat(
-                initialValue = 0.3f,
-                targetValue = 1f,
+            val translationY by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = -8f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(600, delayMillis = index * 200),
-                    repeatMode = androidx.compose.animation.core.RepeatMode.Reverse
+                    animation = tween(400, delayMillis = index * 150),
+                    repeatMode = RepeatMode.Reverse
                 )
             )
 
             Box(
                 modifier = Modifier
                     .size(6.dp)
+                    .offset(y = translationY.dp)
                     .clip(CircleShape)
-                    .background(ZapCoral.copy(alpha = alpha))
+                    .background(ZapCoral)
             )
         }
     }
 }
 
+@Preview
+@Composable
+fun MessageDetailScreenPreview() {
+    MaterialTheme {
+        MessageDetailScreen(
+            state = MessagesDetailUiState(
+                contactName = "Alex Rivera",
+                isOnline = true,
+                messages = listOf(
+                    MessageItem(
+                        id = "1",
+                        text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?",
+                        timestamp = "09:42 AM",
+                        isFromMe = false
+                    ),
+                    MessageItem(
+                        id = "2",
+                        text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.",
+                        timestamp = "09:45 AM",
+                        isFromMe = true,
+                        status = MessageStatus.READ
+                    ),
+                    MessageItem(
+                        id = "3",
+                        text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.",
+                        timestamp = "09:46 AM",
+                        isFromMe = false
+                    )
+                ),
+                isContactTyping = true
+            )
+        )
+    }
+}

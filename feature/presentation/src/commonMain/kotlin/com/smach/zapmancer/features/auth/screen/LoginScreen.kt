@@ -1,51 +1,70 @@
 package com.smach.zapmancer.features.auth.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
 import com.smach.zapmancer.features.common.components.AuthDivider
 import com.smach.zapmancer.features.common.components.AuthHeader
-import com.smach.zapmancer.features.common.components.AuthTextField
 import com.smach.zapmancer.features.common.components.SocialAuthButton
+import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
+
+// Flip7 Palette
+private val ZapTeal = Color(0xFF2BA8A2)
+private val ZapGold = Color(0xFFFFD23F)
+private val ZapBg = Color(0xFFEFF8F7)
+private val ZapSurface = Color(0xFFFFFFFF)
+private val ZapOnSurface = Color(0xFF1A1C1C)
+private val ZapOnSurfaceVariant = Color(0xFF404948)
+private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun LoginScreen(
@@ -89,138 +108,123 @@ private fun LoginContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
+            .background(ZapBg)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp),
+                .fillMaxWidth()
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-
             AuthHeader(
                 title = "Welcome Back",
-                subtitle = "Login to continue your reading journey",
+                subtitle = "Sign in to your dashboard",
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Form Section
-            AuthTextField(
-                value = state.email,
-                onValueChange = onEmailChanged,
-                label = "Email",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
-                ),
-                error = if (state.error != null && state.email.isEmpty()) "Email is required" else null,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AuthTextField(
-                value = state.password,
-                onValueChange = onPasswordChanged,
-                label = "Password",
-                isPassword = true,
-                isPasswordVisible = !state.togglePassword, // State.togglePassword seems to be 'hide' flag based on previous code
-                onTogglePassword = onTogglePassword,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        onSubmit()
-                    },
-                ),
-            )
-
-            TextButton(
-                onClick = onNavigateToForgot,
-                modifier = Modifier.align(Alignment.End),
+            // Login Form Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = ZapSurface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
-                Text("Forgot Password?")
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Email Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Email Address", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        ZapTextField(
+                            value = state.email,
+                            onValueChange = onEmailChanged,
+                            placeholder = "name@company.com",
+                            leadingIcon = Icons.Default.Mail,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                        )
+                    }
+
+                    // Password Field
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Password", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                            Text(
+                                "Forgot password?",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ZapTeal,
+                                modifier = Modifier.clickable { onNavigateToForgot() }
+                            )
+                        }
+                        ZapTextField(
+                            value = state.password,
+                            onValueChange = onPasswordChanged,
+                            placeholder = "••••••••",
+                            leadingIcon = Icons.Default.Lock,
+                            isPassword = true,
+                            isPasswordVisible = !state.togglePassword,
+                            onTogglePassword = onTogglePassword,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+                        )
+                    }
+
+                    if (state.error != null) {
+                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                    }
+
+                    // Sign In Button
+                    Button(
+                        onClick = onSubmit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        shape = RoundedCornerShape(100.dp),
+                        enabled = !state.isLoading
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            }
+                        }
+                    }
+
+                    AuthDivider()
+
+                    // Secondary Actions
+                    SocialAuthButton(
+                        onClick = {},
+                        text = "Continue with SSO",
+                        icon = Icons.Default.Key
+                    )
+                }
             }
 
-            if (state.error != null) {
+            // Footer
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("Don't have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
                 Text(
-                    text = state.error,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    "Join",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ZapTeal,
+                    modifier = Modifier.clickable { onNavigateToSignup() }
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = !state.isLoading,
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                } else {
-                    Text("Login")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            AuthDivider()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Social Login Section
-            SocialAuthButton(
-                onClick = { /* TODO */ },
-                text = "Continue with Google",
-                icon = Icons.Default.AccountCircle, // Placeholder for Google
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SocialAuthButton(
-                onClick = { /* TODO */ },
-                text = "Continue with Apple",
-                icon = Icons.Default.AccountCircle,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Don't have an account?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                TextButton(onClick = onNavigateToSignup) {
-                    Text(
-                        text = "Sign Up",
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+            // System Status
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.alpha(0.6f)) {
+                Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(ZapTeal))
+                Text("All systems operational", fontSize = 12.sp, color = ZapOnSurfaceVariant, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -231,14 +235,7 @@ private fun LoginContent(
 private fun LoginContentPreview() {
     MaterialTheme {
         LoginContent(
-            state = LoginUiState(
-                email = "test@example.com",
-                password = "password123",
-                togglePassword = true,
-                isLoading = false,
-                error = null,
-                isSuccess = false,
-            ),
+            state = LoginUiState(),
             onEmailChanged = {},
             onPasswordChanged = {},
             onSubmit = {},
