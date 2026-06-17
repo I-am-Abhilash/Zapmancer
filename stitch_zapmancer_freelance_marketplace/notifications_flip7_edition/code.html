@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #EFF8F7;
+            color: #1A1C1C;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        /* Flip7 Specific Styles */
+        .ribbon-header {
+            position: relative;
+            background: #2BA8A2;
+            color: white;
+            padding: 4px 16px;
+            display: inline-block;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 11px;
+            margin-left: -20px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+        .ribbon-header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 100%;
+            border-left: 8px solid transparent;
+            border-right: 8px solid #1a6d69;
+            border-top: 0 solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .notification-card {
+            background: #ffffff;
+            border: 1px solid #E1E3E3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .accent-coral { border-left: 6px solid #FF6B6B; }
+        .accent-gold { border-left: 6px solid #FFD93D; }
+        .accent-teal { border-left: 6px solid #2BA8A2; }
+        .accent-slate { border-left: 6px solid #6D7278; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EFF8F7; }
+        ::-webkit-scrollbar-thumb { background: #D1D5D5; border-radius: 4px; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2BA8A2",
+                        "on-primary": "#FFFFFF",
+                        "surface": "#EFF8F7",
+                        "on-surface": "#1A1C1C",
+                        "outline": "#D1D5D5",
+                        "outline-variant": "#E1E3E3",
+                        "error": "#FF6B6B",
+                        "warning": "#FFD93D",
+                        "info": "#2BA8A2",
+                        "surface-container": "#FFFFFF"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "mono": ["JetBrains Mono"],
+                        "h1": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-white border-b border-outline-variant w-full top-0 sticky z-50">
+<div class="flex justify-between items-center px-md h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary font-bold" data-icon="search">search</span>
+<h1 class="font-extrabold text-2xl text-on-surface tracking-tight">Zapmancer</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex gap-lg items-center">
+<a class="text-on-surface/70 font-semibold hover:text-primary transition-colors px-sm py-xs" href="#">Home</a>
+<a class="text-on-surface/70 font-semibold hover:text-primary transition-colors px-sm py-xs" href="#">Projects</a>
+<a class="text-primary font-extrabold px-sm py-xs" href="#">Notifications</a>
+</div>
+<div class="h-9 w-9 rounded-full bg-outline-variant border-2 border-primary/20 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEWwiC8WyKNtCvh0W3hyOwyahOjUrXpZQAx7jfy9vRzZUekmS1VhTOLnklAlUR2dP-ithyM_FRuwjoUuiiMa9ZqVbeRBiEDzIfNn2QuU4LiGURB-ZOHCnmUeTWJzmKdHrqCeeEI5UTXN5yAJinb3oySwbT8vNXbfdynU29S_ZXXqREGbXH6MV6bHXHKwVM_lOWdZKzAUi4n7kKYm_RFO8iw6kBoJAMqqDGMAT8QQnimsnduxRWlcF1S6v7G0LCQtDqhKz2VrZabPI"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[800px] mx-auto px-gutter py-xl pb-32">
+<!-- Dashboard Header -->
+<div class="mb-lg flex justify-between items-start">
+<div>
+<h2 class="font-extrabold text-3xl text-on-surface mb-xs">Activity Feed</h2>
+<p class="text-on-surface/60 font-medium">Review updates and automated task results across your workspace.</p>
+</div>
+<button class="flex items-center gap-xs px-md py-2 bg-white border border-outline rounded-lg font-bold text-sm shadow-sm hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+<span>Filter</span>
+</button>
+</div>
+<!-- Today Section -->
+<section class="mb-xl">
+<div class="flex items-center mb-lg px-xs">
+<div class="ribbon-header">Today</div>
+</div>
+<div class="space-y-md">
+<!-- Activity Item 1: Milestone -->
+<div class="notification-card accent-gold rounded-lg p-md flex gap-md group">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 border border-yellow-100">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-extrabold text-base text-on-surface">Neural Mesh Deployment</h3>
+<span class="text-xs font-bold text-on-surface/40">2m ago</span>
+</div>
+<p class="text-sm text-on-surface/70 mb-md">Automated deployment of the <span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-[11px] font-bold">v2.4.1-alpha</span> build was successful on the production cluster.</p>
+<div class="flex gap-sm">
+<button class="px-md py-1.5 bg-primary text-white font-bold text-xs rounded shadow-sm hover:bg-primary/90 transition-all">View Logs</button>
+<button class="px-md py-1.5 border border-outline text-on-surface/70 font-bold text-xs rounded hover:bg-surface transition-all">Dismiss</button>
+</div>
+</div>
+</div>
+<!-- Activity Item 2: Message -->
+<div class="notification-card accent-teal rounded-lg p-md flex gap-md">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-extrabold text-base text-on-surface">Message from Sarah Connor</h3>
+<span class="text-xs font-bold text-on-surface/40">1h ago</span>
+</div>
+<p class="text-sm text-on-surface/70 mb-md italic leading-relaxed">"The latency on the North-East edge node has stabilized. Should we increase the load distribution?"</p>
+<div class="flex items-center gap-sm">
+<input class="flex-grow bg-surface border border-outline rounded-lg px-sm py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Quick reply..." type="text"/>
+<button class="w-9 h-9 flex items-center justify-center bg-primary text-white rounded-lg shadow-sm hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Activity Item 3: Alert -->
+<div class="notification-card accent-coral rounded-lg p-md flex gap-md">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500 border border-red-100">
+<span class="material-symbols-outlined font-bold" data-icon="warning">warning</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-extrabold text-base text-red-500">Database Connection Spike</h3>
+<span class="text-xs font-bold text-on-surface/40">4h ago</span>
+</div>
+<p class="text-sm text-on-surface/70 mb-md">Unauthorized access attempts detected from IP <span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-mono text-[11px] font-bold">192.168.1.104</span>. Security protocols initiated.</p>
+<div class="flex gap-sm">
+<button class="px-md py-1.5 bg-red-500 text-white font-bold text-xs rounded shadow-sm hover:bg-red-600 transition-all">Block IP</button>
+<button class="px-md py-1.5 border border-outline text-on-surface/70 font-bold text-xs rounded hover:bg-surface transition-all">Investigate</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Yesterday Section -->
+<section>
+<div class="flex items-center mb-lg px-xs">
+<div class="ribbon-header">Yesterday</div>
+</div>
+<div class="space-y-md">
+<!-- Activity Item 4: General Info -->
+<div class="notification-card accent-slate opacity-80 rounded-lg p-md flex gap-md">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-extrabold text-base text-on-surface">Weekly Backup Complete</h3>
+<span class="text-xs font-bold text-on-surface/40">1d ago</span>
+</div>
+<p class="text-sm text-on-surface/70">All system partitions have been mirrored to the secure vault. Integrity check: 100%.</p>
+</div>
+</div>
+<!-- Activity Item 5: Person Joined -->
+<div class="notification-card accent-slate opacity-80 rounded-lg p-md flex gap-md">
+<div class="flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-extrabold text-base text-on-surface">New Collaborator Joined</h3>
+<span class="text-xs font-bold text-on-surface/40">1d ago</span>
+</div>
+<p class="text-sm text-on-surface/70">David Chen was added to the <span class="text-primary font-bold">"Project Phoenix"</span> team by Admin.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 border-t border-outline-variant bg-white flex justify-around items-center px-gutter py-3">
+<div class="flex flex-col items-center justify-center text-on-surface/40 font-bold px-sm transition-colors">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] uppercase tracking-tighter">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface/40 font-bold px-sm transition-colors">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span class="text-[10px] uppercase tracking-tighter">Projects</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface/40 font-bold px-sm transition-colors">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-[10px] uppercase tracking-tighter">Messages</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary font-bold px-sm">
+<span class="material-symbols-outlined scale-110" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="text-[10px] uppercase tracking-tighter">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface/40 font-bold px-sm transition-colors">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] uppercase tracking-tighter">Profile</span>
+</div>
+</nav>
+<script>
+    // Search logic placeholder
+    const searchIcon = document.querySelector('[data-icon="search"]');
+    searchIcon.addEventListener('click', () => {
+        console.log("Search activated");
+    });
+</script>
+</body></html>

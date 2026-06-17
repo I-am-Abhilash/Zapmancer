@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zapmancer Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --baseline: 4px;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #EFF8F7; /* Surface Base */
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .settings-sidebar {
+            border-right: 1px solid #D1DEDC;
+        }
+        .settings-card {
+            background-color: #FFF8E7; /* Cream */
+            border: 1px solid #E6DCC3;
+            border-radius: 0.5rem;
+        }
+        /* Custom Toggle Styling */
+        .custom-toggle:checked + .toggle-track {
+            background-color: #2BA8A2; /* Teal */
+        }
+        .custom-toggle:checked + .toggle-track .toggle-dot {
+            transform: translateX(100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#2BA8A2", // Teal
+                        "secondary": "#EF6C4A", // Coral
+                        "background": "#EFF8F7", // Surface Base
+                        "surface": "#FFF8E7", // Cream
+                        "on-surface": "#1A1C1E",
+                        "on-surface-variant": "#44474E",
+                        "outline": "#74777F",
+                        "outline-variant": "#C4C6D0",
+                        "error": "#EF6C4A"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "mono": ["JetBrains Mono"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "h2": ["Plus Jakarta Sans"],
+                        "h3": ["Plus Jakarta Sans"],
+                        "h1": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "mono": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "700"}],
+                        "h2": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "h3": ["16px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-white/80 backdrop-blur-md border-b border-outline-variant z-50">
+<div class="flex justify-between items-center px-md h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary hover:bg-black/5 transition-colors p-sm rounded-lg active:opacity-80">arrow_back</button>
+<h1 class="font-h1 text-h1 text-primary tracking-tight">Zapmancer</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-black/5 transition-colors p-sm rounded-lg active:opacity-80">search</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWKGOcjrZarnY7gMY8V_qqv_LgWIm8xaFyREY3F5VwktLP0iWXq7z3cNu-F0RlL8BaY4-hhWEm09mbKsCIFCGeLMIAnTFgOWbH421Ttr6mdA6V0VnznnrdZmZwGXGG9_PbmG47OGRLJxQlA03e08Fipi3kBFEOONhzqYv8vL7TczQazc4Z7Y5pvEKmEG2-wHIH-f3Qf_04RFrwGw5hNTIY3Mj1btSCAqngvADL6L9ZD8mt0Y2uKXR0lI2voAKr9rwpMdek1uJq2t4"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto flex flex-col md:flex-row">
+<!-- Sidebar Navigation -->
+<nav class="hidden md:flex flex-col w-64 p-md gap-xs settings-sidebar bg-white/30">
+<h2 class="font-label-md text-label-md text-outline uppercase mb-sm px-sm">Global</h2>
+<button class="flex items-center gap-sm px-sm py-md text-primary font-h3 bg-primary/10 rounded-lg w-full text-left transition-colors">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </button>
+<button class="flex items-center gap-sm px-sm py-md text-on-surface-variant font-body-md hover:bg-black/5 rounded-lg w-full text-left transition-colors">
+<span class="material-symbols-outlined">person</span>
+                Profile
+            </button>
+<button class="flex items-center gap-sm px-sm py-md text-on-surface-variant font-body-md hover:bg-black/5 rounded-lg w-full text-left transition-colors">
+<span class="material-symbols-outlined">work</span>
+                Projects
+            </button>
+<button class="flex items-center gap-sm px-sm py-md text-on-surface-variant font-body-md hover:bg-black/5 rounded-lg w-full text-left transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+                Messages
+            </button>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<button class="flex items-center gap-sm px-sm py-md text-secondary font-body-md hover:bg-secondary/10 rounded-lg w-full text-left transition-colors font-bold">
+<span class="material-symbols-outlined">logout</span>
+                    Logout
+                </button>
+</div>
+</nav>
+<!-- Content Canvas -->
+<section class="flex-grow p-md md:p-xl max-w-[800px]">
+<header class="mb-lg">
+<h2 class="font-display text-display text-on-surface">Settings</h2>
+<p class="font-body-md text-on-surface-variant mt-xs">Manage your account preferences and security protocols.</p>
+</header>
+<div class="flex flex-col gap-lg">
+<!-- Account Section -->
+<div class="settings-card overflow-hidden shadow-sm">
+<div class="px-md py-sm border-b border-outline-variant/30 flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+<h3 class="font-h3 text-h3 text-on-surface">Account</h3>
+</div>
+<div class="divide-y divide-outline-variant/30">
+<div class="p-md flex justify-between items-center hover:bg-black/5 transition-colors group">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Email Address</p>
+<p class="font-body-sm text-on-surface-variant">admin@zapmancer.io</p>
+</div>
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">edit</button>
+</div>
+<div class="p-md flex justify-between items-center hover:bg-black/5 transition-colors group">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Organization</p>
+<p class="font-body-sm text-on-surface-variant">Zapmancer Core Team</p>
+</div>
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">corporate_fare</button>
+</div>
+</div>
+</div>
+<!-- Security Section -->
+<div class="settings-card overflow-hidden shadow-sm">
+<div class="px-md py-sm border-b border-outline-variant/30 flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">security</span>
+<h3 class="font-h3 text-h3 text-on-surface">Security</h3>
+</div>
+<div class="divide-y divide-outline-variant/30">
+<div class="p-md flex justify-between items-center">
+<div class="pr-md">
+<p class="font-body-lg font-bold text-on-surface">Two-Factor Authentication</p>
+<p class="font-body-sm text-on-surface-variant">Add an extra layer of security to your account.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="toggle-track w-11 h-6 bg-outline-variant rounded-full peer-focus:ring-2 peer-focus:ring-primary/50 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all toggle-dot"></div>
+</label>
+</div>
+<div class="p-md flex justify-between items-center hover:bg-black/5 transition-colors group">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Change Password</p>
+<p class="font-body-sm text-on-surface-variant">Last changed 4 months ago</p>
+</div>
+<button class="px-md py-sm border border-primary text-primary rounded font-label-md hover:bg-primary/5 transition-colors font-bold">Update</button>
+</div>
+</div>
+</div>
+<!-- Preferences Section -->
+<div class="settings-card overflow-hidden shadow-sm">
+<div class="px-md py-sm border-b border-outline-variant/30 flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">tune</span>
+<h3 class="font-h3 text-h3 text-on-surface">Preferences</h3>
+</div>
+<div class="divide-y divide-outline-variant/30">
+<div class="p-md flex justify-between items-center">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Dark Mode</p>
+<p class="font-body-sm text-on-surface-variant">Switch between light and dark interface themes.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="toggle-track w-11 h-6 bg-outline-variant rounded-full peer-focus:ring-2 peer-focus:ring-primary/50 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all toggle-dot"></div>
+</label>
+</div>
+<div class="p-md flex justify-between items-center">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Email Notifications</p>
+<p class="font-body-sm text-on-surface-variant">Receive weekly performance reports and alerts.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="toggle-track w-11 h-6 bg-outline-variant rounded-full peer-focus:ring-2 peer-focus:ring-primary/50 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all toggle-dot"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Dangerous Area -->
+<div class="mt-lg p-md border border-secondary/20 rounded-lg flex items-center justify-between bg-secondary/5">
+<div>
+<h4 class="font-h3 text-h3 text-secondary">Logout</h4>
+<p class="font-body-sm text-on-surface-variant">Session termination will revoke all active access tokens.</p>
+</div>
+<button class="bg-secondary text-white px-lg py-md rounded-xl font-h3 active:scale-95 transition-all shadow-md hover:brightness-110">Sign Out</button>
+</div>
+<!-- Footer / Version -->
+<footer class="mt-xl text-center md:text-left mb-xl">
+<p class="font-mono text-label-md text-outline">v2.4.12-beta // ZAPMANCER_CORE_X64</p>
+<p class="font-label-md text-outline mt-xs">© 2024 Zapmancer. All systems operational.</p>
+</footer>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-white border-t border-outline-variant flex justify-around items-center px-gutter py-sm pb-8">
+<button class="flex flex-col items-center justify-center text-on-surface-variant font-label-md px-sm py-xs hover:text-primary transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant font-label-md px-sm py-xs hover:text-primary transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">work</span>
+<span class="text-[10px] font-bold">Projects</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant font-label-md px-sm py-xs hover:text-primary transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[10px] font-bold">Messages</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary font-label-md bg-primary/10 rounded-xl px-sm py-xs active:scale-95 duration-100">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Settings</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant font-label-md px-sm py-xs hover:text-primary transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for toggle switches
+        document.querySelectorAll('.custom-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                if(this.checked) {
+                    console.log('Setting Enabled:', this.closest('.p-md')?.querySelector('p')?.innerText || 'Unknown');
+                }
+            });
+        });
+    </script>
+</body></html>
