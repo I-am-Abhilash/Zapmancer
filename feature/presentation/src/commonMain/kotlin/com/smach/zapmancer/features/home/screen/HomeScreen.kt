@@ -168,17 +168,17 @@ fun HomeContent(
                     color = ZapOnSurface
                 )
             }
-            Button(
-                onClick = onCreateProjectClick,
-                colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
-                shape = RoundedCornerShape(8.dp),
-                border = androidx.compose.foundation.BorderStroke(2.dp, ZapOnSurface),
-                modifier = Modifier.height(48.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Create Project", fontWeight = FontWeight.Bold)
-            }
+        }
+        Button(
+            onClick = onCreateProjectClick,
+            colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+            shape = RoundedCornerShape(8.dp),
+            border = androidx.compose.foundation.BorderStroke(2.dp, ZapOnSurface),
+            modifier = Modifier.height(48.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Create Project", fontWeight = FontWeight.Bold)
         }
 
         // Stats Grid
@@ -210,9 +210,7 @@ fun HomeContent(
             isRating = true
         )
 
-        // Main Area
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-            // Recent Activity
             Column(modifier = Modifier.weight(2f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

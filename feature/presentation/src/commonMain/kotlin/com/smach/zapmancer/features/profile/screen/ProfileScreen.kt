@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -131,22 +132,22 @@ fun ProfileContent(
                 .padding(padding),
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
-            // Identity Header
             item { IdentityHeader(state, onEvent) }
 
-            // About Section
-            item { ProfileSectionCard("About") {
-                Text(
-                    text = state.about,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = ZapOnSurfaceVariant,
-                    lineHeight = 22.sp
-                )
-            } }
+            item {
+                ProfileSectionCard("About") {
+                    Text(
+                        text = state.about,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = ZapOnSurfaceVariant,
+                        lineHeight = 22.sp
+                    )
+                }
+            }
 
-            // Skills Section
-            item { ProfileSectionCard("Skills") {
-                FlowRow(
+            item {
+                ProfileSectionCard("Skills") {
+                    FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,7 +156,8 @@ fun ProfileContent(
                         SkillChip(skill)
                     }
                 }
-            } }
+                }
+            }
 
             // Portfolio Section
             item { 
@@ -187,7 +189,7 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Banner Gradient
+             //Banner Gradient
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -226,6 +228,7 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
                     fontWeight = FontWeight.Bold,
                     color = ZapOnSurface
                 )
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = state.role,
@@ -237,24 +240,6 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Chips Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    InfoChip(Icons.Default.LocationOn, state.location)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    InfoChip(Icons.Default.MilitaryTech, state.ranking, Color(0xFFE8E8E8), Color(0xFF717171))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    if (state.isTopRated) {
-                        InfoChip(Icons.Default.Verified, "Top Rated", Color(0xFFFFF5F2), Color(0xFFFF7F50))
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Stats Divider Row
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -266,10 +251,27 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
                     StatItem(state.rating.toString(), "Rating")
                     StatItem(state.experience, "Exp")
                 }
+                Spacer(modifier = Modifier.height(24.dp))
+
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    InfoChip(Icons.Default.LocationOn, state.location)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    InfoChip(Icons.Default.MilitaryTech, state.ranking, Color(0xFFE8E8E8), Color(0xFF717171))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (state.isTopRated) {
+                        InfoChip(Icons.Default.Verified, "Top Rated", Color(0xFFFFF5F2), Color(0xFFFF7F50))
+                    }
+                }
+
+
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Hire Button
                 Button(
                     onClick = { onEvent(ProfileEvent.HireMe) },
                     modifier = Modifier
@@ -538,7 +540,7 @@ fun FlowRow(
     maxItemsInEachRow: Int = Int.MAX_VALUE,
     content: @Composable FlowRowScope.() -> Unit
 ) {
-    androidx.compose.foundation.layout.FlowRow(
+    FlowRow(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
