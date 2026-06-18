@@ -70,7 +70,6 @@ import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 
-// Flip7 Palette
 private val ZapTeal = Color(0xFF2BA8A2)
 private val ZapTealDark = Color(0xFF1D736F)
 private val ZapBg = Color(0xFFF5FAF9)

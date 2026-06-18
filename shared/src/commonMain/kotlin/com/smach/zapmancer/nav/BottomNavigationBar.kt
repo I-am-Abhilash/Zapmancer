@@ -1,51 +1,77 @@
 package com.smach.zapmancer.nav
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 
-/**
- * BottomNavigationBar renders the bottom navigation bar with items for top-level routes.
- */
 @Composable
 fun BottomNavigationBar(
     navController: MainNavigator,
     navigationState: NavigationState,
 ) {
-    BottomAppBar {
-        val topLevelRoute = navigationState.topLevelRoute
+    NavigationBar(
+        modifier = Modifier.height(80.dp),
+        tonalElevation = 0.dp,
+        containerColor = ZapSurface,
+    ) {
+        val currentRoute = navigationState.topLevelRoute
 
         bottomNavigationRoutes.forEach { destination ->
-            val selected = destination == topLevelRoute
-
-            BottomNavItem(
-                isSelected = selected,
-                destination = destination,
+            NavigationBarItem(
+                selected = destination == currentRoute,
                 onClick = {
                     navController.navigate(destination)
                 },
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = destination.title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = destination.title,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = ZapTeal,
+                    selectedTextColor = ZapTeal,
+                    unselectedIconColor = Color(0xFF5F6368),
+                    unselectedTextColor = Color(0xFF5F6368),
+                    indicatorColor = ZapTeal.copy(alpha = 0.1f)
+                )
             )
+
+//                colors = NavigationBarItemDefaults.colors(
+//                    selectedIconColor = MaterialTheme.colorScheme.primary,
+//                    selectedTextColor = MaterialTheme.colorScheme.primary,
+//                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+//                )
+            
         }
     }
 }
+private val ZapTeal = Color(0xFF00897B)
+private val ZapSurface = Color(0xFFFFFFFF)
 
 /**
  * toEntries is an extension function that converts the navigation state's backstacks into
@@ -55,7 +81,6 @@ fun BottomNavigationBar(
 fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): SnapshotStateList<NavEntry<NavKey>> {
     val decoratedEntries =
         backStacks.mapValues { (_, stack) ->
-            // Use rememberSaveableStateHolderNavEntryDecorator to preserve state across backstack changes.
             val decorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
@@ -71,48 +96,4 @@ fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): Snap
     return stacksInUse
         .flatMap { decoratedEntries[it] ?: emptyList() }
         .toMutableStateList()
-}
-
-/**
- * BottomNavItem represents a single clickable item in the BottomNavigationBar.
- */
-@Composable
-fun RowScope.BottomNavItem(
-    isSelected: Boolean,
-    destination: Screen,
-    onClick: () -> Unit,
-) {
-    val iconColor =
-        if (isSelected) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.onSurfaceVariant
-        }
-
-    Column(
-        modifier =
-            Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .clickable(
-                    onClick = onClick,
-                ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    )
-    {
-        Icon(
-            imageVector = destination.icon,
-            contentDescription = destination.title,
-            tint = iconColor,
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            modifier = Modifier,
-            text = destination.title,
-            style = MaterialTheme.typography.labelSmall,
-            color = iconColor,
-        )
-    }
 }

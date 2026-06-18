@@ -27,5 +27,7 @@ data class ProjectDetailUiState(
     val clientProjectsCount: Int = 42,
     val clientRating: Double = 4.9,
     val isClientActive: Boolean = true,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isIdentityVerified: Boolean = false,
+    val isPhoneVerified: Boolean = false,
 )

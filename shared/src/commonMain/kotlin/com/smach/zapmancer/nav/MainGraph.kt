@@ -4,14 +4,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.smach.zapmancer.features.home.screen.HomeScreen
-import com.smach.zapmancer.features.profile.screen.ProfileScreen
+import com.smach.zapmancer.features.alerts.screen.NotificationScreen
+import com.smach.zapmancer.features.alerts.state.NotificationUiState
+import com.smach.zapmancer.features.home.screen.HomeContent
+import com.smach.zapmancer.features.home.state.HomeUiState
+import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
+import com.smach.zapmancer.features.profile.screen.ProfileContent
+import com.smach.zapmancer.features.profile.state.ProfileUiState
+import com.smach.zapmancer.features.projects.screen.ProjectPortfolioContent
 
 /**
  * MainGraph is the entry point for authenticated app content.
@@ -52,43 +57,38 @@ fun MainGraph(
 private fun appEntryProvider(
     navigator: MainNavigator,
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
+    
     entry<Screen.Home> {
-        HomeScreen(
-            onArticleClick = { id ->
-                println("Clicked article $id")
-                navigator.navigate(Screen.Detail(id = id))
-            },
-            onSearchClick = {
-                navigator.openSearchKeyboard = true
-                navigator.navigate(Screen.Explore)
+        HomeContent(
+            state = HomeUiState(),
+            onCreateProjectClick = { navigator.navigate(Screen.ProjectList) }
+        )
+    }
+
+    entry<Screen.ProjectList> {
+        ProjectPortfolioContent(
+            onSearchClick = { /* TODO */ },
+            onProjectClick = { projectId ->
+                // navigator.navigate(Screen.ProjectDetail(projectId))
             }
         )
     }
-    entry<Screen.Explore> {
-        SearchScreen(autoFocus = navigator.openSearchKeyboard)
-        navigator.openSearchKeyboard = false
-    }
-    entry<Screen.Writing> {
-        WritingScreen(onNavigateBack = { navigator.navigate(Screen.Home) })
-    }
-    entry<Screen.Activity> {
-        ActivityScreen()
-    }
     entry<Screen.Profile> {
-        ProfileScreen(
-            onSearchClick = {
-                navigator.openSearchKeyboard = true
-                navigator.navigate(Screen.Explore)
-            },
+        ProfileContent(
+            state = ProfileUiState(),
+            onEvent = {  }
         )
     }
-    entry<Screen.Detail> { screen ->
-        key(screen.id) {
-            DetailScreen(
-                articleId = screen.id,
-                onBack = { navigator.goBack() }
-            )
-        }
+    entry<Screen.Messages> {
+        MessageDetailScreen()
+    }
+
+    entry<Screen.Alerts> {
+        NotificationScreen(
+            state = NotificationUiState(),
+            onBackClick = { navigator.goBack() },
+            onFilterClick = {}
+        )
     }
 }
 

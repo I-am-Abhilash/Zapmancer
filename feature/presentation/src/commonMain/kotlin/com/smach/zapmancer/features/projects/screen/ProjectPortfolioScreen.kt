@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
 
 private val ZapTeal = Color(0xFF00897B)
+
 private val ZapOrange = Color(0xFFF9A825)
 private val ZapGrey = Color(0xFF9E9E9E)
 private val ZapBg = Color(0xFFF4FBFB)
@@ -120,9 +121,9 @@ fun ProjectPortfolioContent(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapBg)
             )
         },
-        bottomBar = {
-            ZapBottomNavigationBar()
-        },
+//        bottomBar = {
+//            ZapBottomNavigationBar()
+//        },
         containerColor = ZapBg
     ) { padding ->
         LazyColumn(
@@ -468,51 +469,51 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
         }
     }
 }
-
-@Composable
-fun ZapBottomNavigationBar() {
-    NavigationBar(
-        containerColor = ZapSurface,
-        tonalElevation = 0.dp,
-        modifier = Modifier.height(80.dp)
-    ) {
-        val items = listOf(
-            BottomNavItem("Home", Icons.Outlined.Home, false),
-            BottomNavItem("Projects", Icons.Outlined.WorkOutline, true),
-            BottomNavItem("Messages", Icons.Outlined.ChatBubbleOutline, false),
-            BottomNavItem("Alerts", Icons.Outlined.NotificationsNone, false),
-            BottomNavItem("Profile", Icons.Outlined.PersonOutline, false)
-        )
-
-        items.forEach { item ->
-            NavigationBarItem(
-                selected = item.isSelected,
-                onClick = {},
-                icon = {
-                    Icon(
-                        item.icon,
-                        contentDescription = item.label,
-                        modifier = Modifier.size(24.dp)
-                    )
-                },
-                label = {
-                    Text(
-                        item.label,
-                        fontSize = 12.sp,
-                        fontWeight = if (item.isSelected) FontWeight.Bold else FontWeight.Medium
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = ZapTeal,
-                    selectedTextColor = ZapTeal,
-                    unselectedIconColor = Color(0xFF5F6368),
-                    unselectedTextColor = Color(0xFF5F6368),
-                    indicatorColor = ZapTeal.copy(alpha = 0.1f)
-                )
-            )
-        }
-    }
-}
+//
+//@Composable
+//fun ZapBottomNavigationBar() {
+//    NavigationBar(
+//        containerColor = ZapSurface,
+//        tonalElevation = 0.dp,
+//        modifier = Modifier.height(80.dp)
+//    ) {
+//        val items = listOf(
+//            BottomNavItem("Home", Icons.Outlined.Home, false),
+//            BottomNavItem("Projects", Icons.Outlined.WorkOutline, true),
+//            BottomNavItem("Messages", Icons.Outlined.ChatBubbleOutline, false),
+//            BottomNavItem("Alerts", Icons.Outlined.NotificationsNone, false),
+//            BottomNavItem("Profile", Icons.Outlined.PersonOutline, false)
+//        )
+//
+//        items.forEach { item ->
+//            NavigationBarItem(
+//                selected = item.isSelected,
+//                onClick = {},
+//                icon = {
+//                    Icon(
+//                        item.icon,
+//                        contentDescription = item.label,
+//                        modifier = Modifier.size(24.dp)
+//                    )
+//                },
+//                label = {
+//                    Text(
+//                        item.label,
+//                        fontSize = 12.sp,
+//                        fontWeight = if (item.isSelected) FontWeight.Bold else FontWeight.Medium
+//                    )
+//                },
+//                colors = NavigationBarItemDefaults.colors(
+//                    selectedIconColor = ZapTeal,
+//                    selectedTextColor = ZapTeal,
+//                    unselectedIconColor = Color(0xFF5F6368),
+//                    unselectedTextColor = Color(0xFF5F6368),
+//                    indicatorColor = ZapTeal.copy(alpha = 0.1f)
+//                )
+//            )
+//        }
+//    }
+//}
 
 
 data class BottomNavItem(

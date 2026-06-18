@@ -51,12 +51,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
 
-// Flip7 Palette for Project Details
 private val ZapTeal = Color(0xFF2BA8A2)
 private val ZapBg = Color(0xFFF5FAF9)
 private val ZapSurface = Color(0xFFFFFFFF)
@@ -167,13 +166,14 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                 lineHeight = 32.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.Center,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 InfoItem(Icons.Default.Schedule, "Posted ${state.postedTime}")
                 InfoItem(Icons.Default.LocationOn, state.location)
+
                 if (state.isPaymentVerified) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -515,15 +515,15 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                 color = ZapOnSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
-            VerificationItem("Payment Method Verified")
-            VerificationItem("Identity Verified")
-            VerificationItem("Phone Number Verified")
+            VerificationItem("Payment Method Verified", state.isPaymentVerified)
+            VerificationItem("Identity Verified", state.isIdentityVerified)
+            VerificationItem("Phone Number Verified", state.isPhoneVerified)
         }
     }
 }
 
 @Composable
-fun VerificationItem(text: String) {
+fun VerificationItem(text: String, isVerified: Boolean = false) {
     Row(
         modifier = Modifier.padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -531,7 +531,7 @@ fun VerificationItem(text: String) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = ZapTeal,
+            tint = if (isVerified) ZapTeal else ZapOnSurfaceVariant.copy(alpha = 0.4f),
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))

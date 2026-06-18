@@ -1,12 +1,12 @@
 package com.smach.zapmancer.nav
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -53,13 +53,21 @@ sealed class Screen(
     data object Profile : Screen("Profile")
 
     @Serializable
-    data object Explore : Screen("Explore")
+    data object Messages : Screen("Messages")
 
     @Serializable
-    data object Writing : Screen("Writing")
+    data object ProjectDetail : Screen("Project Detail")
+    @Serializable
+    data object ProjectList : Screen("Projects")
 
     @Serializable
-    data object Activity : Screen("Alerts")
+    data object Alerts : Screen("Alerts")
+
+    @Serializable
+    data object Proposal : Screen("Proposal")
+
+    @Serializable
+    data object Settings : Screen("Settings")
 
     @Serializable
     data class Detail(
@@ -74,9 +82,9 @@ sealed class Screen(
 val bottomNavigationRoutes: Set<Screen> =
     setOf(
         Screen.Home,
-        Screen.Explore,
-        Screen.Writing,
-        Screen.Activity,
+        Screen.Messages,
+        Screen.ProjectList,
+        Screen.Alerts,
         Screen.Profile,
     )
 
@@ -86,11 +94,11 @@ val bottomNavigationRoutes: Set<Screen> =
 val Screen.icon: ImageVector
     get() =
         when (this) {
-            Screen.Home -> Icons.Filled.Home
-            Screen.Explore -> Icons.Filled.Email
-            Screen.Writing -> Icons.Filled.Create
-            Screen.Activity -> Icons.Filled.Notifications
-            Screen.Profile -> Icons.Filled.Person
+            Screen.Home -> Icons.Outlined.Home
+            Screen.ProjectList -> Icons.Outlined.WorkOutline
+            Screen.Messages -> Icons.Outlined.ChatBubbleOutline
+            Screen.Alerts -> Icons.Outlined.NotificationsNone
+            Screen.Profile -> Icons.Outlined.PersonOutline
             else -> Icons.Filled.Info
         }
 
@@ -204,10 +212,13 @@ val navConfig =
                     subclass(Screen.Verification::class, Screen.Verification.serializer())
                     subclass(Screen.ForgotPassword::class, Screen.ForgotPassword.serializer())
                     subclass(Screen.Home::class, Screen.Home.serializer())
-                    subclass(Screen.Activity::class, Screen.Activity.serializer())
-                    subclass(Screen.Explore::class, Screen.Explore.serializer())
-                    subclass(Screen.Writing::class, Screen.Writing.serializer())
+                    subclass(Screen.Alerts::class, Screen.Alerts.serializer())
+                    subclass(Screen.Messages::class, Screen.Messages.serializer())
+                    subclass(Screen.ProjectList::class, Screen.ProjectList.serializer())
+                    subclass(Screen.ProjectDetail::class, Screen.ProjectDetail.serializer())
                     subclass(Screen.Profile::class, Screen.Profile.serializer())
+                    subclass(Screen.Proposal::class, Screen.Proposal.serializer())
+                    subclass(Screen.Settings::class, Screen.Settings.serializer())
                     subclass(Screen.Detail::class, Screen.Detail.serializer())
                 }
             }
