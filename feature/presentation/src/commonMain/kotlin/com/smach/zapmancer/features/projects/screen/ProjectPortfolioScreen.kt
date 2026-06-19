@@ -127,13 +127,13 @@ fun ProjectPortfolioContent(
                 PortfolioHeader()
             }
 
-//            item {
-//                CategoryTabs(
-//                    categories = categories,
-//                    selectedCategory = selectedCategory,
-//                    onCategorySelected = { selectedCategory = it }
-//                )
-//            }
+            item {
+                CategoryTabs(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = { selectedCategory = it }
+                )
+            }
 
             val projects = getSampleProjects().filter {
                 selectedCategory == "All" || it.category == selectedCategory
@@ -232,15 +232,6 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-//        .drawBehind {
-//                val strokeWidth = 5.dp.toPx()
-//                drawLine(
-//                    color = project.accentColor,
-//                    start = Offset(strokeWidth / 2, 0f),
-//                    end = Offset(strokeWidth / 2, size.height),
-//                    strokeWidth = strokeWidth
-//                )
-//            },
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -558,3 +549,13 @@ private fun ProjectPortfolioScreenPreview() {
         ProjectPortfolioContent(onSearchClick = {})
     }
 }
+
+//        .drawBehind {
+//                val strokeWidth = 5.dp.toPx()
+//                drawLine(
+//                    color = project.accentColor,
+//                    start = Offset(strokeWidth / 2, 0f),
+//                    end = Offset(strokeWidth / 2, size.height),
+//                    strokeWidth = strokeWidth
+//                )
+//            },

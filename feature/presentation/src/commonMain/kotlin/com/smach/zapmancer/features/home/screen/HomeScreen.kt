@@ -70,7 +70,7 @@ import com.smach.zapmancer.features.home.state.RecentActivity
 private val ZapTeal = Color(0xFF2BA8A2)
 private val ZapCoral = Color(0xFFFF6B6B)
 private val ZapGold = Color(0xFFFFD93D)
-private val ZapBg = Color(0xFFEFF8F7)
+private val ZapBg = Color(0xFFF4FBFB)
 private val ZapSurface = Color(0xFFFFFFFF)
 private val ZapOnSurface = Color(0xFF1A1C1E)
 private val ZapOnSurfaceVariant = Color(0xFF434655)
@@ -384,7 +384,7 @@ fun HomeContent(
                     ) {
                         Surface(
                             color = ZapGold,
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ZapOnSurface),
+                            border = BorderStroke(1.dp, ZapOnSurface),
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
@@ -412,7 +412,7 @@ fun HomeContent(
                                 containerColor = ZapSurface,
                                 contentColor = ZapTeal
                             ),
-                            border = androidx.compose.foundation.BorderStroke(2.dp, ZapOnSurface),
+                            border = BorderStroke(2.dp, ZapOnSurface),
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -438,101 +438,96 @@ fun StatCard(
 ) {
     Card(
         modifier = modifier
-            .height(160.dp)
-            .drawAccentLine(accentColor)
-            .drawBehind {
-                val strokeWidth = 6.dp.toPx()
-                drawLine(
-                    color = accentColor,
-                    start = Offset(strokeWidth / 2, 0f),
-                    end = Offset(strokeWidth / 2, size.height),
-                    strokeWidth = strokeWidth
-                )
-            },
+            .fillMaxSize()
+            .height(160.dp),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = BorderStroke(1.dp, ZapOnSurface),
-        shape = RoundedCornerShape(0.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(accentColor.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                        .border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(4.dp)),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        tint = accentColor,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(accentColor.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
+                            .border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(4.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            icon,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    if (growth != null) {
+                        Surface(
+                            color = accentColor,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                growth,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
 
-                if (growth != null) {
-                    Surface(
-                        color = accentColor,
-                        shape = RoundedCornerShape(2.dp)
+                Column {
+                    Text(
+                        title.uppercase(),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ZapOnSurfaceVariant
+                    )
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            growth,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            value,
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = ZapOnSurface
                         )
-                    }
-                }
-            }
-
-            Column {
-                Text(
-                    title.uppercase(),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ZapOnSurfaceVariant
-                )
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        value,
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = ZapOnSurface
-                    )
-                    if (secondaryValue != null) {
-                        Text(
-                            secondaryValue,
-                            modifier = Modifier.padding(bottom = 8.dp),
-                            fontSize = 14.sp,
-                            color = ZapOnSurfaceVariant
-                        )
-                    }
-                    if (isRating) {
-                        Row(modifier = Modifier.padding(bottom = 12.dp)) {
-                            repeat(5) {
-                                Icon(
-                                    Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = ZapGold,
-                                    modifier = Modifier.size(18.dp)
-                                )
+                        if (secondaryValue != null) {
+                            Text(
+                                secondaryValue,
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                fontSize = 14.sp,
+                                color = ZapOnSurfaceVariant
+                            )
+                        }
+                        if (isRating) {
+                            Row(modifier = Modifier.padding(bottom = 12.dp)) {
+                                repeat(5) {
+                                    Icon(
+                                        Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = ZapGold,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+
         }
     }
 }
