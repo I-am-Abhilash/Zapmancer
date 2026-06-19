@@ -137,21 +137,41 @@ private fun LoginContent(
                 ) {
                     // Email Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Email Address", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        Text(
+                            "Email Address",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ZapOnSurfaceVariant
+                        )
                         ZapTextField(
                             value = state.email,
                             onValueChange = onEmailChanged,
                             placeholder = "name@company.com",
                             leadingIcon = Icons.Default.Mail,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            })
                         )
                     }
 
                     // Password Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Password", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "Password",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ZapOnSurfaceVariant
+                            )
                             Text(
                                 "Forgot password?",
                                 fontSize = 12.sp,
@@ -168,7 +188,10 @@ private fun LoginContent(
                             isPassword = true,
                             isPasswordVisible = !state.togglePassword,
                             onTogglePassword = onTogglePassword,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
                             keyboardActions = KeyboardActions(onDone = { onSubmit() })
                         )
                     }
@@ -184,16 +207,30 @@ private fun LoginContent(
                             .fillMaxWidth()
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
-                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ZapGold,
+                            contentColor = ZapOnSurface
+                        ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading
                     ) {
                         if (state.isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = ZapOnSurface,
+                                strokeWidth = 2.dp
+                            )
                         } else {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
@@ -210,7 +247,10 @@ private fun LoginContent(
             }
 
             // Footer
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text("Don't have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
                 Text(
                     "Join",
@@ -222,9 +262,18 @@ private fun LoginContent(
             }
 
             // System Status
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.alpha(0.6f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.alpha(0.6f)
+            ) {
                 Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(ZapTeal))
-                Text("All systems operational", fontSize = 12.sp, color = ZapOnSurfaceVariant, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "All systems operational",
+                    fontSize = 12.sp,
+                    color = ZapOnSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }

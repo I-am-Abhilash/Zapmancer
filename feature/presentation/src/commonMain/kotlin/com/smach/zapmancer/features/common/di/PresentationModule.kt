@@ -23,4 +23,4 @@ val presentationModule =
 //        viewModelOf(::ProfileViewModel)
 //        viewModelOf(::SearchViewModel)
 //        viewModelOf(::WritingViewModel)
-}
+    }

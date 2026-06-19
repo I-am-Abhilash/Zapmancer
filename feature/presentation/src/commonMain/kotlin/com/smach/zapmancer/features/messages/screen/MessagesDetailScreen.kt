@@ -127,13 +127,35 @@ fun MessageDetailScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = ZapOnSurface)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = ZapOnSurface
+                        )
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) { Icon(Icons.Default.Videocam, contentDescription = null, tint = ZapOnSurfaceVariant) }
-                    IconButton(onClick = {}) { Icon(Icons.Default.Call, contentDescription = null, tint = ZapOnSurfaceVariant) }
-                    IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = null, tint = ZapOnSurfaceVariant) }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            Icons.Default.Videocam,
+                            contentDescription = null,
+                            tint = ZapOnSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            Icons.Default.Call,
+                            contentDescription = null,
+                            tint = ZapOnSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = null,
+                            tint = ZapOnSurfaceVariant
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapSurface),
                 modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
@@ -157,7 +179,7 @@ fun MessageDetailScreen(
             reverseLayout = true
         ) {
             if (state.isContactTyping) {
-                item { 
+                item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
@@ -175,11 +197,11 @@ fun MessageDetailScreen(
                     }
                 }
             }
-            
+
             items(state.messages.reversed()) { message ->
                 MessageBubble(message)
             }
-            
+
             item {
                 Box(
                     modifier = Modifier
@@ -224,7 +246,7 @@ fun MessageBubble(message: MessageItem) {
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
-        
+
         Column(
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
             modifier = Modifier.widthIn(max = 280.dp)
@@ -237,7 +259,10 @@ fun MessageBubble(message: MessageItem) {
                     bottomStart = if (message.isFromMe) 16.dp else 0.dp,
                     bottomEnd = if (message.isFromMe) 0.dp else 16.dp
                 ),
-                border = if (message.isFromMe) null else androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+                border = if (message.isFromMe) null else androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    ZapOutlineVariant
+                ),
                 shadowElevation = 1.dp
             ) {
                 Text(
@@ -248,7 +273,7 @@ fun MessageBubble(message: MessageItem) {
                     lineHeight = 20.sp
                 )
             }
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp)
@@ -298,7 +323,12 @@ fun MessageInput(
                         TextField(
                             value = typingText,
                             onValueChange = onTextChange,
-                            placeholder = { Text("Write a message...", color = ZapOnSurfaceVariant) },
+                            placeholder = {
+                                Text(
+                                    "Write a message...",
+                                    color = ZapOnSurfaceVariant
+                                )
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
@@ -307,7 +337,7 @@ fun MessageInput(
                                 unfocusedIndicatorColor = Color.Transparent
                             )
                         )
-                        
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -316,21 +346,44 @@ fun MessageInput(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                IconButton(onClick = {}) { Icon(Icons.Outlined.AddCircle, null, tint = ZapOnSurfaceVariant) }
-                                IconButton(onClick = {}) { Icon(Icons.Outlined.SentimentSatisfied, null, tint = ZapOnSurfaceVariant) }
-                                IconButton(onClick = {}) { Icon(Icons.Outlined.AttachFile, null, tint = ZapOnSurfaceVariant) }
+                                IconButton(onClick = {}) {
+                                    Icon(
+                                        Icons.Outlined.AddCircle,
+                                        null,
+                                        tint = ZapOnSurfaceVariant
+                                    )
+                                }
+                                IconButton(onClick = {}) {
+                                    Icon(
+                                        Icons.Outlined.SentimentSatisfied,
+                                        null,
+                                        tint = ZapOnSurfaceVariant
+                                    )
+                                }
+                                IconButton(onClick = {}) {
+                                    Icon(
+                                        Icons.Outlined.AttachFile,
+                                        null,
+                                        tint = ZapOnSurfaceVariant
+                                    )
+                                }
                             }
-                            
+
                             Button(
                                 onClick = onSend,
                                 colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
                                 shape = RoundedCornerShape(20.dp),
                                 contentPadding = PaddingValues(horizontal = 20.dp),
-                                modifier = Modifier.height(36.dp).shadow(4.dp, RoundedCornerShape(20.dp))
+                                modifier = Modifier.height(36.dp)
+                                    .shadow(4.dp, RoundedCornerShape(20.dp))
                             ) {
                                 Text("Send", fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Icon(Icons.AutoMirrored.Filled.Send, null, modifier = Modifier.size(16.dp))
+                                Icon(
+                                    Icons.AutoMirrored.Filled.Send,
+                                    null,
+                                    modifier = Modifier.size(16.dp)
+                                )
                             }
                         }
                     }

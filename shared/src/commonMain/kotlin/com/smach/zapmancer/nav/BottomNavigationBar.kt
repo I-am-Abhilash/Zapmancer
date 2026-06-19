@@ -66,10 +66,11 @@ fun BottomNavigationBar(
 //                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
 //                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
 //                )
-            
+
         }
     }
 }
+
 private val ZapTeal = Color(0xFF00897B)
 private val ZapSurface = Color(0xFFFFFFFF)
 

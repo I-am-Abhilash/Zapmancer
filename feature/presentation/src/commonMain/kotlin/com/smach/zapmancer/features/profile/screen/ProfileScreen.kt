@@ -147,19 +147,19 @@ fun ProfileContent(
             item {
                 ProfileSectionCard("Skills") {
                     FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    state.skills.forEach { skill ->
-                        SkillChip(skill)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        state.skills.forEach { skill ->
+                            SkillChip(skill)
+                        }
                     }
-                }
                 }
             }
 
             // Portfolio Section
-            item { 
+            item {
                 SectionTitleRow("Portfolio", "View all projects")
             }
             items(state.portfolioItems) { project ->
@@ -167,7 +167,7 @@ fun ProfileContent(
             }
 
             // Reviews Section
-            item { 
+            item {
                 SectionTitleRow("Top Reviews", "")
             }
             items(state.reviews) { review ->
@@ -188,7 +188,7 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-             //Banner Gradient
+            //Banner Gradient
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -242,7 +242,11 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(0.5.dp, ZapOutlineVariant.copy(alpha = 0.5f), RoundedCornerShape(0.dp))
+                        .border(
+                            0.5.dp,
+                            ZapOutlineVariant.copy(alpha = 0.5f),
+                            RoundedCornerShape(0.dp)
+                        )
                         .padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
@@ -260,10 +264,20 @@ fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
                 ) {
                     InfoChip(Icons.Default.LocationOn, state.location)
                     Spacer(modifier = Modifier.width(8.dp))
-                    InfoChip(Icons.Default.MilitaryTech, state.ranking, Color(0xFFE8E8E8), Color(0xFF717171))
+                    InfoChip(
+                        Icons.Default.MilitaryTech,
+                        state.ranking,
+                        Color(0xFFE8E8E8),
+                        Color(0xFF717171)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     if (state.isTopRated) {
-                        InfoChip(Icons.Default.Verified, "Top Rated", Color(0xFFFFF5F2), Color(0xFFFF7F50))
+                        InfoChip(
+                            Icons.Default.Verified,
+                            "Top Rated",
+                            Color(0xFFFFF5F2),
+                            Color(0xFFFF7F50)
+                        )
                     }
                 }
 
@@ -355,7 +369,12 @@ fun StatItem(value: String, label: String) {
 }
 
 @Composable
-fun InfoChip(icon: ImageVector, text: String, bgColor: Color = ZapBg, textColor: Color = ZapOnSurfaceVariant) {
+fun InfoChip(
+    icon: ImageVector,
+    text: String,
+    bgColor: Color = ZapBg,
+    textColor: Color = ZapOnSurfaceVariant
+) {
     Surface(
         color = bgColor,
         shape = RoundedCornerShape(999.dp),
@@ -495,7 +514,7 @@ fun ReviewCard(review: ProfileReview) {
                         )
                     }
                 }
-                
+
                 Row {
                     repeat(review.rating) {
                         Icon(
@@ -507,9 +526,9 @@ fun ReviewCard(review: ProfileReview) {
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "\"${review.content}\"",
                 style = MaterialTheme.typography.bodyMedium,
@@ -550,7 +569,7 @@ fun FlowRow(
 
 @Preview
 @Composable
-fun ProfileScreenPreview(){
+fun ProfileScreenPreview() {
     MaterialTheme {
         ProfileContent(state = ProfileUiState(), onEvent = {})
     }

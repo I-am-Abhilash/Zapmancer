@@ -2,24 +2,38 @@ package com.smach.zapmancer.features.auth.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -35,7 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
-import com.smach.zapmancer.features.common.components.*
+import com.smach.zapmancer.features.common.components.AuthHeader
+import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
 
 // Flip7 Palette
@@ -115,33 +130,62 @@ private fun SignupContent(
                 ) {
                     // Name Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Full Name", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        Text(
+                            "Full Name",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ZapOnSurfaceVariant
+                        )
                         ZapTextField(
                             value = state.username,
                             onValueChange = onUsernameChanged,
                             placeholder = "Alex Rivera",
                             leadingIcon = Icons.Default.Person,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            })
                         )
                     }
 
                     // Email Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Email Address", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        Text(
+                            "Email Address",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ZapOnSurfaceVariant
+                        )
                         ZapTextField(
                             value = state.email,
                             onValueChange = onEmailChanged,
                             placeholder = "name@company.com",
                             leadingIcon = Icons.Default.Mail,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            })
                         )
                     }
 
                     // Password Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Password", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
+                        Text(
+                            "Password",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ZapOnSurfaceVariant
+                        )
                         ZapTextField(
                             value = state.password,
                             onValueChange = onPasswordChanged,
@@ -149,7 +193,10 @@ private fun SignupContent(
                             leadingIcon = Icons.Default.Lock,
                             isPassword = true,
                             isPasswordVisible = false,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
                             keyboardActions = KeyboardActions(onDone = { onSubmit() })
                         )
                     }
@@ -165,16 +212,34 @@ private fun SignupContent(
                             .fillMaxWidth()
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
-                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ZapGold,
+                            contentColor = ZapOnSurface
+                        ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading
                     ) {
                         if (state.isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = ZapOnSurface,
+                                strokeWidth = 2.dp
+                            )
                         } else {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text("Create Account", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    "Create Account",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
@@ -190,7 +255,10 @@ private fun SignupContent(
             }
 
             // Footer
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text("Already have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
                 Text(
                     "Sign In",

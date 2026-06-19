@@ -57,7 +57,7 @@ fun MainGraph(
 private fun appEntryProvider(
     navigator: MainNavigator,
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
-    
+
     entry<Screen.Home> {
         HomeContent(
             state = HomeUiState(),
@@ -73,15 +73,40 @@ private fun appEntryProvider(
             }
         )
     }
+
+    entry<Screen.ProjectDetail> {
+        ProfileContent(
+            state = ProfileUiState(),
+            onEvent = { }
+        )
+    }
+
+    entry<Screen.Proposal> {
+        ProfileContent(
+            state = ProfileUiState(),
+            onEvent = { }
+        )
+    }
     entry<Screen.Profile> {
         ProfileContent(
             state = ProfileUiState(),
-            onEvent = {  }
+            onEvent = { }
         )
     }
-    entry<Screen.Messages> {
+    entry<Screen.Settings> {
+        ProfileContent(
+            state = ProfileUiState(),
+            onEvent = { }
+        )
+    }
+
+    entry<Screen.MessagesList> {
         MessageDetailScreen()
     }
+    entry<Screen.MessagesDetail> {
+        MessageDetailScreen()
+    }
+
 
     entry<Screen.Alerts> {
         NotificationScreen(

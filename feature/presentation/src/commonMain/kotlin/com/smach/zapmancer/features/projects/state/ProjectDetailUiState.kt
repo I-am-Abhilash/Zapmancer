@@ -15,7 +15,13 @@ data class ProjectDetailUiState(
         "Custom theme engine for high-contrast trading environments."
     ),
     val skills: List<String> = listOf(
-        "TypeScript", "React.js", "WebAssembly", "WebSocket API", "Canvas/WebGL", "Rust", "FinTech Experience"
+        "TypeScript",
+        "React.js",
+        "WebAssembly",
+        "WebSocket API",
+        "Canvas/WebGL",
+        "Rust",
+        "FinTech Experience"
     ),
     val budgetRange: String = "$12,000 - $18,000",
     val projectType: String = "Fixed Price Project",

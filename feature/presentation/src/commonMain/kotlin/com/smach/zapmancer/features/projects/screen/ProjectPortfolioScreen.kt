@@ -26,16 +26,11 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AllInclusive
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Layers
-import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.Storage
-import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,9 +39,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -121,9 +113,6 @@ fun ProjectPortfolioContent(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapBg)
             )
         },
-//        bottomBar = {
-//            ZapBottomNavigationBar()
-//        },
         containerColor = ZapBg
     ) { padding ->
         LazyColumn(
@@ -138,13 +127,13 @@ fun ProjectPortfolioContent(
                 PortfolioHeader()
             }
 
-            item {
-                CategoryTabs(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { selectedCategory = it }
-                )
-            }
+//            item {
+//                CategoryTabs(
+//                    categories = categories,
+//                    selectedCategory = selectedCategory,
+//                    onCategorySelected = { selectedCategory = it }
+//                )
+//            }
 
             val projects = getSampleProjects().filter {
                 selectedCategory == "All" || it.category == selectedCategory
@@ -241,8 +230,8 @@ fun CategoryTabs(
 fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
-        .fillMaxWidth()
-        .clickable(onClick = onClick),
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
 //        .drawBehind {
 //                val strokeWidth = 5.dp.toPx()
 //                drawLine(
@@ -256,7 +245,8 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Column(modifier = Modifier.drawAccentLine(project.accentColor).padding(16.dp)
+        Column(
+            modifier = Modifier.drawAccentLine(project.accentColor).padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -297,7 +287,9 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
                 }
 
                 Surface(
-                    color = if (project.status == "ACTIVE") ZapTeal.copy(alpha = 0.1f) else project.accentColor.copy(alpha = 0.1f),
+                    color = if (project.status == "ACTIVE") ZapTeal.copy(alpha = 0.1f) else project.accentColor.copy(
+                        alpha = 0.1f
+                    ),
                     shape = RoundedCornerShape(6.dp)
                 ) {
                     val statusColor = when (project.status) {
@@ -390,7 +382,10 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
                             .fillMaxSize()
                             .background(
                                 Brush.radialGradient(
-                                    colors = listOf(ZapOrange.copy(alpha = 0.3f), Color.Transparent),
+                                    colors = listOf(
+                                        ZapOrange.copy(alpha = 0.3f),
+                                        Color.Transparent
+                                    ),
                                     center = Offset(400f, 200f),
                                     radius = 300f
                                 )
@@ -398,7 +393,7 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
                     )
                 }
             }
-            
+
             if (project.membersCount > 0) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -469,58 +464,7 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
         }
     }
 }
-//
-//@Composable
-//fun ZapBottomNavigationBar() {
-//    NavigationBar(
-//        containerColor = ZapSurface,
-//        tonalElevation = 0.dp,
-//        modifier = Modifier.height(80.dp)
-//    ) {
-//        val items = listOf(
-//            BottomNavItem("Home", Icons.Outlined.Home, false),
-//            BottomNavItem("Projects", Icons.Outlined.WorkOutline, true),
-//            BottomNavItem("Messages", Icons.Outlined.ChatBubbleOutline, false),
-//            BottomNavItem("Alerts", Icons.Outlined.NotificationsNone, false),
-//            BottomNavItem("Profile", Icons.Outlined.PersonOutline, false)
-//        )
-//
-//        items.forEach { item ->
-//            NavigationBarItem(
-//                selected = item.isSelected,
-//                onClick = {},
-//                icon = {
-//                    Icon(
-//                        item.icon,
-//                        contentDescription = item.label,
-//                        modifier = Modifier.size(24.dp)
-//                    )
-//                },
-//                label = {
-//                    Text(
-//                        item.label,
-//                        fontSize = 12.sp,
-//                        fontWeight = if (item.isSelected) FontWeight.Bold else FontWeight.Medium
-//                    )
-//                },
-//                colors = NavigationBarItemDefaults.colors(
-//                    selectedIconColor = ZapTeal,
-//                    selectedTextColor = ZapTeal,
-//                    unselectedIconColor = Color(0xFF5F6368),
-//                    unselectedTextColor = Color(0xFF5F6368),
-//                    indicatorColor = ZapTeal.copy(alpha = 0.1f)
-//                )
-//            )
-//        }
-//    }
-//}
 
-
-data class BottomNavItem(
-    val label: String,
-    val icon: ImageVector,
-    val isSelected: Boolean
-)
 data class ProjectData(
     val id: Int,
     val category: String,

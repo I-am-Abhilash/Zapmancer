@@ -146,22 +146,45 @@ private fun VerificationContent(
                             .fillMaxWidth()
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
-                        colors = ButtonDefaults.buttonColors(containerColor = ZapGold, contentColor = ZapOnSurface),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ZapGold,
+                            contentColor = ZapOnSurface
+                        ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading && state.code.length == codeLength
                     ) {
                         if (state.isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = ZapOnSurface, strokeWidth = 2.dp)
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = ZapOnSurface,
+                                strokeWidth = 2.dp
+                            )
                         } else {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text("Verify & Continue", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    "Verify & Continue",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
 
                     TextButton(onClick = { /* Resend */ }) {
-                        Text("Didn't receive code? Resend", color = ZapTeal, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(
+                            "Didn't receive code? Resend",
+                            color = ZapTeal,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
                     }
                 }
             }

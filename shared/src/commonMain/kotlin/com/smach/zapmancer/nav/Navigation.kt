@@ -53,10 +53,14 @@ sealed class Screen(
     data object Profile : Screen("Profile")
 
     @Serializable
-    data object Messages : Screen("Messages")
+    data object MessagesDetail : Screen("MessagesDetail")
+
+    @Serializable
+    data object MessagesList : Screen("Messages")
 
     @Serializable
     data object ProjectDetail : Screen("Project Detail")
+
     @Serializable
     data object ProjectList : Screen("Projects")
 
@@ -82,7 +86,7 @@ sealed class Screen(
 val bottomNavigationRoutes: Set<Screen> =
     setOf(
         Screen.Home,
-        Screen.Messages,
+        Screen.MessagesList,
         Screen.ProjectList,
         Screen.Alerts,
         Screen.Profile,
@@ -96,7 +100,7 @@ val Screen.icon: ImageVector
         when (this) {
             Screen.Home -> Icons.Outlined.Home
             Screen.ProjectList -> Icons.Outlined.WorkOutline
-            Screen.Messages -> Icons.Outlined.ChatBubbleOutline
+            Screen.MessagesList -> Icons.Outlined.ChatBubbleOutline
             Screen.Alerts -> Icons.Outlined.NotificationsNone
             Screen.Profile -> Icons.Outlined.PersonOutline
             else -> Icons.Filled.Info
@@ -213,7 +217,8 @@ val navConfig =
                     subclass(Screen.ForgotPassword::class, Screen.ForgotPassword.serializer())
                     subclass(Screen.Home::class, Screen.Home.serializer())
                     subclass(Screen.Alerts::class, Screen.Alerts.serializer())
-                    subclass(Screen.Messages::class, Screen.Messages.serializer())
+                    subclass(Screen.MessagesList::class, Screen.MessagesList.serializer())
+                    subclass(Screen.MessagesDetail::class, Screen.MessagesDetail.serializer())
                     subclass(Screen.ProjectList::class, Screen.ProjectList.serializer())
                     subclass(Screen.ProjectDetail::class, Screen.ProjectDetail.serializer())
                     subclass(Screen.Profile::class, Screen.Profile.serializer())

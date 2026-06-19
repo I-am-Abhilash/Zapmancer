@@ -107,7 +107,11 @@ fun SettingsContent(
                 },
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = ZapOnSurfaceVariant)
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = ZapOnSurfaceVariant
+                        )
                     }
                     Box(
                         modifier = Modifier
@@ -234,7 +238,10 @@ fun SettingsContent(
                 Surface(
                     color = ZapCoral.copy(alpha = 0.05f),
                     shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, ZapCoral.copy(alpha = 0.2f)),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        ZapCoral.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -311,7 +318,12 @@ fun SettingsSection(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(icon, contentDescription = null, tint = ZapTeal, modifier = Modifier.size(20.dp))
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = ZapTeal,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(
                     title,
                     fontWeight = FontWeight.Bold,

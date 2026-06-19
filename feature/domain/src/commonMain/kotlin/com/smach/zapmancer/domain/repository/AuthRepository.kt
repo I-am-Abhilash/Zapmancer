@@ -11,9 +11,13 @@ interface AuthRepository {
     fun getRefreshToken(): Flow<String?>
     suspend fun saveTokens(accessToken: String, refreshToken: String)
 
-    suspend fun login( email: String, password: String ): Result<User, DataError.Network>
+    suspend fun login(email: String, password: String): Result<User, DataError.Network>
 
-    suspend fun signUp(email: String, username: String, password: String): Result<User, DataError.Network>
+    suspend fun signUp(
+        email: String,
+        username: String,
+        password: String
+    ): Result<User, DataError.Network>
 
     suspend fun logout()
 }

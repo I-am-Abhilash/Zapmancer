@@ -292,7 +292,10 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                     Surface(
                         color = ZapTeal.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(999.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, ZapTeal.copy(alpha = 0.2f))
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            ZapTeal.copy(alpha = 0.2f)
+                        )
                     ) {
                         Text(
                             skill,

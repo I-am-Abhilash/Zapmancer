@@ -3,7 +3,17 @@ package com.smach.zapmancer.features.proposal.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,9 +22,35 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +89,10 @@ fun ProposalScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Text(
                             "Zapmancer",
                             color = ZapTeal,
@@ -64,12 +103,20 @@ fun ProposalScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = ZapTeal)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = ZapTeal
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = ZapOnSurfaceVariant)
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = ZapOnSurfaceVariant
+                        )
                     }
                     Box(
                         modifier = Modifier
@@ -123,11 +170,13 @@ fun ProposalContent(
                     onNext = { onStateChange(state.copy(currentStep = 3)) },
                     onBack = { onStateChange(state.copy(currentStep = 1)) }
                 )
+
                 3 -> ReviewStep(
                     state = state,
                     onNext = { onStateChange(state.copy(currentStep = 4)) },
                     onBack = { onStateChange(state.copy(currentStep = 2)) }
                 )
+
                 4 -> FinalizeStep(
                     state = state,
                     onBack = { onStateChange(state.copy(currentStep = 3)) },
@@ -164,7 +213,7 @@ fun StepIndicator(currentStep: Int) {
             steps.forEach { step ->
                 val isCompleted = currentStep > step.step
                 val isCurrent = currentStep == step.step
-                
+
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(
                         modifier = Modifier
@@ -185,7 +234,12 @@ fun StepIndicator(currentStep: Int) {
                         contentAlignment = Alignment.Center
                     ) {
                         if (isCompleted) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
                         } else {
                             Text(
                                 text = step.step.toString(),
@@ -309,13 +363,24 @@ fun PitchStep(
             // Pro Tip
             Surface(
                 color = ZapSkyBlue,
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapSkyBlueText.copy(alpha = 0.3f)),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    ZapSkyBlueText.copy(alpha = 0.3f)
+                ),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     Icon(Icons.Default.Info, contentDescription = null, tint = ZapSkyBlueText)
                     Column {
-                        Text("PRO TIP", fontWeight = FontWeight.Bold, color = ZapSkyBlueText, fontSize = 12.sp)
+                        Text(
+                            "PRO TIP",
+                            fontWeight = FontWeight.Bold,
+                            color = ZapSkyBlueText,
+                            fontSize = 12.sp
+                        )
                         Text(
                             "Focus on the client's problem, not just your services. Explain the unique value you bring.",
                             style = MaterialTheme.typography.bodySmall,
@@ -335,7 +400,12 @@ fun PitchStep(
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(top = 8.dp),
-                placeholder = { Text("Write your compelling proposal here...", color = ZapOutline) },
+                placeholder = {
+                    Text(
+                        "Write your compelling proposal here...",
+                        color = ZapOutline
+                    )
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = ZapTeal,
                     unfocusedBorderColor = ZapOutlineVariant,
@@ -354,7 +424,10 @@ fun PitchStep(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Proposed Budget", fontWeight = FontWeight.Bold, color = ZapOnSurface)
                     OutlinedTextField(
@@ -442,15 +515,18 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
             DetailReviewItem("Freelancer", state.freelancerName)
             DetailReviewItem("Proposed Budget", "$${state.budget}")
             DetailReviewItem("Timeline", "${state.timelineDays} Days")
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text("Your Pitch", fontWeight = FontWeight.Bold, color = ZapOnSurface)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 color = ZapBg,
                 shape = RoundedCornerShape(8.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant.copy(alpha = 0.5f))
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    ZapOutlineVariant.copy(alpha = 0.5f)
+                )
             ) {
                 Text(
                     state.pitchContent,
@@ -526,7 +602,10 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
             border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     "Finalize Submission",
                     style = MaterialTheme.typography.headlineSmall,
@@ -560,7 +639,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                 ) {
                     Text("Submit Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
-                
+
                 TextButton(onClick = onBack, modifier = Modifier.padding(top = 8.dp)) {
                     Text("Back to Review", color = ZapOnSurfaceVariant)
                 }
@@ -583,9 +662,24 @@ fun DetailReviewItem(label: String, value: String) {
 @Composable
 fun ContextInfoGrid() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        InfoCard(Icons.Default.Lock, "Secure Payment", "Payments are held in escrow.", Modifier.weight(1f))
-        InfoCard(Icons.Default.History, "Fast Review", "Most clients review in 24-48h.", Modifier.weight(1f))
-        InfoCard(Icons.Default.SupportAgent, "Support", "24/7 success team guide.", Modifier.weight(1f))
+        InfoCard(
+            Icons.Default.Lock,
+            "Secure Payment",
+            "Payments are held in escrow.",
+            Modifier.weight(1f)
+        )
+        InfoCard(
+            Icons.Default.History,
+            "Fast Review",
+            "Most clients review in 24-48h.",
+            Modifier.weight(1f)
+        )
+        InfoCard(
+            Icons.Default.SupportAgent,
+            "Support",
+            "24/7 success team guide.",
+            Modifier.weight(1f)
+        )
     }
 }
 
@@ -599,7 +693,12 @@ fun InfoCard(icon: ImageVector, title: String, description: String, modifier: Mo
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Icon(icon, contentDescription = null, tint = ZapTeal, modifier = Modifier.size(24.dp))
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(top = 8.dp)
+            )
             Text(description, fontSize = 11.sp, color = ZapOnSurfaceVariant, lineHeight = 14.sp)
         }
     }

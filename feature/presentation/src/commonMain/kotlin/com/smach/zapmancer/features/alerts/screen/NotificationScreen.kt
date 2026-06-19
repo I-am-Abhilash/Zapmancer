@@ -149,7 +149,11 @@ fun NotificationScreen(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                         modifier = Modifier.shadow(1.dp, RoundedCornerShape(8.dp))
                     ) {
-                        Icon(Icons.Outlined.FilterList, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Icon(
+                            Icons.Outlined.FilterList,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
                         Spacer(Modifier.width(4.dp))
                         Text("Filter", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
@@ -191,10 +195,11 @@ fun RibbonHeader(text: String) {
             )
         }
         // The fold triangle
-        Canvas(modifier = Modifier
-            .size(8.dp)
-            .align(Alignment.BottomStart)
-            .offset(x = (-16).dp, y = 8.dp)
+        Canvas(
+            modifier = Modifier
+                .size(8.dp)
+                .align(Alignment.BottomStart)
+                .offset(x = (-16).dp, y = 8.dp)
         ) {
             val path = Path().apply {
                 moveTo(16f, 0f)
@@ -246,7 +251,12 @@ fun NotificationCard(item: NotificationItem) {
             .shadow(if (item.section == "Today") 2.dp else 0.dp, RoundedCornerShape(8.dp))
             .border(1.dp, ZapOutlineVariant, RoundedCornerShape(8.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = opacity)),
-        shape = RoundedCornerShape(topStart = 2.dp, bottomStart = 2.dp, topEnd = 8.dp, bottomEnd = 8.dp)
+        shape = RoundedCornerShape(
+            topStart = 2.dp,
+            bottomStart = 2.dp,
+            topEnd = 8.dp,
+            bottomEnd = 8.dp
+        )
     ) {
         Row(
             modifier = Modifier
@@ -263,7 +273,12 @@ fun NotificationCard(item: NotificationItem) {
                     .border(1.dp, iconBg.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(20.dp))
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -313,10 +328,15 @@ fun NotificationCard(item: NotificationItem) {
                                 onClick = {},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (action.isPrimary) (if (action.isError) ZapCoral else ZapTeal) else Color.Transparent,
-                                    contentColor = if (action.isPrimary) Color.White else ZapOnSurface.copy(alpha = 0.7f)
+                                    contentColor = if (action.isPrimary) Color.White else ZapOnSurface.copy(
+                                        alpha = 0.7f
+                                    )
                                 ),
                                 shape = RoundedCornerShape(4.dp),
-                                border = if (!action.isPrimary) BorderStroke(1.dp, ZapOutline) else null,
+                                border = if (!action.isPrimary) BorderStroke(
+                                    1.dp,
+                                    ZapOutline
+                                ) else null,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier.height(32.dp)
                             ) {
@@ -354,7 +374,12 @@ fun NotificationCard(item: NotificationItem) {
                                 .size(36.dp)
                                 .background(ZapTeal, RoundedCornerShape(8.dp))
                         ) {
-                            Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = "Send", tint = Color.White, modifier = Modifier.size(20.dp))
+                            Icon(
+                                Icons.AutoMirrored.Outlined.Send,
+                                contentDescription = "Send",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 }

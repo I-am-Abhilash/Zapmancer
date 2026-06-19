@@ -17,9 +17,13 @@ interface ArticleRepository {
 
     fun getFollowingFeed(): Flow<List<Article>>
 
-    suspend fun getArticlesPaged( page: Int, pageSize: Int ): Result<List<Article>, DataError.Network>
+    suspend fun getArticlesPaged(page: Int, pageSize: Int): Result<List<Article>, DataError.Network>
 
-    suspend fun getSearchArticlesPaged(query: String, page: Int, pageSize: Int): Result<List<Article>, DataError.Network>
+    suspend fun getSearchArticlesPaged(
+        query: String,
+        page: Int,
+        pageSize: Int
+    ): Result<List<Article>, DataError.Network>
 
     suspend fun createArticle(article: CreateArticle): Result<Unit, DataError.Network>
 
