@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +52,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,15 +66,36 @@ import com.smach.zapmancer.features.common.components.AppImage
 import com.smach.zapmancer.features.messages.state.MessageItem
 import com.smach.zapmancer.features.messages.state.MessageStatus
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
+import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEvent
+import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
+@Composable
+fun MessageDetailScreen(
+    viewModel: MessagesDetailViewModel = koinViewModel(),
+    onBackClick: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    MessageDetailContent(
+        state = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick,
+        onCallClick = viewModel.onCallClick,
+        onVideocamClick = TODO(),
+        onMoreClick = TODO(),
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageDetailScreen(
-    state: MessagesDetailUiState = MessagesDetailUiState(),
+fun MessageDetailContent(
+    state: MessagesDetailUiState,
+    onEvent: (MessagesDetailEvent) -> Unit,
     onBackClick: () -> Unit = {},
-    onTextChange: (String) -> Unit = {},
-    onSendMessage: (String) -> Unit = {}
+    onCallClick: () -> Unit,
+    onVideocamClick: () -> Unit,
+    onMoreClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -88,7 +111,7 @@ fun MessageDetailScreen(
                                 .background(MaterialTheme.colorScheme.background)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Column( verticalArrangement = Arrangement.spacedBy(0.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
                             Text(
                                 text = state.contactName,
                                 fontSize = 16.sp,
@@ -127,21 +150,21 @@ fun MessageDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { onVideocamClick()}) {
                         Icon(
                             Icons.Default.Videocam,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { onCallClick()}) {
                         Icon(
                             Icons.Default.Call,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { onMoreClick()}) {
                         Icon(
                             Icons.Default.MoreVert,
                             contentDescription = null,
@@ -156,8 +179,7 @@ fun MessageDetailScreen(
         bottomBar = {
             MessageInput(
                 typingText = state.typingText,
-                onTextChange = onTextChange,
-                onSend = { onSendMessage(state.typingText) }
+                onEvent = onEvent
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -193,7 +215,7 @@ fun MessageDetailScreen(
                                 bottomStart = 0.dp,
                                 bottomEnd = 16.dp
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                             shadowElevation = 1.dp,
                             modifier = Modifier.padding(bottom = 8.dp)
                         ) {
@@ -232,6 +254,7 @@ fun MessageDetailScreen(
         }
     }
 }
+
 
 @Composable
 fun MessageBubble(message: MessageItem) {
@@ -305,8 +328,7 @@ fun MessageBubble(message: MessageItem) {
 @Composable
 fun MessageInput(
     typingText: String,
-    onTextChange: (String) -> Unit,
-    onSend: () -> Unit
+    onEvent: (MessagesDetailEvent) -> Unit
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
@@ -327,7 +349,7 @@ fun MessageInput(
                     Column {
                         TextField(
                             value = typingText,
-                            onValueChange = onTextChange,
+                            onValueChange = { onEvent(MessagesDetailEvent.OnTextChanged(it)) },
                             placeholder = {
                                 Text(
                                     "Write a message...",
@@ -375,12 +397,11 @@ fun MessageInput(
                             }
 
                             Button(
-                                onClick = onSend,
+                                onClick = { onEvent(MessagesDetailEvent.SendMessage) },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(20.dp),
                                 contentPadding = PaddingValues(horizontal = 20.dp),
                                 modifier = Modifier.height(36.dp)
-//                                    .shadow(4.dp, RoundedCornerShape(20.dp))
                             ) {
                                 Text("Send", fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -407,7 +428,7 @@ fun TypingIndicator() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        repeat(0) { index ->
+        repeat(3) { index ->
             val translationY by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -8f,
@@ -433,7 +454,7 @@ fun TypingIndicator() {
 @Composable
 fun MessageDetailScreenPreview() {
     MaterialTheme {
-        MessageDetailScreen(
+        MessageDetailContent(
             state = MessagesDetailUiState(
                 contactName = "Alex Rivera",
                 isOnline = true,
@@ -459,7 +480,7 @@ fun MessageDetailScreenPreview() {
                     )
                 ),
                 isContactTyping = true
-            )
-        )
+            ),
+        ) {}
     }
 }

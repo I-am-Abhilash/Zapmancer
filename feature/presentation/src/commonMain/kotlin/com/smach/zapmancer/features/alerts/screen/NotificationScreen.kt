@@ -43,6 +43,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,15 +63,35 @@ import com.smach.zapmancer.features.alerts.state.NotificationAction
 import com.smach.zapmancer.features.alerts.state.NotificationItem
 import com.smach.zapmancer.features.alerts.state.NotificationType
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
+import com.smach.zapmancer.features.alerts.viewmodel.NotificationEvent
+import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
 import com.smach.zapmancer.features.common.theme.ZapCoral
 import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.common.theme.ZapSlate
 import com.smach.zapmancer.features.common.theme.ZapTeal
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+fun NotificationScreen(
+    viewModel: NotificationViewModel = koinViewModel(),
+    onBackClick: () -> Unit = {},
+    onFilterClick: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    NotificationContent(
+        state = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick,
+        onFilterClick = onFilterClick
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScreen(
+fun NotificationContent(
     state: NotificationUiState,
+    onEvent: (NotificationEvent) -> Unit,
     onBackClick: () -> Unit = {},
     onFilterClick: () -> Unit = {}
 ) {
@@ -111,14 +133,26 @@ fun NotificationScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
         ) {
-           val grouped = state.notifications.groupBy { it.section }
+            val grouped = state.notifications.groupBy { it.section }
 
             grouped.forEach { (section, items) ->
                 item {
                     RibbonHeader(section)
                 }
                 items(items) { item ->
-                    NotificationCard(item)
+                    NotificationCard(
+                        item = item,
+                        replyText = state.replyDrafts[item.id] ?: "",
+                        onReplyTextChanged = { text ->
+                            onEvent(NotificationEvent.OnReplyTextChanged(item.id, text))
+                        },
+                        onSendReply = {
+                            onEvent(NotificationEvent.SendQuickReply(item.id))
+                        },
+                        onActionClicked = { actionLabel ->
+                            onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel))
+                        }
+                    )
                 }
             }
         }
@@ -163,7 +197,13 @@ fun RibbonHeader(text: String) {
 }
 
 @Composable
-fun NotificationCard(item: NotificationItem) {
+fun NotificationCard(
+    item: NotificationItem,
+    replyText: String,
+    onReplyTextChanged: (String) -> Unit,
+    onSendReply: () -> Unit,
+    onActionClicked: (String) -> Unit
+) {
     val accentColor = when (item.type) {
         NotificationType.MILESTONE -> ZapGold
         NotificationType.MESSAGE -> ZapTeal
@@ -274,7 +314,7 @@ fun NotificationCard(item: NotificationItem) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         item.actions.forEach { action ->
                             Button(
-                                onClick = {},
+                                onClick = { onActionClicked(action.label) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary) else Color.Transparent,
                                     contentColor = if (action.isPrimary) Color.White else MaterialTheme.colorScheme.onSurface.copy(
@@ -303,8 +343,8 @@ fun NotificationCard(item: NotificationItem) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         OutlinedTextField(
-                            value = "",
-                            onValueChange = {},
+                            value = replyText,
+                            onValueChange = onReplyTextChanged,
                             placeholder = { Text("Quick reply...", fontSize = 14.sp) },
                             modifier = Modifier
                                 .weight(1f),
@@ -317,7 +357,7 @@ fun NotificationCard(item: NotificationItem) {
                             )
                         )
                         IconButton(
-                            onClick = {},
+                            onClick = onSendReply,
                             modifier = Modifier
                                 .size(36.dp)
                                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
@@ -348,7 +388,7 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
 
 @PreviewLightDark
 @Composable
-fun NotificationPreview(){
+fun NotificationPreview() {
     val sampleState = NotificationUiState(
         notifications = listOf(
             NotificationItem(
@@ -403,5 +443,5 @@ fun NotificationPreview(){
             )
         )
     )
-    NotificationScreen(state = sampleState)
+    NotificationContent(state = sampleState, onEvent = {})
 }

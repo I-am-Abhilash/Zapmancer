@@ -72,19 +72,24 @@ import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 import com.smach.zapmancer.features.projects.screen.VerticalDivider
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel,
-    onReviewMoreClick: () -> Unit
+    viewModel: ProfileViewModel = koinViewModel(),
+    onSearchClick: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     ProfileContent(
         state = uiState,
         onEvent = { viewModel.onEvent(it) },
-        onReviewMoreClick = onReviewMoreClick
-    )
+        onReviewMoreClick = { viewModel.onReviewMoreClick() },
+        onLoadMorePortfolio = { viewModel.onLoadMorePortfolio() },
+        onSearchClick = onSearchClick,
+        onBackClick = onBackClick,
+    ) 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +97,10 @@ fun ProfileScreen(
 fun ProfileContent(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
-    onReviewMoreClick: () -> Unit
+    onReviewMoreClick: () -> Unit,
+    onLoadMorePortfolio: () -> Unit,
+    onSearchClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -106,13 +114,17 @@ fun ProfileContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle Back */ }) {
+                    IconButton(onClick = { onBackClick() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle Search */ }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
+                    IconButton(onClick = { onSearchClick() }) {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -162,35 +174,11 @@ fun ProfileContent(
                 PortfolioCard(project)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    OutlinedButton(
-                        onClick = onReviewMoreClick,
-                        shape = RoundedCornerShape(50),
-                        border = ButtonDefaults.outlinedButtonBorder(enabled = true)
-                            .copy(
-                                width = 1.dp,
-                                brush = SolidColor(
-                                    MaterialTheme.colorScheme.outline.copy(
-                                        alpha = 0.5f,
-                                    ),
-                                ),
-                            ),
-                    ) {
-                        Text(
-                            "See more",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
+                OnMoreButton(
+                    text = "See more",
+                    onClick = onLoadMorePortfolio
+                )
             }
-
-
             item {
                 SectionTitleRow("Top Reviews")
             }
@@ -198,35 +186,44 @@ fun ProfileContent(
                 ReviewCard(review)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    OutlinedButton(
-                        onClick = onReviewMoreClick,
-                        shape = RoundedCornerShape(50),
-                        border = ButtonDefaults.outlinedButtonBorder(enabled = true)
-                            .copy(
-                                width = 1.dp,
-                                brush = SolidColor(
-                                    MaterialTheme.colorScheme.outline.copy(
-                                        alpha = 0.5f,
-                                    ),
-                                ),
-                            ),
-                    ) {
-                        Text(
-                            "See more",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
+                OnMoreButton(
+                    text = "See more reviews",
+                    onClick = onReviewMoreClick
+                )
             }
         }
 
+    }
+
+}
+
+@Composable
+fun OnMoreButton(onClick: () -> Unit, text: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        OutlinedButton(
+            onClick = onClick,
+            shape = RoundedCornerShape(50),
+            border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                .copy(
+                    width = 1.dp,
+                    brush = SolidColor(
+                        MaterialTheme.colorScheme.outline.copy(
+                            alpha = 0.5f,
+                        ),
+                    ),
+                ),
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 
 }
@@ -397,7 +394,11 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                RoundedCornerShape(16.dp)
+            ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -519,7 +520,11 @@ fun PortfolioCard(item: PortfolioItem) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
 //            .shadow(4.dp, RoundedCornerShape(16.dp))
             .clickable { }
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                RoundedCornerShape(16.dp)
+            ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -555,7 +560,11 @@ fun ReviewCard(review: ProfileReview) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                RoundedCornerShape(16.dp)
+            ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -573,7 +582,11 @@ fun ReviewCard(review: ProfileReview) {
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape)
+                            .border(
+                                2.dp,
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                CircleShape
+                            )
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
@@ -650,6 +663,10 @@ fun ProfileScreenPreview() {
         ProfileContent(
             state = ProfileUiState(),
             onEvent = {},
-        ) {}
+            onReviewMoreClick = {},
+            onLoadMorePortfolio = {},
+            onSearchClick = {},
+            onBackClick = {},
+        ) 
     }
 }

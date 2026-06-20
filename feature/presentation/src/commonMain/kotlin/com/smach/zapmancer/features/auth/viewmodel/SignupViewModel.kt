@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUserMessage
-import com.smach.zapmancer.domain.repository.AuthRepository
+import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import kotlinx.coroutines.launch
 
@@ -25,7 +25,7 @@ sealed class SignupEvent {
 }
 
 class SignupViewModel(
-    private val authRepository: AuthRepository,
+    private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignupUiState, SignupEvent, Unit>(SignupUiState()) {
     override fun onEvent(event: SignupEvent) {
         when (event) {
@@ -41,7 +41,7 @@ class SignupViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
 
-            when (val result = authRepository.signUp(
+            when (val result = signUpUseCase(
                 currentState.email,
                 currentState.username,
                 currentState.password

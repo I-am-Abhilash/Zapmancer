@@ -10,15 +10,11 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.smach.zapmancer.features.alerts.screen.NotificationScreen
-import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import com.smach.zapmancer.features.home.screen.HomeScreen
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.features.messages.screen.MessagesListScreen
-import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
-import com.smach.zapmancer.features.messages.state.MessagesListUiState
-import com.smach.zapmancer.features.profile.screen.ProfileContent
-import com.smach.zapmancer.features.profile.state.ProfileUiState
+import com.smach.zapmancer.features.profile.screen.ProfileScreen
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
 import com.smach.zapmancer.features.projects.screen.ProjectListContent
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
@@ -69,7 +65,7 @@ private fun appEntryProvider(
     entry<Screen.Home> {
         HomeScreen(
             state = HomeUiState(),
-            onCreateProjectClick = { navigator.navigate(Screen.Proposal)}
+            onCreateProjectClick = { navigator.navigate(Screen.Proposal) }
         )
     }
 
@@ -94,10 +90,9 @@ private fun appEntryProvider(
 
     }
     entry<Screen.Profile> {
-        ProfileContent(
-            state = ProfileUiState(),
-            onEvent = {},
-            onReviewMoreClick = {navigator.navigate(Screen.Settings)},
+        ProfileScreen(
+            onSearchClick = { navigator.navigate(Screen.ProjectList) },
+            onBackClick = { navigator.goBack() }
         )
     }
     entry<Screen.Settings> {
@@ -113,24 +108,20 @@ private fun appEntryProvider(
 
     entry<Screen.MessagesList> {
         MessagesListScreen(
-            state = MessagesListUiState(),
-            onConversationClick = { navigator.navigate(Screen.MessagesDetail)},
-            onBackClick = {navigator.goBack()}
+            onConversationClick = { navigator.navigate(Screen.MessagesDetail) },
+            onBackClick = { navigator.goBack() }
         )
     }
     entry<Screen.MessagesDetail> {
         MessageDetailScreen(
-            state = MessagesDetailUiState(),
-            onBackClick = {navigator.goBack()},
+            onBackClick = { navigator.goBack() },
         )
     }
 
 
     entry<Screen.Alerts> {
         NotificationScreen(
-            state = NotificationUiState(),
             onBackClick = { navigator.goBack() },
-            onFilterClick = {}
         )
     }
 }

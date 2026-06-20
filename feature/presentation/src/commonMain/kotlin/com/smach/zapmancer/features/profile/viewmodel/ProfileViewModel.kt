@@ -1,21 +1,111 @@
 package com.smach.zapmancer.features.profile.viewmodel
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
+import com.smach.zapmancer.domain.usecase.HireUserUseCase
+import com.smach.zapmancer.features.profile.state.PortfolioItem
+import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-
-class ProfileViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
-
-    fun onEvent(event: ProfileEvent) {
-        // Handle events
-    }
-}
+import kotlinx.coroutines.launch
 
 sealed class ProfileEvent {
-    object Refresh : ProfileEvent()
-    object HireMe : ProfileEvent()
+    data object Refresh : ProfileEvent()
+    data object HireMe : ProfileEvent()
+}
+
+class ProfileViewModel(
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val hireUserUseCase: HireUserUseCase,
+) : BaseViewModel<ProfileUiState, ProfileEvent, Unit>(ProfileUiState()) {
+
+    init {
+        loadProfile()
+    }
+
+    override fun onEvent(event: ProfileEvent) {
+        when (event) {
+            ProfileEvent.Refresh -> loadProfile()
+            ProfileEvent.HireMe -> hireUser()
+        }
+    }
+
+    private fun loadProfile() {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, error = null) }
+            when (val result = getUserProfileUseCase()) {
+                is Result.Success -> {
+                    val profile = result.data
+                    updateState {
+                        copy(
+                            name = profile.name,
+                            role = profile.role,
+                            location = profile.location,
+                            ranking = profile.ranking,
+                            isTopRated = profile.isTopRated,
+                            projectsCount = profile.projectsCount,
+                            rating = profile.rating,
+                            experience = profile.experience,
+                            about = profile.about,
+                            skills = profile.skills,
+                            portfolioItems = profile.portfolioItems.map {
+                                PortfolioItem(
+                                    title = it.title,
+                                    description = it.description,
+                                    imageUrl = it.imageUrl
+                                )
+                            },
+                            reviews = profile.reviews.map {
+                                ProfileReview(
+                                    authorName = it.authorName,
+                                    authorRole = it.authorRole,
+                                    content = it.content,
+                                    rating = it.rating,
+                                    authorAvatarUrl = it.authorAvatarUrl.orEmpty()
+                                )
+                            },
+                            avatarUrl = profile.avatarUrl.orEmpty(),
+                            isLoading = false
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            error = "Failed to load profile"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun hireUser() {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, error = null, isHireSuccess = false) }
+            when (val result = hireUserUseCase("julian_vancore")) {
+                is Result.Success -> {
+                    updateState { copy(isLoading = false, isHireSuccess = true) }
+                }
+                is Result.Error -> {
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            error = "Failed to process hire request"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onReviewMoreClick() {
+        TODO("Not yet implemented")
+    }
+
+    fun onLoadMorePortfolio() {
+        TODO("Not yet implemented")
+    }
 }

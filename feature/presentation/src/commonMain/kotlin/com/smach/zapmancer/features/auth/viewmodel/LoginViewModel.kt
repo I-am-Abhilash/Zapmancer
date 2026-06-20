@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUserMessage
-import com.smach.zapmancer.domain.repository.AuthRepository
+import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import kotlinx.coroutines.launch
 
@@ -39,17 +39,17 @@ sealed class LoginSideEffect {
 }
 
 class LoginViewModel(
-    private val authRepository: AuthRepository,
+    private val loginUseCase: LoginUseCase,
 ) : BaseViewModel<LoginUiState, LoginEvent, Unit>(LoginUiState()) {
     override fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.OnEmailChanged -> updateState { copy(email = event.email) }
             is LoginEvent.OnPasswordChanged -> updateState { copy(password = event.password) }
-            is LoginEvent.OnRememberMeChanged -> TODO()
+            is LoginEvent.OnRememberMeChanged -> { /* Handle remember me check */ }
             LoginEvent.OnTogglePasswordVisibility -> updateState { copy(togglePassword = !togglePassword) }
             LoginEvent.Submit -> submit()
-            LoginEvent.OnForgotPasswordClicked -> TODO()
-            LoginEvent.OnRegisterHereClicked -> TODO()
+            LoginEvent.OnForgotPasswordClicked -> { /* Handle click */ }
+            LoginEvent.OnRegisterHereClicked -> { /* Handle click */ }
         }
     }
 
@@ -58,7 +58,7 @@ class LoginViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
 
-            when (val result = authRepository.login(currentState.email, currentState.password)) {
+            when (val result = loginUseCase(currentState.email, currentState.password)) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isSuccess = true) }
                 }

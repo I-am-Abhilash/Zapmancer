@@ -34,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,13 +50,31 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.components.AppImage
 import com.smach.zapmancer.features.messages.state.ConversationItem
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
+import com.smach.zapmancer.features.messages.viewmodel.MessagesListEvent
+import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
-// Flip7 Palette
+@Composable
+fun MessagesListScreen(
+    onConversationClick: (String) -> Unit = {},
+    onBackClick: () -> Unit = {},
+    viewModel: MessagesListViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    MessagesListContent(
+        state = uiState,
+        onEvent = viewModel::onEvent,
+        onConversationClick = onConversationClick,
+        onBackClick = onBackClick
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessagesListScreen(
-    state: MessagesListUiState = MessagesListUiState(),
+fun MessagesListContent(
+    state: MessagesListUiState,
+    onEvent: (MessagesListEvent) -> Unit,
     onConversationClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
@@ -107,7 +127,8 @@ fun MessagesListScreen(
         ) {
             MessagesSearchAndFilter(
                 searchQuery = state.searchQuery,
-                selectedFilter = state.selectedFilter
+                selectedFilter = state.selectedFilter,
+                onEvent = onEvent
             )
 
             LazyColumn(
@@ -115,10 +136,26 @@ fun MessagesListScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
-                items(state.conversations) { conversation ->
+                if (state.conversations.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No conversations found",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+                items(state.conversations, key = { it.id }) { conversation ->
                     ConversationItemRow(
                         item = conversation,
-                        isSelected = false, // In mobile view, selection might not be visible as it navigates
+                        isSelected = false,
                         onClick = { onConversationClick(conversation.id) }
                     )
                     HorizontalDivider(
@@ -134,7 +171,8 @@ fun MessagesListScreen(
 @Composable
 fun MessagesSearchAndFilter(
     searchQuery: String,
-    selectedFilter: String
+    selectedFilter: String,
+    onEvent: (MessagesListEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -145,10 +183,8 @@ fun MessagesSearchAndFilter(
     ) {
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth(),
-//                .height(48.dp),
+            onValueChange = { onEvent(MessagesListEvent.OnSearchQueryChanged(it)) },
+            modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Search conversations...", fontSize = 14.sp) },
             leadingIcon = {
                 Icon(
@@ -170,7 +206,7 @@ fun MessagesSearchAndFilter(
             listOf("All", "Unread", "Archived").forEach { filter ->
                 val isSelected = filter == selectedFilter
                 Surface(
-                    onClick = {},
+                    onClick = { onEvent(MessagesListEvent.OnFilterSelected(filter)) },
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                     contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                     shape = RoundedCornerShape(20.dp),
@@ -283,7 +319,7 @@ fun ConversationItemRow(
 @Composable
 fun MessagesListScreenPreview() {
     MaterialTheme {
-        MessagesListScreen(
+        MessagesListContent(
             state = MessagesListUiState(
                 conversations = listOf(
                     ConversationItem(
@@ -305,7 +341,8 @@ fun MessagesListScreenPreview() {
                         isOnline = false
                     )
                 )
-            )
+            ),
+            onEvent = {}
         )
     }
 }

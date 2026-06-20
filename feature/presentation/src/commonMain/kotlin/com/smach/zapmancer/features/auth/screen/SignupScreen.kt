@@ -51,7 +51,6 @@ import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
-import com.smach.zapmancer.features.common.theme.ZapGold
 import org.koin.compose.viewmodel.koinViewModel
 
 // Flip7 Palette
@@ -207,8 +206,8 @@ private fun SignupContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapGold,
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading

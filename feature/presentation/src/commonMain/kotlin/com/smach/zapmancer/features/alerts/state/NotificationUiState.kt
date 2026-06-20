@@ -2,7 +2,9 @@ package com.smach.zapmancer.features.alerts.state
 
 data class NotificationUiState(
     val notifications: List<NotificationItem> = sampleNotifications,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val replyDrafts: Map<String, String> = emptyMap(),
+    val error: String? = null
 )
 
 val sampleNotifications = listOf(
