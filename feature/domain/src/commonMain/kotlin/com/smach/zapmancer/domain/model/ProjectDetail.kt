@@ -1,0 +1,26 @@
+package com.smach.zapmancer.domain.model
+
+data class ProjectDetail(
+    val id: String,
+    val category: String,
+    val title: String,
+    val postedTime: String,
+    val location: String,
+    val isPaymentVerified: Boolean,
+    val projectScope: String,
+    val deliverables: List<String>,
+    val skills: List<String>,
+    val budgetRange: String,
+    val projectType: String,
+    val timeline: String,
+    val estStart: String,
+    val clientName: String,
+    val clientIndustry: String,
+    val clientLocation: String,
+    val clientProjectsCount: Int,
+    val clientRating: Double,
+    val isSaved: Boolean,
+    val isClientActive: Boolean,
+    val isIdentityVerified: Boolean,
+    val isPhoneVerified: Boolean
+)

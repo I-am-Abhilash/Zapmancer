@@ -19,11 +19,15 @@ sealed class NotificationEvent {
     data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent()
 }
 
+sealed class NotificationEffect {
+    data class ShowToast(val message: String) : NotificationEffect()
+}
+
 class NotificationViewModel(
     private val getNotificationsUseCase: GetNotificationsUseCase,
     private val executeNotificationActionUseCase: ExecuteNotificationActionUseCase,
     private val sendNotificationQuickReplyUseCase: SendNotificationQuickReplyUseCase,
-) : BaseViewModel<NotificationUiState, NotificationEvent, Unit>(NotificationUiState()) {
+) : BaseViewModel<NotificationUiState, NotificationEvent, NotificationEffect>(NotificationUiState()) {
 
     init {
         loadNotifications()
@@ -99,6 +103,7 @@ class NotificationViewModel(
                             replyDrafts = replyDrafts - notificationId
                         )
                     }
+                    sendEffect(NotificationEffect.ShowToast("Quick reply sent!"))
                     loadNotifications()
                 }
                 is Result.Error -> {
@@ -119,6 +124,7 @@ class NotificationViewModel(
             when (val result = executeNotificationActionUseCase(notificationId, actionLabel)) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false) }
+                    sendEffect(NotificationEffect.ShowToast("Action executed: $actionLabel"))
                     loadNotifications()
                 }
                 is Result.Error -> {

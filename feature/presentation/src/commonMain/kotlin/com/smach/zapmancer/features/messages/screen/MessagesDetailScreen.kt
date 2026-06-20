@@ -28,9 +28,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Videocam
@@ -49,8 +49,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,7 +60,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.components.AppImage
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.messages.state.MessageItem
 import com.smach.zapmancer.features.messages.state.MessageStatus
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
@@ -73,7 +72,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MessageDetailScreen(
     viewModel: MessagesDetailViewModel = koinViewModel(),
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    showSnackbar: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -81,9 +81,9 @@ fun MessageDetailScreen(
         state = uiState,
         onEvent = viewModel::onEvent,
         onBackClick = onBackClick,
-        onCallClick = viewModel.onCallClick,
-        onVideocamClick = TODO(),
-        onMoreClick = TODO(),
+        onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
+        onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
+        onMoreClick = { showSnackbar("More actions are not supported in this beta") },
     )
 }
 
@@ -99,16 +99,12 @@ fun MessageDetailContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
+            ZapmancerTopBar(
+                titleContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        AppImage(
-                            model = state.contactAvatarUrl,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.background)
+                        UserAvatar(
+                            imageUrl = state.contactAvatarUrl,
+                            size = 40.dp
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
@@ -140,15 +136,8 @@ fun MessageDetailContent(
                         }
                     }
                 },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = { onVideocamClick()}) {
                         Icon(
@@ -172,8 +161,8 @@ fun MessageDetailContent(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true
             )
         },
         bottomBar = {
@@ -198,13 +187,9 @@ fun MessageDetailContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        AppImage(
-                            model = state.contactAvatarUrl,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.background)
+                        UserAvatar(
+                            imageUrl = state.contactAvatarUrl,
+                            size = 32.dp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Surface(
@@ -238,7 +223,7 @@ fun MessageDetailContent(
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.surface,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
@@ -264,13 +249,9 @@ fun MessageBubble(message: MessageItem) {
         verticalAlignment = Alignment.Top
     ) {
         if (!message.isFromMe) {
-            AppImage(
-                model = message.avatarUrl ?: "",
-                contentDescription = null,
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
+            UserAvatar(
+                imageUrl = message.avatarUrl,
+                size = 32.dp
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -287,7 +268,7 @@ fun MessageBubble(message: MessageItem) {
                     bottomStart = if (message.isFromMe) 16.dp else 0.dp,
                     bottomEnd = if (message.isFromMe) 0.dp else 16.dp
                 ),
-                border = if (message.isFromMe) null else androidx.compose.foundation.BorderStroke(
+                border = if (message.isFromMe) null else BorderStroke(
                     1.dp,
                     MaterialTheme.colorScheme.outlineVariant
                 ),
@@ -313,10 +294,15 @@ fun MessageBubble(message: MessageItem) {
                 )
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
+                    val icon = when (message.status) {
+                        MessageStatus.READ -> Icons.Default.DoneAll
+                        else -> Icons.Default.Done
+                    }
+                    val tint = if (message.status == MessageStatus.READ) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     Icon(
-                        imageVector = Icons.Default.DoneAll,
+                        imageVector = icon,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = tint,
                         modifier = Modifier.size(14.dp)
                     )
                 }
@@ -481,6 +467,11 @@ fun MessageDetailScreenPreview() {
                 ),
                 isContactTyping = true
             ),
-        ) {}
+            onEvent = {},
+            onBackClick = {},
+            onCallClick = {},
+            onVideocamClick = {},
+            onMoreClick = {}
+        )
     }
 }

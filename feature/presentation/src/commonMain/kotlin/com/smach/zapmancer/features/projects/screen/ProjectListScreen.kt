@@ -37,8 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,11 +51,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import org.koin.compose.viewmodel.koinViewModel
+import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
 import com.smach.zapmancer.features.common.theme.ZapGrey
 import com.smach.zapmancer.features.common.theme.ZapOrange
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
+
+@Composable
+fun ProjectListScreen(
+    viewModel: ProjectListViewModel = koinViewModel(),
+    onProjectClick: (Int) -> Unit = {},
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    ProjectListScreen(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onProjectClick = onProjectClick,
+    )
+}
 
 @Composable
 fun ProjectListScreen(
@@ -84,21 +101,15 @@ fun ProjectListContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Zapmancer",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
-                    )
-                },
+            ZapmancerTopBar(
+                title = "Zapmancer",
                 actions = {
                     IconButton(onClick = onSearchClick) {
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                containerColor = MaterialTheme.colorScheme.background,
+                drawBottomBorder = false
             )
         },
         containerColor = MaterialTheme.colorScheme.background

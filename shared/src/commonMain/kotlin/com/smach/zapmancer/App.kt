@@ -1,35 +1,21 @@
 package com.smach.zapmancer
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.smach.zapmancer.domain.repository.SettingsRepository
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.nav.MainGraph
+import org.koin.compose.koinInject
 
 @Composable
 fun App() {
-//    val viewModel: MainViewModel = koinInject()
-//    val sessionState by viewModel.session.collectAsState()
+    val settingsRepository: SettingsRepository = koinInject()
+    val settingsState by settingsRepository.settingsFlow.collectAsState(initial = null)
+    val isDarkMode = settingsState?.isDarkModeEnabled ?: isSystemInDarkTheme()
 
-//    AppTheme {
-//        when (sessionState) {
-//            SessionState.Loading -> {
-////                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-////                    Text("Loading...", style = MaterialTheme.typography.headlineMedium)
-////                }
-//            }
-//
-//            SessionState.Unauthenticated -> {
-//                AuthGraph(
-//                    onAuthSuccess = { /* MainViewModel will automatically update via Flow */ },
-//                )
-//            }
-//
-//            is SessionState.Authenticated -> {
-//                MainGraph()
-//            }
-//        }
-//    }
-
-    AppTheme {
+    AppTheme(darkTheme = isDarkMode) {
         MainGraph()
     }
 }

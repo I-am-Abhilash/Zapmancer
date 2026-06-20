@@ -45,8 +45,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -100,20 +100,10 @@ fun ProfileContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Zapmancer",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onBackClick() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = { onSearchClick() }) {
                         Icon(
@@ -123,9 +113,8 @@ fun ProfileContent(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -254,18 +243,11 @@ fun IdentityHeader(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            AppImage(
-                model = state.avatarUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(104.dp)
-                    .clip(CircleShape)
-                    .border(
-                        2.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                        CircleShape
-                    )
-                    .background(MaterialTheme.colorScheme.surface)
+            UserAvatar(
+                imageUrl = state.avatarUrl,
+                size = 104.dp,
+                borderWidth = 2.dp,
+                borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -576,17 +558,11 @@ fun ReviewCard(review: ProfileReview) {
                 verticalAlignment = Alignment.Top
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppImage(
-                        model = review.authorAvatarUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .border(
-                                2.dp,
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                CircleShape
-                            )
+                    UserAvatar(
+                        imageUrl = review.authorAvatarUrl,
+                        size = 48.dp,
+                        borderWidth = 2.dp,
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {

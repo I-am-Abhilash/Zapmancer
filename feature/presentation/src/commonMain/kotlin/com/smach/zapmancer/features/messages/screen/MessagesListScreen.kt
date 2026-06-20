@@ -31,8 +31,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,8 +80,8 @@ fun MessagesListContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
+            ZapmancerTopBar(
+                titleContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -95,27 +95,17 @@ fun MessagesListContent(
                         )
                     }
                 },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 12.dp)
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.outlineVariant)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 36.dp,
+                        modifier = Modifier.padding(end = 12.dp)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -250,26 +240,11 @@ fun ConversationItemRow(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box {
-            AppImage(
-                model = item.avatarUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
-            )
-            if (item.isOnline) {
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                        .border(2.dp, if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface, CircleShape)
-                        .align(Alignment.BottomEnd)
-                )
-            }
-        }
+        UserAvatar(
+            imageUrl = item.avatarUrl,
+            size = 48.dp,
+            isOnline = item.isOnline
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 

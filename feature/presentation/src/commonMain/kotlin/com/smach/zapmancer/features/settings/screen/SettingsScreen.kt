@@ -39,8 +39,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,10 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
+import com.smach.zapmancer.features.settings.viewmodel.SettingsEvent
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel,
+    viewModel: SettingsViewModel = koinViewModel(),
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -67,10 +69,10 @@ fun SettingsScreen(
     SettingsContent(
         uiState = uiState,
         onBackClick = onBackClick,
-        onToggleTwoFactor = { viewModel.toggleTwoFactor() },
-        onToggleDarkMode = { viewModel.toggleDarkMode() },
-        onToggleNotifications = { viewModel.toggleNotifications() },
-        onLogout = { viewModel.logout() }
+        onToggleTwoFactor = { viewModel.onEvent(SettingsEvent.ToggleTwoFactor(it)) },
+        onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
+        onToggleNotifications = { viewModel.onEvent(SettingsEvent.ToggleEmailNotifications(it)) },
+        onLogout = { viewModel.onEvent(SettingsEvent.Logout) }
     )
 }
 
@@ -86,24 +88,10 @@ fun SettingsContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Zapmancer",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = {}) {
                         Icon(
@@ -112,20 +100,14 @@ fun SettingsContent(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 12.dp)
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
-                    ) {
-                        // Avatar placeholder
-                    }
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 32.dp,
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f)
-                ),
-                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+                containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                drawBottomBorder = true
             )
         },
         containerColor = MaterialTheme.colorScheme.background

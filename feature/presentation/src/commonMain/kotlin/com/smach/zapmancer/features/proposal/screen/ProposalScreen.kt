@@ -43,8 +43,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,44 +60,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import org.koin.compose.viewmodel.koinViewModel
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalViewModel
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalEvent
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalEffect
 import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.common.theme.ZapSkyBlue
 import com.smach.zapmancer.features.common.theme.ZapSkyBlueText
 import com.smach.zapmancer.features.proposal.state.ProposalStep
 import com.smach.zapmancer.features.proposal.state.ProposalUiState
 
+@Composable
+fun ProposalScreen(
+    viewModel: ProposalViewModel = koinViewModel(),
+    onBackClick: () -> Unit = {},
+    showSnackbar: (String) -> Unit = {}
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ProposalEffect.ShowToast -> {
+                    showSnackbar(effect.message)
+                }
+            }
+        }
+    }
+
+    ProposalScreen(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProposalScreen(
+    state: ProposalUiState,
+    onEvent: (ProposalEvent) -> Unit,
     onBackClick: () -> Unit = {}
 ) {
-    var state by remember { mutableStateOf(ProposalUiState()) }
-
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            "Zapmancer",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 24.sp
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = {}) {
                         Icon(
@@ -106,25 +118,21 @@ fun ProposalScreen(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 12.dp)
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
-                    ) {
-                        // Avatar placeholder
-                    }
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 32.dp,
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White.copy(alpha = 0.8f))
+                containerColor = Color.White.copy(alpha = 0.8f),
+                drawBottomBorder = false
             )
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         ProposalContent(
             state = state,
-            onStateChange = { state = it },
+            onEvent = onEvent,
             modifier = Modifier.padding(padding)
         )
     }
@@ -133,7 +141,7 @@ fun ProposalScreen(
 @Composable
 fun ProposalContent(
     state: ProposalUiState,
-    onStateChange: (ProposalUiState) -> Unit,
+    onEvent: (ProposalEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -149,26 +157,26 @@ fun ProposalContent(
 
         AnimatedContent(targetState = state.currentStep) { step ->
             when (step) {
-                1 -> DetailsStep(state, onNext = { onStateChange(state.copy(currentStep = 2)) })
+                1 -> DetailsStep(state, onNext = { onEvent(ProposalEvent.StepChanged(2)) })
                 2 -> PitchStep(
                     state = state,
-                    onPitchChange = { onStateChange(state.copy(pitchContent = it)) },
-                    onBudgetChange = { onStateChange(state.copy(budget = it)) },
-                    onTimelineChange = { onStateChange(state.copy(timelineDays = it)) },
-                    onNext = { onStateChange(state.copy(currentStep = 3)) },
-                    onBack = { onStateChange(state.copy(currentStep = 1)) }
+                    onPitchChange = { onEvent(ProposalEvent.OnPitchChanged(it)) },
+                    onBudgetChange = { onEvent(ProposalEvent.OnBudgetChanged(it)) },
+                    onTimelineChange = { onEvent(ProposalEvent.OnTimelineChanged(it)) },
+                    onNext = { onEvent(ProposalEvent.StepChanged(3)) },
+                    onBack = { onEvent(ProposalEvent.StepChanged(1)) }
                 )
 
                 3 -> ReviewStep(
                     state = state,
-                    onNext = { onStateChange(state.copy(currentStep = 4)) },
-                    onBack = { onStateChange(state.copy(currentStep = 2)) }
+                    onNext = { onEvent(ProposalEvent.StepChanged(4)) },
+                    onBack = { onEvent(ProposalEvent.StepChanged(2)) }
                 )
 
                 4 -> FinalizeStep(
                     state = state,
-                    onBack = { onStateChange(state.copy(currentStep = 3)) },
-                    onSubmit = { onStateChange(state.copy(isSubmitted = true)) }
+                    onBack = { onEvent(ProposalEvent.StepChanged(3)) },
+                    onSubmit = { onEvent(ProposalEvent.Submit) }
                 )
             }
         }

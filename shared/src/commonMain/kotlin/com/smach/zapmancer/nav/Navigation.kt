@@ -59,7 +59,9 @@ sealed class Screen(
     data object MessagesList : Screen("Messages")
 
     @Serializable
-    data object ProjectDetail : Screen("Project Detail")
+    data class ProjectDetail(
+        val id: String,
+    ) : Screen("Project Detail")
 
     @Serializable
     data object ProjectList : Screen("Projects")

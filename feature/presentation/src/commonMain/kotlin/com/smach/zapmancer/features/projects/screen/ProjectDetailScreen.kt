@@ -42,8 +42,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,56 +54,85 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import org.koin.compose.viewmodel.koinViewModel
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEffect
 import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.common.theme.ZapOnGoldContainer
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
 
 @Composable
 fun ProjectDetailScreen(
-    state: ProjectDetailUiState = ProjectDetailUiState(),
-    onBackClick: () -> Unit = {}
+    projectId: String,
+    onBackClick: () -> Unit = {},
+    showSnackbar: (String) -> Unit = {}
 ) {
-    ProjectDetailContent(state = state, onBackClick = onBackClick)
+    val viewModel: ProjectDetailViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
+    val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ProjectDetailEffect.ShowToast -> {
+                    showSnackbar(effect.message)
+                }
+            }
+        }
+    }
+
+    ProjectDetailScreen(
+        state = state,
+        onBackClick = onBackClick,
+        onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
+        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) }
+    )
+}
+
+@Composable
+fun ProjectDetailScreen(
+    state: ProjectDetailUiState = ProjectDetailUiState(),
+    onBackClick: () -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onApplyClick: () -> Unit = {}
+) {
+    ProjectDetailContent(
+        state = state,
+        onBackClick = onBackClick,
+        onSaveClick = onSaveClick,
+        onApplyClick = onApplyClick
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDetailContent(
     state: ProjectDetailUiState,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onApplyClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Zapmancer",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
                     }
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 12.dp)
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 32.dp,
+                        modifier = Modifier.padding(end = 12.dp)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -119,7 +148,13 @@ fun ProjectDetailContent(
             item { BudgetSection(state) }
             item { ProjectScopeSection(state) }
             item { RequiredSkillsSection(state) }
-            item { ApplySaveButtonSection() }
+            item {
+                ApplySaveButtonSection(
+                    isSaved = state.isSaved,
+                    onApplyClick = onApplyClick,
+                    onSaveClick = onSaveClick
+                )
+            }
             item { ClientSummarySection(state) }
             item { Spacer(modifier = Modifier.height(48.dp)) }
         }
@@ -359,10 +394,14 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
 }
 
 @Composable
-fun ApplySaveButtonSection() {
+fun ApplySaveButtonSection(
+    isSaved: Boolean,
+    onApplyClick: () -> Unit,
+    onSaveClick: () -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Button(
-            onClick = {},
+            onClick = onApplyClick,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -375,7 +414,7 @@ fun ApplySaveButtonSection() {
         }
 
         Button(
-            onClick = {},
+            onClick = onSaveClick,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -385,7 +424,7 @@ fun ApplySaveButtonSection() {
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            Text("Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(if (isSaved) "Unsave Project" else "Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }
