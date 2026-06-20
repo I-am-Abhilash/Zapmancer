@@ -10,22 +10,20 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
@@ -36,7 +34,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,11 +50,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,6 +71,8 @@ private val ZapBg = Color(0xFFF4FBFB)
 private val ZapSurface = Color(0xFFFFFFFF)
 private val ZapOnSurface = Color(0xFF1A1C1E)
 private val ZapOnSurfaceVariant = Color(0xFF434655)
+private val ZapOutlineVariant = Color(0xFFDEE4E2)
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -183,17 +182,6 @@ fun HomeContent(
                 )
             }
         }
-        Button(
-            onClick = onCreateProjectClick,
-            colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(2.dp, ZapOnSurface),
-            modifier = Modifier.height(48.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text("Create Project", fontWeight = FontWeight.Bold)
-        }
 
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             StatCard(
@@ -221,6 +209,18 @@ fun HomeContent(
                 isRating = true
             )
         }
+        Button(
+            onClick = onCreateProjectClick,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ZapTeal,
+            ),
+            shape = RoundedCornerShape(999.dp),
+            border = BorderStroke(1.dp, ZapOutlineVariant),
+            contentPadding = PaddingValues(vertical = 12.dp)
+        ) {
+            Text("Create Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        }
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -237,56 +237,17 @@ fun HomeContent(
                     Text("Export CSV", color = ZapTeal, fontWeight = FontWeight.Bold)
                 }
             }
-
             Card(
-                colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                border = BorderStroke(1.dp, ZapOnSurface),
-                shape = RoundedCornerShape(0.dp),
-                modifier = Modifier.fillMaxWidth()
+                colors = CardDefaults.cardColors(
+                    containerColor = ZapSurface
+                ),
+//                border = BorderStroke(1.dp, ZapOnSurface),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, ZapOutlineVariant)
             ) {
-                Column {
-                    // Header
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(ZapBg)
-                            .drawBehind {
-                                drawLine(
-                                    color = ZapOnSurface,
-                                    start = Offset(0f, size.height),
-                                    end = Offset(size.width, size.height),
-                                    strokeWidth = 2.dp.toPx()
-                                )
-                            }
-                            .padding(12.dp)
-                    ) {
-                        Text(
-                            "Project Name",
-                            modifier = Modifier.weight(2f),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            "Status",
-                            modifier = Modifier.weight(1f),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            "Date",
-                            modifier = Modifier.weight(1f),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            "Value",
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    }
-
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     state.recentActivities.forEach { activity ->
                         ActivityRow(activity)
                     }
@@ -295,133 +256,133 @@ fun HomeContent(
         }
 
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-
-            // Insights
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                // System Health
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                    border = BorderStroke(1.dp, ZapOnSurface),
-                    shape = RoundedCornerShape(0.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            "System Health",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        HealthBar("CPU Usage", state.cpuUsage, ZapTeal)
-                        Spacer(Modifier.height(12.dp))
-                        HealthBar("Memory Load", state.memoryLoad, ZapCoral)
-
-                        Spacer(Modifier.height(16.dp))
-                        HorizontalDivider(thickness = 2.dp, color = ZapOnSurface.copy(alpha = 0.1f))
-                        Spacer(Modifier.height(12.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                PulseIndicator()
-                                Text(
-                                    "All Nodes Active",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = ZapOnSurfaceVariant
-                                )
-                            }
-                            Text(
-                                "LAST SYNC: ${state.lastSyncTime}",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ZapOnSurfaceVariant
-                            )
-                        }
-                    }
-                }
-
-                // Featured Card
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(4 / 3f)
-                        .border(1.dp, ZapOnSurface)
-                        .background(ZapSurface)
-                ) {
-                    // Gradient/Pattern Background
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        ZapOnSurface.copy(alpha = 0.05f)
-                                    )
-                                )
-                            )
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Surface(
-                            color = ZapGold,
-                            border = BorderStroke(1.dp, ZapOnSurface),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                "New Feature",
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            "Quantum Analytics",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            "Real-time predictive modeling is now available in your workspace.",
-                            fontSize = 12.sp,
-                            color = ZapOnSurfaceVariant
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Button(
-                            onClick = {},
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = ZapSurface,
-                                contentColor = ZapTeal
-                            ),
-                            border = BorderStroke(2.dp, ZapOnSurface),
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Launch Dashboard", fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-            }
-        }
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.spacedBy(24.dp)
+//        ) {
+//
+//            // Insights
+//            Column(
+//                modifier = Modifier.weight(1f),
+//                verticalArrangement = Arrangement.spacedBy(24.dp)
+//            ) {
+//                // System Health
+//                Card(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    colors = CardDefaults.cardColors(containerColor = ZapSurface),
+//                    border = BorderStroke(1.dp, ZapOnSurface),
+//                    shape = RoundedCornerShape(0.dp)
+//                ) {
+//                    Column(modifier = Modifier.padding(16.dp)) {
+//                        Text(
+//                            "System Health",
+//                            style = MaterialTheme.typography.titleMedium,
+//                            fontWeight = FontWeight.Bold
+//                        )
+//                        Spacer(Modifier.height(16.dp))
+//                        HealthBar("CPU Usage", state.cpuUsage, ZapTeal)
+//                        Spacer(Modifier.height(12.dp))
+//                        HealthBar("Memory Load", state.memoryLoad, ZapCoral)
+//
+//                        Spacer(Modifier.height(16.dp))
+//                        HorizontalDivider(thickness = 2.dp, color = ZapOnSurface.copy(alpha = 0.1f))
+//                        Spacer(Modifier.height(12.dp))
+//
+//                        Row(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.SpaceBetween,
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+//                            ) {
+//                                PulseIndicator()
+//                                Text(
+//                                    "All Nodes Active",
+//                                    fontSize = 12.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    color = ZapOnSurfaceVariant
+//                                )
+//                            }
+//                            Text(
+//                                "LAST SYNC: ${state.lastSyncTime}",
+//                                fontSize = 10.sp,
+//                                fontWeight = FontWeight.Bold,
+//                                color = ZapOnSurfaceVariant
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                // Featured Card
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .aspectRatio(4 / 3f)
+//                        .border(1.dp, ZapOnSurface)
+//                        .background(ZapSurface)
+//                ) {
+//                    // Gradient/Pattern Background
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(
+//                                Brush.verticalGradient(
+//                                    colors = listOf(
+//                                        Color.Transparent,
+//                                        ZapOnSurface.copy(alpha = 0.05f)
+//                                    )
+//                                )
+//                            )
+//                    )
+//
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(16.dp),
+//                        verticalArrangement = Arrangement.Bottom
+//                    ) {
+//                        Surface(
+//                            color = ZapGold,
+//                            border = BorderStroke(1.dp, ZapOnSurface),
+//                            shape = RoundedCornerShape(4.dp)
+//                        ) {
+//                            Text(
+//                                "New Feature",
+//                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+//                                fontSize = 10.sp,
+//                                fontWeight = FontWeight.Bold
+//                            )
+//                        }
+//                        Spacer(Modifier.height(8.dp))
+//                        Text(
+//                            "Quantum Analytics",
+//                            style = MaterialTheme.typography.titleLarge,
+//                            fontWeight = FontWeight.Bold
+//                        )
+//                        Text(
+//                            "Real-time predictive modeling is now available in your workspace.",
+//                            fontSize = 12.sp,
+//                            color = ZapOnSurfaceVariant
+//                        )
+//                        Spacer(Modifier.height(16.dp))
+//                        Button(
+//                            onClick = {},
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor = ZapSurface,
+//                                contentColor = ZapTeal
+//                            ),
+//                            border = BorderStroke(2.dp, ZapOnSurface),
+//                            shape = RoundedCornerShape(8.dp),
+//                            modifier = Modifier.fillMaxWidth()
+//                        ) {
+//                            Text("Launch Dashboard", fontWeight = FontWeight.Bold)
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -442,7 +403,8 @@ fun StatCard(
             .height(160.dp),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        border = BorderStroke(1.dp, ZapOutlineVariant)
+
     ) {
         Column(
             modifier = Modifier.drawAccentLine(accentColor).padding(16.dp)
@@ -533,75 +495,118 @@ fun StatCard(
 }
 
 @Composable
-fun ActivityRow(activity: RecentActivity) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier.weight(2f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .border(2.dp, ZapOnSurface, RoundedCornerShape(4.dp))
-                    .background(ZapTeal.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(activity.categoryTag, fontWeight = FontWeight.Bold, color = ZapTeal)
-            }
-            Column {
-                Text(activity.projectName, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                Text(activity.category, fontSize = 12.sp, color = ZapOnSurfaceVariant)
-            }
-        }
+fun ActivityRow(
+    activity: RecentActivity
+) {
+    val accentColor = when (activity.status) {
+        ActivityStatus.IN_PROGRESS -> ZapTeal
+        ActivityStatus.REVIEWING -> ZapGold
+        ActivityStatus.COMPLETED -> ZapTeal
+        ActivityStatus.CRITICAL -> ZapCoral
+    }
 
-        Box(modifier = Modifier.weight(1f)) {
-            Surface(
-                color = when (activity.status) {
-                    ActivityStatus.IN_PROGRESS -> ZapTeal
-                    ActivityStatus.REVIEWING -> ZapGold
-                    ActivityStatus.COMPLETED -> ZapSurface
-                    ActivityStatus.CRITICAL -> ZapCoral
-                },
-                contentColor = if (activity.status == ActivityStatus.COMPLETED) ZapTeal else Color.White,
-                border = BorderStroke(2.dp, ZapOnSurface),
-                shape = RoundedCornerShape(4.dp)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = ZapSurface
+        ),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, ZapOutlineVariant)
+
+    ) {
+        Column(
+            modifier = Modifier
+                .drawAccentLine(accentColor)
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(
+                                accentColor.copy(alpha = 0.15f),
+                                RoundedCornerShape(6.dp)
+                            )
+                            .border(
+                                1.dp,
+                                accentColor.copy(alpha = 0.4f),
+                                RoundedCornerShape(6.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = activity.categoryTag,
+                            fontWeight = FontWeight.Bold,
+                            color = accentColor
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = activity.projectName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+//                        Text(
+//                            text = activity.category,
+//                            style = MaterialTheme.typography.bodySmall,
+//                            color = ZapOnSurfaceVariant
+//                        )
+                    }
+                }
+
                 Text(
-                    text = when (activity.status) {
-                        ActivityStatus.IN_PROGRESS -> "In Progress"
-                        ActivityStatus.REVIEWING -> "Reviewing"
-                        ActivityStatus.COMPLETED -> "Completed"
-                        ActivityStatus.CRITICAL -> "Critical"
-                    }.uppercase(),
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold
+                    text = activity.value,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
-        }
 
-        Text(
-            activity.date,
-            modifier = Modifier.weight(1f),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = ZapOnSurfaceVariant
-        )
-        Text(
-            activity.value,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold
-        )
+            Spacer(Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = activity.date,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ZapOnSurfaceVariant
+                )
+
+                Surface(
+                    color = accentColor,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = activity.status.name
+                            .replace('_', ' '),
+                        modifier = Modifier.padding(
+                            horizontal = 8.dp,
+                            vertical = 4.dp
+                        ),
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
     }
 }
+
 
 @Composable
 fun HealthBar(label: String, progress: Float, color: Color) {
@@ -663,7 +668,9 @@ fun PulseIndicator() {
 }
 
 
-@Preview
+@Preview(
+    device = PIXEL_9_PRO
+)
 @Composable
 private fun HomeScreenPreview() {
     MaterialTheme {

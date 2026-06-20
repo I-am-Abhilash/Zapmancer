@@ -8,12 +8,53 @@ data class HomeUiState(
     val totalCapacity: Int = 30,
     val systemRating: Double = 4.98,
     val ratingStars: Int = 5,
-    val recentActivities: List<RecentActivity> = emptyList(),
+    val recentActivities: List<RecentActivity> = defaultActivities,
     val cpuUsage: Float = 0.42f,
     val memoryLoad: Float = 0.18f,
     val lastSyncTime: String = "14:02:11",
     val isLoading: Boolean = false
-)
+) {
+    companion object {
+        val defaultActivities = listOf(
+            RecentActivity(
+                "1",
+                "Neural Engine Optimizer",
+                "Infrastructure",
+                "AI",
+                ActivityStatus.IN_PROGRESS,
+                "2h ago",
+                "$12,400.00"
+            ),
+            RecentActivity(
+                "2",
+                "Dashboard Redesign",
+                "Visual Design",
+                "UX",
+                ActivityStatus.REVIEWING,
+                "Yesterday",
+                "$4,200.00"
+            ),
+            RecentActivity(
+                "3",
+                "SQL Latency Patch",
+                "Backend",
+                "DB",
+                ActivityStatus.COMPLETED,
+                "Oct 24",
+                "$8,150.00"
+            ),
+            RecentActivity(
+                "4",
+                "Security Audit",
+                "Compliance",
+                "SY",
+                ActivityStatus.CRITICAL,
+                "Oct 22",
+                "$15,000.00"
+            )
+        )
+    }
+}
 
 data class RecentActivity(
     val id: String,

@@ -155,8 +155,8 @@ fun MessagesSearchAndFilter(
             value = searchQuery,
             onValueChange = {},
             modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
+                .fillMaxWidth(),
+//                .height(48.dp),
             placeholder = { Text("Search conversations...", fontSize = 14.sp) },
             leadingIcon = {
                 Icon(

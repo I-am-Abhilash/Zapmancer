@@ -55,7 +55,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -98,10 +97,11 @@ fun MessageDetailScreen(
                                 .background(ZapBg)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Column {
+                        Column( verticalArrangement = Arrangement.spacedBy(0.dp)) {
                             Text(
                                 text = state.contactName,
                                 fontSize = 16.sp,
+                                lineHeight = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = ZapOnSurface
                             )
@@ -117,6 +117,7 @@ fun MessageDetailScreen(
                                     Text(
                                         "Online",
                                         fontSize = 12.sp,
+                                        lineHeight = 16.sp,
                                         color = ZapTeal,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -193,7 +194,20 @@ fun MessageDetailScreen(
                                 .background(ZapBg)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        TypingIndicator()
+                        Surface(
+                            color = ZapCream,
+                            shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = 0.dp,
+                                bottomEnd = 16.dp
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+                            shadowElevation = 1.dp,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            TypingIndicator()
+                        }
                     }
                 }
             }
@@ -375,7 +389,7 @@ fun MessageInput(
                                 shape = RoundedCornerShape(20.dp),
                                 contentPadding = PaddingValues(horizontal = 20.dp),
                                 modifier = Modifier.height(36.dp)
-                                    .shadow(4.dp, RoundedCornerShape(20.dp))
+//                                    .shadow(4.dp, RoundedCornerShape(20.dp))
                             ) {
                                 Text("Send", fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -395,21 +409,22 @@ fun MessageInput(
 
 @Composable
 fun TypingIndicator() {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "TypingIndicator")
 
     Row(
         modifier = Modifier.padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        repeat(3) { index ->
+        repeat(0) { index ->
             val translationY by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = -8f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(400, delayMillis = index * 150),
                     repeatMode = RepeatMode.Reverse
-                )
+                ),
+                label = "DotTranslation"
             )
 
             Box(

@@ -1,11 +1,13 @@
 package com.smach.zapmancer.features.proposal.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +26,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SupportAgent
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,7 +54,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -187,9 +185,9 @@ fun ProposalContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        if (state.currentStep < 4) {
-            ContextInfoGrid()
-        }
+//        if (state.currentStep < 4) {
+//            ContextInfoGrid()
+//        }
     }
 }
 
@@ -197,14 +195,6 @@ fun ProposalContent(
 fun StepIndicator(currentStep: Int) {
     val steps = ProposalStep.entries
     Box(modifier = Modifier.fillMaxWidth().height(60.dp), contentAlignment = Alignment.Center) {
-        // Background Line
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(2.dp)
-                .background(ZapOutlineVariant)
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -267,7 +257,7 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+        border = BorderStroke(1.dp, ZapOutlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -318,7 +308,7 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
             Button(
                 onClick = onNext,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = ZapGold),
+                colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
                 shape = CircleShape
             ) {
                 Text("Confirm & Continue", fontWeight = FontWeight.Bold)
@@ -341,10 +331,10 @@ fun PitchStep(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+        border = BorderStroke(1.dp, ZapOutlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(24.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 "Your Pitch",
                 style = MaterialTheme.typography.headlineSmall,
@@ -363,7 +353,7 @@ fun PitchStep(
             // Pro Tip
             Surface(
                 color = ZapSkyBlue,
-                border = androidx.compose.foundation.BorderStroke(
+                border = BorderStroke(
                     1.dp,
                     ZapSkyBlueText.copy(alpha = 0.3f)
                 ),
@@ -382,7 +372,7 @@ fun PitchStep(
                             fontSize = 12.sp
                         )
                         Text(
-                            "Focus on the client's problem, not just your services. Explain the unique value you bring.",
+                            "Focus on the client's problem, not just your services.",
                             style = MaterialTheme.typography.bodySmall,
                             color = ZapSkyBlueText.copy(alpha = 0.8f)
                         )
@@ -409,8 +399,8 @@ fun PitchStep(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = ZapTeal,
                     unfocusedBorderColor = ZapOutlineVariant,
-                    focusedContainerColor = ZapCream,
-                    unfocusedContainerColor = ZapCream
+                    focusedContainerColor = ZapBg,
+                    unfocusedContainerColor = ZapBg
                 ),
                 shape = RoundedCornerShape(8.dp)
             )
@@ -424,11 +414,11 @@ fun PitchStep(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text("Proposed Budget", fontWeight = FontWeight.Bold, color = ZapOnSurface)
                     OutlinedTextField(
                         value = state.budget,
@@ -439,13 +429,13 @@ fun PitchStep(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = ZapTeal,
                             unfocusedBorderColor = ZapOutlineVariant,
-                            focusedContainerColor = ZapCream,
-                            unfocusedContainerColor = ZapCream
+                            focusedContainerColor = ZapBg,
+                            unfocusedContainerColor = ZapBg
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
                 }
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text("Timeline (Days)", fontWeight = FontWeight.Bold, color = ZapOnSurface)
                     OutlinedTextField(
                         value = state.timelineDays,
@@ -455,8 +445,8 @@ fun PitchStep(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = ZapTeal,
                             unfocusedBorderColor = ZapOutlineVariant,
-                            focusedContainerColor = ZapCream,
-                            unfocusedContainerColor = ZapCream
+                            focusedContainerColor = ZapBg,
+                            unfocusedContainerColor = ZapBg
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
@@ -475,7 +465,7 @@ fun PitchStep(
                 }
                 Button(
                     onClick = onNext,
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapGold),
+                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
                     shape = CircleShape,
                     enabled = state.pitchContent.isNotEmpty() && state.budget.isNotEmpty() && state.timelineDays.isNotEmpty()
                 ) {
@@ -493,10 +483,10 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+        border = BorderStroke(1.dp, ZapOutlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(24.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 "Review Proposal",
                 style = MaterialTheme.typography.headlineSmall,
@@ -512,25 +502,47 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            DetailReviewItem("Freelancer", state.freelancerName)
-            DetailReviewItem("Proposed Budget", "$${state.budget}")
-            DetailReviewItem("Timeline", "${state.timelineDays} Days")
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(ZapTeal.copy(alpha = 0.1f))
+                        .border(1.dp, ZapTeal.copy(alpha = 0.3f), CircleShape)
+                ) {
+                    // Avatar placeholder
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        state.freelancerName,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 18.sp,
+                        color = ZapOnSurface
+                    )
+                    Text(
+                        state.freelancerRole,
+                        fontSize = 14.sp,
+                        color = ZapTeal,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text("Your Pitch", fontWeight = FontWeight.Bold, color = ZapOnSurface)
+            BudgetSection(state)
+
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                color = ZapBg,
+                color = ZapSurface,
                 shape = RoundedCornerShape(8.dp),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    ZapOutlineVariant.copy(alpha = 0.5f)
-                )
             ) {
                 Text(
                     state.pitchContent,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.bodyMedium,
                     color = ZapOnSurfaceVariant
                 )
@@ -548,7 +560,7 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                 }
                 Button(
                     onClick = onNext,
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapGold),
+                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
                     shape = CircleShape
                 ) {
                     Text("Ready to Finalize", fontWeight = FontWeight.Bold)
@@ -599,7 +611,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = ZapSurface),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+            border = BorderStroke(1.dp, ZapOutlineVariant),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
@@ -634,7 +646,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                 Button(
                     onClick = onSubmit,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapGold),
+                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
                     shape = CircleShape
                 ) {
                     Text("Submit Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -649,60 +661,108 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
 }
 
 @Composable
-fun DetailReviewItem(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(label, color = ZapOnSurfaceVariant, fontSize = 14.sp)
-        Text(value, fontWeight = FontWeight.Bold, color = ZapOnSurface, fontSize = 14.sp)
-    }
-}
-
-@Composable
-fun ContextInfoGrid() {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        InfoCard(
-            Icons.Default.Lock,
-            "Secure Payment",
-            "Payments are held in escrow.",
-            Modifier.weight(1f)
-        )
-        InfoCard(
-            Icons.Default.History,
-            "Fast Review",
-            "Most clients review in 24-48h.",
-            Modifier.weight(1f)
-        )
-        InfoCard(
-            Icons.Default.SupportAgent,
-            "Support",
-            "24/7 success team guide.",
-            Modifier.weight(1f)
-        )
-    }
-}
-
-@Composable
-fun InfoCard(icon: ImageVector, title: String, description: String, modifier: Modifier = Modifier) {
+fun BudgetSection(state: ProposalUiState) {
     Card(
-        modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+//        border = BorderStroke(1.dp, ZapOutlineVariant.copy(alpha = 0.5f))
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Icon(icon, contentDescription = null, tint = ZapTeal, modifier = Modifier.size(24.dp))
-            Text(
-                title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-            Text(description, fontSize = 11.sp, color = ZapOnSurfaceVariant, lineHeight = 14.sp)
+
+        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+            Column (Modifier.padding(16.dp).weight(1f),
+            ) {
+                Text(
+                    "BUDGET",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = ZapOnSurface.copy(alpha = 0.8f),
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    state.budget,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = ZapOnSurface
+                )
+                Text(
+                    state.projectType,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ZapOnSurface.copy(alpha = 0.9f)
+                )
+            }
+//            VerticalDivider(
+//                color = ZapOutlineVariant,
+//                thickness = 1.dp
+//            )
+            Column(modifier = Modifier.padding(16.dp).weight(1f)) {
+                Text(
+                    "TIMELINE",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = ZapOnSurface.copy(alpha = 0.8f),
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    state.timelineDays,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = ZapOnSurface
+                )
+                Text(
+                    "Est. Start: ${state.estStart}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ZapOnSurface.copy(alpha = 0.9f)
+                )
+            }
         }
     }
 }
+
+
+//@Composable
+//fun ContextInfoGrid() {
+//    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+//        InfoCard(
+//            Icons.Default.Lock,
+//            "Secure Payment",
+//            "Payments are held in escrow.",
+//            Modifier.weight(1f)
+//        )
+//        InfoCard(
+//            Icons.Default.History,
+//            "Fast Review",
+//            "Most clients review in 24-48h.",
+//            Modifier.weight(1f)
+//        )
+//        InfoCard(
+//            Icons.Default.SupportAgent,
+//            "Support",
+//            "24/7 success team guide.",
+//            Modifier.weight(1f)
+//        )
+//    }
+//}
+
+//@Composable
+//fun InfoCard(icon: ImageVector, title: String, description: String, modifier: Modifier = Modifier) {
+//    Card(
+//        modifier = modifier,
+//        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+//        border = BorderStroke(1.dp, ZapOutlineVariant),
+//        shape = RoundedCornerShape(12.dp)
+//    ) {
+//        Column(modifier = Modifier.padding(12.dp)) {
+//            Icon(icon, contentDescription = null, tint = ZapTeal, modifier = Modifier.size(24.dp))
+//            Text(
+//                title,
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 14.sp,
+//                modifier = Modifier.padding(top = 8.dp)
+//            )
+//            Text(description, fontSize = 11.sp, color = ZapOnSurfaceVariant, lineHeight = 14.sp)
+//        }
+//    }
+//}
 
 @Preview
 @Composable

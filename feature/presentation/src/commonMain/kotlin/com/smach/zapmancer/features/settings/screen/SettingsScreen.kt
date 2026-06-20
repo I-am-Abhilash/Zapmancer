@@ -305,7 +305,7 @@ fun SettingsSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapCream),
+        colors = CardDefaults.cardColors(containerColor = ZapBg),
         border = androidx.compose.foundation.BorderStroke(1.dp, ZapCreamBorder),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))

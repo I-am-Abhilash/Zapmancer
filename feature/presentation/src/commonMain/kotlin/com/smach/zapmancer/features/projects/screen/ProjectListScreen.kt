@@ -22,8 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AllInclusive
 import androidx.compose.material.icons.outlined.Devices
@@ -70,16 +70,18 @@ private val ZapOrange = Color(0xFFF9A825)
 private val ZapGrey = Color(0xFF9E9E9E)
 private val ZapBg = Color(0xFFF4FBFB)
 private val ZapSurface = Color(0xFFFFFFFF)
+private val ZapOutlineVariant = Color(0xFFDEE4E2)
+
 
 @Composable
-fun ProjectPortfolioScreen(
+fun ProjectListScreen(
     onArticleClick: (Int) -> Unit,
     onSearchClick: () -> Unit,
 //    viewModel: HomeViewModel = koinViewModel(),
 ) {
 //    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    ProjectPortfolioContent(
+    ProjectListContent(
         onSearchClick = onSearchClick,
         onProjectClick = onArticleClick
     )
@@ -87,7 +89,7 @@ fun ProjectPortfolioScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectPortfolioContent(
+fun ProjectListContent(
     onSearchClick: () -> Unit,
     onProjectClick: (Int) -> Unit = {}
 ) {
@@ -157,7 +159,7 @@ fun ProjectPortfolioContent(
 fun PortfolioHeader() {
     Column {
         Text(
-            " Project Portfolio",
+            "Get Projects ",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A1C1E)
@@ -234,7 +236,9 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, ZapOutlineVariant)
+
     ) {
         Column(
             modifier = Modifier.drawAccentLine(project.accentColor).padding(16.dp)
@@ -446,7 +450,7 @@ fun ProjectItemCard(project: ProjectData, onClick: () -> Unit = {}) {
                     )
                 }
                 Icon(
-                    Icons.Default.KeyboardArrowRight,
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = ZapTeal,
                     modifier = Modifier.size(24.dp)
@@ -544,18 +548,8 @@ private fun getSampleProjects() = listOf(
 
 @Preview
 @Composable
-private fun ProjectPortfolioScreenPreview() {
+private fun ProjectListScreenPreview() {
     MaterialTheme {
-        ProjectPortfolioContent(onSearchClick = {})
+        ProjectListContent(onSearchClick = {})
     }
 }
-
-//        .drawBehind {
-//                val strokeWidth = 5.dp.toPx()
-//                drawLine(
-//                    color = project.accentColor,
-//                    start = Offset(strokeWidth / 2, 0f),
-//                    end = Offset(strokeWidth / 2, size.height),
-//                    strokeWidth = strokeWidth
-//                )
-//            },

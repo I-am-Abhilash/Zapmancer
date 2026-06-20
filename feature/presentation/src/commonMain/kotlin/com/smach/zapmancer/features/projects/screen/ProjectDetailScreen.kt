@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.projects.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +61,7 @@ private val ZapBg = Color(0xFFF5FAF9)
 private val ZapSurface = Color(0xFFFFFFFF)
 private val ZapOnSurface = Color(0xFF171D1C)
 private val ZapOnSurfaceVariant = Color(0xFF3F4948)
-private val ZapOutlineVariant = Color(0xFFDEE4E2)
+private val ZapOutlineVariant = Color(0xFFE1E3E2)
 private val ZapGold = Color(0xFFA89000)
 private val ZapGoldContainer = Color(0xFFFFDF00)
 private val ZapOnGoldContainer = Color(0xFF241D00)
@@ -124,9 +124,10 @@ fun ProjectDetailContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item { ProjectHeaderSection(state) }
+            item { BudgetSection(state) }
             item { ProjectScopeSection(state) }
             item { RequiredSkillsSection(state) }
-            item { SummaryStatsSection(state) }
+            item { ApplySaveButtonSection() }
             item { ClientSummarySection(state) }
             item { Spacer(modifier = Modifier.height(48.dp)) }
         }
@@ -138,7 +139,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, ZapOutlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -173,6 +174,8 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
             ) {
                 InfoItem(Icons.Default.Schedule, "Posted ${state.postedTime}")
                 InfoItem(Icons.Default.LocationOn, state.location)
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (state.isPaymentVerified) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -215,11 +218,63 @@ fun InfoItem(icon: ImageVector, text: String) {
 }
 
 @Composable
+fun BudgetSection(state: ProjectDetailUiState) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, ZapOutlineVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+            Text(
+                "TOTAL BUDGET",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = ZapOnGoldContainer.copy(alpha = 0.8f),
+                letterSpacing = 1.sp
+            )
+            Text(
+                state.budgetRange,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = ZapOnGoldContainer
+            )
+            Text(
+                state.projectType,
+                style = MaterialTheme.typography.bodySmall,
+                color = ZapOnGoldContainer.copy(alpha = 0.9f)
+            )
+        }
+        HorizontalDivider(color = ZapOnGoldContainer.copy(alpha = 0.1f))
+
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()){
+            Text(
+                "TIMELINE",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = ZapOnGoldContainer.copy(alpha = 0.8f),
+                letterSpacing = 1.sp
+            )
+            Text(
+                state.timeline,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = ZapOnGoldContainer
+            )
+            Text(
+                "Est. Start: ${state.estStart}",
+                style = MaterialTheme.typography.bodySmall,
+                color = ZapOnGoldContainer.copy(alpha = 0.9f)
+            )
+        }
+    }
+}
+
+@Composable
 fun ProjectScopeSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, ZapOutlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -274,9 +329,9 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, ZapOutlineVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
                 "Required Skills",
                 style = MaterialTheme.typography.titleSmall,
@@ -292,7 +347,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                     Surface(
                         color = ZapTeal.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(999.dp),
-                        border = androidx.compose.foundation.BorderStroke(
+                        border = BorderStroke(
                             1.dp,
                             ZapTeal.copy(alpha = 0.2f)
                         )
@@ -312,78 +367,21 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
 }
 
 @Composable
-fun SummaryStatsSection(state: ProjectDetailUiState) {
+fun ApplySaveButtonSection() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(ZapGoldContainer, ZapGold)
-                    )
-                )
-                .padding(20.dp)
+        Button(
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ZapTeal,
+            ),
+            shape = RoundedCornerShape(999.dp),
+            border = BorderStroke(1.dp, ZapOutlineVariant),
+            contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            Column {
-                Column {
-                    Text(
-                        "TOTAL BUDGET",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = ZapOnGoldContainer.copy(alpha = 0.8f),
-                        letterSpacing = 1.sp
-                    )
-                    Text(
-                        state.budgetRange,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = ZapOnGoldContainer
-                    )
-                    Text(
-                        state.projectType,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ZapOnGoldContainer.copy(alpha = 0.9f)
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = ZapOnGoldContainer.copy(alpha = 0.1f))
-                Spacer(modifier = Modifier.height(16.dp))
-                Column {
-                    Text(
-                        "TIMELINE",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = ZapOnGoldContainer.copy(alpha = 0.8f),
-                        letterSpacing = 1.sp
-                    )
-                    Text(
-                        state.timeline,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = ZapOnGoldContainer
-                    )
-                    Text(
-                        "Est. Start: ${state.estStart}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ZapOnGoldContainer.copy(alpha = 0.9f)
-                    )
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = {},
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ZapOnGoldContainer,
-                        contentColor = ZapGoldContainer
-                    ),
-                    shape = RoundedCornerShape(999.dp),
-                    contentPadding = PaddingValues(vertical = 12.dp)
-                ) {
-                    Text("Apply Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                }
-            }
+            Text("Apply Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
+
         Button(
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
@@ -392,7 +390,7 @@ fun SummaryStatsSection(state: ProjectDetailUiState) {
                 contentColor = ZapOnSurface
             ),
             shape = RoundedCornerShape(999.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+            border = BorderStroke(1.dp, ZapOutlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Text("Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -405,7 +403,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, ZapOutlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(

@@ -11,12 +11,17 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.smach.zapmancer.features.alerts.screen.NotificationScreen
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
-import com.smach.zapmancer.features.home.screen.HomeContent
+import com.smach.zapmancer.features.home.screen.HomeScreen
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
+import com.smach.zapmancer.features.messages.screen.MessagesListScreen
+import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
+import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.profile.screen.ProfileContent
 import com.smach.zapmancer.features.profile.state.ProfileUiState
-import com.smach.zapmancer.features.projects.screen.ProjectPortfolioContent
+import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
+import com.smach.zapmancer.features.projects.screen.ProjectListContent
+import com.smach.zapmancer.features.proposal.screen.ProposalScreen
 
 /**
  * MainGraph is the entry point for authenticated app content.
@@ -59,33 +64,29 @@ private fun appEntryProvider(
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
 
     entry<Screen.Home> {
-        HomeContent(
+        HomeScreen(
             state = HomeUiState(),
-            onCreateProjectClick = { navigator.navigate(Screen.ProjectList) }
+            onCreateProjectClick = { navigator.navigate(Screen.Proposal)}
         )
     }
 
     entry<Screen.ProjectList> {
-        ProjectPortfolioContent(
+        ProjectListContent(
             onSearchClick = { /* TODO */ },
-            onProjectClick = { projectId ->
-                // navigator.navigate(Screen.ProjectDetail(projectId))
-            }
+            onProjectClick = { navigator.navigate(Screen.ProjectDetail)}
+//            onProjectClick = { projectId ->
+//                // navigator.navigate(Screen.ProjectDetail(projectId))
+//            }
         )
     }
 
     entry<Screen.ProjectDetail> {
-        ProfileContent(
-            state = ProfileUiState(),
-            onEvent = { }
-        )
+        ProjectDetailScreen()
     }
 
     entry<Screen.Proposal> {
-        ProfileContent(
-            state = ProfileUiState(),
-            onEvent = { }
-        )
+        ProposalScreen()
+
     }
     entry<Screen.Profile> {
         ProfileContent(
@@ -101,10 +102,17 @@ private fun appEntryProvider(
     }
 
     entry<Screen.MessagesList> {
-        MessageDetailScreen()
+        MessagesListScreen(
+            state = MessagesListUiState(),
+            onConversationClick = { navigator.navigate(Screen.MessagesDetail)},
+            onBackClick = {navigator.goBack()}
+        )
     }
     entry<Screen.MessagesDetail> {
-        MessageDetailScreen()
+        MessageDetailScreen(
+            state = MessagesDetailUiState(),
+            onBackClick = {navigator.goBack()},
+        )
     }
 
 
@@ -115,9 +123,4 @@ private fun appEntryProvider(
             onFilterClick = {}
         )
     }
-}
-
-@Composable
-fun ActivityScreen() {
-    // TODO: Implement Activity Screen
 }

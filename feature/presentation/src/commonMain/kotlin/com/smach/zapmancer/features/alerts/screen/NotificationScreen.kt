@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.ChatBubble
-import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Warning
@@ -118,49 +116,7 @@ fun NotificationScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "Activity Feed",
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = ZapOnSurface
-                        )
-                        Text(
-                            "Review updates and automated task results across your workspace.",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = ZapOnSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                    Button(
-                        onClick = onFilterClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = ZapOnSurface
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, ZapOutline),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                        modifier = Modifier.shadow(1.dp, RoundedCornerShape(8.dp))
-                    ) {
-                        Icon(
-                            Icons.Outlined.FilterList,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text("Filter", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    }
-                }
-            }
-
-            val grouped = state.notifications.groupBy { it.section }
+           val grouped = state.notifications.groupBy { it.section }
 
             grouped.forEach { (section, items) ->
                 item {
@@ -177,7 +133,6 @@ fun NotificationScreen(
 @Composable
 fun RibbonHeader(text: String) {
     Box(modifier = Modifier.padding(start = 4.dp)) {
-        // The main ribbon body
         Surface(
             color = ZapTeal,
             modifier = Modifier
@@ -358,8 +313,7 @@ fun NotificationCard(item: NotificationItem) {
                             onValueChange = {},
                             placeholder = { Text("Quick reply...", fontSize = 14.sp) },
                             modifier = Modifier
-                                .weight(1f)
-                                .height(40.dp),
+                                .weight(1f),
                             shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = ZapTeal,
@@ -400,7 +354,7 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
 
 @Preview
 @Composable
-fun NotificationPreview() {
+fun NotificationPreview(){
     val sampleState = NotificationUiState(
         notifications = listOf(
             NotificationItem(
@@ -410,10 +364,10 @@ fun NotificationPreview() {
                 description = "Automated deployment of the v2.4.1-alpha build was successful on the production cluster.",
                 timestamp = "2m ago",
                 section = "Today",
-                actions = listOf(
-                    NotificationAction("View Logs", isPrimary = true),
-                    NotificationAction("Dismiss")
-                )
+//                actions = listOf(
+//                    NotificationAction("View Logs", isPrimary = true),
+//                    NotificationAction("Dismiss")
+//                )
             ),
             NotificationItem(
                 id = "2",
@@ -423,7 +377,7 @@ fun NotificationPreview() {
                 timestamp = "1h ago",
                 section = "Today",
                 isItalic = true,
-                quickReply = true
+//                quickReply = true
             ),
             NotificationItem(
                 id = "3",
