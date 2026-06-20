@@ -54,17 +54,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.features.common.theme.ZapGold
+import com.smach.zapmancer.features.common.theme.ZapOnGoldContainer
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
-
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapBg = Color(0xFFF5FAF9)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF171D1C)
-private val ZapOnSurfaceVariant = Color(0xFF3F4948)
-private val ZapOutlineVariant = Color(0xFFE1E3E2)
-private val ZapGold = Color(0xFFA89000)
-private val ZapGoldContainer = Color(0xFFFFDF00)
-private val ZapOnGoldContainer = Color(0xFF241D00)
 
 @Composable
 fun ProjectDetailScreen(
@@ -88,7 +80,7 @@ fun ProjectDetailContent(
                         "Zapmancer",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
@@ -105,16 +97,16 @@ fun ProjectDetailContent(
                             .padding(end = 12.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(ZapOutlineVariant)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ZapSurface
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
-                modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
+                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -137,16 +129,16 @@ fun ProjectDetailContent(
 @Composable
 fun ProjectHeaderSection(state: ProjectDetailUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.Code,
                     contentDescription = null,
-                    tint = ZapTeal,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -154,7 +146,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                     state.category.uppercase(),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
-                    color = ZapTeal,
+                    color = MaterialTheme.colorScheme.primary,
                     letterSpacing = 1.sp
                 )
             }
@@ -163,7 +155,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                 state.title,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = ZapOnSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 32.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -182,14 +174,14 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                         Icon(
                             Icons.Default.Verified,
                             contentDescription = null,
-                            tint = ZapTeal,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             "Payment Verified",
                             style = MaterialTheme.typography.bodySmall,
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -205,14 +197,14 @@ fun InfoItem(icon: ImageVector, text: String) {
         Icon(
             icon,
             contentDescription = null,
-            tint = ZapOnSurfaceVariant,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(14.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = ZapOnSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -220,9 +212,9 @@ fun InfoItem(icon: ImageVector, text: String) {
 @Composable
 fun BudgetSection(state: ProjectDetailUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
@@ -272,32 +264,32 @@ fun BudgetSection(state: ProjectDetailUiState) {
 @Composable
 fun ProjectScopeSection(state: ProjectDetailUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 "Project Scope",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 state.projectScope,
                 style = MaterialTheme.typography.bodyLarge,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 24.sp
             )
             Spacer(modifier = Modifier.height(24.dp))
-            HorizontalDivider(color = ZapOutlineVariant)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 "Key Deliverables",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(12.dp))
             state.deliverables.forEach { deliverable ->
@@ -308,14 +300,14 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
                     Icon(
                         Icons.Default.CheckCircle,
                         contentDescription = null,
-                        tint = ZapTeal,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         deliverable,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = ZapOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -327,16 +319,16 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
 @Composable
 fun RequiredSkillsSection(state: ProjectDetailUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
                 "Required Skills",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(12.dp))
             FlowRow(
@@ -345,11 +337,11 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
             ) {
                 state.skills.forEach { skill ->
                     Surface(
-                        color = ZapTeal.copy(alpha = 0.1f),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(999.dp),
                         border = BorderStroke(
                             1.dp,
-                            ZapTeal.copy(alpha = 0.2f)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                         )
                     ) {
                         Text(
@@ -357,7 +349,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = ZapTeal
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -373,10 +365,10 @@ fun ApplySaveButtonSection() {
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ZapTeal,
+                containerColor = MaterialTheme.colorScheme.primary,
             ),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, ZapOutlineVariant),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Text("Apply Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -386,11 +378,11 @@ fun ApplySaveButtonSection() {
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ZapSurface,
-                contentColor = ZapOnSurface
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             ),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, ZapOutlineVariant),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Text("Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -401,9 +393,9 @@ fun ApplySaveButtonSection() {
 @Composable
 fun ClientSummarySection(state: ProjectDetailUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -415,20 +407,20 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                     "Client Summary",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 if (state.isClientActive) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             modifier = Modifier.size(8.dp),
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             shape = CircleShape
                         ) {}
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             "Active Now",
                             style = MaterialTheme.typography.labelSmall,
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -440,8 +432,8 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(ZapBg)
-                        .border(1.dp, ZapOutlineVariant, RoundedCornerShape(8.dp)),
+                        .background(MaterialTheme.colorScheme.background)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     // Placeholder for logo
@@ -452,12 +444,12 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         state.clientName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         "${state.clientIndustry} · ${state.clientLocation}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = ZapOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -465,7 +457,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, ZapOutlineVariant, RoundedCornerShape(8.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -474,29 +466,29 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         "PROJECTS",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         state.clientProjectsCount.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                VerticalDivider(color = ZapOutlineVariant)
+                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "RATING",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             state.clientRating.toString(),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
@@ -513,7 +505,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                 "VERIFICATION",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             VerificationItem("Payment Method Verified", state.isPaymentVerified)
@@ -532,14 +524,14 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = if (isVerified) ZapTeal else ZapOnSurfaceVariant.copy(alpha = 0.4f),
+            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = ZapOnSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

@@ -58,13 +58,6 @@ import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
 
 // Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapGold = Color(0xFFFFD23F)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF1A1C1C)
-private val ZapOnSurfaceVariant = Color(0xFF404948)
-private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun LoginScreen(
@@ -108,7 +101,7 @@ private fun LoginContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZapBg)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -126,8 +119,8 @@ private fun LoginContent(
 
             // Login Form Card
             Card(
-                colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
@@ -141,7 +134,7 @@ private fun LoginContent(
                             "Email Address",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         ZapTextField(
                             value = state.email,
@@ -170,13 +163,13 @@ private fun LoginContent(
                                 "Password",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = ZapOnSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 "Forgot password?",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = ZapTeal,
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.clickable { onNavigateToForgot() }
                             )
                         }
@@ -208,8 +201,8 @@ private fun LoginContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapTeal,
-                            contentColor = ZapSurface
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.surface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading
@@ -217,7 +210,7 @@ private fun LoginContent(
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = ZapOnSurface,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -250,12 +243,12 @@ private fun LoginContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text("Don't have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
+                Text("Don't have an account?", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "Join",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ZapTeal,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onNavigateToSignup() }
                 )
             }
@@ -266,11 +259,11 @@ private fun LoginContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.alpha(0.6f)
             ) {
-                Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(ZapTeal))
+                Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
                 Text(
                     "All systems operational",
                     fontSize = 12.sp,
-                    color = ZapOnSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold
                 )
             }

@@ -50,13 +50,6 @@ import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
 
 // Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapGold = Color(0xFFFFD23F)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF1A1C1C)
-private val ZapOnSurfaceVariant = Color(0xFF404948)
-private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun ForgotPasswordScreen(
@@ -85,7 +78,7 @@ private fun ForgotPasswordContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZapBg)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -103,8 +96,8 @@ private fun ForgotPasswordContent(
 
             // Form Card
             Card(
-                colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
@@ -118,7 +111,7 @@ private fun ForgotPasswordContent(
                             "Email Address",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         ZapTextField(
                             value = state.email,
@@ -139,13 +132,13 @@ private fun ForgotPasswordContent(
 
                     if (state.isSuccess) {
                         Surface(
-                            color = ZapTeal.copy(alpha = 0.1f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 "Recovery email sent! Check your inbox.",
-                                color = ZapTeal,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(12.dp),
@@ -161,8 +154,8 @@ private fun ForgotPasswordContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapTeal,
-                            contentColor = ZapSurface
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.surface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading && !state.isSuccess
@@ -170,7 +163,7 @@ private fun ForgotPasswordContent(
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = ZapOnSurface,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -199,7 +192,7 @@ private fun ForgotPasswordContent(
                 "Back to Login",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = ZapTeal,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onBackToLogin() }
             )
         }

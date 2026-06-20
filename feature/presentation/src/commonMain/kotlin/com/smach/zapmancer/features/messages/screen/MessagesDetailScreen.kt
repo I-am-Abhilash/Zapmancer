@@ -65,15 +65,6 @@ import com.smach.zapmancer.features.messages.state.MessageItem
 import com.smach.zapmancer.features.messages.state.MessageStatus
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
 
-// Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapCoral = Color(0xFFEF6C4A)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF131B2E)
-private val ZapOnSurfaceVariant = Color(0xFF434655)
-private val ZapOutlineVariant = Color(0xFFE0E8E7)
-private val ZapCream = Color(0xFFFDFBF7)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +85,7 @@ fun MessageDetailScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(ZapBg)
+                                .background(MaterialTheme.colorScheme.background)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column( verticalArrangement = Arrangement.spacedBy(0.dp)) {
@@ -103,7 +94,7 @@ fun MessageDetailScreen(
                                 fontSize = 16.sp,
                                 lineHeight = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = ZapOnSurface
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             if (state.isOnline) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -111,14 +102,14 @@ fun MessageDetailScreen(
                                         modifier = Modifier
                                             .size(8.dp)
                                             .clip(CircleShape)
-                                            .background(ZapTeal)
+                                            .background(MaterialTheme.colorScheme.primary)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         "Online",
                                         fontSize = 12.sp,
                                         lineHeight = 16.sp,
-                                        color = ZapTeal,
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
@@ -131,7 +122,7 @@ fun MessageDetailScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ZapOnSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -140,26 +131,26 @@ fun MessageDetailScreen(
                         Icon(
                             Icons.Default.Videocam,
                             contentDescription = null,
-                            tint = ZapOnSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     IconButton(onClick = {}) {
                         Icon(
                             Icons.Default.Call,
                             contentDescription = null,
-                            tint = ZapOnSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     IconButton(onClick = {}) {
                         Icon(
                             Icons.Default.MoreVert,
                             contentDescription = null,
-                            tint = ZapOnSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapSurface),
-                modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
         bottomBar = {
@@ -169,7 +160,7 @@ fun MessageDetailScreen(
                 onSend = { onSendMessage(state.typingText) }
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -191,18 +182,18 @@ fun MessageDetailScreen(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
-                                .background(ZapBg)
+                                .background(MaterialTheme.colorScheme.background)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Surface(
-                            color = ZapCream,
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = RoundedCornerShape(
                                 topStart = 16.dp,
                                 topEnd = 16.dp,
                                 bottomStart = 0.dp,
                                 bottomEnd = 16.dp
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                             shadowElevation = 1.dp,
                             modifier = Modifier.padding(bottom = 8.dp)
                         ) {
@@ -224,15 +215,15 @@ fun MessageDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Surface(
-                        color = ZapSurface,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutlineVariant),
+                        color = MaterialTheme.colorScheme.surface,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Text(
                             "Today, August 25",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                             fontSize = 12.sp,
-                            color = ZapOnSurfaceVariant,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -256,7 +247,7 @@ fun MessageBubble(message: MessageItem) {
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .background(ZapBg)
+                    .background(MaterialTheme.colorScheme.background)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -266,7 +257,7 @@ fun MessageBubble(message: MessageItem) {
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
             Surface(
-                color = if (message.isFromMe) ZapTeal else ZapCream,
+                color = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(
                     topStart = 16.dp,
                     topEnd = 16.dp,
@@ -275,7 +266,7 @@ fun MessageBubble(message: MessageItem) {
                 ),
                 border = if (message.isFromMe) null else androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    ZapOutlineVariant
+                    MaterialTheme.colorScheme.outlineVariant
                 ),
                 shadowElevation = 1.dp
             ) {
@@ -283,7 +274,7 @@ fun MessageBubble(message: MessageItem) {
                     text = message.text,
                     modifier = Modifier.padding(12.dp),
                     fontSize = 14.sp,
-                    color = if (message.isFromMe) Color.White else ZapOnSurface,
+                    color = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface,
                     lineHeight = 20.sp
                 )
             }
@@ -295,14 +286,14 @@ fun MessageBubble(message: MessageItem) {
                 Text(
                     text = message.timestamp,
                     fontSize = 11.sp,
-                    color = ZapOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.DoneAll,
                         contentDescription = null,
-                        tint = ZapTeal,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(14.dp)
                     )
                 }
@@ -318,19 +309,19 @@ fun MessageInput(
     onSend: () -> Unit
 ) {
     Surface(
-        color = ZapSurface,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .fillMaxWidth()
             .imePadding()
     ) {
         Column {
-            HorizontalDivider(color = ZapOutlineVariant, thickness = 1.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
             Column(modifier = Modifier.padding(16.dp)) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(ZapBg, RoundedCornerShape(12.dp))
-                        .border(1.dp, ZapOutlineVariant, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
                         .padding(4.dp)
                 ) {
                     Column {
@@ -340,7 +331,7 @@ fun MessageInput(
                             placeholder = {
                                 Text(
                                     "Write a message...",
-                                    color = ZapOnSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -364,28 +355,28 @@ fun MessageInput(
                                     Icon(
                                         Icons.Outlined.AddCircle,
                                         null,
-                                        tint = ZapOnSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.SentimentSatisfied,
                                         null,
-                                        tint = ZapOnSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.AttachFile,
                                         null,
-                                        tint = ZapOnSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
                             Button(
                                 onClick = onSend,
-                                colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(20.dp),
                                 contentPadding = PaddingValues(horizontal = 20.dp),
                                 modifier = Modifier.height(36.dp)
@@ -432,7 +423,7 @@ fun TypingIndicator() {
                     .size(6.dp)
                     .offset(y = translationY.dp)
                     .clip(CircleShape)
-                    .background(ZapCoral)
+                    .background(MaterialTheme.colorScheme.secondary)
             )
         }
     }

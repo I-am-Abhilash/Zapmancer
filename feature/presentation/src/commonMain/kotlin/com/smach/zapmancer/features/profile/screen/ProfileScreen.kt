@@ -73,15 +73,6 @@ import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 import com.smach.zapmancer.features.projects.screen.VerticalDivider
 
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapTealDark = Color(0xFF1D736F)
-private val ZapBg = Color(0xFFF5FAF9)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF131B2E)
-private val ZapOnSurfaceVariant = Color(0xFF434655)
-private val ZapOutlineVariant = Color(0xFFC3C6D7)
-private val ZapGold = Color(0xFFFFD700)
-
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
@@ -109,7 +100,7 @@ fun ProfileContent(
                 title = {
                     Text(
                         "Zapmancer",
-                        color = ZapTeal,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     )
@@ -121,15 +112,15 @@ fun ProfileContent(
                 },
                 actions = {
                     IconButton(onClick = { /* Handle Search */ }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = ZapTeal)
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ZapSurface
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -144,7 +135,7 @@ fun ProfileContent(
                     Text(
                         text = state.about,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = ZapOnSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
                     )
                 }
@@ -252,11 +243,11 @@ fun IdentityHeader(
             .padding(16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = ZapSurface
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         border = BorderStroke(
             1.dp,
-            ZapOutlineVariant.copy(alpha = 0.3f)
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
         )
     ) {
         Column(
@@ -274,10 +265,10 @@ fun IdentityHeader(
                     .clip(CircleShape)
                     .border(
                         2.dp,
-                        ZapOutlineVariant.copy(alpha = 0.3f),
+                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                         CircleShape
                     )
-                    .background(ZapSurface)
+                    .background(MaterialTheme.colorScheme.surface)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -286,7 +277,7 @@ fun IdentityHeader(
                 text = state.name,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
 
@@ -295,7 +286,7 @@ fun IdentityHeader(
             Text(
                 text = state.role,
                 style = MaterialTheme.typography.bodyMedium,
-                color = ZapTeal,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
@@ -335,7 +326,7 @@ fun IdentityHeader(
             Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalDivider(
-                color = ZapOutlineVariant.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             )
 
             Row(
@@ -353,7 +344,7 @@ fun IdentityHeader(
                 )
 
                 VerticalDivider(
-                    color = ZapOutlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                 )
 
                 StatItem(
@@ -362,7 +353,7 @@ fun IdentityHeader(
                 )
 
                 VerticalDivider(
-                    color = ZapOutlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                 )
 
                 StatItem(
@@ -372,7 +363,7 @@ fun IdentityHeader(
             }
 
             HorizontalDivider(
-                color = ZapOutlineVariant.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -385,8 +376,8 @@ fun IdentityHeader(
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = ZapTeal,
-                    contentColor = ZapSurface
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.surface
                 ),
                 shape = RoundedCornerShape(999.dp)
             ) {
@@ -406,8 +397,8 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(1.dp, ZapOutlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -415,7 +406,7 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
             content()
@@ -426,16 +417,16 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
 @Composable
 fun SkillChip(skill: String) {
     Surface(
-        color = ZapTeal.copy(alpha = 0.1f),
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
         shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(1.dp, ZapTeal.copy(alpha = 0.2f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
     ) {
         Text(
             text = skill.uppercase(),
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = ZapTeal,
+            color = MaterialTheme.colorScheme.primary,
             letterSpacing = 0.5.sp
         )
     }
@@ -448,13 +439,13 @@ fun StatItem(value: String, label: String) {
             text = value,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = ZapOnSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = label.uppercase(),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            color = ZapOnSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             letterSpacing = 1.sp
         )
     }
@@ -464,8 +455,8 @@ fun StatItem(value: String, label: String) {
 fun InfoChip(
     icon: ImageVector,
     text: String,
-    bgColor: Color = ZapBg,
-    textColor: Color = ZapOnSurfaceVariant
+    bgColor: Color = MaterialTheme.colorScheme.background,
+    textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     Surface(
         color = bgColor,
@@ -506,14 +497,14 @@ fun SectionTitleRow(title: String) {
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = ZapOnSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
 //        if (actionText.isNotEmpty()) {
 //            Text(
 //                text = actionText,
 //                style = MaterialTheme.typography.labelLarge,
 //                fontWeight = FontWeight.Bold,
-//                color = ZapTeal,
+//                color = MaterialTheme.colorScheme.primary,
 //                modifier = Modifier.clickable { }
 //            )
 //        }
@@ -528,8 +519,8 @@ fun PortfolioCard(item: PortfolioItem) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
 //            .shadow(4.dp, RoundedCornerShape(16.dp))
             .clickable { }
-            .border(1.dp, ZapOutlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column {
@@ -546,12 +537,12 @@ fun PortfolioCard(item: PortfolioItem) {
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = item.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = ZapOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -564,11 +555,12 @@ fun ReviewCard(review: ProfileReview) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(1.dp, ZapOutlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
+            val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -581,7 +573,7 @@ fun ReviewCard(review: ProfileReview) {
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .border(2.dp, ZapTeal.copy(alpha = 0.2f), CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), CircleShape)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
@@ -589,12 +581,12 @@ fun ReviewCard(review: ProfileReview) {
                             text = review.authorName,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = review.authorRole,
                             style = MaterialTheme.typography.labelSmall,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -604,7 +596,7 @@ fun ReviewCard(review: ProfileReview) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = ZapTeal,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -616,12 +608,12 @@ fun ReviewCard(review: ProfileReview) {
             Text(
                 text = "\"${review.content}\"",
                 style = MaterialTheme.typography.bodyMedium,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier
                     .drawBehind {
                         drawLine(
-                            color = ZapTeal.copy(alpha = 0.2f),
+                            color = drawLineColor,
                             start = Offset(0f, 0f),
                             end = Offset(0f, size.height),
                             strokeWidth = 4.dp.toPx()

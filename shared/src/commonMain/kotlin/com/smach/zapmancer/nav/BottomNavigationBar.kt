@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -27,7 +26,7 @@ fun BottomNavigationBar(
     NavigationBar(
         modifier = Modifier.height(80.dp),
         tonalElevation = 0.dp,
-        containerColor = ZapSurface,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         val currentRoute = navigationState.topLevelRoute
 
@@ -51,28 +50,16 @@ fun BottomNavigationBar(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = ZapTeal,
-                    selectedTextColor = ZapTeal,
-                    unselectedIconColor = Color(0xFF5F6368),
-                    unselectedTextColor = Color(0xFF5F6368),
-                    indicatorColor = ZapTeal.copy(alpha = 0.1f)
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                 )
             )
-
-//                colors = NavigationBarItemDefaults.colors(
-//                    selectedIconColor = MaterialTheme.colorScheme.primary,
-//                    selectedTextColor = MaterialTheme.colorScheme.primary,
-//                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-//                )
-
         }
     }
 }
-
-private val ZapTeal = Color(0xFF00897B)
-private val ZapSurface = Color(0xFFFFFFFF)
 
 /**
  * toEntries is an extension function that converts the navigation state's backstacks into

@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.settings.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,16 +57,6 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 
-// Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapCoral = Color(0xFFEF6C4A)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapCream = Color(0xFFFFF8E7)
-private val ZapCreamBorder = Color(0xFFE6DCC3)
-private val ZapOnSurface = Color(0xFF1A1C1E)
-private val ZapOnSurfaceVariant = Color(0xFF44474E)
-private val ZapOutlineVariant = Color(0xFFC4C6D0)
-
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
@@ -91,7 +82,7 @@ fun SettingsContent(
                 title = {
                     Text(
                         "Zapmancer",
-                        color = ZapTeal,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     )
@@ -101,7 +92,7 @@ fun SettingsContent(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ZapTeal
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -110,7 +101,7 @@ fun SettingsContent(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = ZapOnSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Box(
@@ -118,7 +109,7 @@ fun SettingsContent(
                             .padding(end = 12.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .border(1.dp, ZapOutlineVariant, CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                     ) {
                         // Avatar placeholder
                     }
@@ -126,10 +117,10 @@ fun SettingsContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White.copy(alpha = 0.8f)
                 ),
-                modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
+                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -145,12 +136,12 @@ fun SettingsContent(
                         "Settings",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         "Manage your account preferences and security protocols.",
                         fontSize = 14.sp,
-                        color = ZapOnSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -167,7 +158,7 @@ fun SettingsContent(
                         subtitle = uiState.email,
                         actionIcon = Icons.Outlined.Edit
                     )
-                    HorizontalDivider(color = ZapOutlineVariant.copy(alpha = 0.3f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Organization",
                         subtitle = uiState.organization,
@@ -188,7 +179,7 @@ fun SettingsContent(
                         checked = uiState.isTwoFactorEnabled,
                         onCheckedChange = {}
                     )
-                    HorizontalDivider(color = ZapOutlineVariant.copy(alpha = 0.3f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Change Password",
                         subtitle = "Last changed 4 months ago",
@@ -197,9 +188,9 @@ fun SettingsContent(
                                 onClick = {},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Transparent,
-                                    contentColor = ZapTeal
+                                    contentColor = MaterialTheme.colorScheme.primary
                                 ),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, ZapTeal),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(4.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                                 modifier = Modifier.height(32.dp)
@@ -223,7 +214,7 @@ fun SettingsContent(
                         checked = uiState.isDarkModeEnabled,
                         onCheckedChange = {}
                     )
-                    HorizontalDivider(color = ZapOutlineVariant.copy(alpha = 0.3f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Email Notifications",
                         description = "Receive weekly performance reports and alerts.",
@@ -236,11 +227,11 @@ fun SettingsContent(
             // Dangerous Area
             item {
                 Surface(
-                    color = ZapCoral.copy(alpha = 0.05f),
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
                     shape = RoundedCornerShape(8.dp),
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        ZapCoral.copy(alpha = 0.2f)
+                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -254,17 +245,17 @@ fun SettingsContent(
                                 "Logout",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = ZapCoral
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Text(
                                 "Session termination will revoke all active access tokens.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = ZapOnSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Button(
                             onClick = {},
-                            colors = ButtonDefaults.buttonColors(containerColor = ZapCoral),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.shadow(4.dp, RoundedCornerShape(12.dp))
                         ) {
@@ -283,13 +274,13 @@ fun SettingsContent(
                     Text(
                         uiState.version,
                         fontSize = 12.sp,
-                        color = ZapOnSurfaceVariant.copy(alpha = 0.6f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         fontWeight = FontWeight.Normal
                     )
                     Text(
                         "© 2024 Zapmancer. All systems operational.",
                         fontSize = 12.sp,
-                        color = ZapOnSurfaceVariant.copy(alpha = 0.6f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -305,8 +296,8 @@ fun SettingsSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapBg),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapCreamBorder),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
     ) {
@@ -321,17 +312,17 @@ fun SettingsSection(
                 Icon(
                     icon,
                     contentDescription = null,
-                    tint = ZapTeal,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
                     title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            HorizontalDivider(color = ZapCreamBorder.copy(alpha = 0.3f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
             Column(content = content)
         }
     }
@@ -357,12 +348,12 @@ fun SettingsItem(
                 title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 subtitle,
                 fontSize = 13.sp,
-                color = ZapOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         if (actionContent != null) {
@@ -371,7 +362,7 @@ fun SettingsItem(
             Icon(
                 actionIcon,
                 contentDescription = null,
-                tint = ZapOnSurfaceVariant.copy(alpha = 0.6f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -397,12 +388,12 @@ fun SettingsToggleItem(
                 title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 description,
                 fontSize = 13.sp,
-                color = ZapOnSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Switch(
@@ -410,9 +401,9 @@ fun SettingsToggleItem(
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = ZapTeal,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = ZapOutlineVariant
+                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant
             )
         )
     }

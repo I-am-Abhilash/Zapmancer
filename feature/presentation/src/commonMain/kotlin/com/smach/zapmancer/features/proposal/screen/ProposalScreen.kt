@@ -60,20 +60,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.features.common.theme.ZapGold
+import com.smach.zapmancer.features.common.theme.ZapSkyBlue
+import com.smach.zapmancer.features.common.theme.ZapSkyBlueText
 import com.smach.zapmancer.features.proposal.state.ProposalStep
 import com.smach.zapmancer.features.proposal.state.ProposalUiState
-
-// Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapGold = Color(0xFFD4AF37)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF191C1B)
-private val ZapOnSurfaceVariant = Color(0xFF3F4948)
-private val ZapOutline = Color(0xFF6F7978)
-private val ZapOutlineVariant = Color(0xFFBEC9C7)
-private val ZapSkyBlue = Color(0xFFEBF5FB)
-private val ZapSkyBlueText = Color(0xFF2E86C1)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +83,7 @@ fun ProposalScreen(
                     ) {
                         Text(
                             "Zapmancer",
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 24.sp
                         )
@@ -103,7 +94,7 @@ fun ProposalScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ZapTeal
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -112,7 +103,7 @@ fun ProposalScreen(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = ZapOnSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Box(
@@ -120,8 +111,8 @@ fun ProposalScreen(
                             .padding(end = 12.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(ZapTeal.copy(alpha = 0.1f))
-                            .border(1.dp, ZapOutlineVariant, CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                     ) {
                         // Avatar placeholder
                     }
@@ -129,7 +120,7 @@ fun ProposalScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White.copy(alpha = 0.8f))
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         ProposalContent(
             state = state,
@@ -210,14 +201,14 @@ fun StepIndicator(currentStep: Int) {
                             .clip(CircleShape)
                             .background(
                                 when {
-                                    isCompleted -> ZapTeal
+                                    isCompleted -> MaterialTheme.colorScheme.primary
                                     isCurrent -> ZapGold
                                     else -> Color.White
                                 }
                             )
                             .border(
                                 2.dp,
-                                if (isCompleted || isCurrent) Color.Transparent else ZapOutlineVariant,
+                                if (isCompleted || isCurrent) Color.Transparent else MaterialTheme.colorScheme.outlineVariant,
                                 CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -232,7 +223,7 @@ fun StepIndicator(currentStep: Int) {
                         } else {
                             Text(
                                 text = step.step.toString(),
-                                color = if (isCurrent) Color.White else ZapOnSurfaceVariant,
+                                color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -240,7 +231,7 @@ fun StepIndicator(currentStep: Int) {
                     }
                     Text(
                         text = step.title,
-                        color = if (isCurrent) ZapGold else if (isCompleted) ZapTeal else ZapOnSurfaceVariant,
+                        color = if (isCurrent) ZapGold else if (isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
                         modifier = Modifier.padding(top = 4.dp)
@@ -255,8 +246,8 @@ fun StepIndicator(currentStep: Int) {
 fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = BorderStroke(1.dp, ZapOutlineVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -264,12 +255,12 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
                 "Verify Your Details",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 "These details are automatically applied from your profile to ensure credibility.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
@@ -280,8 +271,8 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(ZapTeal.copy(alpha = 0.1f))
-                        .border(1.dp, ZapTeal.copy(alpha = 0.3f), CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape)
                 ) {
                     // Avatar placeholder
                 }
@@ -291,12 +282,12 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
                         state.freelancerName,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 18.sp,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         state.freelancerRole,
                         fontSize = 14.sp,
-                        color = ZapTeal,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -307,7 +298,7 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
             Button(
                 onClick = onNext,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = CircleShape
             ) {
                 Text("Confirm & Continue", fontWeight = FontWeight.Bold)
@@ -329,8 +320,8 @@ fun PitchStep(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = BorderStroke(1.dp, ZapOutlineVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -338,12 +329,12 @@ fun PitchStep(
                 "Your Pitch",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 "Clearly articulate how your skills align with the project requirements.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
@@ -381,7 +372,7 @@ fun PitchStep(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Pitch Content", fontWeight = FontWeight.Bold, color = ZapOnSurface)
+            Text("Pitch Content", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             OutlinedTextField(
                 value = state.pitchContent,
                 onValueChange = onPitchChange,
@@ -392,14 +383,14 @@ fun PitchStep(
                 placeholder = {
                     Text(
                         "Write your compelling proposal here...",
-                        color = ZapOutline
+                        color = MaterialTheme.colorScheme.outline
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = ZapTeal,
-                    unfocusedBorderColor = ZapOutlineVariant,
-                    focusedContainerColor = ZapBg,
-                    unfocusedContainerColor = ZapBg
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background
                 ),
                 shape = RoundedCornerShape(8.dp)
             )
@@ -408,7 +399,7 @@ fun PitchStep(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End,
                 fontSize = 12.sp,
-                color = if (state.pitchContent.length > 2000) Color.Red else ZapOnSurfaceVariant
+                color = if (state.pitchContent.length > 2000) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -418,7 +409,7 @@ fun PitchStep(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Proposed Budget", fontWeight = FontWeight.Bold, color = ZapOnSurface)
+                    Text("Proposed Budget", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     OutlinedTextField(
                         value = state.budget,
                         onValueChange = onBudgetChange,
@@ -426,26 +417,26 @@ fun PitchStep(
                         prefix = { Text("$") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = ZapTeal,
-                            unfocusedBorderColor = ZapOutlineVariant,
-                            focusedContainerColor = ZapBg,
-                            unfocusedContainerColor = ZapBg
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Timeline (Days)", fontWeight = FontWeight.Bold, color = ZapOnSurface)
+                    Text("Timeline (Days)", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     OutlinedTextField(
                         value = state.timelineDays,
                         onValueChange = onTimelineChange,
                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = ZapTeal,
-                            unfocusedBorderColor = ZapOutlineVariant,
-                            focusedContainerColor = ZapBg,
-                            unfocusedContainerColor = ZapBg
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
@@ -460,11 +451,11 @@ fun PitchStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = onBack) {
-                    Text("Back", color = ZapOnSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                 }
                 Button(
                     onClick = onNext,
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = CircleShape,
                     enabled = state.pitchContent.isNotEmpty() && state.budget.isNotEmpty() && state.timelineDays.isNotEmpty()
                 ) {
@@ -481,8 +472,8 @@ fun PitchStep(
 fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        border = BorderStroke(1.dp, ZapOutlineVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -490,12 +481,12 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                 "Review Proposal",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 "Please double-check your content before finalizing.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
@@ -509,8 +500,8 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(ZapTeal.copy(alpha = 0.1f))
-                        .border(1.dp, ZapTeal.copy(alpha = 0.3f), CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape)
                 ) {
                     // Avatar placeholder
                 }
@@ -520,12 +511,12 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                         state.freelancerName,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 18.sp,
-                        color = ZapOnSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         state.freelancerRole,
                         fontSize = 14.sp,
-                        color = ZapTeal,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -536,14 +527,14 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
 
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                color = ZapSurface,
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp),
             ) {
                 Text(
                     state.pitchContent,
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = ZapOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -555,11 +546,11 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = onBack) {
-                    Text("Back", color = ZapOnSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                 }
                 Button(
                     onClick = onNext,
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = CircleShape
                 ) {
                     Text("Ready to Finalize", fontWeight = FontWeight.Bold)
@@ -581,7 +572,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
             Icon(
                 Icons.Default.CheckCircle,
                 contentDescription = null,
-                tint = ZapTeal,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(80.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -589,18 +580,18 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                 "Proposal Submitted!",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 "Good luck! The client will review your pitch shortly.",
                 textAlign = TextAlign.Center,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 32.dp).padding(top = 8.dp)
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 onClick = { /* Navigate Home */ },
-                colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = CircleShape
             ) {
                 Text("Back to Dashboard", fontWeight = FontWeight.Bold)
@@ -609,8 +600,8 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
     } else {
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = ZapSurface),
-            border = BorderStroke(1.dp, ZapOutlineVariant),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
@@ -621,13 +612,13 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                     "Finalize Submission",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     "By clicking submit, you agree to our Terms of Service and escrow guidelines.",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = ZapOnSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
                 )
 
@@ -636,7 +627,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                 Icon(
                     Icons.Default.VerifiedUser,
                     contentDescription = null,
-                    tint = ZapTeal.copy(alpha = 0.7f),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                     modifier = Modifier.size(64.dp)
                 )
 
@@ -645,14 +636,14 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
                 Button(
                     onClick = onSubmit,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = ZapTeal),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = CircleShape
                 ) {
                     Text("Submit Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
 
                 TextButton(onClick = onBack, modifier = Modifier.padding(top = 8.dp)) {
-                    Text("Back to Review", color = ZapOnSurfaceVariant)
+                    Text("Back to Review", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -662,9 +653,9 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
 @Composable
 fun BudgetSection(state: ProposalUiState) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-//        border = BorderStroke(1.dp, ZapOutlineVariant.copy(alpha = 0.5f))
+//        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
     ) {
 
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
@@ -674,23 +665,23 @@ fun BudgetSection(state: ProposalUiState) {
                     "BUDGET",
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     letterSpacing = 1.sp
                 )
                 Text(
                     state.budget,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     state.projectType,
                     style = MaterialTheme.typography.bodySmall,
-                    color = ZapOnSurface.copy(alpha = 0.9f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
                 )
             }
 //            VerticalDivider(
-//                color = ZapOutlineVariant,
+//                color = MaterialTheme.colorScheme.outlineVariant,
 //                thickness = 1.dp
 //            )
             Column(modifier = Modifier.padding(16.dp).weight(1f)) {
@@ -698,19 +689,19 @@ fun BudgetSection(state: ProposalUiState) {
                     "TIMELINE",
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     letterSpacing = 1.sp
                 )
                 Text(
                     state.timelineDays,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     "Est. Start: ${state.estStart}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = ZapOnSurface.copy(alpha = 0.9f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
                 )
             }
         }
@@ -746,19 +737,19 @@ fun BudgetSection(state: ProposalUiState) {
 //fun InfoCard(icon: ImageVector, title: String, description: String, modifier: Modifier = Modifier) {
 //    Card(
 //        modifier = modifier,
-//        colors = CardDefaults.cardColors(containerColor = ZapSurface),
-//        border = BorderStroke(1.dp, ZapOutlineVariant),
+//        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+//        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 //        shape = RoundedCornerShape(12.dp)
 //    ) {
 //        Column(modifier = Modifier.padding(12.dp)) {
-//            Icon(icon, contentDescription = null, tint = ZapTeal, modifier = Modifier.size(24.dp))
+//            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
 //            Text(
 //                title,
 //                fontWeight = FontWeight.Bold,
 //                fontSize = 14.sp,
 //                modifier = Modifier.padding(top = 8.dp)
 //            )
-//            Text(description, fontSize = 11.sp, color = ZapOnSurfaceVariant, lineHeight = 14.sp)
+//            Text(description, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp)
 //        }
 //    }
 //}

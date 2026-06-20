@@ -51,16 +51,10 @@ import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
+import com.smach.zapmancer.features.common.theme.ZapGold
 import org.koin.compose.viewmodel.koinViewModel
 
 // Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapGold = Color(0xFFFFD23F)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF1A1C1E)
-private val ZapOnSurfaceVariant = Color(0xFF404948)
-private val ZapOutline = Color(0xFFD1DBDA)
 
 @Composable
 fun SignupScreen(
@@ -101,7 +95,7 @@ private fun SignupContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZapBg)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -119,8 +113,8 @@ private fun SignupContent(
 
             // Signup Form Card
             Card(
-                colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
@@ -134,7 +128,7 @@ private fun SignupContent(
                             "Full Name",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         ZapTextField(
                             value = state.username,
@@ -159,7 +153,7 @@ private fun SignupContent(
                             "Email Address",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         ZapTextField(
                             value = state.email,
@@ -184,7 +178,7 @@ private fun SignupContent(
                             "Password",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = ZapOnSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         ZapTextField(
                             value = state.password,
@@ -214,7 +208,7 @@ private fun SignupContent(
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ZapGold,
-                            contentColor = ZapOnSurface
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading
@@ -222,7 +216,7 @@ private fun SignupContent(
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = ZapOnSurface,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -247,7 +241,7 @@ private fun SignupContent(
                     Text(
                         "By signing up, you agree to our Terms of Service and Privacy Policy.",
                         fontSize = 11.sp,
-                        color = ZapOnSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -259,12 +253,12 @@ private fun SignupContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text("Already have an account?", fontSize = 14.sp, color = ZapOnSurfaceVariant)
+                Text("Already have an account?", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "Sign In",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ZapTeal,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }

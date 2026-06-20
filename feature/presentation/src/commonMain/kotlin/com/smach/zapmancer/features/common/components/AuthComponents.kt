@@ -40,11 +40,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Flip7 Palette for Auth Components
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapOnSurfaceVariant = Color(0xFF404948)
-private val ZapOutline = Color(0xFFD1DBDA)
-private val ZapCream = Color(0xFFE2E2E2)
 
 @Composable
 fun AuthHeader(
@@ -60,7 +55,7 @@ fun AuthHeader(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(ZapTeal, RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
                 .shadow(2.dp, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
@@ -86,7 +81,7 @@ fun AuthHeader(
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = ZapOnSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -111,12 +106,12 @@ fun ZapTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(placeholder, color = ZapOnSurfaceVariant.copy(alpha = 0.5f)) },
+            placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
             leadingIcon = {
                 Icon(
                     leadingIcon,
                     contentDescription = null,
-                    tint = ZapOnSurfaceVariant,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )
             },
@@ -133,11 +128,11 @@ fun ZapTextField(
             } else null,
             visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = ZapCream,
-                unfocusedContainerColor = ZapCream,
-                focusedBorderColor = ZapTeal,
-                unfocusedBorderColor = ZapOutline,
-                focusedLeadingIconColor = ZapTeal
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLeadingIconColor = MaterialTheme.colorScheme.primary
             ),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = keyboardOptions,
@@ -169,7 +164,7 @@ fun SocialAuthButton(
             .fillMaxWidth()
             .height(50.dp),
         shape = RoundedCornerShape(8.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = Color(0xFF1A1C1C),
         ),
@@ -201,14 +196,14 @@ fun AuthDivider(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = ZapOutline)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
         Text(
             text = "OR",
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 16.dp),
-            color = ZapOnSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
         )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = ZapOutline)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
     }
 }

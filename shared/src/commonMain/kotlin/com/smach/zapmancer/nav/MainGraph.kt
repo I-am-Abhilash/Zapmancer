@@ -21,6 +21,7 @@ import com.smach.zapmancer.features.profile.screen.ProfileContent
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
 import com.smach.zapmancer.features.projects.screen.ProjectListContent
+import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
 import com.smach.zapmancer.features.settings.screen.SettingsContent
 import com.smach.zapmancer.features.settings.state.SettingsUiState
@@ -75,7 +76,9 @@ private fun appEntryProvider(
     entry<Screen.ProjectList> {
         ProjectListContent(
             onSearchClick = { /* TODO */ },
-            onProjectClick = { navigator.navigate(Screen.ProjectDetail)}
+            onProjectClick = { navigator.navigate(Screen.ProjectDetail) },
+            state = ProjectListUiState(),
+            onEvent = {}
 //            onProjectClick = { projectId ->
 //                // navigator.navigate(Screen.ProjectDetail(projectId))
 //            }

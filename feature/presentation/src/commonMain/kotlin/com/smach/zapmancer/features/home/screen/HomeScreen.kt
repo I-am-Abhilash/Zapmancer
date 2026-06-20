@@ -1,9 +1,5 @@
 package com.smach.zapmancer.features.home.screen
 
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,14 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -44,12 +38,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -59,19 +50,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
+import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.home.state.ActivityStatus
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.state.RecentActivity
-
-// Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapCoral = Color(0xFFFF6B6B)
-private val ZapGold = Color(0xFFFFD93D)
-private val ZapBg = Color(0xFFF4FBFB)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF1A1C1E)
-private val ZapOnSurfaceVariant = Color(0xFF434655)
-private val ZapOutlineVariant = Color(0xFFDEE4E2)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,12 +73,12 @@ fun HomeScreen(
                         Icon(
                             Icons.Default.Bolt,
                             contentDescription = null,
-                            tint = ZapTeal,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(28.dp)
                         )
                         Text(
                             "Zapmancer",
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 24.sp
                         )
@@ -104,7 +86,7 @@ fun HomeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Bolt, contentDescription = "Menu", tint = ZapOnSurface)
+                        Icon(Icons.Default.Bolt, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 actions = {
@@ -112,7 +94,7 @@ fun HomeScreen(
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Notifications",
-                            tint = ZapOnSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     Box(
@@ -120,24 +102,24 @@ fun HomeScreen(
                             .padding(end = 12.dp)
                             .size(36.dp)
                             .clip(RoundedCornerShape(8.dp))
-                            .border(2.dp, ZapOnSurface, RoundedCornerShape(8.dp))
-                            .background(ZapBg)
+                            .border(2.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         // Avatar placeholder
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapSurface),
-                modifier = Modifier.drawBehind {
-                    drawLine(
-                        color = ZapOnSurface,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+//                modifier = Modifier.drawBehind {
+//                    drawLine(
+//                        color = MaterialTheme.colorScheme.onSurface,
+//                        start = Offset(0f, size.height),
+//                        end = Offset(size.width, size.height),
+//                        strokeWidth = 2.dp.toPx()
+//                    )
+//                }
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         HomeContent(
             state = state,
@@ -171,14 +153,14 @@ fun HomeContent(
                     "Welcome back, ${state.userName}".uppercase(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ZapTeal,
+                    color = MaterialTheme.colorScheme.primary,
                     letterSpacing = 1.sp
                 )
                 Text(
                     "Start your Journey.",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.ExtraBold,
-                    color = ZapOnSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -188,7 +170,7 @@ fun HomeContent(
                 modifier = Modifier.fillMaxWidth(),
                 title = "Total Earnings",
                 value = state.totalEarnings,
-                accentColor = ZapTeal,
+                accentColor = MaterialTheme.colorScheme.primary,
                 icon = Icons.Default.Payments,
                 growth = state.earningsGrowth
             )
@@ -204,7 +186,7 @@ fun HomeContent(
                 modifier = Modifier.fillMaxWidth(),
                 title = "System Rating",
                 value = state.systemRating.toString(),
-                accentColor = ZapCoral,
+                accentColor = MaterialTheme.colorScheme.secondary,
                 icon = Icons.Default.Star,
                 isRating = true
             )
@@ -213,10 +195,10 @@ fun HomeContent(
             onClick = onCreateProjectClick,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ZapTeal,
+                containerColor = MaterialTheme.colorScheme.primary,
             ),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, ZapOutlineVariant),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Text("Create Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -234,16 +216,16 @@ fun HomeContent(
                     fontWeight = FontWeight.Bold
                 )
                 TextButton(onClick = {}) {
-                    Text("Export CSV", color = ZapTeal, fontWeight = FontWeight.Bold)
+                    Text("Export CSV", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 }
             }
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = ZapSurface
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
-//                border = BorderStroke(1.dp, ZapOnSurface),
+//                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
                 shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, ZapOutlineVariant)
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -269,8 +251,8 @@ fun HomeContent(
 //                // System Health
 //                Card(
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = CardDefaults.cardColors(containerColor = ZapSurface),
-//                    border = BorderStroke(1.dp, ZapOnSurface),
+//                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+//                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
 //                    shape = RoundedCornerShape(0.dp)
 //                ) {
 //                    Column(modifier = Modifier.padding(16.dp)) {
@@ -280,12 +262,12 @@ fun HomeContent(
 //                            fontWeight = FontWeight.Bold
 //                        )
 //                        Spacer(Modifier.height(16.dp))
-//                        HealthBar("CPU Usage", state.cpuUsage, ZapTeal)
+//                        HealthBar("CPU Usage", state.cpuUsage, MaterialTheme.colorScheme.primary)
 //                        Spacer(Modifier.height(12.dp))
-//                        HealthBar("Memory Load", state.memoryLoad, ZapCoral)
+//                        HealthBar("Memory Load", state.memoryLoad, MaterialTheme.colorScheme.secondary)
 //
 //                        Spacer(Modifier.height(16.dp))
-//                        HorizontalDivider(thickness = 2.dp, color = ZapOnSurface.copy(alpha = 0.1f))
+//                        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 //                        Spacer(Modifier.height(12.dp))
 //
 //                        Row(
@@ -302,14 +284,14 @@ fun HomeContent(
 //                                    "All Nodes Active",
 //                                    fontSize = 12.sp,
 //                                    fontWeight = FontWeight.Bold,
-//                                    color = ZapOnSurfaceVariant
+//                                    color = MaterialTheme.colorScheme.onSurfaceVariant
 //                                )
 //                            }
 //                            Text(
 //                                "LAST SYNC: ${state.lastSyncTime}",
 //                                fontSize = 10.sp,
 //                                fontWeight = FontWeight.Bold,
-//                                color = ZapOnSurfaceVariant
+//                                color = MaterialTheme.colorScheme.onSurfaceVariant
 //                            )
 //                        }
 //                    }
@@ -320,8 +302,8 @@ fun HomeContent(
 //                    modifier = Modifier
 //                        .fillMaxWidth()
 //                        .aspectRatio(4 / 3f)
-//                        .border(1.dp, ZapOnSurface)
-//                        .background(ZapSurface)
+//                        .border(1.dp, MaterialTheme.colorScheme.onSurface)
+//                        .background(MaterialTheme.colorScheme.surface)
 //                ) {
 //                    // Gradient/Pattern Background
 //                    Box(
@@ -331,7 +313,7 @@ fun HomeContent(
 //                                Brush.verticalGradient(
 //                                    colors = listOf(
 //                                        Color.Transparent,
-//                                        ZapOnSurface.copy(alpha = 0.05f)
+//                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
 //                                    )
 //                                )
 //                            )
@@ -345,7 +327,7 @@ fun HomeContent(
 //                    ) {
 //                        Surface(
 //                            color = ZapGold,
-//                            border = BorderStroke(1.dp, ZapOnSurface),
+//                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
 //                            shape = RoundedCornerShape(4.dp)
 //                        ) {
 //                            Text(
@@ -364,16 +346,16 @@ fun HomeContent(
 //                        Text(
 //                            "Real-time predictive modeling is now available in your workspace.",
 //                            fontSize = 12.sp,
-//                            color = ZapOnSurfaceVariant
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
 //                        )
 //                        Spacer(Modifier.height(16.dp))
 //                        Button(
 //                            onClick = {},
 //                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = ZapSurface,
-//                                contentColor = ZapTeal
+//                                containerColor = MaterialTheme.colorScheme.surface,
+//                                contentColor = MaterialTheme.colorScheme.primary
 //                            ),
-//                            border = BorderStroke(2.dp, ZapOnSurface),
+//                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
 //                            shape = RoundedCornerShape(8.dp),
 //                            modifier = Modifier.fillMaxWidth()
 //                        ) {
@@ -401,9 +383,9 @@ fun StatCard(
         modifier = modifier
             .fillMaxSize()
             .height(160.dp),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
         Column(
@@ -454,7 +436,7 @@ fun StatCard(
                         title.uppercase(),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -464,14 +446,14 @@ fun StatCard(
                             value,
                             style = MaterialTheme.typography.displayMedium,
                             fontWeight = FontWeight.ExtraBold,
-                            color = ZapOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         if (secondaryValue != null) {
                             Text(
                                 secondaryValue,
                                 modifier = Modifier.padding(bottom = 8.dp),
                                 fontSize = 14.sp,
-                                color = ZapOnSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         if (isRating) {
@@ -499,19 +481,19 @@ fun ActivityRow(
     activity: RecentActivity
 ) {
     val accentColor = when (activity.status) {
-        ActivityStatus.IN_PROGRESS -> ZapTeal
+        ActivityStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primary
         ActivityStatus.REVIEWING -> ZapGold
-        ActivityStatus.COMPLETED -> ZapTeal
-        ActivityStatus.CRITICAL -> ZapCoral
+        ActivityStatus.COMPLETED -> MaterialTheme.colorScheme.primary
+        ActivityStatus.CRITICAL -> MaterialTheme.colorScheme.secondary
     }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = ZapSurface
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, ZapOutlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
         Column(
@@ -561,7 +543,7 @@ fun ActivityRow(
 //                        Text(
 //                            text = activity.category,
 //                            style = MaterialTheme.typography.bodySmall,
-//                            color = ZapOnSurfaceVariant
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
 //                        )
                     }
                 }
@@ -583,7 +565,7 @@ fun ActivityRow(
                 Text(
                     text = activity.date,
                     style = MaterialTheme.typography.bodySmall,
-                    color = ZapOnSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Surface(
@@ -605,66 +587,6 @@ fun ActivityRow(
             }
         }
     }
-}
-
-
-@Composable
-fun HealthBar(label: String, progress: Float, color: Color) {
-    Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = ZapOnSurfaceVariant)
-            Text(
-                "${(progress * 100).toInt()}%",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = ZapOnSurface
-            )
-        }
-        Spacer(Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(12.dp)
-                .border(1.dp, ZapOnSurface, RoundedCornerShape(2.dp))
-                .background(ZapBg)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(progress)
-                    .background(color)
-                    .drawBehind {
-                        drawLine(
-                            color = ZapOnSurface,
-                            start = Offset(size.width, 0f),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }
-            )
-        }
-    }
-}
-
-@Composable
-fun PulseIndicator() {
-    val infiniteTransition = rememberInfiniteTransition()
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = androidx.compose.animation.core.RepeatMode.Reverse
-        )
-    )
-
-    Box(
-        modifier = Modifier
-            .size(12.dp)
-            .clip(CircleShape)
-            .background(ZapTeal.copy(alpha = alpha))
-            .border(1.dp, ZapOnSurface, CircleShape)
-    )
 }
 
 

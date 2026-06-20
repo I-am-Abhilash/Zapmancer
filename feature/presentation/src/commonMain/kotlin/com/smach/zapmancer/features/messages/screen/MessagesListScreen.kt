@@ -50,14 +50,6 @@ import com.smach.zapmancer.features.messages.state.ConversationItem
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 
 // Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapCoral = Color(0xFFEF6C4A)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF131B2E)
-private val ZapOnSurfaceVariant = Color(0xFF434655)
-private val ZapOutlineVariant = Color(0xFFE0E8E7)
-private val ZapCream = Color(0xFFFDFBF7)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,10 +66,10 @@ fun MessagesListScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = ZapTeal)
+                        Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Text(
                             "Zapmancer",
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp
                         )
@@ -88,7 +80,7 @@ fun MessagesListScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ZapOnSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -98,15 +90,15 @@ fun MessagesListScreen(
                             .padding(end = 12.dp)
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(ZapOutlineVariant)
-                            .border(1.dp, ZapOutlineVariant, CircleShape)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ZapSurface),
-                modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -121,7 +113,7 @@ fun MessagesListScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ZapSurface)
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 items(state.conversations) { conversation ->
                     ConversationItemRow(
@@ -130,7 +122,7 @@ fun MessagesListScreen(
                         onClick = { onConversationClick(conversation.id) }
                     )
                     HorizontalDivider(
-                        color = ZapOutlineVariant.copy(alpha = 0.5f),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                         thickness = 1.dp
                     )
                 }
@@ -146,7 +138,7 @@ fun MessagesSearchAndFilter(
 ) {
     Column(
         modifier = Modifier
-            .background(ZapSurface)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -167,10 +159,10 @@ fun MessagesSearchAndFilter(
             },
             shape = RoundedCornerShape(24.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = ZapCream,
-                unfocusedContainerColor = ZapCream,
-                focusedBorderColor = ZapTeal,
-                unfocusedBorderColor = ZapTeal.copy(alpha = 0.5f)
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             )
         )
 
@@ -179,8 +171,8 @@ fun MessagesSearchAndFilter(
                 val isSelected = filter == selectedFilter
                 Surface(
                     onClick = {},
-                    color = if (isSelected) ZapTeal else ZapBg,
-                    contentColor = if (isSelected) Color.White else ZapOnSurfaceVariant,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
+                    contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                     shape = RoundedCornerShape(20.dp),
                     modifier = Modifier.height(32.dp)
                 ) {
@@ -202,16 +194,17 @@ fun ConversationItemRow(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val drawLineColor = MaterialTheme.colorScheme.primary
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .background(if (isSelected) ZapBg else ZapSurface)
+            .background(if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface)
             .drawBehind {
                 if (isSelected) {
                     val strokeWidth = 4.dp.toPx()
                     drawLine(
-                        color = ZapTeal,
+                        color = drawLineColor,
                         start = Offset(strokeWidth / 2, 0f),
                         end = Offset(strokeWidth / 2, size.height),
                         strokeWidth = strokeWidth
@@ -228,15 +221,15 @@ fun ConversationItemRow(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(ZapBg)
+                    .background(MaterialTheme.colorScheme.background)
             )
             if (item.isOnline) {
                 Box(
                     modifier = Modifier
                         .size(12.dp)
                         .clip(CircleShape)
-                        .background(ZapTeal)
-                        .border(2.dp, if (isSelected) ZapBg else ZapSurface, CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .border(2.dp, if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface, CircleShape)
                         .align(Alignment.BottomEnd)
                 )
             }
@@ -254,21 +247,21 @@ fun ConversationItemRow(
                     text = item.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = ZapOnSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = item.timestamp,
                     fontSize = 12.sp,
-                    color = ZapOnSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )
             }
             Text(
                 text = item.lastMessage,
                 fontSize = 14.sp,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -280,7 +273,7 @@ fun ConversationItemRow(
                 modifier = Modifier
                     .size(10.dp)
                     .clip(CircleShape)
-                    .background(ZapCoral)
+                    .background(MaterialTheme.colorScheme.secondary)
             )
         }
     }

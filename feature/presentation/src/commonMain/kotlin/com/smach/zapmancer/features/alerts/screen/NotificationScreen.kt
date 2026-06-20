@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -53,23 +54,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.alerts.state.NotificationAction
 import com.smach.zapmancer.features.alerts.state.NotificationItem
 import com.smach.zapmancer.features.alerts.state.NotificationType
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
-
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapTealDark = Color(0xFF1A6D69)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapOnSurface = Color(0xFF1A1C1C)
-private val ZapOutline = Color(0xFFD1D5D5)
-private val ZapOutlineVariant = Color(0xFFE1E3E3)
-private val ZapCoral = Color(0xFFFF6B6B)
-private val ZapGold = Color(0xFFFFD93D)
-private val ZapSlate = Color(0xFF6D7278)
+import com.smach.zapmancer.features.common.theme.ZapGold
+import com.smach.zapmancer.features.common.theme.ZapSlate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +83,7 @@ fun NotificationScreen(
                             "Zapmancer",
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 24.sp,
-                            color = ZapOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -100,13 +93,13 @@ fun NotificationScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = ZapOnSurface
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                modifier = Modifier.border(0.5.dp, ZapOutlineVariant)
+                modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = ZapBg
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -134,7 +127,7 @@ fun NotificationScreen(
 fun RibbonHeader(text: String) {
     Box(modifier = Modifier.padding(start = 4.dp)) {
         Surface(
-            color = ZapTeal,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .padding(start = 4.dp) // Adjust for the "fold"
                 .offset(x = (-20).dp),
@@ -149,7 +142,7 @@ fun RibbonHeader(text: String) {
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
         }
-        // The fold triangle
+        val pathColor = MaterialTheme.colorScheme.primaryContainer
         Canvas(
             modifier = Modifier
                 .size(8.dp)
@@ -162,7 +155,7 @@ fun RibbonHeader(text: String) {
                 lineTo(0f, 0f)
                 close()
             }
-            drawPath(path, color = ZapTealDark)
+            drawPath(path, color = pathColor)
         }
     }
 }
@@ -171,8 +164,8 @@ fun RibbonHeader(text: String) {
 fun NotificationCard(item: NotificationItem) {
     val accentColor = when (item.type) {
         NotificationType.MILESTONE -> ZapGold
-        NotificationType.MESSAGE -> ZapTeal
-        NotificationType.ALERT -> ZapCoral
+        NotificationType.MESSAGE -> MaterialTheme.colorScheme.primary
+        NotificationType.ALERT -> MaterialTheme.colorScheme.secondary
         NotificationType.GENERAL, NotificationType.COLLABORATOR -> ZapSlate
     }
 
@@ -185,17 +178,32 @@ fun NotificationCard(item: NotificationItem) {
     }
 
     val iconBg = when (item.type) {
-        NotificationType.MILESTONE -> Color(0xFFFEF9C3) // yellow-50
-        NotificationType.MESSAGE -> ZapTeal.copy(alpha = 0.05f)
-        NotificationType.ALERT -> Color(0xFFFEF2F2) // red-50
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFFF9FAFB) // gray-50
-    }
+        NotificationType.MILESTONE ->
+            MaterialTheme.colorScheme.secondaryContainer
 
+        NotificationType.MESSAGE ->
+            MaterialTheme.colorScheme.primaryContainer
+
+        NotificationType.ALERT ->
+            MaterialTheme.colorScheme.errorContainer
+
+        NotificationType.GENERAL,
+        NotificationType.COLLABORATOR ->
+            MaterialTheme.colorScheme.surfaceVariant
+    }
     val iconTint = when (item.type) {
-        NotificationType.MILESTONE -> Color(0xFFCA8A04) // yellow-600
-        NotificationType.MESSAGE -> ZapTeal
-        NotificationType.ALERT -> ZapCoral
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFF6B7280) // gray-500
+        NotificationType.MILESTONE ->
+            MaterialTheme.colorScheme.onSecondaryContainer
+
+        NotificationType.MESSAGE ->
+            MaterialTheme.colorScheme.onPrimaryContainer
+
+        NotificationType.ALERT ->
+            MaterialTheme.colorScheme.onErrorContainer
+
+        NotificationType.GENERAL,
+        NotificationType.COLLABORATOR ->
+            MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     val opacity = if (item.section == "Yesterday") 0.8f else 1f
@@ -204,7 +212,7 @@ fun NotificationCard(item: NotificationItem) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(if (item.section == "Today") 2.dp else 0.dp, RoundedCornerShape(8.dp))
-            .border(1.dp, ZapOutlineVariant, RoundedCornerShape(8.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = opacity)),
         shape = RoundedCornerShape(
             topStart = 2.dp,
@@ -246,13 +254,13 @@ fun NotificationCard(item: NotificationItem) {
                         item.title,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
-                        color = if (item.type == NotificationType.ALERT) ZapCoral else ZapOnSurface
+                        color = if (item.type == NotificationType.ALERT) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         item.timestamp,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ZapOnSurface.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
 
@@ -262,7 +270,7 @@ fun NotificationCard(item: NotificationItem) {
                     Text(
                         "\"${item.description}\"",
                         fontSize = 14.sp,
-                        color = ZapOnSurface.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         fontStyle = FontStyle.Italic,
                         lineHeight = 20.sp
                     )
@@ -270,7 +278,7 @@ fun NotificationCard(item: NotificationItem) {
                     Text(
                         text = item.description,
                         fontSize = 14.sp,
-                        color = ZapOnSurface.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         lineHeight = 20.sp
                     )
                 }
@@ -282,15 +290,15 @@ fun NotificationCard(item: NotificationItem) {
                             Button(
                                 onClick = {},
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (action.isPrimary) (if (action.isError) ZapCoral else ZapTeal) else Color.Transparent,
-                                    contentColor = if (action.isPrimary) Color.White else ZapOnSurface.copy(
+                                    containerColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary) else Color.Transparent,
+                                    contentColor = if (action.isPrimary) Color.White else MaterialTheme.colorScheme.onSurface.copy(
                                         alpha = 0.7f
                                     )
                                 ),
                                 shape = RoundedCornerShape(4.dp),
                                 border = if (!action.isPrimary) BorderStroke(
                                     1.dp,
-                                    ZapOutline
+                                    MaterialTheme.colorScheme.outline
                                 ) else null,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier.height(32.dp)
@@ -316,17 +324,17 @@ fun NotificationCard(item: NotificationItem) {
                                 .weight(1f),
                             shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = ZapTeal,
-                                unfocusedBorderColor = ZapOutline,
-                                focusedContainerColor = ZapBg,
-                                unfocusedContainerColor = ZapBg
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedContainerColor = MaterialTheme.colorScheme.background,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.background
                             )
                         )
                         IconButton(
                             onClick = {},
                             modifier = Modifier
                                 .size(36.dp)
-                                .background(ZapTeal, RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.Send,
@@ -352,7 +360,7 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
     }
 )
 
-@Preview
+@PreviewLightDark
 @Composable
 fun NotificationPreview(){
     val sampleState = NotificationUiState(
@@ -364,10 +372,10 @@ fun NotificationPreview(){
                 description = "Automated deployment of the v2.4.1-alpha build was successful on the production cluster.",
                 timestamp = "2m ago",
                 section = "Today",
-//                actions = listOf(
-//                    NotificationAction("View Logs", isPrimary = true),
-//                    NotificationAction("Dismiss")
-//                )
+                actions = listOf(
+                    NotificationAction("View Logs", isPrimary = true),
+                    NotificationAction("Dismiss")
+                )
             ),
             NotificationItem(
                 id = "2",
@@ -377,7 +385,7 @@ fun NotificationPreview(){
                 timestamp = "1h ago",
                 section = "Today",
                 isItalic = true,
-//                quickReply = true
+                quickReply = true
             ),
             NotificationItem(
                 id = "3",

@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.auth.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,16 +52,6 @@ import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
 
-// Flip7 Palette
-private val ZapTeal = Color(0xFF2BA8A2)
-private val ZapGold = Color(0xFFFFD23F)
-private val ZapBg = Color(0xFFEFF8F7)
-private val ZapSurface = Color(0xFFFFFFFF)
-private val ZapOnSurface = Color(0xFF1A1C1E)
-private val ZapOnSurfaceVariant = Color(0xFF404948)
-private val ZapOutline = Color(0xFFD1DBDA)
-private val ZapCream = Color(0xFFFFF8E7)
-
 @Composable
 fun VerificationScreen(
     email: String,
@@ -99,7 +90,7 @@ private fun VerificationContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ZapBg)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -116,8 +107,8 @@ private fun VerificationContent(
             )
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = ZapSurface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
             ) {
@@ -144,8 +135,8 @@ private fun VerificationContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapTeal,
-                            contentColor = ZapSurface
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.surface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading && state.code.length == codeLength
@@ -153,7 +144,7 @@ private fun VerificationContent(
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = ZapOnSurface,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -178,7 +169,7 @@ private fun VerificationContent(
                     TextButton(onClick = { /* Resend */ }) {
                         Text(
                             "Didn't receive code? Resend",
-                            color = ZapTeal,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
@@ -191,7 +182,7 @@ private fun VerificationContent(
                 "Change Email",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.clickable { onBack() }.alpha(0.6f)
             )
         }
@@ -231,11 +222,11 @@ fun OtpInputField(
                         .weight(1f)
                         .aspectRatio(1f),
                     shape = RoundedCornerShape(8.dp),
-                    color = ZapCream,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     border = if (isFocused && enabled) {
-                        androidx.compose.foundation.BorderStroke(2.dp, ZapTeal)
+                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                     } else {
-                        androidx.compose.foundation.BorderStroke(1.dp, ZapOutline)
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                     },
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -244,14 +235,14 @@ fun OtpInputField(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
-                            color = ZapOnSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         if (isFocused && enabled) {
                             Box(
                                 modifier = Modifier
                                     .width(2.dp)
                                     .height(24.dp)
-                                    .background(ZapTeal),
+                                    .background(MaterialTheme.colorScheme.primary),
                             )
                         }
                     }
