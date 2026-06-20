@@ -7,48 +7,45 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme =
-    darkColorScheme(
-        primary = Indigo200,
-        onPrimary = Indigo900,
-        primaryContainer = Indigo700,
-        onPrimaryContainer = Indigo100,
-        secondary = IndigoAccent200,
-        onSecondary = Color.White,
-        secondaryContainer = Indigo800,
-        onSecondaryContainer = IndigoAccent100,
-        background = Ink900,
-        onBackground = Ink100,
-        surface = Ink800,
-        onSurface = Ink100,
-        surfaceVariant = Ink700,
-        onSurfaceVariant = Ink300,
-        error = ErrorRed,
-        onError = Color.White,
-        outline = Ink500,
-    )
+private val DarkColorScheme = darkColorScheme(
+    primary = ZapTeal,
+    onPrimary = Color.Black,
 
-private val LightColorScheme =
-    lightColorScheme(
-        primary = Indigo600,
-        onPrimary = Color.White,
-        primaryContainer = Indigo100,
-        onPrimaryContainer = Indigo900,
-        secondary = IndigoAccent400,
-        onSecondary = Color.White,
-        secondaryContainer = Indigo50,
-        onSecondaryContainer = IndigoAccent700,
-        background = Color.White,
-        onBackground = Ink900,
-        surface = Ink50,
-        onSurface = Ink900,
-        surfaceVariant = Ink200,
-        onSurfaceVariant = Ink700,
-        error = ErrorRed,
-        onError = Color.White,
-        outline = Ink400,
-    )
+    secondary = ZapCoral,
+    onSecondary = Color.Black,
 
+    background = ZapDarkBg,
+    onBackground = ZapDarkOnSurface,
+
+    surface = ZapDarkSurface,
+    onSurface = ZapDarkOnSurface,
+
+    surfaceVariant = ZapDarkSurfaceVariant,
+    onSurfaceVariant = ZapDarkOnSurfaceVariant,
+
+    outline = ZapDarkOutline,
+
+    error = ErrorRed
+)
+private val LightColorScheme = lightColorScheme(
+    primary = ZapTeal,
+    onPrimary = Color.White,
+
+    secondary = ZapCoral,
+    onSecondary = Color.White,
+
+    background = ZapBg,
+    onBackground = ZapOnSurface,
+
+    surface = ZapSurface,
+    onSurface = ZapOnSurface,
+
+    surfaceVariant = ZapCream,
+    onSurfaceVariant = ZapOnSurfaceVariant,
+
+    outline = ZapOutline,
+    error = ErrorRed,
+)
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
