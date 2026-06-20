@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.profile.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,9 +37,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,10 +54,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
@@ -69,6 +71,7 @@ import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
+import com.smach.zapmancer.features.projects.screen.VerticalDivider
 
 private val ZapTeal = Color(0xFF2BA8A2)
 private val ZapTealDark = Color(0xFF1D736F)
@@ -81,13 +84,15 @@ private val ZapGold = Color(0xFFFFD700)
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    onReviewMoreClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     ProfileContent(
         state = uiState,
-        onEvent = { viewModel.onEvent(it) }
+        onEvent = { viewModel.onEvent(it) },
+        onReviewMoreClick = onReviewMoreClick
     )
 }
 
@@ -95,7 +100,8 @@ fun ProfileScreen(
 @Composable
 fun ProfileContent(
     state: ProfileUiState,
-    onEvent: (ProfileEvent) -> Unit
+    onEvent: (ProfileEvent) -> Unit,
+    onReviewMoreClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -158,151 +164,237 @@ fun ProfileContent(
                 }
             }
 
-            // Portfolio Section
             item {
-                SectionTitleRow("Portfolio", "View all projects")
+                SectionTitleRow("Portfolio")
             }
             items(state.portfolioItems) { project ->
                 PortfolioCard(project)
             }
-
-            // Reviews Section
             item {
-                SectionTitleRow("Top Reviews", "")
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    OutlinedButton(
+                        onClick = onReviewMoreClick,
+                        shape = RoundedCornerShape(50),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                            .copy(
+                                width = 1.dp,
+                                brush = SolidColor(
+                                    MaterialTheme.colorScheme.outline.copy(
+                                        alpha = 0.5f,
+                                    ),
+                                ),
+                            ),
+                    ) {
+                        Text(
+                            "See more",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            }
+
+
+            item {
+                SectionTitleRow("Top Reviews")
             }
             items(state.reviews) { review ->
                 ReviewCard(review)
             }
-        }
-    }
-}
-
-@Composable
-fun IdentityHeader(state: ProfileUiState, onEvent: (ProfileEvent) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = ZapSurface),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            //Banner Gradient
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp)
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(ZapTeal, ZapTealDark)
-                        )
-                    )
-            )
-
-            // Profile Info Content
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp)
-                    .offset(y = (-48).dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Avatar
-                AppImage(
-                    model = state.avatarUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(128.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(4.dp, ZapSurface, RoundedCornerShape(16.dp))
-                        .background(ZapSurface)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = state.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = ZapOnSurface
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = state.role,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = ZapTeal,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
+            item {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(
-                            0.5.dp,
-                            ZapOutlineVariant.copy(alpha = 0.5f),
-                            RoundedCornerShape(0.dp)
-                        )
                         .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    contentAlignment = Alignment.Center,
                 ) {
-                    StatItem(state.projectsCount.toString(), "Projects")
-                    StatItem(state.rating.toString(), "Rating")
-                    StatItem(state.experience, "Exp")
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-
-
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    InfoChip(Icons.Default.LocationOn, state.location)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    InfoChip(
-                        Icons.Default.MilitaryTech,
-                        state.ranking,
-                        Color(0xFFE8E8E8),
-                        Color(0xFF717171)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    if (state.isTopRated) {
-                        InfoChip(
-                            Icons.Default.Verified,
-                            "Top Rated",
-                            Color(0xFFFFF5F2),
-                            Color(0xFFFF7F50)
+                    OutlinedButton(
+                        onClick = onReviewMoreClick,
+                        shape = RoundedCornerShape(50),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                            .copy(
+                                width = 1.dp,
+                                brush = SolidColor(
+                                    MaterialTheme.colorScheme.outline.copy(
+                                        alpha = 0.5f,
+                                    ),
+                                ),
+                            ),
+                    ) {
+                        Text(
+                            "See more",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
+            }
+        }
 
+    }
 
+}
 
-                Spacer(modifier = Modifier.height(24.dp))
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun IdentityHeader(
+    state: ProfileUiState,
+    onEvent: (ProfileEvent) -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = ZapSurface
+        ),
+        border = BorderStroke(
+            1.dp,
+            ZapOutlineVariant.copy(alpha = 0.3f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-                Button(
-                    onClick = { onEvent(ProfileEvent.HireMe) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .shadow(4.dp, CircleShape),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ZapGold
-                    ),
-                    shape = CircleShape
-                ) {
-                    Text(
-                        "Hire Julian",
-                        color = Color(0xFF1A1A1A),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+            AppImage(
+                model = state.avatarUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(104.dp)
+                    .clip(CircleShape)
+                    .border(
+                        2.dp,
+                        ZapOutlineVariant.copy(alpha = 0.3f),
+                        CircleShape
+                    )
+                    .background(ZapSurface)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = state.name,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = ZapOnSurface,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = state.role,
+                style = MaterialTheme.typography.bodyMedium,
+                color = ZapTeal,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(
+                    8.dp,
+                    Alignment.CenterHorizontally
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                InfoChip(
+                    Icons.Default.LocationOn,
+                    state.location
+                )
+
+                InfoChip(
+                    Icons.Default.MilitaryTech,
+                    state.ranking,
+                    Color(0xFFE8E8E8),
+                    Color(0xFF717171)
+                )
+
+                if (state.isTopRated) {
+                    InfoChip(
+                        Icons.Default.Verified,
+                        "Top Rated",
+                        Color(0xFFFFF5F2),
+                        Color(0xFFFF7F50)
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            HorizontalDivider(
+                color = ZapOutlineVariant.copy(alpha = 0.3f)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .padding(vertical = 20.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                StatItem(
+                    value = state.projectsCount.toString(),
+                    label = "Projects"
+                )
+
+                VerticalDivider(
+                    color = ZapOutlineVariant.copy(alpha = 0.3f)
+                )
+
+                StatItem(
+                    value = state.rating.toString(),
+                    label = "Rating"
+                )
+
+                VerticalDivider(
+                    color = ZapOutlineVariant.copy(alpha = 0.3f)
+                )
+
+                StatItem(
+                    value = state.experience,
+                    label = "Exp"
+                )
+            }
+
+            HorizontalDivider(
+                color = ZapOutlineVariant.copy(alpha = 0.3f)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    onEvent(ProfileEvent.HireMe)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ZapTeal,
+                    contentColor = ZapSurface
+                ),
+                shape = RoundedCornerShape(999.dp)
+            ) {
+                Text(
+                    text = "Hire Me",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
             }
         }
     }
@@ -336,7 +428,7 @@ fun SkillChip(skill: String) {
     Surface(
         color = ZapTeal.copy(alpha = 0.1f),
         shape = RoundedCornerShape(999.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, ZapTeal.copy(alpha = 0.2f))
+        border = BorderStroke(1.dp, ZapTeal.copy(alpha = 0.2f))
     ) {
         Text(
             text = skill.uppercase(),
@@ -378,7 +470,7 @@ fun InfoChip(
     Surface(
         color = bgColor,
         shape = RoundedCornerShape(999.dp),
-        border = androidx.compose.foundation.BorderStroke(0.5.dp, textColor.copy(alpha = 0.2f))
+        border = BorderStroke(0.5.dp, textColor.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -402,7 +494,7 @@ fun InfoChip(
 }
 
 @Composable
-fun SectionTitleRow(title: String, actionText: String) {
+fun SectionTitleRow(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -416,15 +508,15 @@ fun SectionTitleRow(title: String, actionText: String) {
             fontWeight = FontWeight.Bold,
             color = ZapOnSurface
         )
-        if (actionText.isNotEmpty()) {
-            Text(
-                text = actionText,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = ZapTeal,
-                modifier = Modifier.clickable { }
-            )
-        }
+//        if (actionText.isNotEmpty()) {
+//            Text(
+//                text = actionText,
+//                style = MaterialTheme.typography.labelLarge,
+//                fontWeight = FontWeight.Bold,
+//                color = ZapTeal,
+//                modifier = Modifier.clickable { }
+//            )
+//        }
     }
 }
 
@@ -434,17 +526,9 @@ fun PortfolioCard(item: PortfolioItem) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
+//            .shadow(4.dp, RoundedCornerShape(16.dp))
             .clickable { }
-            .drawBehind {
-                val strokeWidth = 4.dp.toPx()
-                drawLine(
-                    color = ZapTeal,
-                    start = Offset(0f, 0f),
-                    end = Offset(0f, size.height),
-                    strokeWidth = strokeWidth
-                )
-            },
+            .border(1.dp, ZapOutlineVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = ZapSurface),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -571,6 +655,9 @@ fun FlowRow(
 @Composable
 fun ProfileScreenPreview() {
     MaterialTheme {
-        ProfileContent(state = ProfileUiState(), onEvent = {})
+        ProfileContent(
+            state = ProfileUiState(),
+            onEvent = {},
+        ) {}
     }
 }

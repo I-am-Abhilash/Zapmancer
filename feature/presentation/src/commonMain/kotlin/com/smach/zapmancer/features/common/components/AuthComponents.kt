@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 private val ZapTeal = Color(0xFF2BA8A2)
 private val ZapOnSurfaceVariant = Color(0xFF404948)
 private val ZapOutline = Color(0xFFD1DBDA)
-private val ZapCream = Color(0xFFFFF8E7)
+private val ZapCream = Color(0xFFE2E2E2)
 
 @Composable
 fun AuthHeader(

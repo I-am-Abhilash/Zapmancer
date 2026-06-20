@@ -2,7 +2,7 @@ package com.smach.zapmancer.features.projects.state
 
 import com.smach.zapmancer.domain.model.Article
 
-data class ProjectPortfolioUiState(
+data class ProjectListUiState(
     val id: Int = 0,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,

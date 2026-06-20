@@ -154,7 +154,6 @@ private fun ForgotPasswordContent(
                         }
                     }
 
-                    // Submit Button
                     Button(
                         onClick = onSubmit,
                         modifier = Modifier
@@ -162,8 +161,8 @@ private fun ForgotPasswordContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapGold,
-                            contentColor = ZapOnSurface
+                            containerColor = ZapTeal,
+                            contentColor = ZapSurface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading && !state.isSuccess

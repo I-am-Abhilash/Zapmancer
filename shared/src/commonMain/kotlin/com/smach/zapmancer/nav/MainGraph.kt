@@ -22,6 +22,8 @@ import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
 import com.smach.zapmancer.features.projects.screen.ProjectListContent
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
+import com.smach.zapmancer.features.settings.screen.SettingsContent
+import com.smach.zapmancer.features.settings.state.SettingsUiState
 
 /**
  * MainGraph is the entry point for authenticated app content.
@@ -91,13 +93,14 @@ private fun appEntryProvider(
     entry<Screen.Profile> {
         ProfileContent(
             state = ProfileUiState(),
-            onEvent = { }
+            onEvent = {},
+            onReviewMoreClick = {navigator.navigate(Screen.Settings)},
         )
     }
     entry<Screen.Settings> {
-        ProfileContent(
-            state = ProfileUiState(),
-            onEvent = { }
+        SettingsContent(
+            uiState = SettingsUiState(),
+            onBackClick = { navigator.goBack() }
         )
     }
 

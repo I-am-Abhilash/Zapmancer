@@ -7,7 +7,7 @@ data class ProjectDetailUiState(
     val postedTime: String = "2 hours ago",
     val location: String = "Remote (Global)",
     val isPaymentVerified: Boolean = true,
-    val description: String = "We are seeking a senior frontend engineer to architect and build the core components of our new real-time HFT monitoring dashboard. The project requires extreme performance optimization, handling up to 10,000 data updates per second with zero UI lag.",
+    val projectScope: String = "We are seeking a senior frontend engineer to architect and build the core components of our new real-time HFT monitoring dashboard. The project requires extreme performance optimization, handling up to 10,000 data updates per second with zero UI lag.",
     val deliverables: List<String> = listOf(
         "Low-latency Canvas-based charting engine.",
         "Real-time order book visualization component.",
@@ -32,6 +32,7 @@ data class ProjectDetailUiState(
     val clientLocation: String = "London, UK",
     val clientProjectsCount: Int = 42,
     val clientRating: Double = 4.9,
+    val isSaved: Boolean = false,
     val isClientActive: Boolean = true,
     val isLoading: Boolean = false,
     val isIdentityVerified: Boolean = false,

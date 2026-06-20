@@ -65,7 +65,7 @@ data class NotificationItem(
     val title: String,
     val description: String,
     val timestamp: String,
-    val section: String, // e.g., "Today", "Yesterday"
+    val section: String, // "Today", "Yesterday"
     val codeSnippet: String? = null,
     val isItalic: Boolean = false,
     val actions: List<NotificationAction> = emptyList(),

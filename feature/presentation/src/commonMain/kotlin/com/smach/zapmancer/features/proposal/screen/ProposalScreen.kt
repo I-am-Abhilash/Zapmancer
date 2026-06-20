@@ -74,7 +74,6 @@ private val ZapOutline = Color(0xFF6F7978)
 private val ZapOutlineVariant = Color(0xFFBEC9C7)
 private val ZapSkyBlue = Color(0xFFEBF5FB)
 private val ZapSkyBlueText = Color(0xFF2E86C1)
-private val ZapCream = Color(0xFFFFF8E7)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

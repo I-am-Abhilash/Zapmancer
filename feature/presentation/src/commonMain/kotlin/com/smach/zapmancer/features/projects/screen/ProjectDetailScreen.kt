@@ -169,7 +169,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
             Spacer(modifier = Modifier.height(16.dp))
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 InfoItem(Icons.Default.Schedule, "Posted ${state.postedTime}")
@@ -285,7 +285,7 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                state.description,
+                state.projectScope,
                 style = MaterialTheme.typography.bodyLarge,
                 color = ZapOnSurfaceVariant,
                 lineHeight = 24.sp

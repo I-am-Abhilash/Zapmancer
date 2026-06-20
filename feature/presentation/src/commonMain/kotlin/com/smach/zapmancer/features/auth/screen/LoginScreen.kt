@@ -19,9 +19,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -208,8 +208,8 @@ private fun LoginContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapGold,
-                            contentColor = ZapOnSurface
+                            containerColor = ZapTeal,
+                            contentColor = ZapSurface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading
@@ -237,11 +237,10 @@ private fun LoginContent(
 
                     AuthDivider()
 
-                    // Secondary Actions
                     SocialAuthButton(
                         onClick = {},
-                        text = "Continue with SSO",
-                        icon = Icons.Default.Key
+                        text = "Continue with Google",
+                        icon = Icons.Default.Person
                     )
                 }
             }

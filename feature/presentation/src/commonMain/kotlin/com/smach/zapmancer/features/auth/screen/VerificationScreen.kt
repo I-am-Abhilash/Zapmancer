@@ -115,7 +115,6 @@ private fun VerificationContent(
                 subtitle = "We've sent a 6-digit code to $email",
             )
 
-            // Verification Form Card
             Card(
                 colors = CardDefaults.cardColors(containerColor = ZapSurface),
                 border = androidx.compose.foundation.BorderStroke(1.dp, ZapOutline),
@@ -127,7 +126,6 @@ private fun VerificationContent(
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // OTP Input Area
                     OtpInputField(
                         code = state.code,
                         onCodeChanged = onCodeChanged,
@@ -139,7 +137,6 @@ private fun VerificationContent(
                         Text(state.error, color = Color.Red, fontSize = 12.sp)
                     }
 
-                    // Verify Button
                     Button(
                         onClick = onSubmit,
                         modifier = Modifier
@@ -147,8 +144,8 @@ private fun VerificationContent(
                             .height(56.dp)
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ZapGold,
-                            contentColor = ZapOnSurface
+                            containerColor = ZapTeal,
+                            contentColor = ZapSurface
                         ),
                         shape = RoundedCornerShape(100.dp),
                         enabled = !state.isLoading && state.code.length == codeLength
