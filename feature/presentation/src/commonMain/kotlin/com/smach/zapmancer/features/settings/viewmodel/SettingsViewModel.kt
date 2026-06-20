@@ -11,7 +11,22 @@ class SettingsViewModel : ViewModel() {
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     fun onEvent(event: SettingsEvent) {
-        // Handle events
+    }
+
+    fun toggleTwoFactor() {
+        TODO("Not yet implemented")
+    }
+
+    fun toggleDarkMode() {
+        TODO("Not yet implemented")
+    }
+
+    fun toggleNotifications() {
+        TODO("Not yet implemented")
+    }
+
+    fun logout() {
+        TODO("Not yet implemented")
     }
 }
 

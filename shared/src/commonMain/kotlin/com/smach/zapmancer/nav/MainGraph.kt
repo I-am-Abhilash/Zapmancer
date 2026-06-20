@@ -103,7 +103,11 @@ private fun appEntryProvider(
     entry<Screen.Settings> {
         SettingsContent(
             uiState = SettingsUiState(),
-            onBackClick = { navigator.goBack() }
+            onBackClick = { navigator.goBack() },
+            onToggleTwoFactor = { /* TODO: Implement 2FA toggle */ },
+            onToggleDarkMode = { /* TODO: Implement dark mode toggle */ },
+            onToggleNotifications = { /* TODO: Implement notifications toggle */ },
+            onLogout = { /* TODO: Implement logout logic */ }
         )
     }
 

@@ -61,8 +61,10 @@ import com.smach.zapmancer.features.alerts.state.NotificationAction
 import com.smach.zapmancer.features.alerts.state.NotificationItem
 import com.smach.zapmancer.features.alerts.state.NotificationType
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
+import com.smach.zapmancer.features.common.theme.ZapCoral
 import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.common.theme.ZapSlate
+import com.smach.zapmancer.features.common.theme.ZapTeal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,8 +166,8 @@ fun RibbonHeader(text: String) {
 fun NotificationCard(item: NotificationItem) {
     val accentColor = when (item.type) {
         NotificationType.MILESTONE -> ZapGold
-        NotificationType.MESSAGE -> MaterialTheme.colorScheme.primary
-        NotificationType.ALERT -> MaterialTheme.colorScheme.secondary
+        NotificationType.MESSAGE -> ZapTeal
+        NotificationType.ALERT -> ZapCoral
         NotificationType.GENERAL, NotificationType.COLLABORATOR -> ZapSlate
     }
 
@@ -178,34 +180,18 @@ fun NotificationCard(item: NotificationItem) {
     }
 
     val iconBg = when (item.type) {
-        NotificationType.MILESTONE ->
-            MaterialTheme.colorScheme.secondaryContainer
-
-        NotificationType.MESSAGE ->
-            MaterialTheme.colorScheme.primaryContainer
-
-        NotificationType.ALERT ->
-            MaterialTheme.colorScheme.errorContainer
-
-        NotificationType.GENERAL,
-        NotificationType.COLLABORATOR ->
-            MaterialTheme.colorScheme.surfaceVariant
+        NotificationType.MILESTONE -> Color(0xFFFEF9C3) // yellow-50
+        NotificationType.MESSAGE -> ZapTeal.copy(alpha = 0.05f)
+        NotificationType.ALERT -> Color(0xFFFEF2F2) // red-50
+        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFFF9FAFB) // gray-50
     }
+
     val iconTint = when (item.type) {
-        NotificationType.MILESTONE ->
-            MaterialTheme.colorScheme.onSecondaryContainer
-
-        NotificationType.MESSAGE ->
-            MaterialTheme.colorScheme.onPrimaryContainer
-
-        NotificationType.ALERT ->
-            MaterialTheme.colorScheme.onErrorContainer
-
-        NotificationType.GENERAL,
-        NotificationType.COLLABORATOR ->
-            MaterialTheme.colorScheme.onSurfaceVariant
+        NotificationType.MILESTONE -> Color(0xFFCA8A04) // yellow-600
+        NotificationType.MESSAGE -> ZapTeal
+        NotificationType.ALERT -> ZapCoral
+        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFF6B7280) // gray-500
     }
-
     val opacity = if (item.section == "Yesterday") 0.8f else 1f
 
     Card(
@@ -213,7 +199,7 @@ fun NotificationCard(item: NotificationItem) {
             .fillMaxWidth()
             .shadow(if (item.section == "Today") 2.dp else 0.dp, RoundedCornerShape(8.dp))
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = opacity)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = opacity)),
         shape = RoundedCornerShape(
             topStart = 2.dp,
             bottomStart = 2.dp,

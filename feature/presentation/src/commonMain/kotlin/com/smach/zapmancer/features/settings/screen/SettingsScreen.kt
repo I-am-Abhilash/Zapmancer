@@ -66,7 +66,11 @@ fun SettingsScreen(
 
     SettingsContent(
         uiState = uiState,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onToggleTwoFactor = { viewModel.toggleTwoFactor() },
+        onToggleDarkMode = { viewModel.toggleDarkMode() },
+        onToggleNotifications = { viewModel.toggleNotifications() },
+        onLogout = { viewModel.logout() }
     )
 }
 
@@ -74,7 +78,11 @@ fun SettingsScreen(
 @Composable
 fun SettingsContent(
     uiState: SettingsUiState,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onToggleTwoFactor: (Boolean) -> Unit,
+    onToggleDarkMode: (Boolean) -> Unit,
+    onToggleNotifications: (Boolean) -> Unit,
+    onLogout: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -115,12 +123,12 @@ fun SettingsContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White.copy(alpha = 0.8f)
+                    containerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                 ),
                 modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.onBackground
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -177,7 +185,7 @@ fun SettingsContent(
                         title = "Two-Factor Authentication",
                         description = "Add an extra layer of security to your account.",
                         checked = uiState.isTwoFactorEnabled,
-                        onCheckedChange = {}
+                        onCheckedChange = onToggleTwoFactor
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
@@ -190,7 +198,7 @@ fun SettingsContent(
                                     containerColor = Color.Transparent,
                                     contentColor = MaterialTheme.colorScheme.primary
                                 ),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(4.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                                 modifier = Modifier.height(32.dp)
@@ -212,14 +220,14 @@ fun SettingsContent(
                         title = "Dark Mode",
                         description = "Switch between light and dark interface themes.",
                         checked = uiState.isDarkModeEnabled,
-                        onCheckedChange = {}
+                        onCheckedChange = onToggleDarkMode
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Email Notifications",
                         description = "Receive weekly performance reports and alerts.",
                         checked = uiState.isEmailNotificationsEnabled,
-                        onCheckedChange = {}
+                        onCheckedChange = onToggleNotifications
                     )
                 }
             }
@@ -229,7 +237,7 @@ fun SettingsContent(
                 Surface(
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
                     shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(
+                    border = BorderStroke(
                         1.dp,
                         MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
                     ),
@@ -254,7 +262,7 @@ fun SettingsContent(
                             )
                         }
                         Button(
-                            onClick = {},
+                            onClick = onLogout,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.shadow(4.dp, RoundedCornerShape(12.dp))
@@ -414,6 +422,10 @@ fun SettingsToggleItem(
 fun SettingsPreview() {
     SettingsContent(
         uiState = SettingsUiState(),
-        onBackClick = {}
+        onBackClick = {},
+        onToggleTwoFactor = {},
+        onToggleDarkMode = {},
+        onToggleNotifications = {},
+        onLogout = {}
     )
 }
