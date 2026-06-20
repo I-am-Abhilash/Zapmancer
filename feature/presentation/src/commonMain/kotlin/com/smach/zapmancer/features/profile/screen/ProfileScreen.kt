@@ -85,11 +85,9 @@ fun ProfileScreen(
     ProfileContent(
         state = uiState,
         onEvent = { viewModel.onEvent(it) },
-        onReviewMoreClick = { viewModel.onReviewMoreClick() },
-        onLoadMorePortfolio = { viewModel.onLoadMorePortfolio() },
         onSearchClick = onSearchClick,
         onBackClick = onBackClick,
-    ) 
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,8 +95,6 @@ fun ProfileScreen(
 fun ProfileContent(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
-    onReviewMoreClick: () -> Unit,
-    onLoadMorePortfolio: () -> Unit,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -176,7 +172,9 @@ fun ProfileContent(
             item {
                 OnMoreButton(
                     text = "See more",
-                    onClick = onLoadMorePortfolio
+                    onClick = {
+                        onEvent(ProfileEvent.PortfolioMore)
+                    }
                 )
             }
             item {
@@ -188,7 +186,9 @@ fun ProfileContent(
             item {
                 OnMoreButton(
                     text = "See more reviews",
-                    onClick = onReviewMoreClick
+                    onClick = {
+                        onEvent(ProfileEvent.ReviewMore)
+                    }
                 )
             }
         }
@@ -663,10 +663,8 @@ fun ProfileScreenPreview() {
         ProfileContent(
             state = ProfileUiState(),
             onEvent = {},
-            onReviewMoreClick = {},
-            onLoadMorePortfolio = {},
             onSearchClick = {},
             onBackClick = {},
-        ) 
+        )
     }
 }

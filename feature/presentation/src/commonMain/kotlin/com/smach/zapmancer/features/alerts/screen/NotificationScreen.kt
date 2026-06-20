@@ -75,7 +75,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NotificationScreen(
     viewModel: NotificationViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onFilterClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -83,7 +82,6 @@ fun NotificationScreen(
         state = uiState,
         onEvent = viewModel::onEvent,
         onBackClick = onBackClick,
-        onFilterClick = onFilterClick
     )
 }
 
@@ -93,7 +91,6 @@ fun NotificationContent(
     state: NotificationUiState,
     onEvent: (NotificationEvent) -> Unit,
     onBackClick: () -> Unit = {},
-    onFilterClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {

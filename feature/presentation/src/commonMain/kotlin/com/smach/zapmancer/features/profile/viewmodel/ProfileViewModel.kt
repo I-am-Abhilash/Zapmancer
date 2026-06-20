@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 
 sealed class ProfileEvent {
     data object Refresh : ProfileEvent()
+    data object ReviewMore : ProfileEvent()
+    data object PortfolioMore : ProfileEvent()
     data object HireMe : ProfileEvent()
 }
 
@@ -27,6 +29,8 @@ class ProfileViewModel(
     override fun onEvent(event: ProfileEvent) {
         when (event) {
             ProfileEvent.Refresh -> loadProfile()
+            ProfileEvent.ReviewMore -> onReviewMoreClick()
+            ProfileEvent.PortfolioMore -> onLoadMorePortfolio()
             ProfileEvent.HireMe -> hireUser()
         }
     }
@@ -101,11 +105,11 @@ class ProfileViewModel(
         }
     }
 
-    fun onReviewMoreClick() {
+    private fun onReviewMoreClick() {
         TODO("Not yet implemented")
     }
 
-    fun onLoadMorePortfolio() {
+    private fun onLoadMorePortfolio() {
         TODO("Not yet implemented")
     }
 }
