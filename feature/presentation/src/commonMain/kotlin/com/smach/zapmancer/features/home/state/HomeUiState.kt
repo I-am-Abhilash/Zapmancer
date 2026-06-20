@@ -1,5 +1,7 @@
 package com.smach.zapmancer.features.home.state
 
+import com.smach.zapmancer.domain.model.ActivityStatus
+
 data class HomeUiState(
     val userName: String = "Alex",
     val totalEarnings: String = "$42,850.00",
@@ -65,7 +67,3 @@ data class RecentActivity(
     val date: String,
     val value: String
 )
-
-enum class ActivityStatus {
-    IN_PROGRESS, REVIEWING, COMPLETED, CRITICAL
-}

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Star
@@ -41,6 +43,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +54,9 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
 import com.smach.zapmancer.features.common.theme.ZapGold
-import com.smach.zapmancer.features.home.state.ActivityStatus
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.state.RecentActivity
 
@@ -62,6 +67,8 @@ fun HomeScreen(
     state: HomeUiState,
     onCreateProjectClick: () -> Unit = {}
 ) {
+    val drawLineColor = MaterialTheme.colorScheme.outlineVariant
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -86,7 +93,7 @@ fun HomeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Bolt, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurface)
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 actions = {
@@ -109,14 +116,14 @@ fun HomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-//                modifier = Modifier.drawBehind {
-//                    drawLine(
-//                        color = MaterialTheme.colorScheme.onSurface,
-//                        start = Offset(0f, size.height),
-//                        end = Offset(size.width, size.height),
-//                        strokeWidth = 2.dp.toPx()
-//                    )
-//                }
+                modifier = Modifier.drawBehind {
+                    drawLine(
+                        color = drawLineColor,
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = 2.dp.toPx()
+                    )
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -223,7 +230,6 @@ fun HomeContent(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
-//                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
@@ -236,135 +242,79 @@ fun HomeContent(
                 }
             }
         }
+        Card(
+            modifier = modifier
+                .fillMaxSize()
+                .height(160.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(4 / 3f)
+                    .border(1.dp, MaterialTheme.colorScheme.onSurface)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
+                                )
+                            )
+                        )
+                )
 
-
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.spacedBy(24.dp)
-//        ) {
-//
-//            // Insights
-//            Column(
-//                modifier = Modifier.weight(1f),
-//                verticalArrangement = Arrangement.spacedBy(24.dp)
-//            ) {
-//                // System Health
-//                Card(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-//                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-//                    shape = RoundedCornerShape(0.dp)
-//                ) {
-//                    Column(modifier = Modifier.padding(16.dp)) {
-//                        Text(
-//                            "System Health",
-//                            style = MaterialTheme.typography.titleMedium,
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                        Spacer(Modifier.height(16.dp))
-//                        HealthBar("CPU Usage", state.cpuUsage, MaterialTheme.colorScheme.primary)
-//                        Spacer(Modifier.height(12.dp))
-//                        HealthBar("Memory Load", state.memoryLoad, MaterialTheme.colorScheme.secondary)
-//
-//                        Spacer(Modifier.height(16.dp))
-//                        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-//                        Spacer(Modifier.height(12.dp))
-//
-//                        Row(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.SpaceBetween,
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-//                            ) {
-//                                PulseIndicator()
-//                                Text(
-//                                    "All Nodes Active",
-//                                    fontSize = 12.sp,
-//                                    fontWeight = FontWeight.Bold,
-//                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                                )
-//                            }
-//                            Text(
-//                                "LAST SYNC: ${state.lastSyncTime}",
-//                                fontSize = 10.sp,
-//                                fontWeight = FontWeight.Bold,
-//                                color = MaterialTheme.colorScheme.onSurfaceVariant
-//                            )
-//                        }
-//                    }
-//                }
-//
-//                // Featured Card
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .aspectRatio(4 / 3f)
-//                        .border(1.dp, MaterialTheme.colorScheme.onSurface)
-//                        .background(MaterialTheme.colorScheme.surface)
-//                ) {
-//                    // Gradient/Pattern Background
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .background(
-//                                Brush.verticalGradient(
-//                                    colors = listOf(
-//                                        Color.Transparent,
-//                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
-//                                    )
-//                                )
-//                            )
-//                    )
-//
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(16.dp),
-//                        verticalArrangement = Arrangement.Bottom
-//                    ) {
-//                        Surface(
-//                            color = ZapGold,
-//                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-//                            shape = RoundedCornerShape(4.dp)
-//                        ) {
-//                            Text(
-//                                "New Feature",
-//                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-//                                fontSize = 10.sp,
-//                                fontWeight = FontWeight.Bold
-//                            )
-//                        }
-//                        Spacer(Modifier.height(8.dp))
-//                        Text(
-//                            "Quantum Analytics",
-//                            style = MaterialTheme.typography.titleLarge,
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                        Text(
-//                            "Real-time predictive modeling is now available in your workspace.",
-//                            fontSize = 12.sp,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-//                        Spacer(Modifier.height(16.dp))
-//                        Button(
-//                            onClick = {},
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = MaterialTheme.colorScheme.surface,
-//                                contentColor = MaterialTheme.colorScheme.primary
-//                            ),
-//                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
-//                            shape = RoundedCornerShape(8.dp),
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
-//                            Text("Launch Dashboard", fontWeight = FontWeight.Bold)
-//                        }
-//                    }
-//                }
-//            }
-//        }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Surface(
+                        color = ZapGold,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            "New Feature",
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Quantum Analytics",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "Real-time predictive modeling is now available in your workspace.",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Launch Dashboard", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
     }
 }
 
