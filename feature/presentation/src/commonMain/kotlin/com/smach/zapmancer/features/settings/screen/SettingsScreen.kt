@@ -123,12 +123,12 @@ fun SettingsContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f)
                 ),
                 modifier = Modifier.border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
             )
         },
-        containerColor = MaterialTheme.colorScheme.onBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
