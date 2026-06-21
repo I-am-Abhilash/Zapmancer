@@ -59,7 +59,11 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ClientProposalsScreen(
     projectId: String,
-    viewModel: ClientProposalsViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) }),
+    viewModel: ClientProposalsViewModel = koinViewModel(parameters = {
+        org.koin.core.parameter.parametersOf(
+            projectId
+        )
+    }),
     onBackClick: () -> Unit = {},
     onFreelancerClick: (String) -> Unit = {},
     showSnackbar: (String) -> Unit = {}
@@ -131,14 +135,23 @@ fun ClientProposalsContent(
 
             if (state.isLoading) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(48.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text("Loading proposals...", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             } else if (state.proposals.isEmpty()) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(48.dp), contentAlignment = Alignment.Center) {
-                        Text("No proposals received yet.", style = MaterialTheme.typography.bodyMedium)
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "No proposals received yet.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             } else {
@@ -146,7 +159,8 @@ fun ClientProposalsContent(
                     ProposalCard(
                         proposal = proposal,
                         onFreelancerClick = {
-                            val id = if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
+                            val id =
+                                if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
                             onFreelancerClick(id)
                         },
                         onAccept = { onEvent(ClientProposalsEvent.AcceptBid(proposal.freelancerName)) },
@@ -267,7 +281,11 @@ fun ProposalCard(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Icon(Icons.Outlined.ChatBubbleOutline, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Icon(
+                        Icons.Outlined.ChatBubbleOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
                     Spacer(Modifier.width(6.dp))
                     Text("Message", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }

@@ -107,14 +107,10 @@ fun NotificationContent(
                 containerColor = MaterialTheme.colorScheme.surface,
                 drawBottomBorder = true
             )
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        }, containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
         ) {
@@ -136,8 +132,7 @@ fun NotificationContent(
                         },
                         onActionClicked = { actionLabel ->
                             onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel))
-                        }
-                    )
+                        })
                 }
             }
         }
@@ -149,8 +144,7 @@ fun RibbonHeader(text: String) {
     Box(modifier = Modifier.padding(start = 4.dp)) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .padding(start = 4.dp) // Adjust for the "fold"
+            modifier = Modifier.padding(start = 4.dp) // Adjust for the "fold"
                 .offset(x = (-20).dp),
             shadowElevation = 4.dp
         ) {
@@ -165,9 +159,7 @@ fun RibbonHeader(text: String) {
         }
         val pathColor = MaterialTheme.colorScheme.primaryContainer
         Canvas(
-            modifier = Modifier
-                .size(8.dp)
-                .align(Alignment.BottomStart)
+            modifier = Modifier.size(8.dp).align(Alignment.BottomStart)
                 .offset(x = (-16).dp, y = 8.dp)
         ) {
             val path = Path().apply {
@@ -220,25 +212,22 @@ fun NotificationCard(
     val opacity = if (item.section == "Yesterday") 0.8f else 1f
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .shadow(if (item.section == "Today") 2.dp else 0.dp, MaterialTheme.shapes.medium)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = opacity)),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(
+                alpha = opacity
+            )
+        ),
         shape = MaterialTheme.shapes.medium
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .drawAccentLine(accentColor)
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().drawAccentLine(accentColor).padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(iconBg)
+                modifier = Modifier.size(40.dp).clip(MaterialTheme.shapes.small).background(iconBg)
                     .border(1.dp, iconBg.copy(alpha = 0.1f), MaterialTheme.shapes.small),
                 contentAlignment = Alignment.Center
             ) {
@@ -298,13 +287,15 @@ fun NotificationCard(
                                 ),
                                 shape = MaterialTheme.shapes.small,
                                 border = if (!action.isPrimary) BorderStroke(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.outline
+                                    1.dp, MaterialTheme.colorScheme.outline
                                 ) else null,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier.height(32.dp)
                             ) {
-                                Text(action.label, style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
+                                Text(
+                                    action.label,
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                )
                             }
                         }
                     }
@@ -320,9 +311,12 @@ fun NotificationCard(
                         OutlinedTextField(
                             value = replyText,
                             onValueChange = onReplyTextChanged,
-                            placeholder = { Text("Quick reply...", style = MaterialTheme.typography.bodyMedium) },
-                            modifier = Modifier
-                                .weight(1f),
+                            placeholder = {
+                                Text(
+                                    "Quick reply...", style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            modifier = Modifier.weight(1f),
                             shape = MaterialTheme.shapes.small,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -332,10 +326,9 @@ fun NotificationCard(
                             )
                         )
                         IconButton(
-                            onClick = onSendReply,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small)
+                            onClick = onSendReply, modifier = Modifier.size(36.dp).background(
+                                MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small
+                            )
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.Send,
@@ -358,8 +351,7 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
             topLeft = Offset.Zero,
             size = Size(width = 6.dp.toPx(), height = size.height)
         )
-    }
-)
+    })
 
 @PreviewLightDark
 @Composable
@@ -374,11 +366,9 @@ fun NotificationPreview() {
                 timestamp = "2m ago",
                 section = "Today",
                 actions = listOf(
-                    NotificationAction("View Logs", isPrimary = true),
-                    NotificationAction("Dismiss")
+                    NotificationAction("View Logs", isPrimary = true), NotificationAction("Dismiss")
                 )
-            ),
-            NotificationItem(
+            ), NotificationItem(
                 id = "2",
                 type = NotificationType.MESSAGE,
                 title = "Message from Sarah Connor",
@@ -387,8 +377,7 @@ fun NotificationPreview() {
                 section = "Today",
                 isItalic = true,
                 quickReply = true
-            ),
-            NotificationItem(
+            ), NotificationItem(
                 id = "3",
                 type = NotificationType.ALERT,
                 title = "Database Connection Spike",
@@ -399,16 +388,14 @@ fun NotificationPreview() {
                     NotificationAction("Block IP", isPrimary = true, isError = true),
                     NotificationAction("Investigate")
                 )
-            ),
-            NotificationItem(
+            ), NotificationItem(
                 id = "4",
                 type = NotificationType.GENERAL,
                 title = "Weekly Backup Complete",
                 description = "All system partitions have been mirrored to the secure vault. Integrity check: 100%.",
                 timestamp = "1d ago",
                 section = "Yesterday"
-            ),
-            NotificationItem(
+            ), NotificationItem(
                 id = "5",
                 type = NotificationType.COLLABORATOR,
                 title = "New Collaborator Joined",

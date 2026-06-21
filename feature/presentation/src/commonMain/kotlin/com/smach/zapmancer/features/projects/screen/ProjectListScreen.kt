@@ -88,6 +88,8 @@ fun ProjectListContent(
     onProjectClick: (Int) -> Unit = {},
     onSearchClick: () -> Unit
 ) {
+    val projects = state.projects
+
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -121,23 +123,6 @@ fun ProjectListContent(
                     )
                 }
             }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                PortfolioHeader()
-            }
-
-//            item {
-//                CategoryTabs(
-//                    categories = state.categories.map { it.displayName },
-//                    selectedCategory = state.selectedCategory,
-//                    onCategorySelected = {
-//                        onEvent(
-//                            ProjectListEvent.CategorySelected(it)
-//                        )
-//                    })
-//            }
-
             if (state.error != null) {
                 item {
                     Text(
@@ -150,7 +135,11 @@ fun ProjectListContent(
                 }
             }
 
-            val projects = state.projects
+
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                PortfolioHeader()
+            }
 
             if (projects.isEmpty() && !state.isLoading && state.error == null) {
                 item {
@@ -216,41 +205,6 @@ fun DashedDivider() {
     }
 }
 
-@Composable
-fun CategoryTabs(
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        categories.forEach { category ->
-            val isSelected = category == selectedCategory
-            Surface(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onCategorySelected(category) },
-                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(
-                    text = category,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    textAlign = TextAlign.Center,
-                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                    fontSize = 14.sp
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {

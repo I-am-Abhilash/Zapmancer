@@ -45,11 +45,16 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.OnEmailChanged -> updateState { copy(email = event.email) }
             is LoginEvent.OnPasswordChanged -> updateState { copy(password = event.password) }
-            is LoginEvent.OnRememberMeChanged -> { /* Handle remember me check */ }
+            is LoginEvent.OnRememberMeChanged -> { /* Handle remember me check */
+            }
+
             LoginEvent.OnTogglePasswordVisibility -> updateState { copy(togglePassword = !togglePassword) }
             LoginEvent.Submit -> submit()
-            LoginEvent.OnForgotPasswordClicked -> { /* Handle click */ }
-            LoginEvent.OnRegisterHereClicked -> { /* Handle click */ }
+            LoginEvent.OnForgotPasswordClicked -> { /* Handle click */
+            }
+
+            LoginEvent.OnRegisterHereClicked -> { /* Handle click */
+            }
         }
     }
 

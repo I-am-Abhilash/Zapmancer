@@ -28,6 +28,7 @@ class MessagesListViewModel(
             is MessagesListEvent.OnSearchQueryChanged -> {
                 updateState { copy(searchQuery = event.query) }
             }
+
             is MessagesListEvent.OnFilterSelected -> {
                 updateState { copy(selectedFilter = event.filter) }
             }
@@ -56,6 +57,7 @@ class MessagesListViewModel(
                         )
                     }
                 }
+
                 is Result.Error -> {
                     updateState { copy(isLoading = false) }
                 }

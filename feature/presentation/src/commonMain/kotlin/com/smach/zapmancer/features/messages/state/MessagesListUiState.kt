@@ -7,7 +7,7 @@ data class MessagesListUiState(
     val isLoading: Boolean = false
 )
 
-val conversations : List<ConversationItem> = listOf(
+val conversations: List<ConversationItem> = listOf(
     ConversationItem(
         id = "1",
         name = "Alex Rivera",

@@ -65,7 +65,7 @@ fun SettingsScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
- 
+
     SettingsContent(
         uiState = uiState,
         onBackClick = onBackClick,

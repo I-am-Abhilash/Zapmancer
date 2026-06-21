@@ -1,9 +1,5 @@
 package com.smach.zapmancer.features.projects.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Devices
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.domain.model.ProjectCategory
@@ -33,14 +29,16 @@ class ProjectListViewModel(
             is ProjectListEvent.CategorySelected -> {
                 updateState { copy(selectedCategory = event.category) }
             }
+
             ProjectListEvent.SearchClicked -> {
                 // Implement search action if needed
             }
+
             is ProjectListEvent.ProjectClicked -> {
                 // Implement project selection logic if needed
             }
+
             ProjectListEvent.Refresh -> loadProjects()
-            else -> {}
         }
     }
 
@@ -64,12 +62,13 @@ class ProjectListViewModel(
                                     showImagePlaceholder = domainProject.showImagePlaceholder,
                                     footerText = domainProject.footerText,
                                     membersCount = domainProject.membersCount
-                                )                            }
+                                )
+                            }
                         )
                     }
                 },
-                onFailure = {
-                    // Handle failure if needed
+                onFailure = { error ->
+                    updateState { copy(error = error.message ?: "An unknown error occurred") }
                 }
             )
         }

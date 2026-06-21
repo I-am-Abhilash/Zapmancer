@@ -8,7 +8,11 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 class SignUpUseCase(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, username: String, password: String): Result<User, DataError.Network> {
+    suspend operator fun invoke(
+        email: String,
+        username: String,
+        password: String
+    ): Result<User, DataError.Network> {
         return repository.signUp(email, username, password)
     }
 }

@@ -20,7 +20,9 @@ sealed interface ClientProposalsEffect {
 class ClientProposalsViewModel(
     private val projectId: String,
     private val getProjectProposalsUseCase: GetProjectProposalsUseCase
-) : BaseViewModel<ClientProposalsUiState, ClientProposalsEvent, ClientProposalsEffect>(ClientProposalsUiState()) {
+) : BaseViewModel<ClientProposalsUiState, ClientProposalsEvent, ClientProposalsEffect>(
+    ClientProposalsUiState()
+) {
 
     init {
         loadProposals()
@@ -32,6 +34,7 @@ class ClientProposalsViewModel(
             is ClientProposalsEvent.AcceptBid -> {
                 sendEffect(ClientProposalsEffect.ShowToast("Accepted bid from ${event.freelancerName}!"))
             }
+
             is ClientProposalsEvent.MessageFreelancer -> {
                 sendEffect(ClientProposalsEffect.ShowToast("Initiated chat room with ${event.freelancerName}."))
             }
@@ -45,6 +48,7 @@ class ClientProposalsViewModel(
                 is Result.Success -> {
                     updateState { copy(isLoading = false, proposals = result.data) }
                 }
+
                 is Result.Error -> {
                     // Fallback to static mock proposals if the server returns error
                     updateState {

@@ -11,7 +11,7 @@ data class ProposalUiState(
     val isSubmitting: Boolean = false,
     val isSubmitted: Boolean = false,
     val projectType: String = "Fixed Price",
-    val estStart : String = ""
+    val estStart: String = ""
 )
 
 enum class ProposalStep(val step: Int, val title: String) {

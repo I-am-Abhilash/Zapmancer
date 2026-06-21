@@ -38,16 +38,28 @@ class PostProjectViewModel(
             is PostProjectEvent.OnDescriptionChanged -> updateState { copy(description = event.description) }
             is PostProjectEvent.OnBudgetChanged -> updateState { copy(budgetRange = event.budget) }
             is PostProjectEvent.OnTimelineChanged -> updateState { copy(timeline = event.timeline) }
-            is PostProjectEvent.OnDeliverableInputChanged -> updateState { copy(currentDeliverableInput = event.input) }
+            is PostProjectEvent.OnDeliverableInputChanged -> updateState {
+                copy(
+                    currentDeliverableInput = event.input
+                )
+            }
+
             PostProjectEvent.AddDeliverable -> {
                 val input = uiState.value.currentDeliverableInput.trim()
                 if (input.isNotEmpty()) {
-                    updateState { copy(deliverables = deliverables + input, currentDeliverableInput = "") }
+                    updateState {
+                        copy(
+                            deliverables = deliverables + input,
+                            currentDeliverableInput = ""
+                        )
+                    }
                 }
             }
+
             is PostProjectEvent.RemoveDeliverable -> {
                 updateState { copy(deliverables = deliverables.filterIndexed { idx, _ -> idx != event.index }) }
             }
+
             is PostProjectEvent.OnSkillInputChanged -> updateState { copy(currentSkillInput = event.input) }
             PostProjectEvent.AddSkill -> {
                 val input = uiState.value.currentSkillInput.trim()
@@ -55,9 +67,11 @@ class PostProjectViewModel(
                     updateState { copy(skills = skills + input, currentSkillInput = "") }
                 }
             }
+
             is PostProjectEvent.RemoveSkill -> {
                 updateState { copy(skills = skills.filterIndexed { idx, _ -> idx != event.index }) }
             }
+
             PostProjectEvent.Submit -> submitProject()
         }
     }
@@ -99,6 +113,7 @@ class PostProjectViewModel(
                     updateState { copy(isSubmitting = false, isSubmitted = true) }
                     sendEffect(PostProjectEffect.ShowToast("Project posted successfully!"))
                 }
+
                 is Result.Error -> {
                     updateState { copy(isSubmitting = false, error = "Failed to post project") }
                     sendEffect(PostProjectEffect.ShowToast("Failed to post project: ${result.error}"))

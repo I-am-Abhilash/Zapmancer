@@ -35,6 +35,7 @@ class MessagesDetailViewModel(
             is MessagesDetailEvent.OnTextChanged -> {
                 updateState { copy(typingText = event.text) }
             }
+
             MessagesDetailEvent.SendMessage -> sendMessage()
             MessagesDetailEvent.MarkAsRead -> markAsRead()
         }

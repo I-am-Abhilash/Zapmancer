@@ -14,9 +14,12 @@ import kotlinx.coroutines.launch
 
 sealed class NotificationEvent {
     data object Refresh : NotificationEvent()
-    data class OnReplyTextChanged(val notificationId: String, val text: String) : NotificationEvent()
+    data class OnReplyTextChanged(val notificationId: String, val text: String) :
+        NotificationEvent()
+
     data class SendQuickReply(val notificationId: String) : NotificationEvent()
-    data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent()
+    data class ExecuteAction(val notificationId: String, val actionLabel: String) :
+        NotificationEvent()
 }
 
 sealed class NotificationEffect {
@@ -41,8 +44,12 @@ class NotificationViewModel(
                     copy(replyDrafts = replyDrafts + (event.notificationId to event.text))
                 }
             }
+
             is NotificationEvent.SendQuickReply -> sendQuickReply(event.notificationId)
-            is NotificationEvent.ExecuteAction -> executeAction(event.notificationId, event.actionLabel)
+            is NotificationEvent.ExecuteAction -> executeAction(
+                event.notificationId,
+                event.actionLabel
+            )
         }
     }
 
@@ -77,6 +84,7 @@ class NotificationViewModel(
                         )
                     }
                 }
+
                 is Result.Error -> {
                     updateState {
                         copy(
@@ -106,6 +114,7 @@ class NotificationViewModel(
                     sendEffect(NotificationEffect.ShowToast("Quick reply sent!"))
                     loadNotifications()
                 }
+
                 is Result.Error -> {
                     updateState {
                         copy(
@@ -127,6 +136,7 @@ class NotificationViewModel(
                     sendEffect(NotificationEffect.ShowToast("Action executed: $actionLabel"))
                     loadNotifications()
                 }
+
                 is Result.Error -> {
                     updateState {
                         copy(

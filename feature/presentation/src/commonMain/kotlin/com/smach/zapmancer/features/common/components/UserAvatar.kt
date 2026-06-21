@@ -56,7 +56,7 @@ fun UserAvatar(
                 )
             }
         }
-        
+
         if (isOnline) {
             val badgeSize = size * 0.25f
             val badgeBorder = if (badgeSize > 8.dp) 2.dp else 1.5.dp

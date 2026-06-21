@@ -87,7 +87,8 @@ class SettingsRepositoryImpl(
             }
         }) {
             is Result.Success -> {
-                _settingsState.value = _settingsState.value.copy(isEmailNotificationsEnabled = enabled)
+                _settingsState.value =
+                    _settingsState.value.copy(isEmailNotificationsEnabled = enabled)
             }
 
             is Result.Error -> {

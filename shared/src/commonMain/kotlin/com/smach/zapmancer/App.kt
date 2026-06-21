@@ -49,16 +49,19 @@ fun App() {
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
+
                 is AppState.Onboarding -> {
                     OnboardingScreen(
                         onFinished = { mainViewModel.completeOnboarding() }
                     )
                 }
+
                 is AppState.Unauthenticated -> {
                     AuthGraph(
                         onAuthSuccess = {}
                     )
                 }
+
                 is AppState.Authenticated -> {
                     MainGraph(
                         onLogout = { mainViewModel.logout() },

@@ -34,6 +34,7 @@ class ForgotPasswordViewModel(
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isSuccess = true) }
                 }
+
                 is Result.Error -> {
                     updateState { copy(isLoading = false, error = result.error.toUserMessage()) }
                 }

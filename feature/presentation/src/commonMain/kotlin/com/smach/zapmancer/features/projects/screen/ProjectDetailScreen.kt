@@ -68,7 +68,8 @@ fun ProjectDetailScreen(
     onBackClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {}
 ) {
-    val viewModel: ProjectDetailViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
+    val viewModel: ProjectDetailViewModel =
+        koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
@@ -120,7 +121,11 @@ fun ProjectDetailContent(
                 onBackClick = onBackClick,
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                     UserAvatar(
                         imageUrl = null,
@@ -270,7 +275,7 @@ fun BudgetSection(state: ProjectDetailUiState) {
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
 
-        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()){
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
                 "TIMELINE",
                 style = MaterialTheme.typography.labelSmall,
@@ -421,7 +426,11 @@ fun ApplySaveButtonSection(
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            Text(if (isSaved) "Unsave Project" else "Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(
+                if (isSaved) "Unsave Project" else "Save Project",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
         }
     }
 }
@@ -469,7 +478,11 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.background)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            RoundedCornerShape(8.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     // Placeholder for logo
@@ -493,7 +506,11 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -560,7 +577,9 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                alpha = 0.4f
+            ),
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))

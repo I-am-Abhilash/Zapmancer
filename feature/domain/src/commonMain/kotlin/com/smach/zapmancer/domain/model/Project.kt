@@ -17,8 +17,7 @@ data class Project(
 )
 
 
-
-enum class ProjectCategory(    val displayName: String) {
+enum class ProjectCategory(val displayName: String) {
     ALL("All"),
     DEVELOPMENT("Development"),
     DESIGN("Design"),
@@ -32,7 +31,7 @@ enum class ProjectCategory(    val displayName: String) {
     }
 }
 
-enum class ProjectStatus(    val displayName: String) {
+enum class ProjectStatus(val displayName: String) {
     ACTIVE("Active"),
     PENDING("Pending"),
     DONE("Done");

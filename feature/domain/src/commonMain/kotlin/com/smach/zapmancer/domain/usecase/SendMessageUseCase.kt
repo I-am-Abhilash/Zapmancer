@@ -7,7 +7,10 @@ import com.smach.zapmancer.domain.repository.MessageRepository
 class SendMessageUseCase(
     private val repository: MessageRepository
 ) {
-    suspend operator fun invoke(conversationId: String, text: String): Result<Unit, DataError.Network> {
+    suspend operator fun invoke(
+        conversationId: String,
+        text: String
+    ): Result<Unit, DataError.Network> {
         return repository.sendMessage(conversationId, text)
     }
 }

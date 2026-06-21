@@ -75,7 +75,10 @@ fun ErrorState(
             ),
             shape = MaterialTheme.shapes.medium,
         ) {
-            Text(buttonText, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+            Text(
+                buttonText,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+            )
         }
     }
 }

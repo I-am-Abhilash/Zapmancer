@@ -23,7 +23,9 @@ class ProjectDetailViewModel(
     private val getProjectDetailUseCase: GetProjectDetailUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
     private val applyProjectUseCase: ApplyProjectUseCase
-) : BaseViewModel<ProjectDetailUiState, ProjectDetailEvent, ProjectDetailEffect>(ProjectDetailUiState()) {
+) : BaseViewModel<ProjectDetailUiState, ProjectDetailEvent, ProjectDetailEffect>(
+    ProjectDetailUiState()
+) {
 
     init {
         loadProject()

@@ -28,15 +28,19 @@ class ProposalViewModel(
             is ProposalEvent.OnPitchChanged -> {
                 updateState { copy(pitchContent = event.pitch) }
             }
+
             is ProposalEvent.OnBudgetChanged -> {
                 updateState { copy(budget = event.budget) }
             }
+
             is ProposalEvent.OnTimelineChanged -> {
                 updateState { copy(timelineDays = event.timeline) }
             }
+
             is ProposalEvent.StepChanged -> {
                 updateState { copy(currentStep = event.step) }
             }
+
             ProposalEvent.Submit -> submitProposal()
         }
     }
@@ -45,7 +49,7 @@ class ProposalViewModel(
         val current = uiState.value
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
-            
+
             val domainProposal = Proposal(
                 freelancerName = current.freelancerName,
                 freelancerRole = current.freelancerRole,

@@ -32,11 +32,12 @@ class VerificationViewModel(
             updateState { copy(isLoading = true, error = null) }
             // Assuming we pass current email/context or dummy for now.
             // In a real application, email is passed down from previous screens or saved in session/state.
-            val email = "user@example.com" 
+            val email = "user@example.com"
             when (val result = verifyOtpUseCase(email, currentState.code)) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isSuccess = true) }
                 }
+
                 is Result.Error -> {
                     updateState { copy(isLoading = false, error = result.error.toUserMessage()) }
                 }

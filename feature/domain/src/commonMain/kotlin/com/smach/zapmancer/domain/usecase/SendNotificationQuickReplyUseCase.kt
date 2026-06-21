@@ -7,7 +7,10 @@ import com.smach.zapmancer.domain.repository.NotificationRepository
 class SendNotificationQuickReplyUseCase(
     private val repository: NotificationRepository
 ) {
-    suspend operator fun invoke(notificationId: String, replyText: String): Result<Unit, DataError.Network> {
+    suspend operator fun invoke(
+        notificationId: String,
+        replyText: String
+    ): Result<Unit, DataError.Network> {
         return repository.sendQuickReply(notificationId, replyText)
     }
 }

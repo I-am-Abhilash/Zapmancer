@@ -81,6 +81,7 @@ class ProfileViewModel(
                         )
                     }
                 }
+
                 is Result.Error -> {
                     updateState {
                         copy(
@@ -101,6 +102,7 @@ class ProfileViewModel(
                     updateState { copy(isLoading = false, isHireSuccess = true) }
                     sendEffect(ProfileEffect.ShowToast("Hire request processed successfully!"))
                 }
+
                 is Result.Error -> {
                     updateState {
                         copy(
