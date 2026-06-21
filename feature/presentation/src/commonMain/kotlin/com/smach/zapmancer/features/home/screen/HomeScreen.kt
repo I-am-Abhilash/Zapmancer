@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Settings
@@ -50,7 +48,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -85,7 +82,7 @@ fun HomeScreen(
     showSnackbar: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
- 
+
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -95,7 +92,7 @@ fun HomeScreen(
             }
         }
     }
- 
+
     HomeScreen(
         state = state,
         onCreateProjectClick = {
@@ -139,12 +136,6 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Bolt,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(32.dp)
-                        )
                         Text(
                             "Zapmancer",
                             style = MaterialTheme.typography.titleLarge,
@@ -159,7 +150,10 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                MaterialTheme.shapes.medium
+                            )
                             .clickable {
                                 scope.launch { drawerState.close() }
                                 onNavigateToProfile()
@@ -265,12 +259,6 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Icon(
-                                Icons.Default.Bolt,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(28.dp)
-                            )
                             Text(
                                 "Zapmancer",
                                 color = MaterialTheme.colorScheme.primary,
@@ -287,16 +275,17 @@ fun HomeScreen(
                             Icon(
                                 Icons.Default.Notifications,
                                 contentDescription = "Notifications",
-                                tint = MaterialTheme.colorScheme.onSurface
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
+                        Spacer(modifier = Modifier.width(8.dp))
                         UserAvatar(
                             imageUrl = null,
-                            size = 36.dp,
-                            shape = MaterialTheme.shapes.small,
-                            borderWidth = 2.dp,
-                            borderColor = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(end = 12.dp)
+                            size = 42.dp,
+                            shape = MaterialTheme.shapes.extraLarge,
+                            borderWidth = 1.dp,
+                            borderColor = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(end = 4.dp)
                         )
                     },
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -433,93 +422,21 @@ fun HomeContent(
                     fontWeight = FontWeight.Bold
                 )
                 TextButton(onClick = onExportCsvClick) {
-                    Text("Export CSV", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Export CSV",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = MaterialTheme.shapes.large,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    state.recentActivities.forEach { activity ->
-                        ActivityRow(activity)
-                    }
-                }
-            }
-        }
-        Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(160.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.large,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(4 / 3f)
-                    .border(1.dp, MaterialTheme.colorScheme.onSurface)
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
-                                )
-                            )
-                        )
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Surface(
-                        color = ZapGold,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                        shape = MaterialTheme.shapes.extraSmall
-                    ) {
-                        Text(
-                            "New Feature",
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        "Quantum Analytics",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                state.recentActivities.forEach { activity ->
+                    ActivityRow(
+                        activity = activity,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
-                    Text(
-                        "Real-time predictive modeling is now available in your workspace.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Launch Dashboard", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                    }
                 }
             }
         }
@@ -561,8 +478,15 @@ fun StatCard(
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(accentColor.copy(alpha = 0.2f), MaterialTheme.shapes.extraSmall)
-                            .border(1.dp, accentColor.copy(alpha = 0.4f), MaterialTheme.shapes.extraSmall),
+                            .background(
+                                accentColor.copy(alpha = 0.2f),
+                                MaterialTheme.shapes.extraSmall
+                            )
+                            .border(
+                                1.dp,
+                                accentColor.copy(alpha = 0.4f),
+                                MaterialTheme.shapes.extraSmall
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -634,7 +558,8 @@ fun StatCard(
 
 @Composable
 fun ActivityRow(
-    activity: RecentActivity
+    activity: RecentActivity,
+    modifier: Modifier = Modifier
 ) {
     val accentColor = when (activity.status) {
         ActivityStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primary
@@ -644,7 +569,7 @@ fun ActivityRow(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -695,12 +620,11 @@ fun ActivityRow(
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
-
-//                        Text(
-//                            text = activity.category,
-//                            style = MaterialTheme.typography.bodySmall,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
+                        Text(
+                            text = activity.category,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
 

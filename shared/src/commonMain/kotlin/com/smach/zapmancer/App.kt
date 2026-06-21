@@ -32,7 +32,7 @@ fun App() {
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.appState.collectAsState()
 
-    AppTheme(darkTheme = isDarkMode) {
+    AppTheme() {
         AnimatedContent(
             targetState = appState,
             transitionSpec = { fadeIn() togetherWith fadeOut() }
