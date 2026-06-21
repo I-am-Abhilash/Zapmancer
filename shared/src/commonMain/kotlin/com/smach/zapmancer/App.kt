@@ -28,6 +28,7 @@ fun App() {
     val settingsRepository: SettingsRepository = koinInject()
     val settingsState by settingsRepository.settingsFlow.collectAsState(initial = null)
     val isDarkMode = settingsState?.isDarkModeEnabled ?: isSystemInDarkTheme()
+    val isClientMode = settingsState?.isClientModeEnabled ?: false
 
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.appState.collectAsState()
@@ -55,14 +56,13 @@ fun App() {
                 }
                 is AppState.Unauthenticated -> {
                     AuthGraph(
-                        onAuthSuccess = {
-//                            mainViewModel.onAuthSuccess()
-                        }
+                        onAuthSuccess = {}
                     )
                 }
                 is AppState.Authenticated -> {
                     MainGraph(
-                        onLogout = { mainViewModel.logout() }
+                        onLogout = { mainViewModel.logout() },
+                        isClientMode = isClientMode,
                     )
                 }
             }

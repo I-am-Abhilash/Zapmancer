@@ -1,7 +1,6 @@
 package com.smach.zapmancer.features.profile.screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +22,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MilitaryTech
 import androidx.compose.material.icons.filled.Search
@@ -45,14 +42,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -66,6 +61,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.components.AppImage
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.profile.state.PortfolioItem
 import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
@@ -74,16 +71,17 @@ import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 import com.smach.zapmancer.features.projects.screen.VerticalDivider
 import org.koin.compose.viewmodel.koinViewModel
-import androidx.compose.runtime.LaunchedEffect
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProfileScreen(
     userId: String? = null,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
+    onProfileClick: (String) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
 ) {
-    val viewModel: ProfileViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(userId) })
+    val viewModel: ProfileViewModel = koinViewModel(parameters = { parametersOf(userId) })
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
@@ -101,6 +99,7 @@ fun ProfileScreen(
         onEvent = { viewModel.onEvent(it) },
         onSearchClick = onSearchClick,
         onBackClick = onBackClick,
+        onProfileClick = onProfileClick,
     )
 }
 
@@ -110,7 +109,8 @@ fun ProfileContent(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
     onSearchClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onProfileClick: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -142,7 +142,7 @@ fun ProfileContent(
             item { IdentityHeader(state, onEvent) }
 
             item {
-                ProfileSectionCard("About") {
+                ProfileSectionCard(title = "About") {
                     Text(
                         text = state.about,
                         style = MaterialTheme.typography.bodyMedium,
@@ -153,7 +153,7 @@ fun ProfileContent(
             }
 
             item {
-                ProfileSectionCard("Skills") {
+                ProfileSectionCard(title = "Skills") {
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -167,10 +167,10 @@ fun ProfileContent(
             }
 
             item {
-                SectionTitleRow("Portfolio")
+                SectionTitleRow(title = "Portfolio")
             }
             items(state.portfolioItems) { project ->
-                PortfolioCard(project)
+                PortfolioCard(item = project)
             }
             item {
                 OnMoreButton(
@@ -181,10 +181,10 @@ fun ProfileContent(
                 )
             }
             item {
-                SectionTitleRow("Top Reviews")
+                SectionTitleRow(title = "Top Reviews")
             }
             items(state.reviews) { review ->
-                ReviewCard(review)
+                ReviewCard(review = review, onProfileClick = onProfileClick)
             }
             item {
                 OnMoreButton(
@@ -302,16 +302,12 @@ fun IdentityHeader(
                 InfoChip(
                     Icons.Default.MilitaryTech,
                     state.ranking,
-                    Color(0xFFE8E8E8),
-                    Color(0xFF717171)
                 )
 
                 if (state.isTopRated) {
                     InfoChip(
                         Icons.Default.Verified,
                         "Top Rated",
-                        Color(0xFFFFF5F2),
-                        Color(0xFFFF7F50)
                     )
                 }
             }
@@ -454,7 +450,7 @@ fun StatItem(value: String, label: String) {
 fun InfoChip(
     icon: ImageVector,
     text: String,
-    bgColor: Color = MaterialTheme.colorScheme.background,
+    bgColor: Color = MaterialTheme.colorScheme.surface,
     textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     Surface(
@@ -553,7 +549,7 @@ fun PortfolioCard(item: PortfolioItem) {
 }
 
 @Composable
-fun ReviewCard(review: ProfileReview) {
+fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -578,10 +574,11 @@ fun ReviewCard(review: ProfileReview) {
                         imageUrl = review.authorAvatarUrl,
                         size = 48.dp,
                         borderWidth = 2.dp,
-                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        modifier = Modifier.clickable { onProfileClick(review.authorId) }
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column {
+                    Column(modifier = Modifier.clickable { onProfileClick(review.authorId) }) {
                         Text(
                             text = review.authorName,
                             style = MaterialTheme.typography.titleSmall,
@@ -657,6 +654,7 @@ fun ProfileScreenPreview() {
             onEvent = {},
             onSearchClick = {},
             onBackClick = {},
+            onProfileClick = {}
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.smach.zapmancer.features.projects.screen
 
-//import com.smach.zapmancer.features.home.viewmodel.HomeViewModel
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -62,7 +61,6 @@ import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-val ZapGrey = Color(0xFF9E9E9E)
 
 @Composable
 fun ProjectListScreen(
@@ -70,14 +68,14 @@ fun ProjectListScreen(
     onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit = {},
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsState()
 
-        ProjectListContent(
-            state = state,
-            onEvent = onEvent,
-            onProjectClick = onProjectClick,
-            onSearchClick = {},
-        )
+    ProjectListContent(
+        state = state,
+        onEvent = onEvent,
+        onProjectClick = onProjectClick,
+        onSearchClick = {},
+    )
 
 }
 

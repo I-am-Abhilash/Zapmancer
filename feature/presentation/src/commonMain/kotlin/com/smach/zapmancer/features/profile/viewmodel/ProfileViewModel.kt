@@ -71,7 +71,8 @@ class ProfileViewModel(
                                     authorRole = it.authorRole,
                                     content = it.content,
                                     rating = it.rating,
-                                    authorAvatarUrl = it.authorAvatarUrl.orEmpty()
+                                    authorAvatarUrl = it.authorAvatarUrl.orEmpty(),
+                                    authorId = it.authorId
                                 )
                             },
                             avatarUrl = profile.avatarUrl.orEmpty(),
@@ -95,7 +96,7 @@ class ProfileViewModel(
     private fun hireUser() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null, isHireSuccess = false) }
-            when (val result = hireUserUseCase("julian_vancore")) {
+            when (val result = hireUserUseCase(userId ?: "")) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isHireSuccess = true) }
                     sendEffect(ProfileEffect.ShowToast("Hire request processed successfully!"))

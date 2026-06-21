@@ -3,7 +3,6 @@ package com.smach.zapmancer.features.home.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,37 +14,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,30 +47,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
+import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.state.RecentActivity
 import com.smach.zapmancer.features.home.viewmodel.HomeEffect
-import com.smach.zapmancer.features.home.viewmodel.HomeEvent
 import com.smach.zapmancer.features.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 val ZapGold = Color(0xFFFFD700)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onNavigateToSettings: () -> Unit = {},
+    onCreateProjectClick: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
-    onNavigateToPostProject: () -> Unit = {},
-    onNavigateToClientProposals: (String) -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToSubmitProposal: () -> Unit = {},
+    onExportCsvClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
+    val drawerController = LocalDrawerController.current
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -93,216 +81,51 @@ fun HomeScreen(
         }
     }
 
-    HomeScreen(
-        state = state,
-        onCreateProjectClick = {
-            if (state.isClientMode) onNavigateToPostProject() else onNavigateToProjects()
-        },
-        onNavigateToSettings = onNavigateToSettings,
-        onNavigateToProfile = onNavigateToProfile,
-        onNavigateToProposal = {
-            if (state.isClientMode) onNavigateToClientProposals("1") else onNavigateToSubmitProposal()
-        },
-        onExportCsvClick = { viewModel.onEvent(HomeEvent.ExportCsv) }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeScreen(
-    state: HomeUiState,
-    onCreateProjectClick: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
-    onNavigateToProposal: () -> Unit = {},
-    onExportCsvClick: () -> Unit = {}
-) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.width(300.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp)
-                ) {
+    Scaffold(
+        topBar = {
+            ZapmancerTopBar(
+                titleContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             "Zapmancer",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                MaterialTheme.shapes.medium
-                            )
-                            .clickable {
-                                scope.launch { drawerState.close() }
-                                onNavigateToProfile()
-                            }
-                            .padding(12.dp)
-                    ) {
-                        UserAvatar(
-                            imageUrl = null,
-                            size = 40.dp
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                "Alex Rivera",
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                "Senior Developer",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        DrawerItem(
-                            icon = Icons.Default.Work,
-                            label = "Home Dashboard",
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                            }
-                        )
-                        if (state.isClientMode) {
-                            DrawerItem(
-                                icon = Icons.Default.Payments,
-                                label = "Post a Project",
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                    onCreateProjectClick()
-                                }
-                            )
-                            DrawerItem(
-                                icon = Icons.Default.Star,
-                                label = "Review Project Bids",
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                    onNavigateToProposal()
-                                }
-                            )
-                        } else {
-                            DrawerItem(
-                                icon = Icons.Default.Payments,
-                                label = "Create Proposal",
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                    onNavigateToProposal()
-                                }
-                            )
-                            DrawerItem(
-                                icon = Icons.Default.Star,
-                                label = "My Profile",
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                    onNavigateToProfile()
-                                }
-                            )
-                        }
-                        DrawerItem(
-                            icon = Icons.Default.Settings,
-                            label = "Settings",
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                onNavigateToSettings()
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = "Version 1.0.0",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                },
+                showMenuButton = true,
+                onMenuClick = {
+                    drawerController?.open() ?: onMenuClick()
+                },
+                actions = {
+                    UserAvatar(
+                        onClick = onNavigateToProfile,
+                        imageUrl = null,
+                        size = 32.dp,
+                        shape = MaterialTheme.shapes.extraLarge,
+                        borderWidth = 1.dp,
+                        borderColor = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(end = 4.dp)
                     )
-                }
-            }
-        }
-    ) {
-        Scaffold(
-            topBar = {
-                ZapmancerTopBar(
-                    titleContent = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                "Zapmancer",
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
-                            )
-                        }
-                    },
-                    showMenuButton = true,
-                    onMenuClick = {
-                        scope.launch { drawerState.open() }
-                    },
-                    actions = {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        UserAvatar(
-                            imageUrl = null,
-                            size = 42.dp,
-                            shape = MaterialTheme.shapes.extraLarge,
-                            borderWidth = 1.dp,
-                            borderColor = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                    },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    drawBottomBorder = true
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.background
-        ) { padding ->
-            HomeContent(
-                state = state,
-                onCreateProjectClick = onCreateProjectClick,
-                onExportCsvClick = onExportCsvClick,
-                modifier = Modifier.padding(padding)
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
+        HomeContent(
+            state = state,
+            onCreateProjectClick = onCreateProjectClick,
+            onExportCsvClick = onExportCsvClick,
+            modifier = Modifier.padding(padding)
+        )
     }
 }
+
 
 @Composable
 fun HomeContent(
@@ -675,7 +498,7 @@ fun ActivityRow(
 @Composable
 private fun HomeScreenPreview() {
     MaterialTheme {
-        HomeScreen(
+        HomeContent(
             state = HomeUiState(
                 userName = "Alex",
                 recentActivities = listOf(
@@ -716,42 +539,10 @@ private fun HomeScreenPreview() {
                         "$15,000.00"
                     )
                 )
-            )
+            ),
+            onCreateProjectClick = {},
+            onExportCsvClick = {}
         )
     }
 }
 
-@Composable
-private fun DrawerItem(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        shape = MaterialTheme.shapes.small,
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}

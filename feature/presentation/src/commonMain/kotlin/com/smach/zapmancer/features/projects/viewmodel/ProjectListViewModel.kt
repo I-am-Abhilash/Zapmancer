@@ -25,14 +25,14 @@ class ProjectListViewModel(
 ) : BaseViewModel<ProjectListUiState, ProjectListEvent, Unit>(ProjectListUiState()) {
 
     init {
-//        loadProjects()
+        loadProjects()
     }
 
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
-//            is ProjectListEvent.CategorySelected -> {
-//                updateState { copy(selectedCategory = event.category) }
-//            }
+            is ProjectListEvent.CategorySelected -> {
+                updateState { copy(selectedCategory = event.category) }
+            }
             ProjectListEvent.SearchClicked -> {
                 // Implement search action if needed
             }
@@ -44,38 +44,34 @@ class ProjectListViewModel(
         }
     }
 
+
     private fun loadProjects() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            updateState { copy(projects = emptyList()) }
+            getProjectsUseCase().fold(
+                onSuccess = { list ->
+                    updateState {
+                        copy(
+                            projects = list.map { domainProject ->
+                                ProjectUiModel(
+                                    id = domainProject.id,
+                                    category = ProjectCategory.from(domainProject.category),
+                                    status = ProjectStatus.from(domainProject.status),
+                                    title = domainProject.title,
+                                    description = domainProject.description,
+                                    progress = domainProject.progress,
+                                    tags = domainProject.tags,
+                                    showImagePlaceholder = domainProject.showImagePlaceholder,
+                                    footerText = domainProject.footerText,
+                                    membersCount = domainProject.membersCount
+                                )                            }
+                        )
+                    }
+                },
+                onFailure = {
+                    // Handle failure if needed
+                }
+            )
+        }
     }
-
-
-//    private fun loadProjects() {
-//        viewModelScope.launch {
-//            updateState { copy(projects = emptyList()) }
-//            getProjectsUseCase().fold(
-//                onSuccess = { list ->
-//                    updateState {
-//                        copy(
-//                            projects = list.map { domainProject ->
-//                                ProjectUiModel(
-//                                    id = domainProject.id,
-//                                    category = ProjectCategory.from(domainProject.category),
-//                                    status = ProjectStatus.from(domainProject.status),
-//                                    title = domainProject.title,
-//                                    description = domainProject.description,
-//                                    progress = domainProject.progress,
-//                                    tags = domainProject.tags,
-//                                    showImagePlaceholder = domainProject.showImagePlaceholder,
-//                                    footerText = domainProject.footerText,
-//                                    membersCount = domainProject.membersCount
-//                                )                            }
-//                        )
-//                    }
-//                },
-//                onFailure = {
-//                    // Handle failure if needed
-//                }
-//            )
-//        }
-//    }
 }

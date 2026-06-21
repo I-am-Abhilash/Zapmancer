@@ -1,7 +1,6 @@
 package com.smach.zapmancer.features.messages.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,20 +18,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,7 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.components.AppImage
+import com.smach.zapmancer.features.common.components.LocalDrawerController
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.messages.state.ConversationItem
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListEvent
@@ -58,15 +55,19 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MessagesListScreen(
     onConversationClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {},
-    viewModel: MessagesListViewModel = koinViewModel()
+    viewModel: MessagesListViewModel = koinViewModel(),
+    onProfileClick: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val drawerController = LocalDrawerController.current
 
     MessagesListContent(
         state = uiState,
         onEvent = viewModel::onEvent,
         onConversationClick = onConversationClick,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onProfileClick = onProfileClick,
+        onMenuClick = { drawerController.open() }
     )
 }
 
@@ -76,7 +77,9 @@ fun MessagesListContent(
     state: MessagesListUiState,
     onEvent: (MessagesListEvent) -> Unit,
     onConversationClick: (String) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
+    onMenuClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -86,7 +89,6 @@ fun MessagesListContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Text(
                             "Zapmancer",
                             color = MaterialTheme.colorScheme.primary,
@@ -95,13 +97,18 @@ fun MessagesListContent(
                         )
                     }
                 },
-                showBackButton = true,
+                showMenuButton = true,
+                onMenuClick = onMenuClick,
                 onBackClick = onBackClick,
                 actions = {
                     UserAvatar(
+                        onClick = { onProfileClick("me") },
                         imageUrl = null,
-                        size = 36.dp,
-                        modifier = Modifier.padding(end = 12.dp)
+                        size = 32.dp,
+                        shape = MaterialTheme.shapes.extraLarge,
+                        borderWidth = 1.dp,
+                        borderColor = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(end = 4.dp)
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -317,7 +324,10 @@ fun MessagesListScreenPreview() {
                     )
                 )
             ),
-            onEvent = {}
+            onEvent = {},
+            onProfileClick = {},
+            onBackClick = {},
+            onConversationClick = {}
         )
     }
 }

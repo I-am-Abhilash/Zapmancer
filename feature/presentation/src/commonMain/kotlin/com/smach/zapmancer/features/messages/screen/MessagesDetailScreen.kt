@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,7 +74,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MessageDetailScreen(
     viewModel: MessagesDetailViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    showSnackbar: (String) -> Unit = {}
+    showSnackbar: (String) -> Unit = {},
+    onProfileClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -84,6 +86,7 @@ fun MessageDetailScreen(
         onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
         onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
         onMoreClick = { showSnackbar("More actions are not supported in this beta") },
+        onProfileClick = onProfileClick
     )
 }
 
@@ -95,13 +98,18 @@ fun MessageDetailContent(
     onBackClick: () -> Unit = {},
     onCallClick: () -> Unit,
     onVideocamClick: () -> Unit,
-    onMoreClick: () -> Unit
+    onMoreClick: () -> Unit,
+    onProfileClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
             ZapmancerTopBar(
                 titleContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            onProfileClick(state.contactName)
+                        }) {
                         UserAvatar(
                             imageUrl = state.contactAvatarUrl,
                             size = 40.dp
@@ -139,21 +147,21 @@ fun MessageDetailContent(
                 showBackButton = true,
                 onBackClick = onBackClick,
                 actions = {
-                    IconButton(onClick = { onVideocamClick()}) {
+                    IconButton(onClick = { onVideocamClick() }) {
                         Icon(
                             Icons.Default.Videocam,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = { onCallClick()}) {
+                    IconButton(onClick = { onCallClick() }) {
                         Icon(
                             Icons.Default.Call,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = { onMoreClick()}) {
+                    IconButton(onClick = { onMoreClick() }) {
                         Icon(
                             Icons.Default.MoreVert,
                             contentDescription = null,
@@ -298,7 +306,8 @@ fun MessageBubble(message: MessageItem) {
                         MessageStatus.READ -> Icons.Default.DoneAll
                         else -> Icons.Default.Done
                     }
-                    val tint = if (message.status == MessageStatus.READ) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    val tint =
+                        if (message.status == MessageStatus.READ) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
@@ -329,7 +338,11 @@ fun MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            RoundedCornerShape(12.dp)
+                        )
                         .padding(4.dp)
                 ) {
                     Column {
@@ -468,10 +481,10 @@ fun MessageDetailScreenPreview() {
                 isContactTyping = true
             ),
             onEvent = {},
-            onBackClick = {},
             onCallClick = {},
             onVideocamClick = {},
-            onMoreClick = {}
+            onMoreClick = {},
+            onProfileClick = {}
         )
     }
 }

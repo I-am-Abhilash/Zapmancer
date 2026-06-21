@@ -30,6 +30,7 @@ data class PortfolioItem(
 
 @Serializable
 data class ProfileReview(
+    val authorId: String,
     val id: String,
     val authorName: String,
     val authorRole: String,
@@ -37,3 +38,4 @@ data class ProfileReview(
     val rating: Int,
     val authorAvatarUrl: String? = null
 )
+

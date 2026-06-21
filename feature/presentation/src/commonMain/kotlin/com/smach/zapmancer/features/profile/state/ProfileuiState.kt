@@ -28,6 +28,7 @@ data class ProfileUiState(
     ),
     val reviews: List<ProfileReview> = listOf(
         ProfileReview(
+            authorId = "user_sj_123",
             authorName = "Sarah Jenkins",
             authorRole = "CTO at Velocity Flow",
             content = "Julian delivered our entire SaaS architecture ahead of schedule. His ability to understand complex business logic and translate it into a clean, performant system is unmatched. A true professional.",
@@ -35,6 +36,7 @@ data class ProfileUiState(
             authorAvatarUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAX8tbMna09O86Wf5o2nHWHxsqjy7PARWhxZXBCVEWOe7KfAJ9eTK1JqA5LH7wh8NgBt2Dh6YT7t34Ay3Wm__NSI__FFShGQSbJT4vkBQFPnYTgUToF5QZpYgZESL4TgKbxoPgnYfjj4GMYJzn4J3FI3CapiStdQ4GlZKecwDNJTuDGIfCHXG_De4Gzw8Fr-oziYeoZIy01oCMOTAKtIivyNuH68QFqBjeLpkJAea8JDdWbxSePLlbr5U5_jhrpqzToIO5g-Oz5yfs"
         ),
         ProfileReview(
+            authorId = "user_mt_456",
             authorName = "Marcus Thorne",
             authorRole = "Product Director at Core Systems",
             content = "Working with Julian was a seamless experience. He doesn't just write code; he builds solutions that scale. His design eye for high-density dashboards significantly improved our user retention.",
@@ -56,6 +58,7 @@ data class PortfolioItem(
 )
 
 data class ProfileReview(
+    val authorId: String,
     val authorName: String,
     val authorRole: String,
     val content: String,

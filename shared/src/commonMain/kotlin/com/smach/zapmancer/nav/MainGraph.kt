@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.smach.zapmancer.features.alerts.screen.NotificationScreen
+import com.smach.zapmancer.features.common.components.AppDrawerScaffold
 import com.smach.zapmancer.features.home.screen.HomeScreen
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.features.messages.screen.MessagesListScreen
@@ -34,6 +35,7 @@ import kotlinx.coroutines.launch
 fun MainGraph(
     modifier: Modifier = Modifier,
     onLogout: () -> Unit = {},
+    isClientMode: Boolean,
 ) {
     val state = rememberNavigationState(Screen.Home, bottomNavigationRoutes)
     val navigator = MainNavigator(state)
@@ -58,13 +60,19 @@ fun MainGraph(
             }
         },
     ) { innerPadding ->
-        NavDisplay(
-            modifier = Modifier.padding(innerPadding),
-            entries = state.toEntries(appEntryProvider(navigator, showSnackbar)),
-            onBack = {
-                navigator.goBack()
-            },
-        )
+        AppDrawerScaffold(
+            isClientMode = isClientMode,
+            onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
+            onNavigateToSettings = { navigator.navigate(Screen.Settings) },
+            onCreateProjectClick = { navigator.navigate(Screen.PostProject) },
+            onNavigateToProposal = { navigator.navigate(Screen.Proposal) }
+        ) {
+            NavDisplay(
+                modifier = Modifier.padding(innerPadding),
+                entries = state.toEntries(appEntryProvider(navigator, showSnackbar)),
+                onBack = { navigator.goBack() },
+            )
+        }
     }
 }
 
@@ -79,12 +87,7 @@ private fun appEntryProvider(
 
     entry<Screen.Home> {
         HomeScreen(
-            onNavigateToSettings = { navigator.navigate(Screen.Settings) },
             onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
-            onNavigateToPostProject = { navigator.navigate(Screen.PostProject) },
-            onNavigateToClientProposals = { projectId -> navigator.navigate(Screen.ClientProposals(projectId)) },
-            onNavigateToProjects = { navigator.navigate(Screen.ProjectList) },
-            onNavigateToSubmitProposal = { navigator.navigate(Screen.Proposal) },
             showSnackbar = showSnackbar
         )
     }
@@ -148,12 +151,14 @@ private fun appEntryProvider(
     entry<Screen.MessagesList> {
         MessagesListScreen(
             onConversationClick = { navigator.navigate(Screen.MessagesDetail) },
-            onBackClick = { navigator.goBack() }
+            onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
+            onBackClick = { navigator.goBack() },
         )
     }
     entry<Screen.MessagesDetail> {
         MessageDetailScreen(
             onBackClick = { navigator.goBack() },
+            onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
             showSnackbar = showSnackbar
         )
     }
