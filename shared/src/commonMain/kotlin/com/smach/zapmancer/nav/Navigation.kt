@@ -33,6 +33,9 @@ sealed class Screen(
     val title: String,
 ) : NavKey {
     @Serializable
+    data object Onboarding : Screen("Onboarding")
+
+    @Serializable
     data object Login : Screen("Login")
 
     @Serializable
@@ -50,7 +53,9 @@ sealed class Screen(
     data object Home : Screen("Home")
 
     @Serializable
-    data object Profile : Screen("Profile")
+    data class Profile(
+        val userId: String? = null,
+    ) : Screen("Profile")
 
     @Serializable
     data object MessagesDetail : Screen("MessagesDetail")
@@ -76,6 +81,14 @@ sealed class Screen(
     data object Settings : Screen("Settings")
 
     @Serializable
+    data object PostProject : Screen("Post Project")
+
+    @Serializable
+    data class ClientProposals(
+        val projectId: String,
+    ) : Screen("Client Proposals")
+
+    @Serializable
     data class Detail(
         val id: Int,
     ) : Screen("Detail")
@@ -91,7 +104,7 @@ val bottomNavigationRoutes: Set<Screen> =
         Screen.MessagesList,
         Screen.ProjectList,
         Screen.Alerts,
-        Screen.Profile,
+        Screen.Profile(),
     )
 
 /**
@@ -104,7 +117,7 @@ val Screen.icon: ImageVector
             Screen.ProjectList -> Icons.Outlined.WorkOutline
             Screen.MessagesList -> Icons.Outlined.ChatBubbleOutline
             Screen.Alerts -> Icons.Outlined.NotificationsNone
-            Screen.Profile -> Icons.Outlined.PersonOutline
+            is Screen.Profile -> Icons.Outlined.PersonOutline
             else -> Icons.Filled.Info
         }
 
@@ -213,6 +226,7 @@ val navConfig =
         serializersModule =
             SerializersModule {
                 polymorphic(NavKey::class) {
+                    subclass(Screen.Onboarding::class, Screen.Onboarding.serializer())
                     subclass(Screen.Login::class, Screen.Login.serializer())
                     subclass(Screen.Signup::class, Screen.Signup.serializer())
                     subclass(Screen.Verification::class, Screen.Verification.serializer())
@@ -226,6 +240,8 @@ val navConfig =
                     subclass(Screen.Profile::class, Screen.Profile.serializer())
                     subclass(Screen.Proposal::class, Screen.Proposal.serializer())
                     subclass(Screen.Settings::class, Screen.Settings.serializer())
+                    subclass(Screen.PostProject::class, Screen.PostProject.serializer())
+                    subclass(Screen.ClientProposals::class, Screen.ClientProposals.serializer())
                     subclass(Screen.Detail::class, Screen.Detail.serializer())
                 }
             }

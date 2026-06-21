@@ -13,17 +13,18 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import kotlinx.coroutines.launch
 import com.smach.zapmancer.features.alerts.screen.NotificationScreen
 import com.smach.zapmancer.features.home.screen.HomeScreen
-import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.features.messages.screen.MessagesListScreen
 import com.smach.zapmancer.features.profile.screen.ProfileScreen
+import com.smach.zapmancer.features.projects.screen.PostProjectScreen
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
 import com.smach.zapmancer.features.projects.screen.ProjectListScreen
+import com.smach.zapmancer.features.proposal.screen.ClientProposalsScreen
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
 import com.smach.zapmancer.features.settings.screen.SettingsScreen
+import kotlinx.coroutines.launch
 
 /**
  * MainGraph is the entry point for authenticated app content.
@@ -32,6 +33,7 @@ import com.smach.zapmancer.features.settings.screen.SettingsScreen
 @Composable
 fun MainGraph(
     modifier: Modifier = Modifier,
+    onLogout: () -> Unit = {},
 ) {
     val state = rememberNavigationState(Screen.Home, bottomNavigationRoutes)
     val navigator = MainNavigator(state)
@@ -77,10 +79,12 @@ private fun appEntryProvider(
 
     entry<Screen.Home> {
         HomeScreen(
-            onCreateProjectClick = { navigator.navigate(Screen.Proposal) },
             onNavigateToSettings = { navigator.navigate(Screen.Settings) },
-            onNavigateToProfile = { navigator.navigate(Screen.Profile) },
-            onNavigateToProposal = { navigator.navigate(Screen.Proposal) },
+            onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
+            onNavigateToPostProject = { navigator.navigate(Screen.PostProject) },
+            onNavigateToClientProposals = { projectId -> navigator.navigate(Screen.ClientProposals(projectId)) },
+            onNavigateToProjects = { navigator.navigate(Screen.ProjectList) },
+            onNavigateToSubmitProposal = { navigator.navigate(Screen.Proposal) },
             showSnackbar = showSnackbar
         )
     }
@@ -89,7 +93,8 @@ private fun appEntryProvider(
         ProjectListScreen(
             onProjectClick = { projectId ->
                 navigator.navigate(Screen.ProjectDetail(id = projectId.toString()))
-            }
+            },
+            onEvent = {}
         )
     }
 
@@ -108,15 +113,35 @@ private fun appEntryProvider(
             showSnackbar = showSnackbar
         )
     }
-    entry<Screen.Profile> {
+    entry<Screen.Profile> { key ->
+        val profileKey = key as Screen.Profile
         ProfileScreen(
+            userId = profileKey.userId,
             onSearchClick = { navigator.navigate(Screen.ProjectList) },
-            onBackClick = { navigator.goBack() }
+            onBackClick = { navigator.goBack() },
+            showSnackbar = showSnackbar
         )
     }
     entry<Screen.Settings> {
         SettingsScreen(
             onBackClick = { navigator.goBack() }
+        )
+    }
+
+    entry<Screen.PostProject> {
+        PostProjectScreen(
+            onBackClick = { navigator.goBack() },
+            showSnackbar = showSnackbar
+        )
+    }
+
+    entry<Screen.ClientProposals> { key ->
+        val proposalsKey = key as Screen.ClientProposals
+        ClientProposalsScreen(
+            projectId = proposalsKey.projectId,
+            onBackClick = { navigator.goBack() },
+            onFreelancerClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
+            showSnackbar = showSnackbar
         )
     }
 

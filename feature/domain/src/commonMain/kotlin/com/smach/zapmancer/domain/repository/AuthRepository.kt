@@ -11,6 +11,9 @@ interface AuthRepository {
     fun getRefreshToken(): Flow<String?>
     suspend fun saveTokens(accessToken: String, refreshToken: String)
 
+    fun isOnboardingCompleted(): Flow<Boolean>
+    suspend fun setOnboardingCompleted(completed: Boolean)
+
     suspend fun login(email: String, password: String): Result<User, DataError.Network>
 
     suspend fun signUp(

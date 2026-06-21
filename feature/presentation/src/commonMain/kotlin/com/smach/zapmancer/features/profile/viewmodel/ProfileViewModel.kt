@@ -17,10 +17,15 @@ sealed class ProfileEvent {
     data object HireMe : ProfileEvent()
 }
 
+sealed class ProfileEffect {
+    data class ShowToast(val message: String) : ProfileEffect()
+}
+
 class ProfileViewModel(
+    private val userId: String? = null,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val hireUserUseCase: HireUserUseCase,
-) : BaseViewModel<ProfileUiState, ProfileEvent, Unit>(ProfileUiState()) {
+) : BaseViewModel<ProfileUiState, ProfileEvent, ProfileEffect>(ProfileUiState()) {
 
     init {
         loadProfile()
@@ -38,7 +43,7 @@ class ProfileViewModel(
     private fun loadProfile() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = getUserProfileUseCase()) {
+            when (val result = getUserProfileUseCase(userId)) {
                 is Result.Success -> {
                     val profile = result.data
                     updateState {
@@ -70,7 +75,8 @@ class ProfileViewModel(
                                 )
                             },
                             avatarUrl = profile.avatarUrl.orEmpty(),
-                            isLoading = false
+                            isLoading = false,
+                            isOwnProfile = userId.isNullOrEmpty()
                         )
                     }
                 }
@@ -92,6 +98,7 @@ class ProfileViewModel(
             when (val result = hireUserUseCase("julian_vancore")) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isHireSuccess = true) }
+                    sendEffect(ProfileEffect.ShowToast("Hire request processed successfully!"))
                 }
                 is Result.Error -> {
                     updateState {
@@ -100,16 +107,17 @@ class ProfileViewModel(
                             error = "Failed to process hire request"
                         )
                     }
+                    sendEffect(ProfileEffect.ShowToast("Failed to process hire request"))
                 }
             }
         }
     }
 
     private fun onReviewMoreClick() {
-        TODO("Not yet implemented")
+        sendEffect(ProfileEffect.ShowToast("More reviews coming soon"))
     }
 
     private fun onLoadMorePortfolio() {
-        TODO("Not yet implemented")
+        sendEffect(ProfileEffect.ShowToast("More portfolio items coming soon"))
     }
 }

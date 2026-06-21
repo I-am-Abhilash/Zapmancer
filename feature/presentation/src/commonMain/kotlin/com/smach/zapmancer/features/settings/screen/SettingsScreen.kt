@@ -65,13 +65,14 @@ fun SettingsScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+ 
     SettingsContent(
         uiState = uiState,
         onBackClick = onBackClick,
         onToggleTwoFactor = { viewModel.onEvent(SettingsEvent.ToggleTwoFactor(it)) },
         onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
         onToggleNotifications = { viewModel.onEvent(SettingsEvent.ToggleEmailNotifications(it)) },
+        onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
         onLogout = { viewModel.onEvent(SettingsEvent.Logout) }
     )
 }
@@ -84,6 +85,7 @@ fun SettingsContent(
     onToggleTwoFactor: (Boolean) -> Unit,
     onToggleDarkMode: (Boolean) -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
+    onToggleClientMode: (Boolean) -> Unit,
     onLogout: () -> Unit
 ) {
     Scaffold(
@@ -210,6 +212,13 @@ fun SettingsContent(
                         description = "Receive weekly performance reports and alerts.",
                         checked = uiState.isEmailNotificationsEnabled,
                         onCheckedChange = onToggleNotifications
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    SettingsToggleItem(
+                        title = "Client Mode",
+                        description = "Toggle to switch interface focus to hiring and project posting.",
+                        checked = uiState.isClientModeEnabled,
+                        onCheckedChange = onToggleClientMode
                     )
                 }
             }
@@ -408,6 +417,7 @@ fun SettingsPreview() {
         onToggleTwoFactor = {},
         onToggleDarkMode = {},
         onToggleNotifications = {},
+        onToggleClientMode = {},
         onLogout = {}
     )
 }

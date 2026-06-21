@@ -14,7 +14,8 @@ data class HomeUiState(
     val cpuUsage: Float = 0.42f,
     val memoryLoad: Float = 0.18f,
     val lastSyncTime: String = "14:02:11",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isClientMode: Boolean = false
 ) {
     companion object {
         val defaultActivities = listOf(

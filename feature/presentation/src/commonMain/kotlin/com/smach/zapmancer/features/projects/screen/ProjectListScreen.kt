@@ -20,10 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.Card
@@ -37,8 +37,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,44 +52,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import org.koin.compose.viewmodel.koinViewModel
-import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
+import com.smach.zapmancer.domain.model.ProjectCategory
+import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
-import com.smach.zapmancer.features.common.theme.ZapGrey
-import com.smach.zapmancer.features.common.theme.ZapOrange
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.theme.Warning
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
+import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
+import org.koin.compose.viewmodel.koinViewModel
+
+val ZapGrey = Color(0xFF9E9E9E)
 
 @Composable
 fun ProjectListScreen(
     viewModel: ProjectListViewModel = koinViewModel(),
+    onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    ProjectListScreen(
-        state = state,
-        onEvent = viewModel::onEvent,
-        onProjectClick = onProjectClick,
-    )
-}
+        ProjectListContent(
+            state = state,
+            onEvent = onEvent,
+            onProjectClick = onProjectClick,
+            onSearchClick = {},
+        )
 
-@Composable
-fun ProjectListScreen(
-    state: ProjectListUiState,
-    onEvent: (ProjectListEvent) -> Unit,
-    onProjectClick: (Int) -> Unit = {},
-) {
-    ProjectListContent(
-        state = state,
-        onEvent = onEvent,
-        onProjectClick = onProjectClick,
-        onSearchClick = {},
-    )
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,7 +96,11 @@ fun ProjectListContent(
                 title = "Zapmancer",
                 actions = {
                     IconButton(onClick = onSearchClick) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.primary)
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.background,
@@ -121,25 +116,54 @@ fun ProjectListContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            if (state.isLoading) {
+                item {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    )
+                }
+            }
+
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 PortfolioHeader()
             }
 
-            item {
-                CategoryTabs(
-                    categories = listOf("All", "Development", "Design"),
-                    selectedCategory = state.selectedCategory,
-                    onCategorySelected = {
-                        onEvent(
-                            ProjectListEvent.CategorySelected(it)
-                        )
-                    }                )
+//            item {
+//                CategoryTabs(
+//                    categories = state.categories.map { it.displayName },
+//                    selectedCategory = state.selectedCategory,
+//                    onCategorySelected = {
+//                        onEvent(
+//                            ProjectListEvent.CategorySelected(it)
+//                        )
+//                    })
+//            }
+
+            if (state.error != null) {
+                item {
+                    Text(
+                        text = state.error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
-            val projects = state.projects.filter {
-                state.selectedCategory == "All" ||
-                        it.category == state.selectedCategory
+            val projects = state.projects
+
+            if (projects.isEmpty() && !state.isLoading && state.error == null) {
+                item {
+                    Text(
+                        text = "No projects found for this category.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             items(projects) { project ->
@@ -163,7 +187,7 @@ fun PortfolioHeader() {
             "Get Projects ",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A1C1E)
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(8.dp))
         DashedDivider()
@@ -171,7 +195,7 @@ fun PortfolioHeader() {
         Text(
             "Manage and track your active development and design cycles.",
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF5F6368)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -203,8 +227,8 @@ fun CategoryTabs(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -215,13 +239,13 @@ fun CategoryTabs(
                     .weight(1f)
                     .clickable { onCategorySelected(category) },
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     text = category,
                     modifier = Modifier.padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
-                    color = if (isSelected) Color.White else Color(0xFF5F6368),
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                     fontSize = 14.sp
                 )
@@ -237,13 +261,26 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
+        val icon = when (project.category) {
+            ProjectCategory.DESIGN -> Icons.Outlined.Palette
+            ProjectCategory.DEVELOPMENT -> Icons.Outlined.Devices
+            ProjectCategory.MARKETING -> Icons.Outlined.Campaign
+            ProjectCategory.ALL -> Icons.Outlined.Devices
+        }
+
+        val accentColor = when (project.category) {
+            ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
+            ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
+            ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
+            ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
+        }
         Column(
-            modifier = Modifier.drawAccentLine(project.accentColor).padding(16.dp)
+            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -254,23 +291,23 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(MaterialTheme.shapes.small)
                             .background(MaterialTheme.colorScheme.background),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            project.icon,
+                            icon,
                             contentDescription = null,
-                            tint = project.accentColor,
+                            tint = accentColor,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            project.category.uppercase(),
+                            text = project.category.displayName,
                             style = MaterialTheme.typography.labelSmall,
-                            color = project.accentColor,
+                            color = accentColor,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp
                         )
@@ -278,28 +315,24 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             project.title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A1C1E)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
 
                 Surface(
-                    color = if (project.status == "ACTIVE") MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else project.accentColor.copy(
+                    color = if (project.status == ProjectStatus.ACTIVE) MaterialTheme.colorScheme.primary.copy(
+                        alpha = 0.1f
+                    ) else accentColor.copy(
                         alpha = 0.1f
                     ),
-                    shape = RoundedCornerShape(6.dp)
+                    shape = MaterialTheme.shapes.small
                 ) {
-                    val statusColor = when (project.status) {
-                        "ACTIVE" -> MaterialTheme.colorScheme.primary
-                        "PENDING" -> ZapOrange
-                        "DONE" -> ZapGrey
-                        else -> project.accentColor
-                    }
                     Text(
-                        project.status,
+                        project.status.displayName,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = statusColor,
+                        color = project.status.color(),
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -309,7 +342,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
             Text(
                 project.description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF44474E),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
 
@@ -321,15 +354,13 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                 ) {
                     Text(
                         "Optimization Progress",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF44474E)
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         "${project.progress}%",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF44474E)
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(6.dp))
@@ -338,7 +369,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp)),
+                        .clip(MaterialTheme.shapes.extraSmall),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.background,
                 )
@@ -350,14 +381,14 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     project.tags.forEach { tag ->
                         Surface(
                             color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(8.dp),
-                            border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.3f))
+                            shape = MaterialTheme.shapes.small,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Text(
                                 tag,
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFF5F6368),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -371,18 +402,14 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(160.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF1A1C1E))
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
                                 Brush.radialGradient(
-                                    colors = listOf(
-                                        ZapOrange.copy(alpha = 0.3f),
-                                        Color.Transparent
-                                    ),
                                     center = Offset(400f, 200f),
                                     radius = 300f
                                 )
@@ -398,9 +425,9 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                         Surface(
                             modifier = Modifier
                                 .size(28.dp)
-                                .border(2.dp, Color.White, CircleShape),
+                                .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
                             shape = CircleShape,
-                            color = Color.LightGray
+                            color = MaterialTheme.colorScheme.surfaceVariant
                         ) {}
                         Spacer(modifier = Modifier.width((-8).dp))
                     }
@@ -408,7 +435,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                         Surface(
                             modifier = Modifier
                                 .size(28.dp)
-                                .border(2.dp, Color.White, CircleShape),
+                                .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.background
                         ) {
@@ -447,7 +474,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     Text(
                         project.footerText ?: "",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color(0xFF5F6368),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -465,12 +492,10 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
 
 data class ProjectUiModel(
     val id: Int,
-    val category: String,
-    val status: String,
+    val category: ProjectCategory,
+    val status: ProjectStatus,
     val title: String,
     val description: String,
-    val icon: ImageVector,
-    val accentColor: Color,
     val progress: Int? = null,
     val tags: List<String> = emptyList(),
     val showImagePlaceholder: Boolean = false,
@@ -480,17 +505,24 @@ data class ProjectUiModel(
 )
 
 
+@Composable
+fun ProjectStatus.color(): Color =
+    when (this) {
+        ProjectStatus.ACTIVE -> MaterialTheme.colorScheme.primary
+        ProjectStatus.PENDING -> Warning
+        ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
+    }
+
+
 object ProjectPreviewData {
 
     val projects = listOf(
         ProjectUiModel(
             id = 1,
-            category = "Development",
-            status = "ACTIVE",
+            category = ProjectCategory.DEVELOPMENT,
+            status = ProjectStatus.ACTIVE,
             title = "Neural Engine Alpha",
             description = "High-performance inference engine...",
-            icon = Icons.Outlined.Devices,
-            accentColor = Color(0xFF2BA8A2),
             progress = 78,
             footerText = "Optimization Progress",
             membersCount = 2
@@ -498,12 +530,10 @@ object ProjectPreviewData {
 
         ProjectUiModel(
             id = 2,
-            category = "Design",
-            status = "PENDING",
+            category = ProjectCategory.DESIGN,
+            status = ProjectStatus.PENDING,
             title = "Lumina Design System",
             description = "Unified token-based architecture...",
-            icon = Icons.Outlined.Palette,
-            accentColor = ZapOrange,
             showImagePlaceholder = true,
             footerText = "Review: Oct 24"
         )

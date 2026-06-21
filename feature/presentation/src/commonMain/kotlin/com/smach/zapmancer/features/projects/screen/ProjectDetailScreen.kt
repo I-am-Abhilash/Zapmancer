@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Code
@@ -42,9 +41,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,16 +54,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import org.koin.compose.viewmodel.koinViewModel
-import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
-import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent
-import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEffect
-import com.smach.zapmancer.features.common.theme.ZapGold
-import com.smach.zapmancer.features.common.theme.ZapOnGoldContainer
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEffect
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProjectDetailScreen(
@@ -256,41 +253,41 @@ fun BudgetSection(state: ProjectDetailUiState) {
                 "TOTAL BUDGET",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnGoldContainer.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 letterSpacing = 1.sp
             )
             Text(
                 state.budgetRange,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = ZapOnGoldContainer
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 state.projectType,
                 style = MaterialTheme.typography.bodySmall,
-                color = ZapOnGoldContainer.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
             )
         }
-        HorizontalDivider(color = ZapOnGoldContainer.copy(alpha = 0.1f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
 
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()){
             Text(
                 "TIMELINE",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnGoldContainer.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 letterSpacing = 1.sp
             )
             Text(
                 state.timeline,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = ZapOnGoldContainer
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 "Est. Start: ${state.estStart}",
                 style = MaterialTheme.typography.bodySmall,
-                color = ZapOnGoldContainer.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
             )
         }
     }
@@ -533,7 +530,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         Icon(
                             Icons.Default.Star,
                             contentDescription = null,
-                            tint = ZapGold,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.size(18.dp)
                         )
                     }

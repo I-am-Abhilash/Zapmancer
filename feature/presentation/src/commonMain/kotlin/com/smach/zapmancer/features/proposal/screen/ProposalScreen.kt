@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
@@ -43,13 +42,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,17 +56,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import org.koin.compose.viewmodel.koinViewModel
-import com.smach.zapmancer.features.proposal.viewmodel.ProposalViewModel
-import com.smach.zapmancer.features.proposal.viewmodel.ProposalEvent
-import com.smach.zapmancer.features.proposal.viewmodel.ProposalEffect
-import com.smach.zapmancer.features.common.theme.ZapGold
-import com.smach.zapmancer.features.common.theme.ZapSkyBlue
-import com.smach.zapmancer.features.common.theme.ZapSkyBlueText
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.proposal.state.ProposalStep
 import com.smach.zapmancer.features.proposal.state.ProposalUiState
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalEffect
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalEvent
+import com.smach.zapmancer.features.proposal.viewmodel.ProposalViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProposalScreen(
@@ -210,8 +203,8 @@ fun StepIndicator(currentStep: Int) {
                             .background(
                                 when {
                                     isCompleted -> MaterialTheme.colorScheme.primary
-                                    isCurrent -> ZapGold
-                                    else -> Color.White
+                                    isCurrent -> MaterialTheme.colorScheme.secondary
+                                    else -> MaterialTheme.colorScheme.onPrimary
                                 }
                             )
                             .border(
@@ -239,7 +232,7 @@ fun StepIndicator(currentStep: Int) {
                     }
                     Text(
                         text = step.title,
-                        color = if (isCurrent) ZapGold else if (isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (isCurrent) MaterialTheme.colorScheme.secondary else if (isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
                         modifier = Modifier.padding(top = 4.dp)
@@ -280,7 +273,11 @@ fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
                         .size(64.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                            CircleShape
+                        )
                 ) {
                     // Avatar placeholder
                 }
@@ -350,10 +347,10 @@ fun PitchStep(
 
             // Pro Tip
             Surface(
-                color = ZapSkyBlue,
+                color = MaterialTheme.colorScheme.secondary,
                 border = BorderStroke(
                     1.dp,
-                    ZapSkyBlueText.copy(alpha = 0.3f)
+                    MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f)
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {
@@ -361,18 +358,22 @@ fun PitchStep(
                     modifier = Modifier.padding(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(Icons.Default.Info, contentDescription = null, tint = ZapSkyBlueText)
+                    Icon(
+                        Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                     Column {
                         Text(
                             "PRO TIP",
                             fontWeight = FontWeight.Bold,
-                            color = ZapSkyBlueText,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontSize = 12.sp
                         )
                         Text(
                             "Focus on the client's problem, not just your services.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = ZapSkyBlueText.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -380,7 +381,11 @@ fun PitchStep(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Pitch Content", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                "Pitch Content",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             OutlinedTextField(
                 value = state.pitchContent,
                 onValueChange = onPitchChange,
@@ -417,7 +422,11 @@ fun PitchStep(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Proposed Budget", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        "Proposed Budget",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     OutlinedTextField(
                         value = state.budget,
                         onValueChange = onBudgetChange,
@@ -434,7 +443,11 @@ fun PitchStep(
                     )
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Timeline (Days)", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        "Timeline (Days)",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     OutlinedTextField(
                         value = state.timelineDays,
                         onValueChange = onTimelineChange,
@@ -459,7 +472,11 @@ fun PitchStep(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = onBack) {
-                    Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Back",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Button(
                     onClick = onNext,
@@ -509,7 +526,11 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                         .size(64.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                            CircleShape
+                        )
                 ) {
                     // Avatar placeholder
                 }
@@ -554,7 +575,11 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = onBack) {
-                    Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Back",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Button(
                     onClick = onNext,
@@ -667,7 +692,8 @@ fun BudgetSection(state: ProposalUiState) {
     ) {
 
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-            Column (Modifier.padding(16.dp).weight(1f),
+            Column(
+                Modifier.padding(16.dp).weight(1f),
             ) {
                 Text(
                     "BUDGET",

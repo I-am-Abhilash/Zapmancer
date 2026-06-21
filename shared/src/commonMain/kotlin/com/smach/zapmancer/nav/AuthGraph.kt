@@ -10,6 +10,10 @@ import com.smach.zapmancer.features.auth.screen.LoginScreen
 import com.smach.zapmancer.features.auth.screen.SignupScreen
 import com.smach.zapmancer.features.auth.screen.VerificationScreen
 
+/**
+ * AuthGraph handles the unauthenticated navigation stack:
+ * Login → Signup, Forgot Password, Verification.
+ */
 @Composable
 fun AuthGraph(
     onAuthSuccess: () -> Unit,

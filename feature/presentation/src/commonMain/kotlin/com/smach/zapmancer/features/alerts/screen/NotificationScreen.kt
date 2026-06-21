@@ -18,9 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.PersonAdd
@@ -40,12 +38,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.smach.zapmancer.features.alerts.viewmodel.NotificationEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,12 +60,10 @@ import com.smach.zapmancer.features.alerts.state.NotificationAction
 import com.smach.zapmancer.features.alerts.state.NotificationItem
 import com.smach.zapmancer.features.alerts.state.NotificationType
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
+import com.smach.zapmancer.features.alerts.viewmodel.NotificationEffect
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEvent
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
-import com.smach.zapmancer.features.common.theme.ZapCoral
-import com.smach.zapmancer.features.common.theme.ZapGold
-import com.smach.zapmancer.features.common.theme.ZapSlate
-import com.smach.zapmancer.features.common.theme.ZapTeal
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -196,10 +190,10 @@ fun NotificationCard(
     onActionClicked: (String) -> Unit
 ) {
     val accentColor = when (item.type) {
-        NotificationType.MILESTONE -> ZapGold
-        NotificationType.MESSAGE -> ZapTeal
-        NotificationType.ALERT -> ZapCoral
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> ZapSlate
+        NotificationType.MILESTONE -> MaterialTheme.colorScheme.primary
+        NotificationType.MESSAGE -> MaterialTheme.colorScheme.primary
+        NotificationType.ALERT -> MaterialTheme.colorScheme.primary
+        NotificationType.GENERAL, NotificationType.COLLABORATOR -> MaterialTheme.colorScheme.primary
     }
 
     val icon = when (item.type) {
@@ -211,32 +205,27 @@ fun NotificationCard(
     }
 
     val iconBg = when (item.type) {
-        NotificationType.MILESTONE -> Color(0xFFFEF9C3) // yellow-50
-        NotificationType.MESSAGE -> ZapTeal.copy(alpha = 0.05f)
-        NotificationType.ALERT -> Color(0xFFFEF2F2) // red-50
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFFF9FAFB) // gray-50
+        NotificationType.MILESTONE -> MaterialTheme.colorScheme.primaryContainer
+        NotificationType.MESSAGE -> MaterialTheme.colorScheme.primaryContainer
+        NotificationType.ALERT -> MaterialTheme.colorScheme.errorContainer
+        NotificationType.GENERAL, NotificationType.COLLABORATOR -> MaterialTheme.colorScheme.surfaceVariant
     }
 
     val iconTint = when (item.type) {
-        NotificationType.MILESTONE -> Color(0xFFCA8A04) // yellow-600
-        NotificationType.MESSAGE -> ZapTeal
-        NotificationType.ALERT -> ZapCoral
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> Color(0xFF6B7280) // gray-500
+        NotificationType.MILESTONE -> MaterialTheme.colorScheme.primary
+        NotificationType.MESSAGE -> MaterialTheme.colorScheme.primary
+        NotificationType.ALERT -> MaterialTheme.colorScheme.error
+        NotificationType.GENERAL, NotificationType.COLLABORATOR -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val opacity = if (item.section == "Yesterday") 0.8f else 1f
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(if (item.section == "Today") 2.dp else 0.dp, RoundedCornerShape(8.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
+            .shadow(if (item.section == "Today") 2.dp else 0.dp, MaterialTheme.shapes.medium)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = opacity)),
-        shape = RoundedCornerShape(
-            topStart = 2.dp,
-            bottomStart = 2.dp,
-            topEnd = 8.dp,
-            bottomEnd = 8.dp
-        )
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             modifier = Modifier
@@ -248,9 +237,9 @@ fun NotificationCard(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(MaterialTheme.shapes.small)
                     .background(iconBg)
-                    .border(1.dp, iconBg.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
+                    .border(1.dp, iconBg.copy(alpha = 0.1f), MaterialTheme.shapes.small),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -269,15 +258,13 @@ fun NotificationCard(
                 ) {
                     Text(
                         item.title,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                         color = if (item.type == NotificationType.ALERT) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         item.timestamp,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -286,16 +273,15 @@ fun NotificationCard(
                 if (item.isItalic) {
                     Text(
                         "\"${item.description}\"",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        fontStyle = FontStyle.Italic,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp
                     )
                 } else {
                     Text(
                         text = item.description,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp
                     )
                 }
@@ -308,11 +294,9 @@ fun NotificationCard(
                                 onClick = { onActionClicked(action.label) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary) else Color.Transparent,
-                                    contentColor = if (action.isPrimary) Color.White else MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.7f
-                                    )
+                                    contentColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary) else MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
-                                shape = RoundedCornerShape(4.dp),
+                                shape = MaterialTheme.shapes.small,
                                 border = if (!action.isPrimary) BorderStroke(
                                     1.dp,
                                     MaterialTheme.colorScheme.outline
@@ -320,7 +304,7 @@ fun NotificationCard(
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier.height(32.dp)
                             ) {
-                                Text(action.label, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(action.label, style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
                             }
                         }
                     }
@@ -336,10 +320,10 @@ fun NotificationCard(
                         OutlinedTextField(
                             value = replyText,
                             onValueChange = onReplyTextChanged,
-                            placeholder = { Text("Quick reply...", fontSize = 14.sp) },
+                            placeholder = { Text("Quick reply...", style = MaterialTheme.typography.bodyMedium) },
                             modifier = Modifier
                                 .weight(1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = MaterialTheme.shapes.small,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -351,12 +335,12 @@ fun NotificationCard(
                             onClick = onSendReply,
                             modifier = Modifier
                                 .size(36.dp)
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small)
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.Send,
                                 contentDescription = "Send",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                         }

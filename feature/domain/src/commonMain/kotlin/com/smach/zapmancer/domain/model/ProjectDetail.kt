@@ -1,5 +1,8 @@
 package com.smach.zapmancer.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ProjectDetail(
     val id: String,
     val category: String,

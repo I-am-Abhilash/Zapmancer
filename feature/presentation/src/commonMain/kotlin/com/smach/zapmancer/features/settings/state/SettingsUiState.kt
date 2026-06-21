@@ -7,5 +7,6 @@ data class SettingsUiState(
     val isDarkModeEnabled: Boolean = true,
     val isEmailNotificationsEnabled: Boolean = false,
     val version: String = "v2.4.12-beta // ZAPMANCER_CORE_X64",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isClientModeEnabled: Boolean = false
 )

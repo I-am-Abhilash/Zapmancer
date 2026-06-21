@@ -1,5 +1,8 @@
 package com.smach.zapmancer.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class HomeDashboard(
     val userName: String,
     val earnings: EarningStats,
@@ -8,16 +11,19 @@ data class HomeDashboard(
     val recentActivities: List<UserActivity>
 )
 
+@Serializable
 data class EarningStats(
     val amount: String,
     val growthPercentage: String
 )
 
+@Serializable
 data class ProjectStats(
     val activeCount: Int,
     val capacity: Int
 )
 
+@Serializable
 data class UserActivity(
     val id: String,
     val projectName: String,
@@ -28,6 +34,7 @@ data class UserActivity(
     val monetaryValue: String
 )
 
+@Serializable
 enum class ActivityStatus {
     IN_PROGRESS, REVIEWING, COMPLETED, CRITICAL
 }

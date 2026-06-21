@@ -20,11 +20,21 @@ sealed class HomeEffect {
 
 class HomeViewModel(
     private val getHomeDashboardUseCase: GetHomeDashboardUseCase,
-    private val exportActivityCsvUseCase: ExportActivityCsvUseCase
+    private val exportActivityCsvUseCase: ExportActivityCsvUseCase,
+    private val settingsRepository: com.smach.zapmancer.domain.repository.SettingsRepository
 ) : BaseViewModel<HomeUiState, HomeEvent, HomeEffect>(HomeUiState()) {
 
     init {
         loadDashboard()
+        observeSettings()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            settingsRepository.settingsFlow.collect { settings ->
+                updateState { copy(isClientMode = settings.isClientModeEnabled) }
+            }
+        }
     }
 
     override fun onEvent(event: HomeEvent) {

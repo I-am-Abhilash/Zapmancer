@@ -31,4 +31,13 @@ class UpdateSettingsUseCase(
             Result.failure(e)
         }
     }
+
+    suspend fun updateClientMode(enabled: Boolean): Result<Unit> {
+        return try {
+            repository.updateClientMode(enabled)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -6,46 +6,92 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+//
+//private val LightColorScheme = lightColorScheme(
+//    primary = Teal700,
+//    onPrimary = Color.White,
+//
+//    secondary = Coral500,
+//    onSecondary = Color.White,
+//
+//    background = BackgroundLight,
+//    onBackground = OnSurfaceLight,
+//
+//    surface = SurfaceLight,
+//    onSurface = OnSurfaceLight,
+//
+//    surfaceVariant = SurfaceVariantLight,
+//    onSurfaceVariant = OnSurfaceVariantLight,
+//
+//    outline = OutlineLight,
+//
+//    error = Error
+//)
+//
+//private val DarkColorScheme = darkColorScheme(
+//    primary = Teal500,
+//    onPrimary = Color.Black,
+//
+//    secondary = Coral500,
+//    onSecondary = Color.Black,
+//
+//    background = BackgroundDark,
+//    onBackground = OnSurfaceDark,
+//
+//    surface = SurfaceDark,
+//    onSurface = OnSurfaceDark,
+//
+//    surfaceVariant = SurfaceVariantDark,
+//    onSurfaceVariant = OnSurfaceVariantDark,
+//
+//    outline = OutlineDark,
+//
+//    error = Error
+//)
 
-private val DarkColorScheme = darkColorScheme(
-    primary = ZapTeal,
-    onPrimary = Color.Black,
-
-    secondary = ZapCoral,
-    onSecondary = Color.Black,
-
-    background = ZapDarkBg,
-    onBackground = ZapDarkOnSurface,
-
-    surface = ZapDarkSurface,
-    onSurface = ZapDarkOnSurface,
-
-    surfaceVariant = ZapDarkSurfaceVariant,
-    onSurfaceVariant = ZapDarkOnSurfaceVariant,
-
-    outline = ZapDarkOutline,
-
-    error = ErrorRed
-)
 private val LightColorScheme = lightColorScheme(
-    primary = ZapTeal,
+    primary = BluePrimary,
     onPrimary = Color.White,
 
-    secondary = ZapCoral,
+    secondary = BlueSecondary,
     onSecondary = Color.White,
 
-    background = ZapBg,
-    onBackground = ZapOnSurface,
 
-    surface = ZapSurface,
-    onSurface = ZapOnSurface,
+    background = BackgroundLight,
+    onBackground = OnSurfaceLight,
 
-    surfaceVariant = ZapCream,
-    onSurfaceVariant = ZapOnSurfaceVariant,
+    surface = SurfaceLight,
+    onSurface = OnSurfaceLight,
 
-    outline = ZapOutline,
-    error = ErrorRed,
+    surfaceVariant = SurfaceVariantLight,
+    onSurfaceVariant = OnSurfaceVariantLight,
+
+    outline = OutlineLight,
+
+    error = Error
 )
+
+private val DarkColorScheme = darkColorScheme(
+    primary = BluePrimaryDark,
+    onPrimary = Color.Black,
+
+    secondary = BlueAccent,
+    onSecondary = Color.Black,
+
+    background = BackgroundDark,
+    onBackground = OnSurfaceDark,
+
+    surface = SurfaceDark,
+    onSurface = OnSurfaceDark,
+
+    surfaceVariant = SurfaceVariantDark,
+    onSurfaceVariant = OnSurfaceVariantDark,
+
+    outline = OutlineDark,
+
+    error = Error
+)
+
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

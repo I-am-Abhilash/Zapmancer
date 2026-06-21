@@ -45,7 +45,8 @@ data class ProfileUiState(
     val avatarUrl: String = "https://lh3.googleusercontent.com/aida-public/AB6AXuBrBrKqoM8axW5MPKsBTP5b-rY47j3sPFMPKxLb9MC-OiKc2nVehBkyjSvjrG61iLhnECENazpIX7ZGYdSvJhKpIGWBgn-fNWKLOFOAoJvAOS7uUgeFV7IEUSxjbQHtWEbwQGrVnBP5GX0LOssfjYZWHQOHZeoQNPaT0aZZAB44DcV0MaETyz8F_dFWst5O4bhj6tODWrstc0H0BKuGeulwq4Nbqlg5_5SCdjeZWbq0lUi7AAm8ZezuoaO1rWJpKniR5CNjmrAo9eo",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isHireSuccess: Boolean = false
+    val isHireSuccess: Boolean = false,
+    val isOwnProfile: Boolean = true
 )
 
 data class PortfolioItem(

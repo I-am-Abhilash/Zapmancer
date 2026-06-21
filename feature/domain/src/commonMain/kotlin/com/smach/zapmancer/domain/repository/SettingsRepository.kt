@@ -9,5 +9,6 @@ interface SettingsRepository {
     suspend fun updateTwoFactor(enabled: Boolean)
     suspend fun updateDarkMode(enabled: Boolean)
     suspend fun updateEmailNotifications(enabled: Boolean)
+    suspend fun updateClientMode(enabled: Boolean)
     suspend fun logout()
 }

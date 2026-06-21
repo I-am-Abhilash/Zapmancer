@@ -69,18 +69,32 @@ import com.smach.zapmancer.features.common.components.AppImage
 import com.smach.zapmancer.features.profile.state.PortfolioItem
 import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
+import com.smach.zapmancer.features.profile.viewmodel.ProfileEffect
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 import com.smach.zapmancer.features.projects.screen.VerticalDivider
 import org.koin.compose.viewmodel.koinViewModel
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = koinViewModel(),
+    userId: String? = null,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
+    showSnackbar: (String) -> Unit = {},
 ) {
+    val viewModel: ProfileViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(userId) })
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ProfileEffect.ShowToast -> {
+                    showSnackbar(effect.message)
+                }
+            }
+        }
+    }
 
     ProfileContent(
         state = uiState,
@@ -341,30 +355,32 @@ fun IdentityHeader(
                 )
             }
 
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    onEvent(ProfileEvent.HireMe)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(999.dp)
-            ) {
-                Text(
-                    text = "Hire Me",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+            if (!state.isOwnProfile) {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+                        onEvent(ProfileEvent.HireMe)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(999.dp)
+                ) {
+                    Text(
+                        text = "Hire Me",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }

@@ -3,10 +3,11 @@ package com.smach.zapmancer.features.projects.viewmodel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.features.common.theme.ZapOrange
-import com.smach.zapmancer.features.common.theme.ZapTeal
+import com.smach.zapmancer.domain.model.ProjectCategory
+import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.domain.usecase.GetProjectsUseCase
 import com.smach.zapmancer.features.projects.screen.ProjectUiModel
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
@@ -24,14 +25,14 @@ class ProjectListViewModel(
 ) : BaseViewModel<ProjectListUiState, ProjectListEvent, Unit>(ProjectListUiState()) {
 
     init {
-        loadProjects()
+//        loadProjects()
     }
 
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
-            is ProjectListEvent.CategorySelected -> {
-                updateState { copy(selectedCategory = event.category) }
-            }
+//            is ProjectListEvent.CategorySelected -> {
+//                updateState { copy(selectedCategory = event.category) }
+//            }
             ProjectListEvent.SearchClicked -> {
                 // Implement search action if needed
             }
@@ -39,39 +40,42 @@ class ProjectListViewModel(
                 // Implement project selection logic if needed
             }
             ProjectListEvent.Refresh -> loadProjects()
+            else -> {}
         }
     }
 
     private fun loadProjects() {
-        viewModelScope.launch {
-            updateState { copy(projects = emptyList()) }
-            getProjectsUseCase().fold(
-                onSuccess = { list ->
-                    updateState {
-                        copy(
-                            projects = list.map { domainProject ->
-                                ProjectUiModel(
-                                    id = domainProject.id,
-                                    category = domainProject.category,
-                                    status = domainProject.status,
-                                    title = domainProject.title,
-                                    description = domainProject.description,
-                                    icon = if (domainProject.category.equals("Design", ignoreCase = true)) Icons.Outlined.Palette else Icons.Outlined.Devices,
-                                    accentColor = if (domainProject.category.equals("Design", ignoreCase = true)) ZapOrange else ZapTeal,
-                                    progress = domainProject.progress,
-                                    tags = domainProject.tags,
-                                    showImagePlaceholder = domainProject.showImagePlaceholder,
-                                    footerText = domainProject.footerText,
-                                    membersCount = domainProject.membersCount
-                                )
-                            }
-                        )
-                    }
-                },
-                onFailure = {
-                    // Handle failure if needed
-                }
-            )
-        }
+        TODO("Not yet implemented")
     }
+
+
+//    private fun loadProjects() {
+//        viewModelScope.launch {
+//            updateState { copy(projects = emptyList()) }
+//            getProjectsUseCase().fold(
+//                onSuccess = { list ->
+//                    updateState {
+//                        copy(
+//                            projects = list.map { domainProject ->
+//                                ProjectUiModel(
+//                                    id = domainProject.id,
+//                                    category = ProjectCategory.from(domainProject.category),
+//                                    status = ProjectStatus.from(domainProject.status),
+//                                    title = domainProject.title,
+//                                    description = domainProject.description,
+//                                    progress = domainProject.progress,
+//                                    tags = domainProject.tags,
+//                                    showImagePlaceholder = domainProject.showImagePlaceholder,
+//                                    footerText = domainProject.footerText,
+//                                    membersCount = domainProject.membersCount
+//                                )                            }
+//                        )
+//                    }
+//                },
+//                onFailure = {
+//                    // Handle failure if needed
+//                }
+//            )
+//        }
+//    }
 }

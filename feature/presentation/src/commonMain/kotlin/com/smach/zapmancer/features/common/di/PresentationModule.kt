@@ -11,7 +11,9 @@ import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
+import com.smach.zapmancer.features.projects.viewmodel.PostProjectViewModel
 import com.smach.zapmancer.features.proposal.viewmodel.ProposalViewModel
+import com.smach.zapmancer.features.proposal.viewmodel.ClientProposalsViewModel
 import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -23,13 +25,20 @@ val presentationModule =
         viewModelOf(::SignupViewModel)
         viewModelOf(::VerificationViewModel)
         viewModelOf(::ForgotPasswordViewModel)
-        viewModelOf(::ProfileViewModel)
+        viewModel { (userId: String?) ->
+            ProfileViewModel(
+                userId = userId,
+                getUserProfileUseCase = get(),
+                hireUserUseCase = get()
+            )
+        }
         viewModelOf(::NotificationViewModel)
         viewModelOf(::MessagesListViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::ProjectListViewModel)
         viewModelOf(::ProposalViewModel)
         viewModelOf(::SettingsViewModel)
+        viewModelOf(::PostProjectViewModel)
         viewModel { (conversationId: String) ->
             MessagesDetailViewModel(
                 conversationId = conversationId,
@@ -44,6 +53,12 @@ val presentationModule =
                 getProjectDetailUseCase = get(),
                 saveProjectUseCase = get(),
                 applyProjectUseCase = get()
+            )
+        }
+        viewModel { (projectId: String) ->
+            ClientProposalsViewModel(
+                projectId = projectId,
+                getProjectProposalsUseCase = get()
             )
         }
     }

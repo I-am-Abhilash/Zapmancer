@@ -12,6 +12,7 @@ sealed class SettingsEvent {
     data class ToggleTwoFactor(val enabled: Boolean) : SettingsEvent()
     data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent()
     data class ToggleEmailNotifications(val enabled: Boolean) : SettingsEvent()
+    data class ToggleClientMode(val enabled: Boolean) : SettingsEvent()
     data object Logout : SettingsEvent()
     data object LoadSettings : SettingsEvent()
 }
@@ -31,6 +32,7 @@ class SettingsViewModel(
             is SettingsEvent.ToggleTwoFactor -> toggleTwoFactor(event.enabled)
             is SettingsEvent.ToggleDarkMode -> toggleDarkMode(event.enabled)
             is SettingsEvent.ToggleEmailNotifications -> toggleNotifications(event.enabled)
+            is SettingsEvent.ToggleClientMode -> toggleClientMode(event.enabled)
             SettingsEvent.Logout -> logout()
             SettingsEvent.LoadSettings -> loadSettings()
         }
@@ -49,7 +51,8 @@ class SettingsViewModel(
                             isDarkModeEnabled = settings.isDarkModeEnabled,
                             isEmailNotificationsEnabled = settings.isEmailNotificationsEnabled,
                             version = settings.version,
-                            isLoading = false
+                            isLoading = false,
+                            isClientModeEnabled = settings.isClientModeEnabled
                         )
                     }
                 },
@@ -87,6 +90,17 @@ class SettingsViewModel(
             updateSettingsUseCase.updateEmailNotifications(enabled).fold(
                 onSuccess = {
                     updateState { copy(isEmailNotificationsEnabled = enabled) }
+                },
+                onFailure = {}
+            )
+        }
+    }
+
+    private fun toggleClientMode(enabled: Boolean) {
+        viewModelScope.launch {
+            updateSettingsUseCase.updateClientMode(enabled).fold(
+                onSuccess = {
+                    updateState { copy(isClientModeEnabled = enabled) }
                 },
                 onFailure = {}
             )

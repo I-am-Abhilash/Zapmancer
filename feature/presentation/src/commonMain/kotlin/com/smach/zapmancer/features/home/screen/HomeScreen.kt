@@ -3,6 +3,7 @@ package com.smach.zapmancer.features.home.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,46 +16,40 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import androidx.compose.runtime.Composable
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,30 +59,33 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
-import com.smach.zapmancer.features.common.theme.ZapGold
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.state.RecentActivity
 import com.smach.zapmancer.features.home.viewmodel.HomeEffect
 import com.smach.zapmancer.features.home.viewmodel.HomeEvent
 import com.smach.zapmancer.features.home.viewmodel.HomeViewModel
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+
+val ZapGold = Color(0xFFFFD700)
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onCreateProjectClick: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
-    onNavigateToProposal: () -> Unit = {},
+    onNavigateToPostProject: () -> Unit = {},
+    onNavigateToClientProposals: (String) -> Unit = {},
+    onNavigateToProjects: () -> Unit = {},
+    onNavigateToSubmitProposal: () -> Unit = {},
     showSnackbar: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
-
+ 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -97,13 +95,17 @@ fun HomeScreen(
             }
         }
     }
-
+ 
     HomeScreen(
         state = state,
-        onCreateProjectClick = onCreateProjectClick,
+        onCreateProjectClick = {
+            if (state.isClientMode) onNavigateToPostProject() else onNavigateToProjects()
+        },
         onNavigateToSettings = onNavigateToSettings,
         onNavigateToProfile = onNavigateToProfile,
-        onNavigateToProposal = onNavigateToProposal,
+        onNavigateToProposal = {
+            if (state.isClientMode) onNavigateToClientProposals("1") else onNavigateToSubmitProposal()
+        },
         onExportCsvClick = { viewModel.onEvent(HomeEvent.ExportCsv) }
     )
 }
@@ -157,7 +159,7 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
                             .clickable {
                                 scope.launch { drawerState.close() }
                                 onNavigateToProfile()
@@ -198,22 +200,41 @@ fun HomeScreen(
                                 scope.launch { drawerState.close() }
                             }
                         )
-                        DrawerItem(
-                            icon = Icons.Default.Payments,
-                            label = "Create Proposal",
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                onNavigateToProposal()
-                            }
-                        )
-                        DrawerItem(
-                            icon = Icons.Default.Star,
-                            label = "My Profile",
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                onNavigateToProfile()
-                            }
-                        )
+                        if (state.isClientMode) {
+                            DrawerItem(
+                                icon = Icons.Default.Payments,
+                                label = "Post a Project",
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    onCreateProjectClick()
+                                }
+                            )
+                            DrawerItem(
+                                icon = Icons.Default.Star,
+                                label = "Review Project Bids",
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    onNavigateToProposal()
+                                }
+                            )
+                        } else {
+                            DrawerItem(
+                                icon = Icons.Default.Payments,
+                                label = "Create Proposal",
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    onNavigateToProposal()
+                                }
+                            )
+                            DrawerItem(
+                                icon = Icons.Default.Star,
+                                label = "My Profile",
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    onNavigateToProfile()
+                                }
+                            )
+                        }
                         DrawerItem(
                             icon = Icons.Default.Settings,
                             label = "Settings",
@@ -253,8 +274,7 @@ fun HomeScreen(
                             Text(
                                 "Zapmancer",
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 24.sp
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
                             )
                         }
                     },
@@ -273,9 +293,9 @@ fun HomeScreen(
                         UserAvatar(
                             imageUrl = null,
                             size = 36.dp,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = MaterialTheme.shapes.small,
                             borderWidth = 2.dp,
-                            borderColor = MaterialTheme.colorScheme.onSurface,
+                            borderColor = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(end = 12.dp)
                         )
                     },
@@ -318,45 +338,72 @@ fun HomeContent(
             Column {
                 Text(
                     "Welcome back, ${state.userName}".uppercase(),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.sp
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     "Start your Journey.",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            StatCard(
-                modifier = Modifier.fillMaxWidth(),
-                title = "Total Earnings",
-                value = state.totalEarnings,
-                accentColor = MaterialTheme.colorScheme.primary,
-                icon = Icons.Default.Payments,
-                growth = state.earningsGrowth
-            )
-            StatCard(
-                modifier = Modifier.fillMaxWidth(),
-                title = "Current Projects",
-                value = state.activeProjectsCount.toString(),
-                accentColor = ZapGold,
-                icon = Icons.Default.Work,
-                secondaryValue = "/ ${state.totalCapacity} capacity"
-            )
-            StatCard(
-                modifier = Modifier.fillMaxWidth(),
-                title = "System Rating",
-                value = state.systemRating.toString(),
-                accentColor = MaterialTheme.colorScheme.secondary,
-                icon = Icons.Default.Star,
-                isRating = true
-            )
+            if (state.isClientMode) {
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "Total Spent",
+                    value = "$14,800.00",
+                    accentColor = MaterialTheme.colorScheme.primary,
+                    icon = Icons.Default.Payments,
+                    growth = "+8.2%"
+                )
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "Active Job Posts",
+                    value = "3",
+                    accentColor = ZapGold,
+                    icon = Icons.Default.Work,
+                    secondaryValue = "/ 5 capacity"
+                )
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "Proposals Received",
+                    value = "12",
+                    accentColor = MaterialTheme.colorScheme.secondary,
+                    icon = Icons.Default.Star,
+                    secondaryValue = "avg 4 bids/post"
+                )
+            } else {
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "Total Earnings",
+                    value = state.totalEarnings,
+                    accentColor = MaterialTheme.colorScheme.primary,
+                    icon = Icons.Default.Payments,
+                    growth = state.earningsGrowth
+                )
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "Current Projects",
+                    value = state.activeProjectsCount.toString(),
+                    accentColor = ZapGold,
+                    icon = Icons.Default.Work,
+                    secondaryValue = "/ ${state.totalCapacity} capacity"
+                )
+                StatCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "System Rating",
+                    value = state.systemRating.toString(),
+                    accentColor = MaterialTheme.colorScheme.secondary,
+                    icon = Icons.Default.Star,
+                    isRating = true
+                )
+            }
         }
         Button(
             onClick = onCreateProjectClick,
@@ -364,11 +411,14 @@ fun HomeContent(
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
             ),
-            shape = RoundedCornerShape(999.dp),
+            shape = MaterialTheme.shapes.large,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            Text("Create Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(
+                text = if (state.isClientMode) "Post a New Project" else "Browse Projects",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
         }
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -390,7 +440,7 @@ fun HomeContent(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Column(
@@ -404,10 +454,10 @@ fun HomeContent(
         }
         Card(
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .height(160.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Box(
@@ -438,25 +488,23 @@ fun HomeContent(
                 ) {
                     Surface(
                         color = ZapGold,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-                        shape = RoundedCornerShape(4.dp)
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        shape = MaterialTheme.shapes.extraSmall
                     ) {
                         Text(
                             "New Feature",
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
                         "Quantum Analytics",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
                         "Real-time predictive modeling is now available in your workspace.",
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(16.dp))
@@ -466,11 +514,11 @@ fun HomeContent(
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary
                         ),
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
-                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                        shape = MaterialTheme.shapes.small,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Launch Dashboard", fontWeight = FontWeight.Bold)
+                        Text("Launch Dashboard", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     }
                 }
             }
@@ -494,7 +542,7 @@ fun StatCard(
             .fillMaxSize()
             .height(160.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
@@ -513,8 +561,8 @@ fun StatCard(
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(accentColor.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                            .border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(4.dp)),
+                            .background(accentColor.copy(alpha = 0.2f), MaterialTheme.shapes.extraSmall)
+                            .border(1.dp, accentColor.copy(alpha = 0.4f), MaterialTheme.shapes.extraSmall),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -528,14 +576,13 @@ fun StatCard(
                     if (growth != null) {
                         Surface(
                             color = accentColor,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = MaterialTheme.shapes.small
                         ) {
                             Text(
                                 growth,
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
                                 color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
                             )
                         }
                     }
@@ -544,8 +591,7 @@ fun StatCard(
                 Column {
                     Text(
                         title.uppercase(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Row(
@@ -562,7 +608,7 @@ fun StatCard(
                             Text(
                                 secondaryValue,
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -602,7 +648,7 @@ fun ActivityRow(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
@@ -625,18 +671,18 @@ fun ActivityRow(
                             .size(40.dp)
                             .background(
                                 accentColor.copy(alpha = 0.15f),
-                                RoundedCornerShape(6.dp)
+                                MaterialTheme.shapes.small
                             )
                             .border(
                                 1.dp,
                                 accentColor.copy(alpha = 0.4f),
-                                RoundedCornerShape(6.dp)
+                                MaterialTheme.shapes.small
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = activity.categoryTag,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = accentColor
                         )
                     }
@@ -680,7 +726,7 @@ fun ActivityRow(
 
                 Surface(
                     color = accentColor,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         text = activity.status.name
@@ -690,8 +736,7 @@ fun ActivityRow(
                             vertical = 4.dp
                         ),
                         color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             }
@@ -760,7 +805,7 @@ private fun DrawerItem(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
+        shape = MaterialTheme.shapes.small,
         color = Color.Transparent,
         modifier = Modifier.fillMaxWidth()
     ) {

@@ -3,6 +3,7 @@ package com.smach.zapmancer.core.network.session
 import com.smach.zapmancer.core.common.utils.DataStoreStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
 class SessionManager(
@@ -12,6 +13,7 @@ class SessionManager(
         private const val KEY_USER_ID = "user_id"
         private const val KEY_ACCESS_TOKEN = "access_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
+        private const val KEY_ONBOARDING = "onboarding_completed"
     }
 
     suspend fun saveSession(userId: String, accessToken: String, refreshToken: String) {
@@ -35,6 +37,13 @@ class SessionManager(
 
     fun getRefreshTokenBlocking(): String? = runBlocking {
         getRefreshToken().first()
+    }
+
+    fun getOnboardingCompleted(): Flow<Boolean> =
+        storage.getString(KEY_ONBOARDING).map { it == "true" }
+
+    suspend fun saveOnboardingCompleted(completed: Boolean) {
+        storage.saveString(KEY_ONBOARDING, completed.toString())
     }
 
     suspend fun clearSession() {
