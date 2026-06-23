@@ -38,7 +38,7 @@ val LocalDrawerController =
 
 class DrawerController(
     private val drawerState: DrawerState,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) {
     fun open() {
         scope.launch {
@@ -60,23 +60,22 @@ fun AppDrawerContent(
     onNavigateToSettings: () -> Unit,
     onCreateProjectClick: () -> Unit,
     onNavigateToProposal: () -> Unit,
-    closeDrawer: () -> Unit
+    closeDrawer: () -> Unit,
 ) {
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.width(300.dp)
+        modifier = Modifier.width(300.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
+                .padding(24.dp),
         ) {
-
             Text(
                 text = "Zapmancer",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(Modifier.height(24.dp))
@@ -84,18 +83,17 @@ fun AppDrawerContent(
             DrawerItem(
                 icon = Icons.Default.Work,
                 label = "Home Dashboard",
-                onClick = closeDrawer
+                onClick = closeDrawer,
             )
 
             if (isClientMode) {
-
                 DrawerItem(
                     icon = Icons.Default.Payments,
                     label = "Post a Project",
                     onClick = {
                         closeDrawer()
                         onCreateProjectClick()
-                    }
+                    },
                 )
 
                 DrawerItem(
@@ -104,18 +102,16 @@ fun AppDrawerContent(
                     onClick = {
                         closeDrawer()
                         onNavigateToProposal()
-                    }
+                    },
                 )
-
             } else {
-
                 DrawerItem(
                     icon = Icons.Default.Payments,
                     label = "Create Proposal",
                     onClick = {
                         closeDrawer()
                         onNavigateToProposal()
-                    }
+                    },
                 )
 
                 DrawerItem(
@@ -124,7 +120,7 @@ fun AppDrawerContent(
                     onClick = {
                         closeDrawer()
                         onNavigateToProfile()
-                    }
+                    },
                 )
             }
 
@@ -134,7 +130,7 @@ fun AppDrawerContent(
                 onClick = {
                     closeDrawer()
                     onNavigateToSettings()
-                }
+                },
             )
 
             Spacer(Modifier.weight(1f))
@@ -143,7 +139,7 @@ fun AppDrawerContent(
                 text = "1.0.0",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }
     }
@@ -153,32 +149,32 @@ fun AppDrawerContent(
 private fun DrawerItem(
     icon: ImageVector,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
         shape = MaterialTheme.shapes.small,
         color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

@@ -13,33 +13,32 @@ data class Project(
     val tags: List<String> = emptyList(),
     val showImagePlaceholder: Boolean = false,
     val footerText: String? = null,
-    val membersCount: Int = 0
+    val membersCount: Int = 0,
 )
-
 
 enum class ProjectCategory(val displayName: String) {
     ALL("All"),
     DEVELOPMENT("Development"),
     DESIGN("Design"),
-    MARKETING("Marketing");
+    MARKETING("Marketing"),
+    ;
 
     companion object {
-        fun from(value: String): ProjectCategory =
-            entries.firstOrNull {
-                it.name.equals(value, ignoreCase = true)
-            } ?: ALL
+        fun from(value: String): ProjectCategory = entries.firstOrNull {
+            it.name.equals(value, ignoreCase = true)
+        } ?: ALL
     }
 }
 
 enum class ProjectStatus(val displayName: String) {
     ACTIVE("Active"),
     PENDING("Pending"),
-    DONE("Done");
+    DONE("Done"),
+    ;
 
     companion object {
-        fun from(value: String): ProjectStatus =
-            entries.firstOrNull {
-                it.name.equals(value, ignoreCase = true)
-            } ?: PENDING
+        fun from(value: String): ProjectStatus = entries.firstOrNull {
+            it.name.equals(value, ignoreCase = true)
+        } ?: PENDING
     }
 }

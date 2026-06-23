@@ -13,17 +13,21 @@ data class NotificationItem(
     val codeSnippet: String? = null,
     val isItalic: Boolean = false,
     val actions: List<NotificationAction> = emptyList(),
-    val quickReply: Boolean = false
+    val quickReply: Boolean = false,
 )
 
 @Serializable
 enum class NotificationType {
-    MILESTONE, MESSAGE, ALERT, GENERAL, COLLABORATOR
+    MILESTONE,
+    MESSAGE,
+    ALERT,
+    GENERAL,
+    COLLABORATOR,
 }
 
 @Serializable
 data class NotificationAction(
     val label: String,
     val isPrimary: Boolean = false,
-    val isError: Boolean = false
+    val isError: Boolean = false,
 )

@@ -25,6 +25,7 @@ import com.smach.zapmancer.domain.usecase.GetHomeDashboardUseCase
 import com.smach.zapmancer.domain.usecase.GetMessagesUseCase
 import com.smach.zapmancer.domain.usecase.GetNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.GetProjectDetailUseCase
+import com.smach.zapmancer.domain.usecase.GetProjectProposalsUseCase
 import com.smach.zapmancer.domain.usecase.GetProjectsUseCase
 import com.smach.zapmancer.domain.usecase.GetSettingsUseCase
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
@@ -32,6 +33,7 @@ import com.smach.zapmancer.domain.usecase.HireUserUseCase
 import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
 import com.smach.zapmancer.domain.usecase.MarkConversationAsReadUseCase
+import com.smach.zapmancer.domain.usecase.PostProjectUseCase
 import com.smach.zapmancer.domain.usecase.SaveProjectUseCase
 import com.smach.zapmancer.domain.usecase.SendMessageUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
@@ -39,8 +41,6 @@ import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
 import com.smach.zapmancer.domain.usecase.UpdateSettingsUseCase
 import com.smach.zapmancer.domain.usecase.VerifyOtpUseCase
-import com.smach.zapmancer.domain.usecase.PostProjectUseCase
-import com.smach.zapmancer.domain.usecase.GetProjectProposalsUseCase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf

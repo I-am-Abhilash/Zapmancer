@@ -9,5 +9,5 @@ data class Proposal(
     val pitchContent: String,
     val budget: String,
     val timelineDays: String,
-    val projectType: String
+    val projectType: String,
 )

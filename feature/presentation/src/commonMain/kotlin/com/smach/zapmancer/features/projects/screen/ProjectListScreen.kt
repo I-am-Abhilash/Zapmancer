@@ -61,7 +61,6 @@ import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-
 @Composable
 fun ProjectListScreen(
     viewModel: ProjectListViewModel = koinViewModel(),
@@ -76,9 +75,7 @@ fun ProjectListScreen(
         onProjectClick = onProjectClick,
         onSearchClick = {},
     )
-
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +83,7 @@ fun ProjectListContent(
     state: ProjectListUiState,
     onProjectClick: (Int) -> Unit = {},
     onSearchClick: () -> Unit,
-    onEvent: (ProjectListEvent) -> Unit
+    onEvent: (ProjectListEvent) -> Unit,
 ) {
     val projects = state.projects
 
@@ -99,27 +96,27 @@ fun ProjectListContent(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.background,
-                drawBottomBorder = false
+                drawBottomBorder = false,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (state.isLoading) {
                 item {
                     LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     )
                 }
             }
@@ -130,7 +127,7 @@ fun ProjectListContent(
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -142,7 +139,6 @@ fun ProjectListContent(
                     it.category == state.category
                 }
             }
-
 
             item {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -156,7 +152,7 @@ fun ProjectListContent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -164,7 +160,7 @@ fun ProjectListContent(
             items(projects) { project ->
                 ProjectItemCard(
                     project = project,
-                    onClick = { onProjectClick(project.id) }
+                    onClick = { onProjectClick(project.id) },
                 )
             }
 
@@ -182,7 +178,7 @@ fun PortfolioHeader() {
             "Get Projects ",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(modifier = Modifier.height(8.dp))
         DashedDivider()
@@ -190,7 +186,7 @@ fun PortfolioHeader() {
         Text(
             "Manage and track your active development and design cycles.",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -202,17 +198,16 @@ fun DashedDivider() {
     Canvas(
         Modifier
             .fillMaxWidth()
-            .height(1.dp)
+            .height(1.dp),
     ) {
         drawLine(
             color = drawLineColor,
             start = Offset(0f, 0f),
             end = Offset(size.width, 0f),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
         )
     }
 }
-
 
 @Composable
 fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
@@ -223,7 +218,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 
     ) {
         val icon = when (project.category) {
@@ -240,12 +235,12 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
             ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
         }
         Column(
-            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp)
+            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
@@ -253,13 +248,13 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             .size(40.dp)
                             .clip(MaterialTheme.shapes.small)
                             .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             icon,
                             contentDescription = null,
                             tint = accentColor,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
@@ -269,31 +264,35 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             style = MaterialTheme.typography.labelSmall,
                             color = accentColor,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
+                            letterSpacing = 0.5.sp,
                         )
                         Text(
                             project.title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
 
                 Surface(
-                    color = if (project.status == ProjectStatus.ACTIVE) MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.1f
-                    ) else accentColor.copy(
-                        alpha = 0.1f
-                    ),
-                    shape = MaterialTheme.shapes.small
+                    color = if (project.status == ProjectStatus.ACTIVE) {
+                        MaterialTheme.colorScheme.primary.copy(
+                            alpha = 0.1f,
+                        )
+                    } else {
+                        accentColor.copy(
+                            alpha = 0.1f,
+                        )
+                    },
+                    shape = MaterialTheme.shapes.small,
                 ) {
                     Text(
                         project.status.displayName,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
                         color = project.status.color(),
-                        fontWeight = FontWeight.ExtraBold
+                        fontWeight = FontWeight.ExtraBold,
                     )
                 }
             }
@@ -303,24 +302,24 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                 project.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 20.sp
+                lineHeight = 20.sp,
             )
 
             if (project.progress != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         "Optimization Progress",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         "${project.progress}%",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Spacer(modifier = Modifier.height(6.dp))
@@ -342,14 +341,14 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                         Surface(
                             color = MaterialTheme.colorScheme.background,
                             shape = MaterialTheme.shapes.small,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         ) {
                             Text(
                                 tag,
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
                             )
                         }
                     }
@@ -363,7 +362,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                         .fillMaxWidth()
                         .height(160.dp)
                         .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                 ) {
                     Box(
                         modifier = Modifier
@@ -371,9 +370,9 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             .background(
                                 Brush.radialGradient(
                                     center = Offset(400f, 200f),
-                                    radius = 300f
-                                )
-                            )
+                                    radius = 300f,
+                                ),
+                            ),
                     )
                 }
             }
@@ -387,7 +386,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                                 .size(28.dp)
                                 .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.surfaceVariant
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                         ) {}
                         Spacer(modifier = Modifier.width((-8).dp))
                     }
@@ -397,14 +396,14 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                                 .size(28.dp)
                                 .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.background
+                            color = MaterialTheme.colorScheme.background,
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Text(
                                     "+${project.membersCount - 2}",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 10.sp
+                                    fontSize = 10.sp,
                                 )
                             }
                         }
@@ -419,7 +418,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (project.footerIcon != null) {
@@ -427,7 +426,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             project.footerIcon,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                     }
@@ -435,7 +434,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                         project.footerText ?: "",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                 }
 
@@ -443,7 +442,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
@@ -461,18 +460,15 @@ data class ProjectUiModel(
     val showImagePlaceholder: Boolean = false,
     val footerText: String? = null,
     val footerIcon: ImageVector? = null,
-    val membersCount: Int = 0
+    val membersCount: Int = 0,
 )
 
-
 @Composable
-fun ProjectStatus.color(): Color =
-    when (this) {
-        ProjectStatus.ACTIVE -> MaterialTheme.colorScheme.primary
-        ProjectStatus.PENDING -> Warning
-        ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
-    }
-
+fun ProjectStatus.color(): Color = when (this) {
+    ProjectStatus.ACTIVE -> MaterialTheme.colorScheme.primary
+    ProjectStatus.PENDING -> Warning
+    ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
+}
 
 object ProjectPreviewData {
 
@@ -485,7 +481,7 @@ object ProjectPreviewData {
             description = "High-performance inference engine...",
             progress = 78,
             footerText = "Optimization Progress",
-            membersCount = 2
+            membersCount = 2,
         ),
 
         ProjectUiModel(
@@ -495,7 +491,7 @@ object ProjectPreviewData {
             title = "Lumina Design System",
             description = "Unified token-based architecture...",
             showImagePlaceholder = true,
-            footerText = "Review: Oct 24"
-        )
+            footerText = "Review: Oct 24",
+        ),
     )
 }

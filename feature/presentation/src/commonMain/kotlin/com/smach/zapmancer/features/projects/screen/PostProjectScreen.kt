@@ -59,7 +59,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun PostProjectScreen(
     viewModel: PostProjectViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    showSnackbar: (String) -> Unit = {}
+    showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -76,15 +76,16 @@ fun PostProjectScreen(
     PostProjectContent(
         state = state,
         onEvent = viewModel::onEvent,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PostProjectContent(
     state: PostProjectUiState,
     onEvent: (PostProjectEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -93,10 +94,10 @@ fun PostProjectContent(
                 showBackButton = true,
                 onBackClick = onBackClick,
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         if (state.isSubmitted) {
             Column(
@@ -105,32 +106,32 @@ fun PostProjectContent(
                     .padding(padding)
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(80.dp),
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     "Project Posted!",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     "Your project has been successfully listed. Freelancers can now view details and submit proposals.",
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
                     onClick = onBackClick,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = CircleShape
+                    shape = CircleShape,
                 ) {
                     Text("Return to Dashboard", fontWeight = FontWeight.Bold)
                 }
@@ -142,7 +143,7 @@ fun PostProjectContent(
                     .padding(padding)
                     .padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 item {
                     Column {
@@ -150,13 +151,13 @@ fun PostProjectContent(
                             "Post a Project",
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             "Create a listing to find talented freelancers for your needs.",
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
+                            modifier = Modifier.padding(top = 4.dp),
                         )
                     }
                 }
@@ -166,23 +167,23 @@ fun PostProjectContent(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Text(
                                 "Job Details",
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
 
                             Column {
                                 Text(
                                     "Project Title",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
+                                    fontSize = 14.sp,
                                 )
                                 OutlinedTextField(
                                     value = state.title,
@@ -193,9 +194,9 @@ fun PostProjectContent(
                                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                         focusedContainerColor = MaterialTheme.colorScheme.background,
-                                        unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 )
                             }
 
@@ -203,15 +204,15 @@ fun PostProjectContent(
                                 Text(
                                     "Description / Scope",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
+                                    fontSize = 14.sp,
                                 )
                                 OutlinedTextField(
                                     value = state.description,
                                     onValueChange = {
                                         onEvent(
                                             PostProjectEvent.OnDescriptionChanged(
-                                                it
-                                            )
+                                                it,
+                                            ),
                                         )
                                     },
                                     modifier = Modifier.fillMaxWidth().height(140.dp)
@@ -221,29 +222,29 @@ fun PostProjectContent(
                                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                         focusedContainerColor = MaterialTheme.colorScheme.background,
-                                        unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 )
                             }
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         "Budget Range",
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp
+                                        fontSize = 14.sp,
                                     )
                                     OutlinedTextField(
                                         value = state.budgetRange,
                                         onValueChange = {
                                             onEvent(
                                                 PostProjectEvent.OnBudgetChanged(
-                                                    it
-                                                )
+                                                    it,
+                                                ),
                                             )
                                         },
                                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -252,9 +253,9 @@ fun PostProjectContent(
                                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                                             unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                             focusedContainerColor = MaterialTheme.colorScheme.background,
-                                            unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                         ),
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(8.dp),
                                     )
                                 }
                                 Column(modifier = Modifier.weight(1f)) {
@@ -264,8 +265,8 @@ fun PostProjectContent(
                                         onValueChange = {
                                             onEvent(
                                                 PostProjectEvent.OnTimelineChanged(
-                                                    it
-                                                )
+                                                    it,
+                                                ),
                                             )
                                         },
                                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -274,9 +275,9 @@ fun PostProjectContent(
                                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                                             unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                             focusedContainerColor = MaterialTheme.colorScheme.background,
-                                            unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                         ),
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(8.dp),
                                     )
                                 }
                             }
@@ -290,28 +291,28 @@ fun PostProjectContent(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 "Deliverables",
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Spacer(Modifier.height(8.dp))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 OutlinedTextField(
                                     value = state.currentDeliverableInput,
                                     onValueChange = {
                                         onEvent(
                                             PostProjectEvent.OnDeliverableInputChanged(
-                                                it
-                                            )
+                                                it,
+                                            ),
                                         )
                                     },
                                     modifier = Modifier.weight(1f),
@@ -320,9 +321,9 @@ fun PostProjectContent(
                                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                         focusedContainerColor = MaterialTheme.colorScheme.background,
-                                        unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 )
                                 IconButton(
                                     onClick = { onEvent(PostProjectEvent.AddDeliverable) },
@@ -330,13 +331,13 @@ fun PostProjectContent(
                                         .size(48.dp)
                                         .background(
                                             MaterialTheme.colorScheme.primary,
-                                            RoundedCornerShape(8.dp)
-                                        )
+                                            RoundedCornerShape(8.dp),
+                                        ),
                                 ) {
                                     Icon(
                                         Icons.Default.Add,
                                         contentDescription = "Add",
-                                        tint = Color.White
+                                        tint = Color.White,
                                     )
                                 }
                             }
@@ -350,17 +351,17 @@ fun PostProjectContent(
                                             .fillMaxWidth()
                                             .background(
                                                 MaterialTheme.colorScheme.background,
-                                                RoundedCornerShape(8.dp)
+                                                RoundedCornerShape(8.dp),
                                             )
                                             .padding(horizontal = 12.dp, vertical = 8.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Text(
                                             text = deliverable,
                                             style = MaterialTheme.typography.bodyMedium,
                                             modifier = Modifier.weight(1f),
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            color = MaterialTheme.colorScheme.onSurface,
                                         )
                                         Icon(
                                             Icons.Default.Close,
@@ -371,10 +372,10 @@ fun PostProjectContent(
                                                 .clickable {
                                                     onEvent(
                                                         PostProjectEvent.RemoveDeliverable(
-                                                            index
-                                                        )
+                                                            index,
+                                                        ),
                                                     )
-                                                }
+                                                },
                                         )
                                     }
                                 }
@@ -389,28 +390,28 @@ fun PostProjectContent(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 "Required Skills",
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Spacer(Modifier.height(8.dp))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 OutlinedTextField(
                                     value = state.currentSkillInput,
                                     onValueChange = {
                                         onEvent(
                                             PostProjectEvent.OnSkillInputChanged(
-                                                it
-                                            )
+                                                it,
+                                            ),
                                         )
                                     },
                                     modifier = Modifier.weight(1f),
@@ -419,9 +420,9 @@ fun PostProjectContent(
                                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                         focusedContainerColor = MaterialTheme.colorScheme.background,
-                                        unfocusedContainerColor = MaterialTheme.colorScheme.background
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
                                     ),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 )
                                 IconButton(
                                     onClick = { onEvent(PostProjectEvent.AddSkill) },
@@ -429,13 +430,13 @@ fun PostProjectContent(
                                         .size(48.dp)
                                         .background(
                                             MaterialTheme.colorScheme.primary,
-                                            RoundedCornerShape(8.dp)
-                                        )
+                                            RoundedCornerShape(8.dp),
+                                        ),
                                 ) {
                                     Icon(
                                         Icons.Default.Add,
                                         contentDescription = "Add",
-                                        tint = Color.White
+                                        tint = Color.White,
                                     )
                                 }
                             }
@@ -445,7 +446,7 @@ fun PostProjectContent(
                             FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 state.skills.forEachIndexed { index, skill ->
                                     Surface(
@@ -453,22 +454,22 @@ fun PostProjectContent(
                                         shape = RoundedCornerShape(999.dp),
                                         border = BorderStroke(
                                             1.dp,
-                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                                        )
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                        ),
                                     ) {
                                         Row(
                                             modifier = Modifier.padding(
                                                 horizontal = 12.dp,
-                                                vertical = 6.dp
+                                                vertical = 6.dp,
                                             ),
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                                         ) {
                                             Text(
                                                 text = skill.uppercase(),
                                                 style = MaterialTheme.typography.labelMedium,
                                                 fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.primary
+                                                color = MaterialTheme.colorScheme.primary,
                                             )
                                             Icon(
                                                 Icons.Default.Close,
@@ -479,10 +480,10 @@ fun PostProjectContent(
                                                     .clickable {
                                                         onEvent(
                                                             PostProjectEvent.RemoveSkill(
-                                                                index
-                                                            )
+                                                                index,
+                                                            ),
                                                         )
-                                                    }
+                                                    },
                                             )
                                         }
                                     }
@@ -500,15 +501,15 @@ fun PostProjectContent(
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = Color.White
+                            contentColor = Color.White,
                         ),
                         shape = RoundedCornerShape(999.dp),
-                        enabled = !state.isSubmitting && state.title.isNotEmpty() && state.description.isNotEmpty()
+                        enabled = !state.isSubmitting && state.title.isNotEmpty() && state.description.isNotEmpty(),
                     ) {
                         Text(
                             text = if (state.isSubmitting) "Posting..." else "Post Project",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            fontSize = 16.sp,
                         )
                     }
                 }
@@ -519,12 +520,12 @@ fun PostProjectContent(
 
 @Preview
 @Composable
-fun PostProjectScreenPreview(){
+fun PostProjectScreenPreview() {
     AppTheme {
         PostProjectContent(
             state = PostProjectUiState(),
             onEvent = {},
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }

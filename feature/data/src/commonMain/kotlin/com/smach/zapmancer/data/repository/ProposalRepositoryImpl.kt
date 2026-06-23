@@ -10,7 +10,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
 class ProposalRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : ProposalRepository {
 
     override suspend fun submitProposal(proposal: Proposal) {
@@ -24,9 +24,7 @@ class ProposalRepositoryImpl(
         }
     }
 
-    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, com.smach.zapmancer.core.common.utils.DataError.Network> {
-        return safeApiCall<List<Proposal>> {
-            client.get("projects/$projectId/proposals")
-        }
+    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, com.smach.zapmancer.core.common.utils.DataError.Network> = safeApiCall<List<Proposal>> {
+        client.get("projects/$projectId/proposals")
     }
 }

@@ -19,9 +19,9 @@ sealed interface ClientProposalsEffect {
 
 class ClientProposalsViewModel(
     private val projectId: String,
-    private val getProjectProposalsUseCase: GetProjectProposalsUseCase
+    private val getProjectProposalsUseCase: GetProjectProposalsUseCase,
 ) : BaseViewModel<ClientProposalsUiState, ClientProposalsEvent, ClientProposalsEffect>(
-    ClientProposalsUiState()
+    ClientProposalsUiState(),
 ) {
 
     init {
@@ -31,6 +31,7 @@ class ClientProposalsViewModel(
     override fun onEvent(event: ClientProposalsEvent) {
         when (event) {
             ClientProposalsEvent.Refresh -> loadProposals()
+
             is ClientProposalsEvent.AcceptBid -> {
                 sendEffect(ClientProposalsEffect.ShowToast("Accepted bid from ${event.freelancerName}!"))
             }
@@ -54,7 +55,7 @@ class ClientProposalsViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            proposals = fallbackProposals
+                            proposals = fallbackProposals,
                         )
                     }
                 }
@@ -70,7 +71,7 @@ class ClientProposalsViewModel(
                 pitchContent = "I can architect your high-density canvas rendering engine to process 10,000 updates/second. Over 12 years of systems design experience.",
                 budget = "14000",
                 timelineDays = "45",
-                projectType = "Fixed Price"
+                projectType = "Fixed Price",
             ),
             com.smach.zapmancer.domain.model.Proposal(
                 freelancerName = "Sarah Connor",
@@ -78,8 +79,8 @@ class ClientProposalsViewModel(
                 pitchContent = "Experienced in auditing high-throughput database replication scripts and securing WebSockets connections against malicious attacks.",
                 budget = "9500",
                 timelineDays = "30",
-                projectType = "Fixed Price"
-            )
+                projectType = "Fixed Price",
+            ),
         )
     }
 }

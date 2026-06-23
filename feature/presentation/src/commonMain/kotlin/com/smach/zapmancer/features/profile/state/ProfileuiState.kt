@@ -14,8 +14,13 @@ data class ProfileUiState(
     val experience: String = "12yr",
     val about: String = "With over 12 years of experience in building mission-critical software architectures, I specialize in bridging the gap between high-density data systems and intuitive user interfaces. My approach is rooted in systematic precision and functional minimalism.",
     val skills: List<String> = listOf(
-        "Systems Architecture", "TypeScript", "Rust", "Product Strategy",
-        "UI/UX Engineering", "GraphQL", "Cloud Native"
+        "Systems Architecture",
+        "TypeScript",
+        "Rust",
+        "Product Strategy",
+        "UI/UX Engineering",
+        "GraphQL",
+        "Cloud Native",
     ),
     val portfolioItems: List<PortfolioItem> = emptyList(),
     val reviews: List<ProfileReview> = emptyList(),
@@ -23,5 +28,5 @@ data class ProfileUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val isHireSuccess: Boolean = false,
-    val isOwnProfile: Boolean = true
+    val isOwnProfile: Boolean = true,
 )

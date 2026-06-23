@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 //
-//private val LightColorScheme = lightColorScheme(
+// private val LightColorScheme = lightColorScheme(
 //    primary = Teal700,
 //    onPrimary = Color.White,
 //
@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 //    outline = OutlineLight,
 //
 //    error = Error
-//)
+// )
 //
-//private val DarkColorScheme = darkColorScheme(
+// private val DarkColorScheme = darkColorScheme(
 //    primary = Teal500,
 //    onPrimary = Color.Black,
 //
@@ -48,7 +48,7 @@ import androidx.compose.ui.graphics.Color
 //    outline = OutlineDark,
 //
 //    error = Error
-//)
+// )
 
 private val LightColorScheme = lightColorScheme(
     primary = BluePrimary,
@@ -56,7 +56,6 @@ private val LightColorScheme = lightColorScheme(
 
     secondary = BlueSecondary,
     onSecondary = Color.White,
-
 
     background = BackgroundLight,
     onBackground = OnSurfaceLight,
@@ -69,7 +68,7 @@ private val LightColorScheme = lightColorScheme(
 
     outline = OutlineLight,
 
-    error = Error
+    error = Error,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -90,7 +89,7 @@ private val DarkColorScheme = darkColorScheme(
 
     outline = OutlineDark,
 
-    error = Error
+    error = Error,
 )
 
 @Composable

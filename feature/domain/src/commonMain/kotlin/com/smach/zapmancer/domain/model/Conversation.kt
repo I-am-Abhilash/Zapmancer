@@ -10,5 +10,5 @@ data class ConversationItem(
     val lastMessage: String,
     val timestamp: String,
     val isUnread: Boolean = false,
-    val isOnline: Boolean = false
+    val isOnline: Boolean = false,
 )

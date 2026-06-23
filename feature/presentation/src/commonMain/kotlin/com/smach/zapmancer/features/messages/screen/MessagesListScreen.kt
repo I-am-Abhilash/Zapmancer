@@ -65,7 +65,7 @@ fun MessagesListScreen(
         onEvent = viewModel::onEvent,
         onConversationClick = onConversationClick,
         onProfileClick = onProfileClick,
-        onMenuClick = { drawerController.open() }
+        onMenuClick = { drawerController.open() },
     )
 }
 
@@ -76,7 +76,7 @@ fun MessagesListContent(
     onEvent: (MessagesListEvent) -> Unit,
     onConversationClick: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -84,13 +84,13 @@ fun MessagesListContent(
                 titleContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             "Zapmancer",
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
+                            fontSize = 24.sp,
                         )
                     }
                 },
@@ -104,30 +104,30 @@ fun MessagesListContent(
                         shape = MaterialTheme.shapes.extraLarge,
                         borderWidth = 1.dp,
                         borderColor = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp),
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
         ) {
             MessagesSearchAndFilter(
                 searchQuery = state.searchQuery,
                 selectedFilter = state.selectedFilter,
-                onEvent = onEvent
+                onEvent = onEvent,
             )
 
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surface),
             ) {
                 if (state.conversations.isEmpty()) {
                     item {
@@ -135,12 +135,12 @@ fun MessagesListContent(
                             modifier = Modifier
                                 .fillParentMaxSize()
                                 .padding(32.dp),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 text = "No conversations found",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
                             )
                         }
                     }
@@ -149,11 +149,11 @@ fun MessagesListContent(
                     ConversationItemRow(
                         item = conversation,
                         isSelected = false,
-                        onClick = { onConversationClick(conversation.id) }
+                        onClick = { onConversationClick(conversation.id) },
                     )
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        thickness = 1.dp
+                        thickness = 1.dp,
                     )
                 }
             }
@@ -165,14 +165,14 @@ fun MessagesListContent(
 fun MessagesSearchAndFilter(
     searchQuery: String,
     selectedFilter: String,
-    onEvent: (MessagesListEvent) -> Unit
+    onEvent: (MessagesListEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         OutlinedTextField(
             value = searchQuery,
@@ -183,7 +183,7 @@ fun MessagesSearchAndFilter(
                 Icon(
                     Icons.Default.Search,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             },
             shape = RoundedCornerShape(24.dp),
@@ -191,8 +191,8 @@ fun MessagesSearchAndFilter(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-            )
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            ),
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -203,11 +203,11 @@ fun MessagesSearchAndFilter(
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                     contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                     shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.height(32.dp)
+                    modifier = Modifier.height(32.dp),
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     ) {
                         Text(filter, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
@@ -221,7 +221,7 @@ fun MessagesSearchAndFilter(
 fun ConversationItemRow(
     item: ConversationItem,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val drawLineColor = MaterialTheme.colorScheme.primary
     Row(
@@ -236,17 +236,17 @@ fun ConversationItemRow(
                         color = drawLineColor,
                         start = Offset(strokeWidth / 2, 0f),
                         end = Offset(strokeWidth / 2, size.height),
-                        strokeWidth = strokeWidth
+                        strokeWidth = strokeWidth,
                     )
                 }
             }
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         UserAvatar(
             imageUrl = item.avatarUrl,
             size = 48.dp,
-            isOnline = item.isOnline
+            isOnline = item.isOnline,
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -255,7 +255,7 @@ fun ConversationItemRow(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = item.name,
@@ -263,13 +263,13 @@ fun ConversationItemRow(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = item.timestamp,
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
             }
             Text(
@@ -277,7 +277,7 @@ fun ConversationItemRow(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
 
@@ -287,7 +287,7 @@ fun ConversationItemRow(
                 modifier = Modifier
                     .size(10.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondary)
+                    .background(MaterialTheme.colorScheme.secondary),
             )
         }
     }
@@ -307,7 +307,7 @@ fun MessagesListScreenPreview() {
                         lastMessage = "The deployment pipeline is successfully configured...",
                         timestamp = "09:42 AM",
                         isUnread = true,
-                        isOnline = true
+                        isOnline = true,
                     ),
                     ConversationItem(
                         id = "2",
@@ -316,13 +316,13 @@ fun MessagesListScreenPreview() {
                         lastMessage = "I've reviewed the latest pull request. Just a few minor...",
                         timestamp = "Yesterday",
                         isUnread = false,
-                        isOnline = false
-                    )
-                )
+                        isOnline = false,
+                    ),
+                ),
             ),
             onEvent = {},
             onProfileClick = {},
-            onConversationClick = {}
+            onConversationClick = {},
         )
     }
 }

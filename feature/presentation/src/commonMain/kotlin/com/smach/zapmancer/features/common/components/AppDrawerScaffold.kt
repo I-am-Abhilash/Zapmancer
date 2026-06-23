@@ -15,11 +15,10 @@ fun AppDrawerScaffold(
     onNavigateToSettings: () -> Unit,
     onCreateProjectClick: () -> Unit,
     onNavigateToProposal: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-
     val drawerState = rememberDrawerState(
-        initialValue = DrawerValue.Closed
+        initialValue = DrawerValue.Closed,
     )
 
     val scope = rememberCoroutineScope()
@@ -27,14 +26,13 @@ fun AppDrawerScaffold(
     val drawerController = remember {
         DrawerController(
             drawerState = drawerState,
-            scope = scope
+            scope = scope,
         )
     }
 
     CompositionLocalProvider(
-        LocalDrawerController provides drawerController
+        LocalDrawerController provides drawerController,
     ) {
-
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
@@ -44,9 +42,9 @@ fun AppDrawerScaffold(
                     onNavigateToSettings = onNavigateToSettings,
                     onCreateProjectClick = onCreateProjectClick,
                     onNavigateToProposal = onNavigateToProposal,
-                    closeDrawer = drawerController::close
+                    closeDrawer = drawerController::close,
                 )
-            }
+            },
         ) {
             content()
         }

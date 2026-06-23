@@ -33,10 +33,10 @@ fun App() {
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.appState.collectAsState()
 
-    AppTheme() {
+    AppTheme {
         AnimatedContent(
             targetState = appState,
-            transitionSpec = { fadeIn() togetherWith fadeOut() }
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
         ) { state ->
             when (state) {
                 is AppState.Loading -> {
@@ -44,7 +44,7 @@ fun App() {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
@@ -52,13 +52,13 @@ fun App() {
 
                 is AppState.Onboarding -> {
                     OnboardingScreen(
-                        onFinished = { mainViewModel.completeOnboarding() }
+                        onFinished = { mainViewModel.completeOnboarding() },
                     )
                 }
 
                 is AppState.Unauthenticated -> {
                     AuthGraph(
-                        onAuthSuccess = {}
+                        onAuthSuccess = {},
                     )
                 }
 

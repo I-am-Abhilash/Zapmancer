@@ -3,50 +3,50 @@ package com.smach.zapmancer.features.common.theme
 import androidx.compose.ui.graphics.Color
 
 //
-//// Brand Colors
-//val Teal500 = Color(0xFF2BA8A2)
-//val Teal700 = Color(0xFF1D736F)
+// // Brand Colors
+// val Teal500 = Color(0xFF2BA8A2)
+// val Teal700 = Color(0xFF1D736F)
 //
-//val Coral500 = Color(0xFFEF6C4A)
+// val Coral500 = Color(0xFFEF6C4A)
 //
-//val Gold500 = Color(0xFFD4AF37)
-//val GoldContainer = Color(0xFFFFDF00)
-//val OnGoldContainer = Color(0xFF241D00)
+// val Gold500 = Color(0xFFD4AF37)
+// val GoldContainer = Color(0xFFFFDF00)
+// val OnGoldContainer = Color(0xFF241D00)
 //
-//// Supporting Colors
-//val SkyBlue50 = Color(0xFFEBF5FB)
-//val SkyBlue700 = Color(0xFF2E86C1)
+// // Supporting Colors
+// val SkyBlue50 = Color(0xFFEBF5FB)
+// val SkyBlue700 = Color(0xFF2E86C1)
 //
-//val Orange500 = Color(0xFFF9A825)
-//val Grey500 = Color(0xFF9E9E9E)
-//val Slate500 = Color(0xFF6D7278)
+// val Orange500 = Color(0xFFF9A825)
+// val Grey500 = Color(0xFF9E9E9E)
+// val Slate500 = Color(0xFF6D7278)
 //
-//// Semantic Colors
-//val Success = Color(0xFF4CAF50)
-//val Warning = Color(0xFFFF9800)
-//val Error = Color(0xFFB00020)
-//val Info = Color(0xFF2196F3)
+// // Semantic Colors
+// val Success = Color(0xFF4CAF50)
+// val Warning = Color(0xFFFF9800)
+// val Error = Color(0xFFB00020)
+// val Info = Color(0xFF2196F3)
 //
-//// Light Theme Neutrals
-//val BackgroundLight = Color(0xFFEFF8F7)
-//val SurfaceLight = Color(0xFFFFFFFF)
-//val SurfaceVariantLight = Color(0xFFFFF8E7)
+// // Light Theme Neutrals
+// val BackgroundLight = Color(0xFFEFF8F7)
+// val SurfaceLight = Color(0xFFFFFFFF)
+// val SurfaceVariantLight = Color(0xFFFFF8E7)
 //
-//val OnSurfaceLight = Color(0xFF1A1C1E)
-//val OnSurfaceVariantLight = Color(0xFF44474E)
+// val OnSurfaceLight = Color(0xFF1A1C1E)
+// val OnSurfaceVariantLight = Color(0xFF44474E)
 //
-//val OutlineLight = Color(0xFF6F7978)
-//val OutlineVariantLight = Color(0xFFBEC9C7)
+// val OutlineLight = Color(0xFF6F7978)
+// val OutlineVariantLight = Color(0xFFBEC9C7)
 //
-//// Dark Theme Neutrals
-//val BackgroundDark = Color(0xFF121414)
-//val SurfaceDark = Color(0xFF1B1D1D)
-//val SurfaceVariantDark = Color(0xFF252929)
+// // Dark Theme Neutrals
+// val BackgroundDark = Color(0xFF121414)
+// val SurfaceDark = Color(0xFF1B1D1D)
+// val SurfaceVariantDark = Color(0xFF252929)
 //
-//val OnSurfaceDark = Color(0xFFE7E9E8)
-//val OnSurfaceVariantDark = Color(0xFFBEC9C7)
+// val OnSurfaceDark = Color(0xFFE7E9E8)
+// val OnSurfaceVariantDark = Color(0xFFBEC9C7)
 //
-//val OutlineDark = Color(0xFF5F6665)
+// val OutlineDark = Color(0xFF5F6665)
 
 // Brand
 val BluePrimary = Color(0xFF2563EB)

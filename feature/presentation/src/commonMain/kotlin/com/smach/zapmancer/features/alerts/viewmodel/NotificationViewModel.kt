@@ -14,12 +14,10 @@ import kotlinx.coroutines.launch
 
 sealed class NotificationEvent {
     data object Refresh : NotificationEvent()
-    data class OnReplyTextChanged(val notificationId: String, val text: String) :
-        NotificationEvent()
+    data class OnReplyTextChanged(val notificationId: String, val text: String) : NotificationEvent()
 
     data class SendQuickReply(val notificationId: String) : NotificationEvent()
-    data class ExecuteAction(val notificationId: String, val actionLabel: String) :
-        NotificationEvent()
+    data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent()
 }
 
 sealed class NotificationEffect {
@@ -39,6 +37,7 @@ class NotificationViewModel(
     override fun onEvent(event: NotificationEvent) {
         when (event) {
             NotificationEvent.Refresh -> loadNotifications()
+
             is NotificationEvent.OnReplyTextChanged -> {
                 updateState {
                     copy(replyDrafts = replyDrafts + (event.notificationId to event.text))
@@ -46,9 +45,10 @@ class NotificationViewModel(
             }
 
             is NotificationEvent.SendQuickReply -> sendQuickReply(event.notificationId)
+
             is NotificationEvent.ExecuteAction -> executeAction(
                 event.notificationId,
-                event.actionLabel
+                event.actionLabel,
             )
         }
     }
@@ -74,13 +74,13 @@ class NotificationViewModel(
                                         NotificationAction(
                                             label = domainAction.label,
                                             isPrimary = domainAction.isPrimary,
-                                            isError = domainAction.isError
+                                            isError = domainAction.isError,
                                         )
                                     },
-                                    quickReply = domainItem.quickReply
+                                    quickReply = domainItem.quickReply,
                                 )
                             },
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 }
@@ -89,7 +89,7 @@ class NotificationViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to load notifications"
+                            error = "Failed to load notifications",
                         )
                     }
                 }
@@ -108,7 +108,7 @@ class NotificationViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            replyDrafts = replyDrafts - notificationId
+                            replyDrafts = replyDrafts - notificationId,
                         )
                     }
                     sendEffect(NotificationEffect.ShowToast("Quick reply sent!"))
@@ -119,7 +119,7 @@ class NotificationViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to send quick reply"
+                            error = "Failed to send quick reply",
                         )
                     }
                 }
@@ -141,7 +141,7 @@ class NotificationViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to execute action"
+                            error = "Failed to execute action",
                         )
                     }
                 }

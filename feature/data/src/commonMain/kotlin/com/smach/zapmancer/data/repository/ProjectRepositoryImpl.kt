@@ -12,25 +12,25 @@ import io.ktor.client.request.setBody
 import kotlinx.serialization.Serializable
 
 class ProjectRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : ProjectRepository {
 
-    override suspend fun getProjects(): List<Project> {
-        return when (val result = safeApiCall<List<Project>> {
+    override suspend fun getProjects(): List<Project> = when (
+        val result = safeApiCall<List<Project>> {
             client.get("projects")
-        }) {
-            is Result.Success -> result.data
-            is Result.Error -> throw Exception("Failed to fetch projects: ${result.error}")
         }
+    ) {
+        is Result.Success -> result.data
+        is Result.Error -> throw Exception("Failed to fetch projects: ${result.error}")
     }
 
-    override suspend fun getProjectDetail(id: String): ProjectDetail {
-        return when (val result = safeApiCall<ProjectDetail> {
+    override suspend fun getProjectDetail(id: String): ProjectDetail = when (
+        val result = safeApiCall<ProjectDetail> {
             client.get("projects/$id")
-        }) {
-            is Result.Success -> result.data
-            is Result.Error -> throw Exception("Failed to fetch project detail: ${result.error}")
         }
+    ) {
+        is Result.Success -> result.data
+        is Result.Error -> throw Exception("Failed to fetch project detail: ${result.error}")
     }
 
     override suspend fun saveProject(id: String, isSaved: Boolean) {

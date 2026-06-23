@@ -12,18 +12,16 @@ import io.ktor.client.request.setBody
 import kotlinx.serialization.Serializable
 
 class NotificationRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : NotificationRepository {
 
-    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> {
-        return safeApiCall<List<NotificationItem>> {
-            client.get("notifications")
-        }
+    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> = safeApiCall<List<NotificationItem>> {
+        client.get("notifications")
     }
 
     override suspend fun executeAction(
         notificationId: String,
-        actionLabel: String
+        actionLabel: String,
     ): Result<Unit, DataError.Network> {
         val result = safeApiCall<CommonResponse> {
             client.post("notifications/$notificationId/action") {
@@ -38,7 +36,7 @@ class NotificationRepositoryImpl(
 
     override suspend fun sendQuickReply(
         notificationId: String,
-        replyText: String
+        replyText: String,
     ): Result<Unit, DataError.Network> {
         val result = safeApiCall<CommonResponse> {
             client.post("notifications/$notificationId/reply") {

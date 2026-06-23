@@ -63,7 +63,7 @@ class ProfileViewModel(
                                     id = it.id,
                                     title = it.title,
                                     description = it.description,
-                                    imageUrl = it.imageUrl
+                                    imageUrl = it.imageUrl,
                                 )
                             },
                             reviews = profile.reviews.map {
@@ -74,12 +74,12 @@ class ProfileViewModel(
                                     content = it.content,
                                     rating = it.rating,
                                     authorAvatarUrl = it.authorAvatarUrl.orEmpty(),
-                                    authorId = it.authorId
+                                    authorId = it.authorId,
                                 )
                             },
                             avatarUrl = profile.avatarUrl.orEmpty(),
                             isLoading = false,
-                            isOwnProfile = userId.isNullOrEmpty()
+                            isOwnProfile = userId.isNullOrEmpty(),
                         )
                     }
                 }
@@ -88,7 +88,7 @@ class ProfileViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to load profile"
+                            error = "Failed to load profile",
                         )
                     }
                 }
@@ -109,7 +109,7 @@ class ProfileViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to process hire request"
+                            error = "Failed to process hire request",
                         )
                     }
                     sendEffect(ProfileEffect.ShowToast("Failed to process hire request"))

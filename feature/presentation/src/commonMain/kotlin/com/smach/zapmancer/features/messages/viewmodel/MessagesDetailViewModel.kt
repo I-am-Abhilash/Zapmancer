@@ -21,7 +21,7 @@ class MessagesDetailViewModel(
     private val conversationId: String,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
-    private val markConversationAsReadUseCase: MarkConversationAsReadUseCase
+    private val markConversationAsReadUseCase: MarkConversationAsReadUseCase,
 ) : BaseViewModel<MessagesDetailUiState, MessagesDetailEvent, Unit>(MessagesDetailUiState()) {
 
     override fun onEvent(event: MessagesDetailEvent) {
@@ -31,6 +31,7 @@ class MessagesDetailViewModel(
             }
 
             MessagesDetailEvent.SendMessage -> sendMessage()
+
             MessagesDetailEvent.MarkAsRead -> markAsRead()
         }
     }
@@ -52,10 +53,10 @@ class MessagesDetailViewModel(
                                 timestamp = domainItem.timestamp,
                                 isFromMe = domainItem.isFromMe,
                                 status = MessageStatus.valueOf(domainItem.status.name),
-                                avatarUrl = domainItem.avatarUrl
+                                avatarUrl = domainItem.avatarUrl,
                             )
                         },
-                        isLoading = false
+                        isLoading = false,
                     )
                 }
             }

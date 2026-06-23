@@ -12,27 +12,27 @@ import io.ktor.client.request.setBody
 import kotlinx.serialization.Serializable
 
 class HomeRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : HomeRepository {
 
-    override suspend fun getDashboardData(): HomeDashboard {
-        return when (val result = safeApiCall<HomeDashboard> {
+    override suspend fun getDashboardData(): HomeDashboard = when (
+        val result = safeApiCall<HomeDashboard> {
             client.get("home/dashboard")
-        }) {
-            is Result.Success -> result.data
-            is Result.Error -> throw Exception("Failed to load dashboard: ${result.error}")
         }
+    ) {
+        is Result.Success -> result.data
+        is Result.Error -> throw Exception("Failed to load dashboard: ${result.error}")
     }
 
-    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): String {
-        return when (val result = safeApiCall<ExportResponse> {
+    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): String = when (
+        val result = safeApiCall<ExportResponse> {
             client.post("home/activities/export") {
                 setBody(ExportRequest(activities = activities))
             }
-        }) {
-            is Result.Success -> result.data.filePath
-            is Result.Error -> "activities_export.csv" // fallback local path
         }
+    ) {
+        is Result.Success -> result.data.filePath
+        is Result.Error -> "activities_export.csv" // fallback local path
     }
 }
 

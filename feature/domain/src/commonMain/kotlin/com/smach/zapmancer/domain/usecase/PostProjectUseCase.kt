@@ -6,9 +6,7 @@ import com.smach.zapmancer.domain.model.ProjectDetail
 import com.smach.zapmancer.domain.repository.ProjectRepository
 
 class PostProjectUseCase(
-    private val repository: ProjectRepository
+    private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(project: ProjectDetail): Result<Unit, DataError.Network> {
-        return repository.postProject(project)
-    }
+    suspend operator fun invoke(project: ProjectDetail): Result<Unit, DataError.Network> = repository.postProject(project)
 }

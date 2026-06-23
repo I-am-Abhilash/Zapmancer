@@ -28,19 +28,24 @@ sealed interface PostProjectEffect {
 }
 
 class PostProjectViewModel(
-    private val postProjectUseCase: PostProjectUseCase
+    private val postProjectUseCase: PostProjectUseCase,
 ) : BaseViewModel<PostProjectUiState, PostProjectEvent, PostProjectEffect>(PostProjectUiState()) {
 
     override fun onEvent(event: PostProjectEvent) {
         when (event) {
             is PostProjectEvent.OnTitleChanged -> updateState { copy(title = event.title) }
+
             is PostProjectEvent.OnCategoryChanged -> updateState { copy(category = event.category) }
+
             is PostProjectEvent.OnDescriptionChanged -> updateState { copy(description = event.description) }
+
             is PostProjectEvent.OnBudgetChanged -> updateState { copy(budgetRange = event.budget) }
+
             is PostProjectEvent.OnTimelineChanged -> updateState { copy(timeline = event.timeline) }
+
             is PostProjectEvent.OnDeliverableInputChanged -> updateState {
                 copy(
-                    currentDeliverableInput = event.input
+                    currentDeliverableInput = event.input,
                 )
             }
 
@@ -50,7 +55,7 @@ class PostProjectViewModel(
                     updateState {
                         copy(
                             deliverables = deliverables + input,
-                            currentDeliverableInput = ""
+                            currentDeliverableInput = "",
                         )
                     }
                 }
@@ -61,6 +66,7 @@ class PostProjectViewModel(
             }
 
             is PostProjectEvent.OnSkillInputChanged -> updateState { copy(currentSkillInput = event.input) }
+
             PostProjectEvent.AddSkill -> {
                 val input = uiState.value.currentSkillInput.trim()
                 if (input.isNotEmpty()) {
@@ -106,7 +112,7 @@ class PostProjectViewModel(
                 isSaved = false,
                 isClientActive = true,
                 isIdentityVerified = true,
-                isPhoneVerified = true
+                isPhoneVerified = true,
             )
             when (val result = postProjectUseCase(project)) {
                 is Result.Success -> {

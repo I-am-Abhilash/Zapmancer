@@ -26,18 +26,14 @@ class SessionManager(
         storage.saveString(KEY_REFRESH_TOKEN, refreshToken)
     }
 
-    fun observeAccessToken(): Flow<String?> =
-        storage.getString(KEY_ACCESS_TOKEN)
+    fun observeAccessToken(): Flow<String?> = storage.getString(KEY_ACCESS_TOKEN)
 
     suspend fun getUserId(): String? = storage.getString(KEY_USER_ID).first()
-    suspend fun getAccessToken(): String? =
-        storage.getString(KEY_ACCESS_TOKEN).first()
+    suspend fun getAccessToken(): String? = storage.getString(KEY_ACCESS_TOKEN).first()
 
-    suspend fun getRefreshToken(): String? =
-        storage.getString(KEY_REFRESH_TOKEN).first()
+    suspend fun getRefreshToken(): String? = storage.getString(KEY_REFRESH_TOKEN).first()
 
-    fun getOnboardingCompleted(): Flow<Boolean> =
-        storage.getString(KEY_ONBOARDING).map { it == "true" }
+    fun getOnboardingCompleted(): Flow<Boolean> = storage.getString(KEY_ONBOARDING).map { it == "true" }
 
     suspend fun saveOnboardingCompleted(completed: Boolean) {
         storage.saveString(KEY_ONBOARDING, completed.toString())

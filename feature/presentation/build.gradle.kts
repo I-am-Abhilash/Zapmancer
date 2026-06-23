@@ -1,7 +1,4 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
-
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
@@ -28,15 +25,7 @@ kotlin {
 
     js {
         browser()
-        binaries.executable()
     }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
-
 
     sourceSets {
         commonMain.dependencies {
@@ -61,7 +50,6 @@ kotlin {
             implementation(libs.adaptive.layout)
             implementation(libs.adaptive)
             implementation(libs.adaptive.navigation)
-            implementation(libs.napier)
             implementation(libs.okio)
             implementation(libs.koin.core)
             implementation(libs.compose.uiTooling.preview)

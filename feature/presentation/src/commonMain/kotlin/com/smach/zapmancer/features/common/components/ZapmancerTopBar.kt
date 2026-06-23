@@ -31,7 +31,7 @@ fun ZapmancerTopBar(
     onMenuClick: () -> Unit = {},
     actions: (@Composable RowScope.() -> Unit)? = null,
     containerColor: Color = MaterialTheme.colorScheme.surface,
-    drawBottomBorder: Boolean = true
+    drawBottomBorder: Boolean = true,
 ) {
     val drawLineColor = MaterialTheme.colorScheme.outlineVariant
     TopAppBar(
@@ -43,7 +43,7 @@ fun ZapmancerTopBar(
                     text = title,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp
+                    fontSize = 22.sp,
                 )
             }
         },
@@ -53,7 +53,7 @@ fun ZapmancerTopBar(
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
             } else if (showMenuButton) {
@@ -61,7 +61,7 @@ fun ZapmancerTopBar(
                     Icon(
                         Icons.Default.Menu,
                         contentDescription = "Menu",
-                        tint = MaterialTheme.colorScheme.onSurface
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -72,7 +72,7 @@ fun ZapmancerTopBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = containerColor
+            containerColor = containerColor,
         ),
         modifier = if (drawBottomBorder) {
             Modifier.drawBehind {
@@ -80,11 +80,11 @@ fun ZapmancerTopBar(
                     color = drawLineColor,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
-                    strokeWidth = 1.dp.toPx()
+                    strokeWidth = 1.dp.toPx(),
                 )
             }
         } else {
             Modifier
-        }
+        },
     )
 }

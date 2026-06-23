@@ -110,7 +110,7 @@ fun ProfileContent(
     onEvent: (ProfileEvent) -> Unit,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -123,21 +123,21 @@ fun ProfileContent(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(bottom = 32.dp)
+            contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item { IdentityHeader(state, onEvent) }
 
@@ -147,7 +147,7 @@ fun ProfileContent(
                         text = state.about,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 22.sp
+                        lineHeight = 22.sp,
                     )
                 }
             }
@@ -157,7 +157,7 @@ fun ProfileContent(
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         state.skills.forEach { skill ->
                             SkillChip(skill)
@@ -177,7 +177,7 @@ fun ProfileContent(
                     text = "See more",
                     onClick = {
                         onEvent(ProfileEvent.PortfolioMore)
-                    }
+                    },
                 )
             }
             item {
@@ -191,13 +191,11 @@ fun ProfileContent(
                     text = "See more reviews",
                     onClick = {
                         onEvent(ProfileEvent.ReviewMore)
-                    }
+                    },
                 )
             }
         }
-
     }
-
 }
 
 @Composable
@@ -228,7 +226,6 @@ fun OnMoreButton(onClick: () -> Unit, text: String) {
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -243,25 +240,24 @@ fun IdentityHeader(
             .padding(16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         border = BorderStroke(
             1.dp,
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-        )
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+        ),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             UserAvatar(
                 imageUrl = state.avatarUrl,
                 size = 104.dp,
                 borderWidth = 2.dp,
-                borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -271,7 +267,7 @@ fun IdentityHeader(
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -281,7 +277,7 @@ fun IdentityHeader(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -290,13 +286,13 @@ fun IdentityHeader(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
                     8.dp,
-                    Alignment.CenterHorizontally
+                    Alignment.CenterHorizontally,
                 ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 InfoChip(
                     Icons.Default.LocationOn,
-                    state.location
+                    state.location,
                 )
 
                 InfoChip(
@@ -315,7 +311,7 @@ fun IdentityHeader(
             Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
             )
 
             Row(
@@ -324,36 +320,35 @@ fun IdentityHeader(
                     .height(IntrinsicSize.Min)
                     .padding(vertical = 20.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-
                 StatItem(
                     value = state.projectsCount.toString(),
-                    label = "Projects"
+                    label = "Projects",
                 )
 
                 VerticalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                 )
 
                 StatItem(
                     value = state.rating.toString(),
-                    label = "Rating"
+                    label = "Rating",
                 )
 
                 VerticalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                 )
 
                 StatItem(
                     value = state.experience,
-                    label = "Exp"
+                    label = "Exp",
                 )
             }
 
             if (!state.isOwnProfile) {
                 HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -367,14 +362,14 @@ fun IdentityHeader(
                         .height(56.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.surface
+                        contentColor = MaterialTheme.colorScheme.surface,
                     ),
-                    shape = RoundedCornerShape(999.dp)
+                    shape = RoundedCornerShape(999.dp),
                 ) {
                     Text(
                         text = "Hire Me",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
             }
@@ -391,10 +386,10 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
             .border(
                 1.dp,
                 MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp)
+                RoundedCornerShape(16.dp),
             ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             Text(
@@ -402,7 +397,7 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp),
             )
             content()
         }
@@ -414,7 +409,7 @@ fun SkillChip(skill: String) {
     Surface(
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
         shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
     ) {
         Text(
             text = skill.uppercase(),
@@ -422,7 +417,7 @@ fun SkillChip(skill: String) {
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            letterSpacing = 0.5.sp
+            letterSpacing = 0.5.sp,
         )
     }
 }
@@ -434,14 +429,14 @@ fun StatItem(value: String, label: String) {
             text = value,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Text(
             text = label.uppercase(),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
     }
 }
@@ -451,29 +446,29 @@ fun InfoChip(
     icon: ImageVector,
     text: String,
     bgColor: Color = MaterialTheme.colorScheme.surface,
-    textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
+    textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Surface(
         color = bgColor,
         shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(0.5.dp, textColor.copy(alpha = 0.2f))
+        border = BorderStroke(0.5.dp, textColor.copy(alpha = 0.2f)),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = textColor,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(14.dp),
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = textColor
+                color = textColor,
             )
         }
     }
@@ -486,13 +481,13 @@ fun SectionTitleRow(title: String) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
 //        if (actionText.isNotEmpty()) {
 //            Text(
@@ -517,10 +512,10 @@ fun PortfolioCard(item: PortfolioItem) {
             .border(
                 1.dp,
                 MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp)
+                RoundedCornerShape(16.dp),
             ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column {
             AppImage(
@@ -529,19 +524,19 @@ fun PortfolioCard(item: PortfolioItem) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16 / 9f),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = item.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -557,17 +552,17 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
             .border(
                 1.dp,
                 MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp)
+                RoundedCornerShape(16.dp),
             ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     UserAvatar(
@@ -575,7 +570,7 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                         size = 48.dp,
                         borderWidth = 2.dp,
                         borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                        modifier = Modifier.clickable { onProfileClick(review.authorId) }
+                        modifier = Modifier.clickable { onProfileClick(review.authorId) },
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.clickable { onProfileClick(review.authorId) }) {
@@ -583,12 +578,12 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                             text = review.authorName,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             text = review.authorRole,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -599,7 +594,7 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                     }
                 }
@@ -618,10 +613,10 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                             color = drawLineColor,
                             start = Offset(0f, 0f),
                             end = Offset(0f, size.height),
-                            strokeWidth = 4.dp.toPx()
+                            strokeWidth = 4.dp.toPx(),
                         )
                     }
-                    .padding(start = 16.dp)
+                    .padding(start = 16.dp),
             )
         }
     }
@@ -634,14 +629,14 @@ fun FlowRow(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     maxItemsInEachRow: Int = Int.MAX_VALUE,
-    content: @Composable FlowRowScope.() -> Unit
+    content: @Composable FlowRowScope.() -> Unit,
 ) {
     FlowRow(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
         maxItemsInEachRow = maxItemsInEachRow,
-        content = content
+        content = content,
     )
 }
 
@@ -654,7 +649,7 @@ fun ProfileScreenPreview() {
             onEvent = {},
             onSearchClick = {},
             onBackClick = {},
-            onProfileClick = {}
+            onProfileClick = {},
         )
     }
 }

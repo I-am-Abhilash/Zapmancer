@@ -19,9 +19,8 @@ class DataStoreStorage(
         queries.insertKeyValue(key, value)
     }
 
-    fun getString(key: String): Flow<String?> = 
-        queries.getValue(key)
-            .asFlow()
-            .mapToOneOrNull(Dispatchers.Default)
-            .map { it?.value_ }
+    fun getString(key: String): Flow<String?> = queries.getValue(key)
+        .asFlow()
+        .mapToOneOrNull(Dispatchers.Default)
+        .map { it?.value_ }
 }

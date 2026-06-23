@@ -34,9 +34,9 @@ fun ErrorState(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -46,7 +46,7 @@ fun ErrorState(
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier
                 .size(64.dp)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp),
         )
 
         Text(
@@ -54,7 +54,7 @@ fun ErrorState(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.error
+            color = MaterialTheme.colorScheme.error,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -71,13 +71,13 @@ fun ErrorState(
             onClick = onButtonClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError
+                contentColor = MaterialTheme.colorScheme.onError,
             ),
             shape = MaterialTheme.shapes.medium,
         ) {
             Text(
                 buttonText,
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
             )
         }
     }

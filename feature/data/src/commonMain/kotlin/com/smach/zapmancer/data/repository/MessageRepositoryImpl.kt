@@ -16,13 +16,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 
 class MessageRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : MessageRepository {
 
-    override suspend fun getConversations(): Result<List<ConversationItem>, DataError.Network> {
-        return safeApiCall<List<ConversationItem>> {
-            client.get("messages/conversations")
-        }
+    override suspend fun getConversations(): Result<List<ConversationItem>, DataError.Network> = safeApiCall<List<ConversationItem>> {
+        client.get("messages/conversations")
     }
 
     override fun getMessages(conversationId: String): Flow<List<MessageItem>> = flow {
@@ -39,7 +37,7 @@ class MessageRepositoryImpl(
 
     override suspend fun sendMessage(
         conversationId: String,
-        text: String
+        text: String,
     ): Result<Unit, DataError.Network> {
         val result = safeApiCall<CommonResponse> {
             client.post("messages/conversations/$conversationId/send") {

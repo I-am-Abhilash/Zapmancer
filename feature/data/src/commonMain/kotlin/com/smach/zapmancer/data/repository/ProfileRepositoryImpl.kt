@@ -11,7 +11,7 @@ import io.ktor.client.request.post
 import kotlinx.serialization.Serializable
 
 class ProfileRepositoryImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : ProfileRepository {
 
     override suspend fun getProfile(userId: String?): Result<UserProfile, DataError.Network> {

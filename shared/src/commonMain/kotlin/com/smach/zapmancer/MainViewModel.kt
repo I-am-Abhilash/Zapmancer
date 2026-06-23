@@ -7,6 +7,7 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,12 +22,14 @@ sealed interface AppState {
 /** Central ViewModel that drives root UI routing */
 class MainViewModel(
     private val authRepository: AuthRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
 ) : ViewModel() {
 
     val appState: StateFlow<AppState> = combine(
-        sessionManager.observeAccessToken(),
+        sessionManager.observeAccessToken()
+            .onEach { println("✅ Session Manager emitted: $it") },
         authRepository.isOnboardingCompleted()
+            .onEach { println("✅ Auth Repository emitted: $it") },
     ) { token, onboardingDone ->
         when {
             !onboardingDone -> AppState.Onboarding

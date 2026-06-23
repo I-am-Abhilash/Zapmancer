@@ -70,7 +70,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NotificationScreen(
     viewModel: NotificationViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    showSnackbar: (String) -> Unit = {}
+    showSnackbar: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -105,14 +105,15 @@ fun NotificationContent(
                 showBackButton = true,
                 onBackClick = onBackClick,
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
-        }, containerColor = MaterialTheme.colorScheme.background
+        },
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
+            contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
         ) {
             val grouped = state.notifications.groupBy { it.section }
 
@@ -132,7 +133,8 @@ fun NotificationContent(
                         },
                         onActionClicked = { actionLabel ->
                             onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel))
-                        })
+                        },
+                    )
                 }
             }
         }
@@ -146,7 +148,7 @@ fun RibbonHeader(text: String) {
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 4.dp) // Adjust for the "fold"
                 .offset(x = (-20).dp),
-            shadowElevation = 4.dp
+            shadowElevation = 4.dp,
         ) {
             Text(
                 text = text.uppercase(),
@@ -154,13 +156,13 @@ fun RibbonHeader(text: String) {
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 11.sp,
                 letterSpacing = 1.1.sp,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             )
         }
         val pathColor = MaterialTheme.colorScheme.primaryContainer
         Canvas(
             modifier = Modifier.size(8.dp).align(Alignment.BottomStart)
-                .offset(x = (-16).dp, y = 8.dp)
+                .offset(x = (-16).dp, y = 8.dp),
         ) {
             val path = Path().apply {
                 moveTo(16f, 0f)
@@ -179,7 +181,7 @@ fun NotificationCard(
     replyText: String,
     onReplyTextChanged: (String) -> Unit,
     onSendReply: () -> Unit,
-    onActionClicked: (String) -> Unit
+    onActionClicked: (String) -> Unit,
 ) {
     val accentColor = when (item.type) {
         NotificationType.MILESTONE -> MaterialTheme.colorScheme.primary
@@ -217,25 +219,25 @@ fun NotificationCard(
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(
-                alpha = opacity
-            )
+                alpha = opacity,
+            ),
         ),
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().drawAccentLine(accentColor).padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Box(
                 modifier = Modifier.size(40.dp).clip(MaterialTheme.shapes.small).background(iconBg)
                     .border(1.dp, iconBg.copy(alpha = 0.1f), MaterialTheme.shapes.small),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
 
@@ -243,17 +245,17 @@ fun NotificationCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         item.title,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-                        color = if (item.type == NotificationType.ALERT) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface
+                        color = if (item.type == NotificationType.ALERT) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         item.timestamp,
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -264,14 +266,14 @@ fun NotificationCard(
                         "\"${item.description}\"",
                         style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 20.sp
+                        lineHeight = 20.sp,
                     )
                 } else {
                     Text(
                         text = item.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 20.sp
+                        lineHeight = 20.sp,
                     )
                 }
 
@@ -283,18 +285,23 @@ fun NotificationCard(
                                 onClick = { onActionClicked(action.label) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary) else Color.Transparent,
-                                    contentColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary) else MaterialTheme.colorScheme.onSurfaceVariant
+                                    contentColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary) else MaterialTheme.colorScheme.onSurfaceVariant,
                                 ),
                                 shape = MaterialTheme.shapes.small,
-                                border = if (!action.isPrimary) BorderStroke(
-                                    1.dp, MaterialTheme.colorScheme.outline
-                                ) else null,
+                                border = if (!action.isPrimary) {
+                                    BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outline,
+                                    )
+                                } else {
+                                    null
+                                },
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-                                modifier = Modifier.height(32.dp)
+                                modifier = Modifier.height(32.dp),
                             ) {
                                 Text(
                                     action.label,
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 )
                             }
                         }
@@ -306,14 +313,15 @@ fun NotificationCard(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         OutlinedTextField(
                             value = replyText,
                             onValueChange = onReplyTextChanged,
                             placeholder = {
                                 Text(
-                                    "Quick reply...", style = MaterialTheme.typography.bodyMedium
+                                    "Quick reply...",
+                                    style = MaterialTheme.typography.bodyMedium,
                                 )
                             },
                             modifier = Modifier.weight(1f),
@@ -322,19 +330,21 @@ fun NotificationCard(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                                 focusedContainerColor = MaterialTheme.colorScheme.background,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.background
-                            )
+                                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            ),
                         )
                         IconButton(
-                            onClick = onSendReply, modifier = Modifier.size(36.dp).background(
-                                MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small
-                            )
+                            onClick = onSendReply,
+                            modifier = Modifier.size(36.dp).background(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.shapes.small,
+                            ),
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Outlined.Send,
                                 contentDescription = "Send",
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
                             )
                         }
                     }
@@ -349,9 +359,10 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
         drawRect(
             color = color,
             topLeft = Offset.Zero,
-            size = Size(width = 6.dp.toPx(), height = size.height)
+            size = Size(width = 6.dp.toPx(), height = size.height),
         )
-    })
+    },
+)
 
 @Preview
 @Composable
@@ -367,9 +378,11 @@ fun NotificationPreview() {
                 timestamp = "2m ago",
                 section = "Today",
                 actions = listOf(
-                    NotificationAction("View Logs", isPrimary = true), NotificationAction("Dismiss")
-                )
-            ), NotificationItem(
+                    NotificationAction("View Logs", isPrimary = true),
+                    NotificationAction("Dismiss"),
+                ),
+            ),
+            NotificationItem(
                 id = "2",
                 type = NotificationType.MESSAGE,
                 title = "Message from Sarah Connor",
@@ -377,8 +390,9 @@ fun NotificationPreview() {
                 timestamp = "1h ago",
                 section = "Today",
                 isItalic = true,
-                quickReply = true
-            ), NotificationItem(
+                quickReply = true,
+            ),
+            NotificationItem(
                 id = "3",
                 type = NotificationType.ALERT,
                 title = "Database Connection Spike",
@@ -387,24 +401,26 @@ fun NotificationPreview() {
                 section = "Today",
                 actions = listOf(
                     NotificationAction("Block IP", isPrimary = true, isError = true),
-                    NotificationAction("Investigate")
-                )
-            ), NotificationItem(
+                    NotificationAction("Investigate"),
+                ),
+            ),
+            NotificationItem(
                 id = "4",
                 type = NotificationType.GENERAL,
                 title = "Weekly Backup Complete",
                 description = "All system partitions have been mirrored to the secure vault. Integrity check: 100%.",
                 timestamp = "1d ago",
-                section = "Yesterday"
-            ), NotificationItem(
+                section = "Yesterday",
+            ),
+            NotificationItem(
                 id = "5",
                 type = NotificationType.COLLABORATOR,
                 title = "New Collaborator Joined",
                 description = "David Chen was added to the \"Project Phoenix\" team by Admin.",
                 timestamp = "1d ago",
-                section = "Yesterday"
-            )
-        )
+                section = "Yesterday",
+            ),
+        ),
     )
     NotificationContent(state = sampleState, onEvent = {})
 }

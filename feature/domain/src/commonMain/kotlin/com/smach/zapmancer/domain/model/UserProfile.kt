@@ -25,7 +25,7 @@ data class PortfolioItem(
     val id: String,
     val title: String,
     val description: String,
-    val imageUrl: String
+    val imageUrl: String,
 )
 
 @Serializable
@@ -36,9 +36,5 @@ data class ProfileReview(
     val authorRole: String,
     val content: String,
     val rating: Int,
-    val authorAvatarUrl: String? = null
+    val authorAvatarUrl: String? = null,
 )
-
-
-
-

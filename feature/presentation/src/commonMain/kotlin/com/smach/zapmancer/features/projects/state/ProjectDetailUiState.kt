@@ -12,7 +12,7 @@ data class ProjectDetailUiState(
         "Low-latency Canvas-based charting engine.",
         "Real-time order book visualization component.",
         "Websocket management layer with robust reconnection logic.",
-        "Custom theme engine for high-contrast trading environments."
+        "Custom theme engine for high-contrast trading environments.",
     ),
     val skills: List<String> = listOf(
         "TypeScript",
@@ -21,7 +21,7 @@ data class ProjectDetailUiState(
         "WebSocket API",
         "Canvas/WebGL",
         "Rust",
-        "FinTech Experience"
+        "FinTech Experience",
     ),
     val budgetRange: String = "$12,000 - $18,000",
     val projectType: String = "Fixed Price Project",

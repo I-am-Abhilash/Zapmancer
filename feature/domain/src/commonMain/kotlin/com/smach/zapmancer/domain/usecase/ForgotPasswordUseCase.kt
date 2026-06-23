@@ -5,9 +5,7 @@ import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.repository.AuthRepository
 
 class ForgotPasswordUseCase(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(email: String): Result<Unit, DataError.Network> {
-        return repository.requestPasswordReset(email)
-    }
+    suspend operator fun invoke(email: String): Result<Unit, DataError.Network> = repository.requestPasswordReset(email)
 }

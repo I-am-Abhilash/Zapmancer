@@ -39,8 +39,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import com.smach.zapmancer.features.common.components.UserAvatar
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,15 +53,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.SettingsData
+import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.settings.state.SettingsUiState
-import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 import com.smach.zapmancer.features.settings.viewmodel.SettingsEvent
+import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -74,7 +74,7 @@ fun SettingsScreen(
         onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
         onToggleNotifications = { viewModel.onEvent(SettingsEvent.ToggleEmailNotifications(it)) },
         onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
-        onLogout = { viewModel.onEvent(SettingsEvent.Logout) }
+        onLogout = { viewModel.onEvent(SettingsEvent.Logout) },
     )
 }
 
@@ -87,7 +87,7 @@ fun SettingsContent(
     onToggleDarkMode: (Boolean) -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
     onToggleClientMode: (Boolean) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -100,20 +100,20 @@ fun SettingsContent(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     UserAvatar(
                         imageUrl = null,
                         size = 32.dp,
-                        modifier = Modifier.padding(end = 12.dp)
+                        modifier = Modifier.padding(end = 12.dp),
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -121,7 +121,7 @@ fun SettingsContent(
                 .padding(padding)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp)
+            contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
         ) {
             item {
                 Column {
@@ -129,13 +129,13 @@ fun SettingsContent(
                         "Settings",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "Manage your account preferences and security protocols.",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -144,18 +144,18 @@ fun SettingsContent(
             item {
                 SettingsSection(
                     title = "Account",
-                    icon = Icons.Outlined.AccountCircle
+                    icon = Icons.Outlined.AccountCircle,
                 ) {
                     SettingsItem(
                         title = "Email Address",
-                        subtitle = uiState.settings?.email?:"",
-                        actionIcon = Icons.Outlined.Edit
+                        subtitle = uiState.settings?.email ?: "",
+                        actionIcon = Icons.Outlined.Edit,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Organization",
                         subtitle = uiState.settings?.organization ?: "",
-                        actionIcon = Icons.Outlined.CorporateFare
+                        actionIcon = Icons.Outlined.CorporateFare,
                     )
                 }
             }
@@ -163,13 +163,13 @@ fun SettingsContent(
             item {
                 SettingsSection(
                     title = "Security",
-                    icon = Icons.Outlined.Security
+                    icon = Icons.Outlined.Security,
                 ) {
                     SettingsToggleItem(
                         title = "Two-Factor Authentication",
                         description = "Add an extra layer of security to your account.",
                         checked = uiState.settings?.isTwoFactorEnabled ?: false,
-                        onCheckedChange = onToggleTwoFactor
+                        onCheckedChange = onToggleTwoFactor,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
@@ -180,16 +180,16 @@ fun SettingsContent(
                                 onClick = {},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.primary
+                                    contentColor = MaterialTheme.colorScheme.primary,
                                 ),
                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(4.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                                modifier = Modifier.height(32.dp)
+                                modifier = Modifier.height(32.dp),
                             ) {
                                 Text("Update", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -198,27 +198,27 @@ fun SettingsContent(
             item {
                 SettingsSection(
                     title = "Preferences",
-                    icon = Icons.Outlined.Tune
+                    icon = Icons.Outlined.Tune,
                 ) {
                     SettingsToggleItem(
                         title = "Dark Mode",
                         description = "Switch between light and dark interface themes.",
                         checked = uiState.settings?.isDarkModeEnabled ?: false,
-                        onCheckedChange = onToggleDarkMode
+                        onCheckedChange = onToggleDarkMode,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Email Notifications",
                         description = "Receive weekly performance reports and alerts.",
                         checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
-                        onCheckedChange = onToggleNotifications
+                        onCheckedChange = onToggleNotifications,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Client Mode",
                         description = "Toggle to switch interface focus to hiring and project posting.",
                         checked = uiState.settings?.isClientModeEnabled ?: false,
-                        onCheckedChange = onToggleClientMode
+                        onCheckedChange = onToggleClientMode,
                     )
                 }
             }
@@ -230,33 +230,33 @@ fun SettingsContent(
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(
                         1.dp,
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column {
                             Text(
                                 "Logout",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
                             )
                             Text(
                                 "Session termination will revoke all active access tokens.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         Button(
                             onClick = onLogout,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.shadow(4.dp, RoundedCornerShape(12.dp))
+                            modifier = Modifier.shadow(4.dp, RoundedCornerShape(12.dp)),
                         ) {
                             Text("Sign Out", fontWeight = FontWeight.Bold)
                         }
@@ -268,19 +268,19 @@ fun SettingsContent(
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
                         uiState.settings?.version ?: "",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
                     )
                     Text(
                         "© 2024 Zapmancer. All systems operational.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -292,13 +292,13 @@ fun SettingsContent(
 fun SettingsSection(
     title: String,
     icon: ImageVector,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
+        modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
     ) {
         Column {
             Row(
@@ -306,19 +306,19 @@ fun SettingsSection(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
                 Text(
                     title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
@@ -332,7 +332,7 @@ fun SettingsItem(
     title: String,
     subtitle: String,
     actionIcon: ImageVector? = null,
-    actionContent: (@Composable () -> Unit)? = null
+    actionContent: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
@@ -340,19 +340,19 @@ fun SettingsItem(
             .clickable { }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 subtitle,
                 fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (actionContent != null) {
@@ -362,7 +362,7 @@ fun SettingsItem(
                 actionIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -373,26 +373,26 @@ fun SettingsToggleItem(
     title: String,
     description: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
             Text(
                 title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 description,
                 fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Switch(
@@ -402,8 +402,8 @@ fun SettingsToggleItem(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant
-            )
+                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant,
+            ),
         )
     }
 }

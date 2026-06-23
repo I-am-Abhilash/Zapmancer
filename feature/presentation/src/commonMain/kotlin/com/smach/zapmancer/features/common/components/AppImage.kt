@@ -51,18 +51,18 @@ fun AppImage(
         if (isLoading) {
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .shimmerEffect(shape),
+                Modifier
+                    .fillMaxSize()
+                    .shimmerEffect(shape),
             )
         }
 
         if (isError) {
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant, shape),
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceVariant, shape),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

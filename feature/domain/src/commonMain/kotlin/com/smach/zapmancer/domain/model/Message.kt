@@ -9,11 +9,12 @@ data class MessageItem(
     val timestamp: String,
     val isFromMe: Boolean,
     val status: MessageStatus = MessageStatus.SENT,
-    val avatarUrl: String? = null
+    val avatarUrl: String? = null,
 )
 
 @Serializable
 enum class MessageStatus {
-    SENT, DELIVERED, READ
+    SENT,
+    DELIVERED,
+    READ,
 }
-

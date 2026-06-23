@@ -20,7 +20,7 @@ sealed class HomeEffect {
 class HomeViewModel(
     private val getHomeDashboardUseCase: GetHomeDashboardUseCase,
     private val exportActivityCsvUseCase: ExportActivityCsvUseCase,
-    private val settingsRepository: com.smach.zapmancer.domain.repository.SettingsRepository
+    private val settingsRepository: com.smach.zapmancer.domain.repository.SettingsRepository,
 ) : BaseViewModel<HomeUiState, HomeEvent, HomeEffect>(HomeUiState()) {
 
     override fun onEvent(event: HomeEvent) {
@@ -64,17 +64,17 @@ class HomeViewModel(
                                     tag = activity.tag,
                                     status = activity.status,
                                     timestamp = activity.timestamp,
-                                    monetaryValue = activity.monetaryValue
+                                    monetaryValue = activity.monetaryValue,
                                 )
                             },
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 },
                 onFailure = { exception ->
                     updateState { copy(isLoading = false) }
                     sendEffect(HomeEffect.ShowToast("Failed to load dashboard: ${exception.message}"))
-                }
+                },
             )
         }
     }
@@ -89,7 +89,7 @@ class HomeViewModel(
                     tag = it.category,
                     status = it.status,
                     timestamp = it.timestamp,
-                    monetaryValue = it.monetaryValue
+                    monetaryValue = it.monetaryValue,
                 )
             }
             exportActivityCsvUseCase(activities).fold(
@@ -98,7 +98,7 @@ class HomeViewModel(
                 },
                 onFailure = { exception ->
                     sendEffect(HomeEffect.ShowToast("Export failed: ${exception.message}"))
-                }
+                },
             )
         }
     }

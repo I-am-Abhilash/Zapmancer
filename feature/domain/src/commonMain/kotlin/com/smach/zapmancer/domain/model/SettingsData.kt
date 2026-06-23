@@ -10,5 +10,5 @@ data class SettingsData(
     val isDarkModeEnabled: Boolean,
     val isEmailNotificationsEnabled: Boolean,
     val version: String,
-    val isClientModeEnabled: Boolean = false
+    val isClientModeEnabled: Boolean = false,
 )

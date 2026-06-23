@@ -20,7 +20,7 @@ sealed class SettingsEvent {
 class SettingsViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val updateSettingsUseCase: UpdateSettingsUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
 ) : BaseViewModel<SettingsUiState, SettingsEvent, Unit>(SettingsUiState()) {
 
     init {
@@ -45,21 +45,21 @@ class SettingsViewModel(
                 onSuccess = { settings ->
                     updateState {
                         copy(
-                            settings = settings?.copy(
+                            settings = settings.copy(
                                 email = settings.email,
                                 organization = settings.organization,
                                 isTwoFactorEnabled = settings.isTwoFactorEnabled,
                                 isDarkModeEnabled = settings.isDarkModeEnabled,
                                 isEmailNotificationsEnabled = settings.isEmailNotificationsEnabled,
                                 version = settings.version,
-                                isClientModeEnabled = settings.isClientModeEnabled
+                                isClientModeEnabled = settings.isClientModeEnabled,
                             ),
                         )
                     }
                 },
                 onFailure = {
                     updateState { copy(isLoading = false) }
-                }
+                },
             )
         }
     }
@@ -71,12 +71,12 @@ class SettingsViewModel(
                     updateState {
                         copy(
                             settings = settings?.copy(
-                                isTwoFactorEnabled = enabled
+                                isTwoFactorEnabled = enabled,
                             ),
                         )
                     }
                 },
-                onFailure = {}
+                onFailure = {},
             )
         }
     }
@@ -87,7 +87,7 @@ class SettingsViewModel(
                 onSuccess = {
                     updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) }
                 },
-                onFailure = {}
+                onFailure = {},
             )
         }
     }
@@ -98,7 +98,7 @@ class SettingsViewModel(
                 onSuccess = {
                     updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) }
                 },
-                onFailure = {}
+                onFailure = {},
             )
         }
     }
@@ -110,12 +110,12 @@ class SettingsViewModel(
                     updateState {
                         copy(
                             settings = settings?.copy(
-                                isClientModeEnabled = enabled
-                            )
+                                isClientModeEnabled = enabled,
+                            ),
                         )
                     }
                 },
-                onFailure = {}
+                onFailure = {},
             )
         }
     }

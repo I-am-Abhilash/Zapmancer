@@ -6,5 +6,3 @@ data class SettingsUiState(
     val settings: SettingsData? = null,
     val isLoading: Boolean = false,
 )
-
-

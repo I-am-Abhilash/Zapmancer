@@ -9,8 +9,5 @@ data class MessagesDetailUiState(
     val messages: List<MessageItem> = emptyList(),
     val typingText: String = "",
     val isContactTyping: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )
-
-
-

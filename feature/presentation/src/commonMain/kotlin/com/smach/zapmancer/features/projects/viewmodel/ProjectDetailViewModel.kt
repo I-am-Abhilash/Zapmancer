@@ -22,9 +22,9 @@ class ProjectDetailViewModel(
     private val projectId: String,
     private val getProjectDetailUseCase: GetProjectDetailUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
-    private val applyProjectUseCase: ApplyProjectUseCase
+    private val applyProjectUseCase: ApplyProjectUseCase,
 ) : BaseViewModel<ProjectDetailUiState, ProjectDetailEvent, ProjectDetailEffect>(
-    ProjectDetailUiState()
+    ProjectDetailUiState(),
 ) {
 
     init {
@@ -68,14 +68,14 @@ class ProjectDetailViewModel(
                             isClientActive = detail.isClientActive,
                             isIdentityVerified = detail.isIdentityVerified,
                             isPhoneVerified = detail.isPhoneVerified,
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 },
                 onFailure = { error ->
                     updateState { copy(isLoading = false) }
                     sendEffect(ProjectDetailEffect.ShowToast("Failed to load project details: ${error.message}"))
-                }
+                },
             )
         }
     }
@@ -90,7 +90,7 @@ class ProjectDetailViewModel(
                 },
                 onFailure = { error ->
                     sendEffect(ProjectDetailEffect.ShowToast("Failed to update save state: ${error.message}"))
-                }
+                },
             )
         }
     }
@@ -103,7 +103,7 @@ class ProjectDetailViewModel(
                 },
                 onFailure = { error ->
                     sendEffect(ProjectDetailEffect.ShowToast("Failed to apply: ${error.message}"))
-                }
+                },
             )
         }
     }

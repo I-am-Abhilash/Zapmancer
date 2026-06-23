@@ -16,7 +16,7 @@ interface AuthRepository {
     suspend fun signUp(
         email: String,
         username: String,
-        password: String
+        password: String,
     ): Result<User, DataError.Network>
 
     suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network>

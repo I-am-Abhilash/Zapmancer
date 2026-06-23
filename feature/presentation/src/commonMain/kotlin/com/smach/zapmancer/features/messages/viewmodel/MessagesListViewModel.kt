@@ -15,12 +15,13 @@ sealed class MessagesListEvent {
 }
 
 class MessagesListViewModel(
-    private val getConversationsUseCase: GetConversationsUseCase
+    private val getConversationsUseCase: GetConversationsUseCase,
 ) : BaseViewModel<MessagesListUiState, MessagesListEvent, Unit>(MessagesListUiState()) {
 
     override fun onEvent(event: MessagesListEvent) {
         when (event) {
             MessagesListEvent.Refresh -> loadConversations()
+
             is MessagesListEvent.OnSearchQueryChanged -> {
                 updateState { copy(searchQuery = event.query) }
             }
@@ -34,7 +35,6 @@ class MessagesListViewModel(
     init {
         loadConversations()
     }
-
 
     private fun loadConversations() {
         viewModelScope.launch {
@@ -51,10 +51,10 @@ class MessagesListViewModel(
                                     lastMessage = domainItem.lastMessage,
                                     timestamp = domainItem.timestamp,
                                     isUnread = domainItem.isUnread,
-                                    isOnline = domainItem.isOnline
+                                    isOnline = domainItem.isOnline,
                                 )
                             },
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 }

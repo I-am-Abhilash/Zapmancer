@@ -1,6 +1,5 @@
 package com.smach.zapmancer.core.network.ktor
 
-
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +13,7 @@ import kotlinx.serialization.Serializable
 data class ApiResponse<T>(
     val success: Boolean,
     val data: T? = null,
-    val error: ApiError? = null
+    val error: ApiError? = null,
 )
 
 /**
@@ -25,5 +24,5 @@ data class ApiResponse<T>(
 @Serializable
 data class ApiError(
     val code: String,
-    val message: String
+    val message: String,
 )

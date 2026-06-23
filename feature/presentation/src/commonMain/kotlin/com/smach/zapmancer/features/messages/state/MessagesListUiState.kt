@@ -6,5 +6,5 @@ data class MessagesListUiState(
     val conversations: List<ConversationItem> = emptyList(),
     val searchQuery: String = "",
     val selectedFilter: String = "All",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )

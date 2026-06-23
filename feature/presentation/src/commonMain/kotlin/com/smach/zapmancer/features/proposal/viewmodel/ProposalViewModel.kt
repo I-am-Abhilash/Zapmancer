@@ -20,7 +20,7 @@ sealed interface ProposalEffect {
 }
 
 class ProposalViewModel(
-    private val submitProposalUseCase: SubmitProposalUseCase
+    private val submitProposalUseCase: SubmitProposalUseCase,
 ) : BaseViewModel<ProposalUiState, ProposalEvent, ProposalEffect>(ProposalUiState()) {
 
     override fun onEvent(event: ProposalEvent) {
@@ -56,7 +56,7 @@ class ProposalViewModel(
                 pitchContent = current.pitchContent,
                 budget = current.budget,
                 timelineDays = current.timelineDays,
-                projectType = current.projectType
+                projectType = current.projectType,
             )
 
             submitProposalUseCase(domainProposal).fold(
@@ -67,7 +67,7 @@ class ProposalViewModel(
                 onFailure = { error ->
                     updateState { copy(isSubmitting = false) }
                     sendEffect(ProposalEffect.ShowToast("Submission failed: ${error.message}"))
-                }
+                },
             )
         }
     }

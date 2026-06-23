@@ -65,7 +65,7 @@ fun MainGraph(
             onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
             onNavigateToSettings = { navigator.navigate(Screen.Settings) },
             onCreateProjectClick = { navigator.navigate(Screen.PostProject) },
-            onNavigateToProposal = { navigator.navigate(Screen.Proposal) }
+            onNavigateToProposal = { navigator.navigate(Screen.Proposal) },
         ) {
             NavDisplay(
                 modifier = Modifier.padding(innerPadding),
@@ -82,13 +82,12 @@ fun MainGraph(
 @Composable
 private fun appEntryProvider(
     navigator: MainNavigator,
-    showSnackbar: (String) -> Unit
+    showSnackbar: (String) -> Unit,
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
-
     entry<Screen.Home> {
         HomeScreen(
             onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
 
@@ -97,7 +96,7 @@ private fun appEntryProvider(
             onProjectClick = { projectId ->
                 navigator.navigate(Screen.ProjectDetail(id = projectId.toString()))
             },
-            onEvent = {}
+            onEvent = {},
         )
     }
 
@@ -106,14 +105,14 @@ private fun appEntryProvider(
         ProjectDetailScreen(
             projectId = projectDetailKey.id,
             onBackClick = { navigator.goBack() },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
 
     entry<Screen.Proposal> {
         ProposalScreen(
             onBackClick = { navigator.goBack() },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
     entry<Screen.Profile> { key ->
@@ -122,19 +121,19 @@ private fun appEntryProvider(
             userId = profileKey.userId,
             onSearchClick = { navigator.navigate(Screen.ProjectList) },
             onBackClick = { navigator.goBack() },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
     entry<Screen.Settings> {
         SettingsScreen(
-            onBackClick = { navigator.goBack() }
+            onBackClick = { navigator.goBack() },
         )
     }
 
     entry<Screen.PostProject> {
         PostProjectScreen(
             onBackClick = { navigator.goBack() },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
 
@@ -144,7 +143,7 @@ private fun appEntryProvider(
             projectId = proposalsKey.projectId,
             onBackClick = { navigator.goBack() },
             onFreelancerClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
 
@@ -158,15 +157,14 @@ private fun appEntryProvider(
         MessageDetailScreen(
             onBackClick = { navigator.goBack() },
             onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
-
 
     entry<Screen.Alerts> {
         NotificationScreen(
             onBackClick = { navigator.goBack() },
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
         )
     }
 }

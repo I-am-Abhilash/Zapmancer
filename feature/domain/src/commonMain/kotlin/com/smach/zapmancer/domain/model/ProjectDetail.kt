@@ -25,5 +25,5 @@ data class ProjectDetail(
     val isSaved: Boolean,
     val isClientActive: Boolean,
     val isIdentityVerified: Boolean,
-    val isPhoneVerified: Boolean
+    val isPhoneVerified: Boolean,
 )

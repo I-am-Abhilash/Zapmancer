@@ -12,5 +12,5 @@ data class PostProjectUiState(
     val currentSkillInput: String = "",
     val isSubmitting: Boolean = false,
     val isSubmitted: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
 )

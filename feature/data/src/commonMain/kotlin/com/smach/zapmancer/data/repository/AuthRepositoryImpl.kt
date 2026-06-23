@@ -15,13 +15,14 @@ import kotlinx.serialization.Serializable
 
 class AuthRepositoryImpl(
     private val client: HttpClient,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
 ) : AuthRepository {
 
-    private val ONBOARDING_KEY = "onboarding_completed"
+    companion object {
+        private const val ONBOARDING_KEY = "onboarding_completed"
+    }
 
-    override fun isOnboardingCompleted(): Flow<Boolean> =
-        sessionManager.getOnboardingCompleted()
+    override fun isOnboardingCompleted(): Flow<Boolean> = sessionManager.getOnboardingCompleted()
 
     override suspend fun setOnboardingCompleted(completed: Boolean) {
         sessionManager.saveOnboardingCompleted(completed)
@@ -42,7 +43,7 @@ class AuthRepositoryImpl(
             sessionManager.saveSession(
                 userId = user.id,
                 accessToken = user.accessToken ?: "",
-                refreshToken = user.refreshToken ?: ""
+                refreshToken = user.refreshToken ?: "",
             )
         }
         return result
@@ -51,7 +52,7 @@ class AuthRepositoryImpl(
     override suspend fun signUp(
         email: String,
         username: String,
-        password: String
+        password: String,
     ): Result<User, DataError.Network> {
         val result = safeApiCall<User> {
             client.post("auth/register") {
@@ -63,7 +64,7 @@ class AuthRepositoryImpl(
             sessionManager.saveSession(
                 userId = user.id,
                 accessToken = user.accessToken ?: "",
-                refreshToken = user.refreshToken ?: ""
+                refreshToken = user.refreshToken ?: "",
             )
         }
         return result

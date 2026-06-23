@@ -96,14 +96,14 @@ private fun SignupContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             AuthHeader(
                 title = "Create Account",
@@ -115,14 +115,14 @@ private fun SignupContent(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    MaterialTheme.colorScheme.outline
+                    MaterialTheme.colorScheme.outline,
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     // Name Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -130,7 +130,7 @@ private fun SignupContent(
                             "Full Name",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         ZapTextField(
                             value = state.username,
@@ -139,13 +139,13 @@ private fun SignupContent(
                             leadingIcon = Icons.Default.Person,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Next
+                                imeAction = ImeAction.Next,
                             ),
                             keyboardActions = KeyboardActions(onNext = {
                                 focusManager.moveFocus(
-                                    FocusDirection.Down
+                                    FocusDirection.Down,
                                 )
-                            })
+                            }),
                         )
                     }
 
@@ -155,7 +155,7 @@ private fun SignupContent(
                             "Email Address",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         ZapTextField(
                             value = state.email,
@@ -164,13 +164,13 @@ private fun SignupContent(
                             leadingIcon = Icons.Default.Mail,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next
+                                imeAction = ImeAction.Next,
                             ),
                             keyboardActions = KeyboardActions(onNext = {
                                 focusManager.moveFocus(
-                                    FocusDirection.Down
+                                    FocusDirection.Down,
                                 )
-                            })
+                            }),
                         )
                     }
 
@@ -180,7 +180,7 @@ private fun SignupContent(
                             "Password",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         ZapTextField(
                             value = state.password,
@@ -191,9 +191,9 @@ private fun SignupContent(
                             isPasswordVisible = false,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
+                                imeAction = ImeAction.Done,
                             ),
-                            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+                            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
                         )
                     }
 
@@ -210,31 +210,31 @@ private fun SignupContent(
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                         shape = RoundedCornerShape(100.dp),
-                        enabled = !state.isLoading
+                        enabled = !state.isLoading,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                strokeWidth = 2.dp
+                                strokeWidth = 2.dp,
                             )
                         } else {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 Text(
                                     "Create Account",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    fontSize = 16.sp,
                                 )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(20.dp),
                                 )
                             }
                         }
@@ -245,7 +245,7 @@ private fun SignupContent(
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -253,19 +253,19 @@ private fun SignupContent(
             // Footer
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     "Already have an account?",
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     "Sign In",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { onNavigateToLogin() }
+                    modifier = Modifier.clickable { onNavigateToLogin() },
                 )
             }
         }
@@ -282,7 +282,7 @@ private fun SignupContentPreview() {
             onPasswordChanged = {},
             onSubmit = {},
             onNavigateToLogin = {},
-            onUsernameChanged = {}
+            onUsernameChanged = {},
         )
     }
 }

@@ -11,49 +11,46 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
 suspend inline fun <reified T> safeApiCall(
-    block: () -> HttpResponse
-): Result<T, DataError.Network> =
-    try {
-        val response = block()
+    block: () -> HttpResponse,
+): Result<T, DataError.Network> = try {
+    val response = block()
 
-        if (response.status.isSuccess()) {
+    if (response.status.isSuccess()) {
+        val apiResponse = response.body<ApiResponse<T>>()
 
-            val apiResponse = response.body<ApiResponse<T>>()
-
-            if (apiResponse.success && apiResponse.data != null) {
-                Result.Success(apiResponse.data)
-            } else {
-                Napier.e(
-                    "API returned success=false. " +
-                            "Code=${apiResponse.error?.code}, " +
-                            "Message=${apiResponse.error?.message}"
-                )
-
-                Result.Error(DataError.Network.CLIENT_ERROR)
-            }
-
+        if (apiResponse.success && apiResponse.data != null) {
+            Result.Success(apiResponse.data)
         } else {
-            val errorType = when (response.status.value) {
-                401 -> DataError.Network.UNAUTHORIZED
-                in 400..499 -> DataError.Network.CLIENT_ERROR
-                in 500..599 -> DataError.Network.SERVICE_UNAVAILABLE
-                else -> DataError.Network.UNKNOWN
-            }
+            Napier.e(
+                "API returned success=false. " +
+                    "Code=${apiResponse.error?.code}, " +
+                    "Message=${apiResponse.error?.message}",
+            )
 
-            Napier.e("API Error: ${response.status.value}")
-            Result.Error(errorType)
+            Result.Error(DataError.Network.CLIENT_ERROR)
         }
-
-    } catch (e: Exception) {
-
-        val errorType = when (e) {
-            is IOException -> DataError.Network.NO_INTERNET
-            is SerializationException,
-            is NoTransformationFoundException -> DataError.Network.SERIALIZATION
-
+    } else {
+        val errorType = when (response.status.value) {
+            401 -> DataError.Network.UNAUTHORIZED
+            in 400..499 -> DataError.Network.CLIENT_ERROR
+            in 500..599 -> DataError.Network.SERVICE_UNAVAILABLE
             else -> DataError.Network.UNKNOWN
         }
 
-        Napier.e("Network Exception: ${e.message}", e)
-        Result.Error(errorType, e)
+        Napier.e("API Error: ${response.status.value}")
+        Result.Error(errorType)
     }
+} catch (e: Exception) {
+    val errorType = when (e) {
+        is IOException -> DataError.Network.NO_INTERNET
+
+        is SerializationException,
+        is NoTransformationFoundException,
+        -> DataError.Network.SERIALIZATION
+
+        else -> DataError.Network.UNKNOWN
+    }
+
+    Napier.e("Network Exception: ${e.message}", e)
+    Result.Error(errorType, e)
+}

@@ -6,6 +6,5 @@ data class NotificationUiState(
     val notifications: List<NotificationItem> = emptyList(),
     val isLoading: Boolean = false,
     val replyDrafts: Map<String, String> = emptyMap(),
-    val error: String? = null
+    val error: String? = null,
 )
-

@@ -48,13 +48,13 @@ data class OnboardingPage(
     val title: String,
     val description: String,
     val icon: ImageVector,
-    val gradientColors: List<Color>
+    val gradientColors: List<Color>,
 )
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
 ) {
     val pages = listOf(
         OnboardingPage(
@@ -63,8 +63,8 @@ fun OnboardingScreen(
             icon = Icons.Default.Bolt,
             gradientColors = listOf(
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                MaterialTheme.colorScheme.primaryContainer
-            )
+                MaterialTheme.colorScheme.primaryContainer,
+            ),
         ),
         OnboardingPage(
             title = "Real-Time Collaboration",
@@ -72,8 +72,8 @@ fun OnboardingScreen(
             icon = Icons.Outlined.ChatBubbleOutline,
             gradientColors = listOf(
                 MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
-                MaterialTheme.colorScheme.secondaryContainer
-            )
+                MaterialTheme.colorScheme.secondaryContainer,
+            ),
         ),
         OnboardingPage(
             title = "Secure & Swift Escrow",
@@ -81,9 +81,9 @@ fun OnboardingScreen(
             icon = Icons.Outlined.Payments,
             gradientColors = listOf(
                 MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
-                MaterialTheme.colorScheme.tertiaryContainer
-            )
-        )
+                MaterialTheme.colorScheme.tertiaryContainer,
+            ),
+        ),
     )
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -91,33 +91,33 @@ fun OnboardingScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
             ) {
                 Icon(
                     Icons.Default.Bolt,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     "Zapmancer",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
                     ),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -126,7 +126,7 @@ fun OnboardingScreen(
                 state = pagerState,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) { pageIndex ->
                 val page = pages[pageIndex]
                 Column(
@@ -134,7 +134,7 @@ fun OnboardingScreen(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Box(
                         modifier = Modifier
@@ -142,16 +142,16 @@ fun OnboardingScreen(
                             .clip(CircleShape)
                             .background(
                                 Brush.radialGradient(
-                                    colors = page.gradientColors
-                                )
+                                    colors = page.gradientColors,
+                                ),
                             ),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = page.icon,
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(72.dp)
+                            modifier = Modifier.size(72.dp),
                         )
                     }
 
@@ -161,9 +161,9 @@ fun OnboardingScreen(
                         text = page.title,
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         ),
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -172,9 +172,9 @@ fun OnboardingScreen(
                         text = page.description,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             textAlign = TextAlign.Center,
-                            lineHeight = 26.sp
+                            lineHeight = 26.sp,
                         ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -182,12 +182,12 @@ fun OnboardingScreen(
             // Bottom Navigation Controls
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Page Indicator
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     repeat(pages.size) { index ->
                         val isSelected = pagerState.currentPage == index
@@ -196,9 +196,12 @@ fun OnboardingScreen(
                                 .size(if (isSelected) 10.dp else 8.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                                )
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                                    },
+                                ),
                         )
                     }
                 }
@@ -208,18 +211,18 @@ fun OnboardingScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Skip button
                     TextButton(
                         onClick = onFinished,
                         modifier = Modifier.alpha(if (pagerState.currentPage < pages.size - 1) 1f else 0f),
-                        enabled = pagerState.currentPage < pages.size - 1
+                        enabled = pagerState.currentPage < pages.size - 1,
                     ) {
                         Text(
                             "Skip",
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
 
@@ -237,22 +240,22 @@ fun OnboardingScreen(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
                                 if (isLastPage) "Get Started" else "Next",
-                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                             )
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                         }
                     }
@@ -262,4 +265,3 @@ fun OnboardingScreen(
         }
     }
 }
-

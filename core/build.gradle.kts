@@ -1,14 +1,12 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.room)
+//    alias(libs.plugins.room)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.ksp)
+//    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -36,15 +34,7 @@ kotlin {
 
     js {
         browser()
-        binaries.executable()
     }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
-
 
     sourceSets {
         commonMain.dependencies {
@@ -84,18 +74,7 @@ kotlin {
         }
 
         val webSourceDir = "src/webMain/kotlin"
-//        jsMain.get().apply {
-//            kotlin.srcDirs(webSourceDir)
-//            dependencies {
-//                implementation(libs.sqldelight.webworker)
-//            }
-//        }
-//        wasmJsMain.get().apply {
-//            kotlin.srcDirs(webSourceDir)
-//            dependencies {
-//                implementation(libs.sqldelight.webworker)
-//            }
-//        }
+
         webMain.get().apply {
             kotlin.srcDirs(webSourceDir)
             dependencies {
@@ -112,16 +91,8 @@ sqldelight {
     databases {
         create("AppDatabase") {
             packageName.set("com.smach.zapmancer.core.database")
+
+            generateAsync.set(true)
         }
     }
-}
-room {
-    schemaDirectory("$projectDir/schemas")
-}
-
-dependencies {
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-//    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
 }

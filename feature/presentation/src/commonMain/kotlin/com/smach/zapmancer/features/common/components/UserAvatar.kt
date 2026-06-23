@@ -25,7 +25,7 @@ fun UserAvatar(
     borderWidth: Dp = 0.dp,
     borderColor: Color = Color.Transparent,
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         Box(
@@ -38,21 +38,21 @@ fun UserAvatar(
                         Modifier.border(borderWidth, borderColor, shape)
                     } else {
                         Modifier
-                    }
+                    },
                 )
                 .then(
                     if (onClick != null) {
                         Modifier.clickable(onClick = onClick)
                     } else {
                         Modifier
-                    }
-                )
+                    },
+                ),
         ) {
             if (!imageUrl.isNullOrEmpty()) {
                 AppImage(
                     model = imageUrl,
                     contentDescription = "Avatar",
-                    modifier = Modifier.size(size)
+                    modifier = Modifier.size(size),
                 )
             }
         }
@@ -66,7 +66,7 @@ fun UserAvatar(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary)
                     .border(badgeBorder, MaterialTheme.colorScheme.surface, CircleShape)
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomEnd),
             )
         }
     }

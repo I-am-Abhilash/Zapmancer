@@ -75,7 +75,7 @@ fun MessageDetailScreen(
     viewModel: MessagesDetailViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {},
-    onProfileClick: (String) -> Unit = {}
+    onProfileClick: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -99,7 +99,7 @@ fun MessageDetailContent(
     onCallClick: () -> Unit,
     onVideocamClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onProfileClick: (String) -> Unit
+    onProfileClick: (String) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -109,10 +109,11 @@ fun MessageDetailContent(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
                             onProfileClick(state.contactName)
-                        }) {
+                        },
+                    ) {
                         UserAvatar(
                             imageUrl = state.contactAvatarUrl,
-                            size = 40.dp
+                            size = 40.dp,
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
@@ -121,7 +122,7 @@ fun MessageDetailContent(
                                 fontSize = 16.sp,
                                 lineHeight = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             if (state.isOnline) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -129,7 +130,7 @@ fun MessageDetailContent(
                                         modifier = Modifier
                                             .size(8.dp)
                                             .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary)
+                                            .background(MaterialTheme.colorScheme.primary),
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
@@ -137,7 +138,7 @@ fun MessageDetailContent(
                                         fontSize = 12.sp,
                                         lineHeight = 16.sp,
                                         color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Medium
+                                        fontWeight = FontWeight.Medium,
                                     )
                                 }
                             }
@@ -151,35 +152,35 @@ fun MessageDetailContent(
                         Icon(
                             Icons.Default.Videocam,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     IconButton(onClick = { onCallClick() }) {
                         Icon(
                             Icons.Default.Call,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     IconButton(onClick = { onMoreClick() }) {
                         Icon(
                             Icons.Default.MoreVert,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
         bottomBar = {
             MessageInput(
                 typingText = state.typingText,
-                onEvent = onEvent
+                onEvent = onEvent,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -187,17 +188,17 @@ fun MessageDetailContent(
                 .padding(padding),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            reverseLayout = true
+            reverseLayout = true,
         ) {
             if (state.isContactTyping) {
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.Start,
                     ) {
                         UserAvatar(
                             imageUrl = state.contactAvatarUrl,
-                            size = 32.dp
+                            size = 32.dp,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Surface(
@@ -206,11 +207,11 @@ fun MessageDetailContent(
                                 topStart = 16.dp,
                                 topEnd = 16.dp,
                                 bottomStart = 0.dp,
-                                bottomEnd = 16.dp
+                                bottomEnd = 16.dp,
                             ),
                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                             shadowElevation = 1.dp,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = 8.dp),
                         ) {
                             TypingIndicator()
                         }
@@ -227,19 +228,19 @@ fun MessageDetailContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 24.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.surface,
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(20.dp),
                     ) {
                         Text(
                             "Today, August 25",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                 }
@@ -248,25 +249,24 @@ fun MessageDetailContent(
     }
 }
 
-
 @Composable
 fun MessageBubble(message: MessageItem) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (message.isFromMe) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
     ) {
         if (!message.isFromMe) {
             UserAvatar(
                 imageUrl = message.avatarUrl,
-                size = 32.dp
+                size = 32.dp,
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
 
         Column(
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start,
-            modifier = Modifier.widthIn(max = 280.dp)
+            modifier = Modifier.widthIn(max = 280.dp),
         ) {
             Surface(
                 color = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
@@ -274,31 +274,35 @@ fun MessageBubble(message: MessageItem) {
                     topStart = 16.dp,
                     topEnd = 16.dp,
                     bottomStart = if (message.isFromMe) 16.dp else 0.dp,
-                    bottomEnd = if (message.isFromMe) 0.dp else 16.dp
+                    bottomEnd = if (message.isFromMe) 0.dp else 16.dp,
                 ),
-                border = if (message.isFromMe) null else BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant
-                ),
-                shadowElevation = 1.dp
+                border = if (message.isFromMe) {
+                    null
+                } else {
+                    BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    )
+                },
+                shadowElevation = 1.dp,
             ) {
                 Text(
                     text = message.text,
                     modifier = Modifier.padding(12.dp),
                     fontSize = 14.sp,
                     color = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface,
-                    lineHeight = 20.sp
+                    lineHeight = 20.sp,
                 )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp)
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
             ) {
                 Text(
                     text = message.timestamp,
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
@@ -312,7 +316,7 @@ fun MessageBubble(message: MessageItem) {
                         imageVector = icon,
                         contentDescription = null,
                         tint = tint,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(14.dp),
                     )
                 }
             }
@@ -323,13 +327,13 @@ fun MessageBubble(message: MessageItem) {
 @Composable
 fun MessageInput(
     typingText: String,
-    onEvent: (MessagesDetailEvent) -> Unit
+    onEvent: (MessagesDetailEvent) -> Unit,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .fillMaxWidth()
-            .imePadding()
+            .imePadding(),
     ) {
         Column {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
@@ -341,9 +345,9 @@ fun MessageInput(
                         .border(
                             1.dp,
                             MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(12.dp)
+                            RoundedCornerShape(12.dp),
                         )
-                        .padding(4.dp)
+                        .padding(4.dp),
                 ) {
                     Column {
                         TextField(
@@ -352,7 +356,7 @@ fun MessageInput(
                             placeholder = {
                                 Text(
                                     "Write a message...",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -360,8 +364,8 @@ fun MessageInput(
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
                                 focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            )
+                                unfocusedIndicatorColor = Color.Transparent,
+                            ),
                         )
 
                         Row(
@@ -369,28 +373,28 @@ fun MessageInput(
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.AddCircle,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.SentimentSatisfied,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.AttachFile,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                             }
@@ -400,14 +404,14 @@ fun MessageInput(
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(20.dp),
                                 contentPadding = PaddingValues(horizontal = 20.dp),
-                                modifier = Modifier.height(36.dp)
+                                modifier = Modifier.height(36.dp),
                             ) {
                                 Text("Send", fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
                                     Icons.AutoMirrored.Filled.Send,
                                     null,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
                             }
                         }
@@ -425,7 +429,7 @@ fun TypingIndicator() {
     Row(
         modifier = Modifier.padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         repeat(3) { index ->
             val translationY by infiniteTransition.animateFloat(
@@ -433,9 +437,9 @@ fun TypingIndicator() {
                 targetValue = -8f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(400, delayMillis = index * 150),
-                    repeatMode = RepeatMode.Reverse
+                    repeatMode = RepeatMode.Reverse,
                 ),
-                label = "DotTranslation"
+                label = "DotTranslation",
             )
 
             Box(
@@ -443,7 +447,7 @@ fun TypingIndicator() {
                     .size(6.dp)
                     .offset(y = translationY.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondary)
+                    .background(MaterialTheme.colorScheme.secondary),
             )
         }
     }
@@ -462,29 +466,29 @@ fun MessageDetailScreenPreview() {
                         id = "1",
                         text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?",
                         timestamp = "09:42 AM",
-                        isFromMe = false
+                        isFromMe = false,
                     ),
                     MessageItem(
                         id = "2",
                         text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.",
                         timestamp = "09:45 AM",
                         isFromMe = true,
-                        status = MessageStatus.READ
+                        status = MessageStatus.READ,
                     ),
                     MessageItem(
                         id = "3",
                         text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.",
                         timestamp = "09:46 AM",
-                        isFromMe = false
-                    )
+                        isFromMe = false,
+                    ),
                 ),
-                isContactTyping = true
+                isContactTyping = true,
             ),
             onEvent = {},
             onCallClick = {},
             onVideocamClick = {},
             onMoreClick = {},
-            onProfileClick = {}
+            onProfileClick = {},
         )
     }
 }

@@ -8,5 +8,5 @@ data class User(
     val email: String,
     val accessToken: String? = null,
     val refreshToken: String? = null,
-    val isNewUser: Boolean = false
+    val isNewUser: Boolean = false,
 )

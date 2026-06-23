@@ -66,7 +66,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProjectDetailScreen(
     projectId: String,
     onBackClick: () -> Unit = {},
-    showSnackbar: (String) -> Unit = {}
+    showSnackbar: (String) -> Unit = {},
 ) {
     val viewModel: ProjectDetailViewModel =
         koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
@@ -86,7 +86,7 @@ fun ProjectDetailScreen(
         state = state,
         onBackClick = onBackClick,
         onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
-        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) }
+        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
     )
 }
 
@@ -95,13 +95,13 @@ fun ProjectDetailScreen(
     state: ProjectDetailUiState = ProjectDetailUiState(),
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
-    onApplyClick: () -> Unit = {}
+    onApplyClick: () -> Unit = {},
 ) {
     ProjectDetailContent(
         state = state,
         onBackClick = onBackClick,
         onSaveClick = onSaveClick,
-        onApplyClick = onApplyClick
+        onApplyClick = onApplyClick,
     )
 }
 
@@ -111,7 +111,7 @@ fun ProjectDetailContent(
     state: ProjectDetailUiState,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onApplyClick: () -> Unit
+    onApplyClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -124,27 +124,27 @@ fun ProjectDetailContent(
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                     UserAvatar(
                         imageUrl = null,
                         size = 32.dp,
-                        modifier = Modifier.padding(end = 12.dp)
+                        modifier = Modifier.padding(end = 12.dp),
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { ProjectHeaderSection(state) }
             item { BudgetSection(state) }
@@ -154,7 +154,7 @@ fun ProjectDetailContent(
                 ApplySaveButtonSection(
                     isSaved = state.isSaved,
                     onApplyClick = onApplyClick,
-                    onSaveClick = onSaveClick
+                    onSaveClick = onSaveClick,
                 )
             }
             item { ClientSummarySection(state) }
@@ -168,7 +168,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -176,7 +176,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                     Icons.Default.Code,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(18.dp),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -184,7 +184,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -193,13 +193,13 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 32.sp
+                lineHeight = 32.sp,
             )
             Spacer(modifier = Modifier.height(16.dp))
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 InfoItem(Icons.Default.Schedule, "Posted ${state.postedTime}")
                 InfoItem(Icons.Default.LocationOn, state.location)
@@ -212,14 +212,14 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                             Icons.Default.Verified,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(14.dp),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             "Payment Verified",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -235,13 +235,13 @@ fun InfoItem(icon: ImageVector, text: String) {
             icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(14.dp),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -251,7 +251,7 @@ fun BudgetSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
@@ -259,18 +259,18 @@ fun BudgetSection(state: ProjectDetailUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
             Text(
                 state.budgetRange,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 state.projectType,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
@@ -281,18 +281,18 @@ fun BudgetSection(state: ProjectDetailUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
             Text(
                 state.timeline,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 "Est. Start: ${state.estStart}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
             )
         }
     }
@@ -303,21 +303,21 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 "Project Scope",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 state.projectScope,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 24.sp
+                lineHeight = 24.sp,
             )
             Spacer(modifier = Modifier.height(24.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -326,25 +326,25 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
                 "Key Deliverables",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             state.deliverables.forEach { deliverable ->
                 Row(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Icon(
                         Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         deliverable,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -358,19 +358,19 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
                 "Required Skills",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 state.skills.forEach { skill ->
                     Surface(
@@ -378,15 +378,15 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                         shape = RoundedCornerShape(999.dp),
                         border = BorderStroke(
                             1.dp,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                        )
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        ),
                     ) {
                         Text(
                             skill,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -399,7 +399,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
 fun ApplySaveButtonSection(
     isSaved: Boolean,
     onApplyClick: () -> Unit,
-    onSaveClick: () -> Unit
+    onSaveClick: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Button(
@@ -410,7 +410,7 @@ fun ApplySaveButtonSection(
             ),
             shape = RoundedCornerShape(999.dp),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            contentPadding = PaddingValues(vertical = 12.dp)
+            contentPadding = PaddingValues(vertical = 12.dp),
         ) {
             Text("Apply Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
@@ -420,16 +420,16 @@ fun ApplySaveButtonSection(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ),
             shape = RoundedCornerShape(999.dp),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            contentPadding = PaddingValues(vertical = 12.dp)
+            contentPadding = PaddingValues(vertical = 12.dp),
         ) {
             Text(
                 if (isSaved) "Unsave Project" else "Save Project",
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             )
         }
     }
@@ -440,33 +440,33 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     "Client Summary",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (state.isClientActive) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             modifier = Modifier.size(8.dp),
                             color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
+                            shape = CircleShape,
                         ) {}
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             "Active Now",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -481,9 +481,9 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         .border(
                             1.dp,
                             MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(8.dp)
+                            RoundedCornerShape(8.dp),
                         ),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     // Placeholder for logo
                 }
@@ -493,12 +493,12 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         state.clientName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "${state.clientIndustry} · ${state.clientLocation}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -509,23 +509,23 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                     .border(
                         1.dp,
                         MaterialTheme.colorScheme.outlineVariant,
-                        RoundedCornerShape(8.dp)
+                        RoundedCornerShape(8.dp),
                     )
                     .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "PROJECTS",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         state.clientProjectsCount.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -534,21 +534,21 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         "RATING",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             state.clientRating.toString(),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             Icons.Default.Star,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 }
@@ -558,7 +558,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                 "VERIFICATION",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(8.dp))
             VerificationItem("Payment Method Verified", state.isPaymentVerified)
@@ -572,21 +572,25 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
 fun VerificationItem(text: String, isVerified: Boolean = false) {
     Row(
         modifier = Modifier.padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                alpha = 0.4f
-            ),
-            modifier = Modifier.size(16.dp)
+            tint = if (isVerified) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                    alpha = 0.4f,
+                )
+            },
+            modifier = Modifier.size(16.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -597,7 +601,7 @@ fun VerticalDivider(color: Color) {
         modifier = Modifier
             .width(1.dp)
             .height(40.dp)
-            .background(color)
+            .background(color),
     )
 }
 

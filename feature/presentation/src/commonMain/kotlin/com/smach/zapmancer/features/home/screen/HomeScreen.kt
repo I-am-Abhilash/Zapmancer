@@ -66,7 +66,7 @@ fun HomeScreen(
     onCreateProjectClick: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onExportCsvClick: () -> Unit = {},
-    showSnackbar: (String) -> Unit = {}
+    showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
     val drawerController = LocalDrawerController.current
@@ -87,9 +87,7 @@ fun HomeScreen(
         onMenuClick = { drawerController.open() },
         onNavigateToProfile = { onNavigateToProfile },
     )
-
 }
-
 
 @Composable
 fun HomeContent(
@@ -97,7 +95,7 @@ fun HomeContent(
     onCreateProjectClick: () -> Unit,
     onExportCsvClick: () -> Unit,
     onMenuClick: () -> Unit,
-    onNavigateToProfile: () -> (() -> Unit)?
+    onNavigateToProfile: () -> (() -> Unit)?,
 ) {
     Scaffold(
         topBar = {
@@ -105,12 +103,12 @@ fun HomeContent(
                 titleContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
                             "Zapmancer",
                             color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
                         )
                     }
                 },
@@ -126,40 +124,40 @@ fun HomeContent(
                         shape = MaterialTheme.shapes.extraLarge,
                         borderWidth = 1.dp,
                         borderColor = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp),
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true
+                drawBottomBorder = true,
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(padding),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.Bottom,
             ) {
                 Column {
                     Text(
                         "Welcome back, ${state.userName}".uppercase(),
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                            letterSpacing = 1.sp,
                         ),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         "Start your Journey.",
                         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold),
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -172,7 +170,7 @@ fun HomeContent(
                         value = "$14,800.00",
                         accentColor = MaterialTheme.colorScheme.primary,
                         icon = Icons.Default.Payments,
-                        growth = "+8.2%"
+                        growth = "+8.2%",
                     )
                     StatCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -180,7 +178,7 @@ fun HomeContent(
                         value = "3",
                         accentColor = ZapGold,
                         icon = Icons.Default.Work,
-                        secondaryValue = "/ 5 capacity"
+                        secondaryValue = "/ 5 capacity",
                     )
                     StatCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -188,7 +186,7 @@ fun HomeContent(
                         value = "12",
                         accentColor = MaterialTheme.colorScheme.secondary,
                         icon = Icons.Default.Star,
-                        secondaryValue = "avg 4 bids/post"
+                        secondaryValue = "avg 4 bids/post",
                     )
                 } else {
                     StatCard(
@@ -197,7 +195,7 @@ fun HomeContent(
                         value = state.totalEarnings,
                         accentColor = MaterialTheme.colorScheme.primary,
                         icon = Icons.Default.Payments,
-                        growth = state.earningsGrowth
+                        growth = state.earningsGrowth,
                     )
                     StatCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -205,7 +203,7 @@ fun HomeContent(
                         value = state.activeProjectsCount.toString(),
                         accentColor = ZapGold,
                         icon = Icons.Default.Work,
-                        secondaryValue = "/ ${state.totalCapacity} capacity"
+                        secondaryValue = "/ ${state.totalCapacity} capacity",
                     )
                     StatCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -213,7 +211,7 @@ fun HomeContent(
                         value = state.systemRating.toString(),
                         accentColor = MaterialTheme.colorScheme.secondary,
                         icon = Icons.Default.Star,
-                        isRating = true
+                        isRating = true,
                     )
                 }
             }
@@ -225,11 +223,11 @@ fun HomeContent(
                 ),
                 shape = MaterialTheme.shapes.large,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                contentPadding = PaddingValues(vertical = 12.dp)
+                contentPadding = PaddingValues(vertical = 12.dp),
             ) {
                 Text(
                     text = if (state.isClientMode) "Post a New Project" else "Browse Projects",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 )
             }
 
@@ -237,35 +235,33 @@ fun HomeContent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         "Recent Activity",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     TextButton(onClick = onExportCsvClick) {
                         Text(
                             "Export CSV",
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     state.recentActivities.forEach { activity ->
                         ActivityRow(
                             activity = activity,
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp),
                         )
                     }
                 }
             }
         }
-
-
     }
 }
 
@@ -278,7 +274,7 @@ fun StatCard(
     icon: ImageVector,
     growth: String? = null,
     secondaryValue: String? = null,
-    isRating: Boolean = false
+    isRating: Boolean = false,
 ) {
     Card(
         modifier = modifier
@@ -286,53 +282,53 @@ fun StatCard(
             .height(160.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = MaterialTheme.shapes.large,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 
     ) {
         Column(
-            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp)
+            modifier = Modifier.drawAccentLine(accentColor).padding(16.dp),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Box(
                         modifier = Modifier
                             .size(32.dp)
                             .background(
                                 accentColor.copy(alpha = 0.2f),
-                                MaterialTheme.shapes.extraSmall
+                                MaterialTheme.shapes.extraSmall,
                             )
                             .border(
                                 1.dp,
                                 accentColor.copy(alpha = 0.4f),
-                                MaterialTheme.shapes.extraSmall
+                                MaterialTheme.shapes.extraSmall,
                             ),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             icon,
                             contentDescription = null,
                             tint = accentColor,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     }
 
                     if (growth != null) {
                         Surface(
                             color = accentColor,
-                            shape = MaterialTheme.shapes.small
+                            shape = MaterialTheme.shapes.small,
                         ) {
                             Text(
                                 growth,
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
                                 color = Color.White,
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             )
                         }
                     }
@@ -342,24 +338,24 @@ fun StatCard(
                     Text(
                         title.uppercase(),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             value,
                             style = MaterialTheme.typography.displayMedium,
                             fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         if (secondaryValue != null) {
                             Text(
                                 secondaryValue,
                                 modifier = Modifier.padding(bottom = 8.dp),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         if (isRating) {
@@ -369,7 +365,7 @@ fun StatCard(
                                         Icons.Default.Star,
                                         contentDescription = null,
                                         tint = ZapGold,
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(18.dp),
                                     )
                                 }
                             }
@@ -377,7 +373,6 @@ fun StatCard(
                     }
                 }
             }
-
         }
     }
 }
@@ -385,7 +380,7 @@ fun StatCard(
 @Composable
 fun ActivityRow(
     activity: UserActivity,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val accentColor = when (activity.status) {
         ActivityStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primary
@@ -397,75 +392,73 @@ fun ActivityRow(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         shape = MaterialTheme.shapes.large,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 
     ) {
         Column(
             modifier = Modifier
                 .drawAccentLine(accentColor)
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Surface(
                     color = accentColor,
-                    shape = MaterialTheme.shapes.small
+                    shape = MaterialTheme.shapes.small,
                 ) {
                     Text(
                         text = activity.status.name
                             .replace('_', ' '),
                         modifier = Modifier.padding(
                             horizontal = 8.dp,
-                            vertical = 4.dp
+                            vertical = 4.dp,
                         ),
                         color = Color.White,
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                     )
                 }
                 Text(
                     text = activity.monetaryValue,
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold
+                    fontWeight = FontWeight.ExtraBold,
                 )
             }
-
 
             Spacer(Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
-
                 Row(
                     modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
                             .background(
                                 accentColor.copy(alpha = 0.15f),
-                                MaterialTheme.shapes.small
+                                MaterialTheme.shapes.small,
                             )
                             .border(
                                 1.dp,
                                 accentColor.copy(alpha = 0.4f),
-                                MaterialTheme.shapes.small
+                                MaterialTheme.shapes.small,
                             ),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = activity.category,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = accentColor
+                            color = accentColor,
                         )
                     }
 
@@ -475,12 +468,12 @@ fun ActivityRow(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = activity.category,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -491,22 +484,20 @@ fun ActivityRow(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = activity.timestamp,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-
             }
         }
     }
 }
 
-
 @Preview(
-    device = PIXEL_9_PRO
+    device = PIXEL_9_PRO,
 )
 @Composable
 private fun HomeScreenPreview() {
@@ -522,7 +513,7 @@ private fun HomeScreenPreview() {
                         "AI",
                         ActivityStatus.IN_PROGRESS,
                         "2h ago",
-                        "$12,400.00"
+                        "$12,400.00",
                     ),
                     UserActivity(
                         "2",
@@ -531,7 +522,7 @@ private fun HomeScreenPreview() {
                         "UX",
                         ActivityStatus.REVIEWING,
                         "Yesterday",
-                        "$4,200.00"
+                        "$4,200.00",
                     ),
                     UserActivity(
                         "3",
@@ -540,7 +531,7 @@ private fun HomeScreenPreview() {
                         "DB",
                         ActivityStatus.COMPLETED,
                         "Oct 24",
-                        "$8,150.00"
+                        "$8,150.00",
                     ),
                     UserActivity(
                         "4",
@@ -549,9 +540,9 @@ private fun HomeScreenPreview() {
                         "SY",
                         ActivityStatus.CRITICAL,
                         "Oct 22",
-                        "$15,000.00"
-                    )
-                )
+                        "$15,000.00",
+                    ),
+                ),
             ),
             onCreateProjectClick = {},
             onExportCsvClick = {},
@@ -560,4 +551,3 @@ private fun HomeScreenPreview() {
         )
     }
 }
-

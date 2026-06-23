@@ -15,5 +15,5 @@ data class HomeUiState(
     val memoryLoad: Float = 0.18f,
     val lastSyncTime: String = "14:02:11",
     val isLoading: Boolean = false,
-    val isClientMode: Boolean = false
+    val isClientMode: Boolean = false,
 )

@@ -103,14 +103,14 @@ private fun LoginContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             AuthHeader(
                 title = "Welcome Back",
@@ -122,14 +122,14 @@ private fun LoginContent(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    MaterialTheme.colorScheme.outline
+                    MaterialTheme.colorScheme.outline,
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp))
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     // Email Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -137,7 +137,7 @@ private fun LoginContent(
                             "Email Address",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         ZapTextField(
                             value = state.email,
@@ -146,13 +146,13 @@ private fun LoginContent(
                             leadingIcon = Icons.Default.Mail,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next
+                                imeAction = ImeAction.Next,
                             ),
                             keyboardActions = KeyboardActions(onNext = {
                                 focusManager.moveFocus(
-                                    FocusDirection.Down
+                                    FocusDirection.Down,
                                 )
-                            })
+                            }),
                         )
                     }
 
@@ -160,20 +160,20 @@ private fun LoginContent(
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(
                                 "Password",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Text(
                                 "Forgot password?",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.clickable { onNavigateToForgot() }
+                                modifier = Modifier.clickable { onNavigateToForgot() },
                             )
                         }
                         ZapTextField(
@@ -186,9 +186,9 @@ private fun LoginContent(
                             onTogglePassword = onTogglePassword,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
+                                imeAction = ImeAction.Done,
                             ),
-                            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+                            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
                         )
                     }
 
@@ -205,27 +205,27 @@ private fun LoginContent(
                             .shadow(2.dp, RoundedCornerShape(100.dp)),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.surface
+                            contentColor = MaterialTheme.colorScheme.surface,
                         ),
                         shape = RoundedCornerShape(100.dp),
-                        enabled = !state.isLoading
+                        enabled = !state.isLoading,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
                                 color = MaterialTheme.colorScheme.onSurface,
-                                strokeWidth = 2.dp
+                                strokeWidth = 2.dp,
                             )
                         } else {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(20.dp),
                                 )
                             }
                         }
@@ -236,7 +236,7 @@ private fun LoginContent(
                     SocialAuthButton(
                         onClick = {},
                         text = "Continue with Google",
-                        icon = Icons.Default.Person
+                        icon = Icons.Default.Person,
                     )
                 }
             }
@@ -244,19 +244,19 @@ private fun LoginContent(
             // Footer
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     "Don't have an account?",
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     "Join",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { onNavigateToSignup() }
+                    modifier = Modifier.clickable { onNavigateToSignup() },
                 )
             }
 
@@ -264,17 +264,17 @@ private fun LoginContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.alpha(0.6f)
+                modifier = Modifier.alpha(0.6f),
             ) {
                 Box(
                     modifier = Modifier.size(8.dp).clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primary),
                 )
                 Text(
                     "All systems operational",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

@@ -40,13 +40,13 @@ fun BottomNavigationBar(
                     Icon(
                         imageVector = destination.icon,
                         contentDescription = destination.title,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 },
                 label = {
                     Text(
                         text = destination.title,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -54,8 +54,8 @@ fun BottomNavigationBar(
                     selectedTextColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                ),
             )
         }
     }

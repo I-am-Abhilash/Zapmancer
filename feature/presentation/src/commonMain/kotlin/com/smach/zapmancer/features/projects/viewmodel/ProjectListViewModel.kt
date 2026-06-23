@@ -14,7 +14,7 @@ sealed interface ProjectListEvent {
 }
 
 class ProjectListViewModel(
-    private val getProjectsUseCase: GetProjectsUseCase
+    private val getProjectsUseCase: GetProjectsUseCase,
 ) : BaseViewModel<ProjectListUiState, ProjectListEvent, Unit>(ProjectListUiState()) {
 
     init {
@@ -33,7 +33,6 @@ class ProjectListViewModel(
         }
     }
 
-
     private fun loadProjects() {
         viewModelScope.launch {
             updateState { copy(projects = emptyList()) }
@@ -41,13 +40,13 @@ class ProjectListViewModel(
                 onSuccess = { list ->
                     updateState {
                         copy(
-                            projects = list.map { it.toUiModel() }
+                            projects = list.map { it.toUiModel() },
                         )
                     }
                 },
                 onFailure = { error ->
                     updateState { copy(error = error.message ?: "An unknown error occurred") }
-                }
+                },
             )
         }
     }

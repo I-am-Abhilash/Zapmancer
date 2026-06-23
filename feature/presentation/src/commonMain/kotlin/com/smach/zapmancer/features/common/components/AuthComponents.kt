@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @Composable
 fun AuthHeader(
     title: String,
@@ -50,7 +49,7 @@ fun AuthHeader(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
             modifier = Modifier
@@ -63,7 +62,7 @@ fun AuthHeader(
                 Icons.Default.Bolt,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp),
             )
         }
         Text(
@@ -71,7 +70,7 @@ fun AuthHeader(
             fontSize = 24.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF1A1C1C),
-            letterSpacing = (-0.5).sp
+            letterSpacing = (-0.5).sp,
         )
         Text(
             text = title,
@@ -109,7 +108,7 @@ fun ZapTextField(
             placeholder = {
                 Text(
                     placeholder,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
             },
             leadingIcon = {
@@ -117,7 +116,7 @@ fun ZapTextField(
                     leadingIcon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(18.dp),
                 )
             },
             trailingIcon = if (isPassword) {
@@ -126,31 +125,33 @@ fun ZapTextField(
                         Icon(
                             if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 }
-            } else null,
+            } else {
+                null
+            },
             visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                focusedLeadingIconColor = MaterialTheme.colorScheme.primary
+                focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
             ),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             isError = error != null,
-            singleLine = true
+            singleLine = true,
         )
         if (error != null) {
             Text(
                 text = error,
                 color = Color.Red,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(start = 4.dp)
+                modifier = Modifier.padding(start = 4.dp),
             )
         }
     }
@@ -207,7 +208,7 @@ fun AuthDivider(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 16.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
     }

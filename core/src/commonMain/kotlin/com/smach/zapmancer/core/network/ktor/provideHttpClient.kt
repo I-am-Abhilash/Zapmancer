@@ -47,7 +47,6 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
         }
         install(Auth) {
             bearer {
-
                 loadTokens {
                     val accessToken = sessionManager.getAccessToken()
                     val refreshToken = sessionManager.getRefreshToken()
@@ -60,7 +59,7 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
                     } else {
                         BearerTokens(
                             accessToken = accessToken,
-                            refreshToken = refreshToken
+                            refreshToken = refreshToken,
                         )
                     }
                 }
@@ -73,8 +72,8 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
                             markAsRefreshTokenRequest()
                             setBody(
                                 RefreshTokenRequest(
-                                    refreshToken = currentRefreshToken
-                                )
+                                    refreshToken = currentRefreshToken,
+                                ),
                             )
                         }.body<ApiResponse<RefreshTokenResponse>>()
 
@@ -86,19 +85,17 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
                         sessionManager.saveSession(
                             userId = user.id,
                             accessToken = newAccessToken,
-                            refreshToken = newRefreshToken
+                            refreshToken = newRefreshToken,
                         )
                         BearerTokens(
                             accessToken = newAccessToken,
-                            refreshToken = newRefreshToken
+                            refreshToken = newRefreshToken,
                         )
-
                     } catch (e: Exception) {
-
                         Napier.e(
                             tag = "Auth",
                             message = "Token refresh failed",
-                            throwable = e
+                            throwable = e,
                         )
                         null
                     }
