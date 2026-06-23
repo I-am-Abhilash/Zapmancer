@@ -49,8 +49,8 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
             bearer {
 
                 loadTokens {
-                    val accessToken = sessionManager.getAccessTokenBlocking()
-                    val refreshToken = sessionManager.getRefreshTokenBlocking()
+                    val accessToken = sessionManager.getAccessToken()
+                    val refreshToken = sessionManager.getRefreshToken()
 
                     if (
                         accessToken.isNullOrBlank() ||
@@ -66,7 +66,7 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
                 }
                 refreshTokens {
                     val currentRefreshToken =
-                        sessionManager.getRefreshTokenBlocking()
+                        sessionManager.getRefreshToken()
                             ?: return@refreshTokens null
                     try {
                         val response = client.post("auth/refresh") {

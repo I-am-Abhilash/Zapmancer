@@ -37,8 +37,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feature:domain"))
-            implementation(project(":core"))
+            implementation(projects.core)
+            implementation(projects.feature.domain)
             implementation(libs.ktor.client.core)
             implementation(libs.koin.core)
             implementation(libs.kotlinx.datetime)

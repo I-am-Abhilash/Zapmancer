@@ -46,11 +46,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feature:data"))
-            implementation(project(":feature:domain"))
-            implementation(project(":feature:presentation"))
-
-            implementation(project(":core"))
+            implementation(projects.core)
+            implementation(projects.feature.data)
+            implementation(projects.feature.domain)
+            implementation(projects.feature.presentation)
 
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)

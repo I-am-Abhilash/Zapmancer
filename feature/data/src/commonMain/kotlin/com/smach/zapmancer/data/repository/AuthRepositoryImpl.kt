@@ -20,10 +20,6 @@ class AuthRepositoryImpl(
 
     private val ONBOARDING_KEY = "onboarding_completed"
 
-    override fun getUserId(): Flow<String?> = sessionManager.getUserId()
-    override fun getAccessToken(): Flow<String?> = sessionManager.getAccessToken()
-    override fun getRefreshToken(): Flow<String?> = sessionManager.getRefreshToken()
-
     override fun isOnboardingCompleted(): Flow<Boolean> =
         sessionManager.getOnboardingCompleted()
 

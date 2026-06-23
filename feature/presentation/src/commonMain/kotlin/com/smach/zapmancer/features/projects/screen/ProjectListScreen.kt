@@ -68,7 +68,7 @@ fun ProjectListScreen(
     onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit = {},
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     ProjectListContent(
         state = state,
@@ -85,7 +85,8 @@ fun ProjectListScreen(
 fun ProjectListContent(
     state: ProjectListUiState,
     onProjectClick: (Int) -> Unit = {},
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit,
+    onEvent: (ProjectListEvent) -> Unit
 ) {
     val projects = state.projects
 
@@ -131,6 +132,14 @@ fun ProjectListContent(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                         textAlign = TextAlign.Center
                     )
+                }
+            }
+
+            val projects = if (state.category == ProjectCategory.ALL) {
+                state.projects
+            } else {
+                state.projects.filter {
+                    it.category == state.category
                 }
             }
 

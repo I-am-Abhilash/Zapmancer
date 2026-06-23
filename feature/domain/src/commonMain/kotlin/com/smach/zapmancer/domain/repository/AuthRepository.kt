@@ -6,9 +6,6 @@ import com.smach.zapmancer.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    fun getUserId(): Flow<String?>
-    fun getAccessToken(): Flow<String?>
-    fun getRefreshToken(): Flow<String?>
     suspend fun saveTokens(accessToken: String, refreshToken: String)
 
     fun isOnboardingCompleted(): Flow<Boolean>

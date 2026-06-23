@@ -2,6 +2,7 @@ package com.smach.zapmancer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.smach.zapmancer.core.network.session.SessionManager
 import com.smach.zapmancer.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,10 +21,11 @@ sealed interface AppState {
 /** Central ViewModel that drives root UI routing */
 class MainViewModel(
     private val authRepository: AuthRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     val appState: StateFlow<AppState> = combine(
-        authRepository.getAccessToken(),
+        sessionManager.observeAccessToken(),
         authRepository.isOnboardingCompleted()
     ) { token, onboardingDone ->
         when {

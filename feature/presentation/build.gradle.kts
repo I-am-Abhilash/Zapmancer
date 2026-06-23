@@ -40,8 +40,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feature:domain"))
-            implementation(project(":core"))
+            implementation(projects.feature.domain)
+            implementation(projects.core)
             implementation(libs.runtime)
             implementation(libs.savedstateCompose)
             implementation(libs.lifecycleViewmodelCompose)

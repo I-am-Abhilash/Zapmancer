@@ -152,7 +152,6 @@ private fun appEntryProvider(
         MessagesListScreen(
             onConversationClick = { navigator.navigate(Screen.MessagesDetail) },
             onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
-            onBackClick = { navigator.goBack() },
         )
     }
     entry<Screen.MessagesDetail> {

@@ -84,13 +84,19 @@ kotlin {
         }
 
         val webSourceDir = "src/webMain/kotlin"
-        jsMain.get().apply {
-            kotlin.srcDirs(webSourceDir)
-            dependencies {
-                implementation(libs.sqldelight.webworker)
-            }
-        }
-        wasmJsMain.get().apply {
+//        jsMain.get().apply {
+//            kotlin.srcDirs(webSourceDir)
+//            dependencies {
+//                implementation(libs.sqldelight.webworker)
+//            }
+//        }
+//        wasmJsMain.get().apply {
+//            kotlin.srcDirs(webSourceDir)
+//            dependencies {
+//                implementation(libs.sqldelight.webworker)
+//            }
+//        }
+        webMain.get().apply {
             kotlin.srcDirs(webSourceDir)
             dependencies {
                 implementation(libs.sqldelight.webworker)

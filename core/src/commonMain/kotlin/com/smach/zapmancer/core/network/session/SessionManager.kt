@@ -4,7 +4,6 @@ import com.smach.zapmancer.core.common.utils.DataStoreStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 
 class SessionManager(
     private val storage: DataStoreStorage,
@@ -27,17 +26,15 @@ class SessionManager(
         storage.saveString(KEY_REFRESH_TOKEN, refreshToken)
     }
 
-    fun getUserId(): Flow<String?> = storage.getString(KEY_USER_ID)
-    fun getAccessToken(): Flow<String?> = storage.getString(KEY_ACCESS_TOKEN)
-    fun getRefreshToken(): Flow<String?> = storage.getString(KEY_REFRESH_TOKEN)
+    fun observeAccessToken(): Flow<String?> =
+        storage.getString(KEY_ACCESS_TOKEN)
 
-    fun getAccessTokenBlocking(): String? = runBlocking {
-        getAccessToken().first()
-    }
+    suspend fun getUserId(): String? = storage.getString(KEY_USER_ID).first()
+    suspend fun getAccessToken(): String? =
+        storage.getString(KEY_ACCESS_TOKEN).first()
 
-    fun getRefreshTokenBlocking(): String? = runBlocking {
-        getRefreshToken().first()
-    }
+    suspend fun getRefreshToken(): String? =
+        storage.getString(KEY_REFRESH_TOKEN).first()
 
     fun getOnboardingCompleted(): Flow<Boolean> =
         storage.getString(KEY_ONBOARDING).map { it == "true" }
