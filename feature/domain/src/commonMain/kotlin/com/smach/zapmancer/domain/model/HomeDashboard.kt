@@ -38,3 +38,4 @@ data class UserActivity(
 enum class ActivityStatus {
     IN_PROGRESS, REVIEWING, COMPLETED, CRITICAL
 }
+

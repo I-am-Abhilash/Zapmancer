@@ -6,7 +6,6 @@ import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.usecase.ExportActivityCsvUseCase
 import com.smach.zapmancer.domain.usecase.GetHomeDashboardUseCase
 import com.smach.zapmancer.features.home.state.HomeUiState
-import com.smach.zapmancer.features.home.state.RecentActivity
 import kotlinx.coroutines.launch
 
 sealed class HomeEvent {
@@ -24,6 +23,13 @@ class HomeViewModel(
     private val settingsRepository: com.smach.zapmancer.domain.repository.SettingsRepository
 ) : BaseViewModel<HomeUiState, HomeEvent, HomeEffect>(HomeUiState()) {
 
+    override fun onEvent(event: HomeEvent) {
+        when (event) {
+            HomeEvent.LoadDashboard -> loadDashboard()
+            HomeEvent.ExportCsv -> exportCsv()
+        }
+    }
+
     init {
         loadDashboard()
         observeSettings()
@@ -34,13 +40,6 @@ class HomeViewModel(
             settingsRepository.settingsFlow.collect { settings ->
                 updateState { copy(isClientMode = settings.isClientModeEnabled) }
             }
-        }
-    }
-
-    override fun onEvent(event: HomeEvent) {
-        when (event) {
-            HomeEvent.LoadDashboard -> loadDashboard()
-            HomeEvent.ExportCsv -> exportCsv()
         }
     }
 
@@ -58,14 +57,14 @@ class HomeViewModel(
                             totalCapacity = dashboard.projectStats.capacity,
                             systemRating = dashboard.systemRating,
                             recentActivities = dashboard.recentActivities.map { activity ->
-                                RecentActivity(
+                                UserActivity(
                                     id = activity.id,
                                     projectName = activity.projectName,
                                     category = activity.category,
-                                    categoryTag = activity.tag,
+                                    tag = activity.tag,
                                     status = activity.status,
-                                    date = activity.timestamp,
-                                    value = activity.monetaryValue
+                                    timestamp = activity.timestamp,
+                                    monetaryValue = activity.monetaryValue
                                 )
                             },
                             isLoading = false
@@ -87,10 +86,10 @@ class HomeViewModel(
                     id = it.id,
                     projectName = it.projectName,
                     category = it.category,
-                    tag = it.categoryTag,
+                    tag = it.category,
                     status = it.status,
-                    timestamp = it.date,
-                    monetaryValue = it.value
+                    timestamp = it.timestamp,
+                    monetaryValue = it.monetaryValue
                 )
             }
             exportActivityCsvUseCase(activities).fold(

@@ -42,10 +42,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.messages.state.ConversationItem
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
@@ -53,19 +53,17 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MessagesListScreen(
-    onConversationClick: (String) -> Unit = {},
-    onBackClick: () -> Unit = {},
     viewModel: MessagesListViewModel = koinViewModel(),
+    onConversationClick: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     val drawerController = LocalDrawerController.current
 
     MessagesListContent(
-        state = uiState,
+        state = state,
         onEvent = viewModel::onEvent,
         onConversationClick = onConversationClick,
-        onBackClick = onBackClick,
         onProfileClick = onProfileClick,
         onMenuClick = { drawerController.open() }
     )
@@ -77,7 +75,6 @@ fun MessagesListContent(
     state: MessagesListUiState,
     onEvent: (MessagesListEvent) -> Unit,
     onConversationClick: (String) -> Unit = {},
-    onBackClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
     onMenuClick: () -> Unit = {}
 ) {
@@ -99,7 +96,6 @@ fun MessagesListContent(
                 },
                 showMenuButton = true,
                 onMenuClick = onMenuClick,
-                onBackClick = onBackClick,
                 actions = {
                     UserAvatar(
                         onClick = { onProfileClick("me") },
@@ -326,7 +322,6 @@ fun MessagesListScreenPreview() {
             ),
             onEvent = {},
             onProfileClick = {},
-            onBackClick = {},
             onConversationClick = {}
         )
     }

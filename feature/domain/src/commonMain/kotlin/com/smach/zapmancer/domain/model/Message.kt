@@ -16,3 +16,4 @@ data class MessageItem(
 enum class MessageStatus {
     SENT, DELIVERED, READ
 }
+

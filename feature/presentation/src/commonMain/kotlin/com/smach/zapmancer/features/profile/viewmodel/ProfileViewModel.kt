@@ -3,10 +3,10 @@ package com.smach.zapmancer.features.profile.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.domain.model.PortfolioItem
+import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
 import com.smach.zapmancer.domain.usecase.HireUserUseCase
-import com.smach.zapmancer.features.profile.state.PortfolioItem
-import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import kotlinx.coroutines.launch
 
@@ -27,10 +27,6 @@ class ProfileViewModel(
     private val hireUserUseCase: HireUserUseCase,
 ) : BaseViewModel<ProfileUiState, ProfileEvent, ProfileEffect>(ProfileUiState()) {
 
-    init {
-        loadProfile()
-    }
-
     override fun onEvent(event: ProfileEvent) {
         when (event) {
             ProfileEvent.Refresh -> loadProfile()
@@ -38,6 +34,10 @@ class ProfileViewModel(
             ProfileEvent.PortfolioMore -> onLoadMorePortfolio()
             ProfileEvent.HireMe -> hireUser()
         }
+    }
+
+    init {
+        loadProfile()
     }
 
     private fun loadProfile() {
@@ -60,6 +60,7 @@ class ProfileViewModel(
                             skills = profile.skills,
                             portfolioItems = profile.portfolioItems.map {
                                 PortfolioItem(
+                                    id = it.id,
                                     title = it.title,
                                     description = it.description,
                                     imageUrl = it.imageUrl
@@ -67,6 +68,7 @@ class ProfileViewModel(
                             },
                             reviews = profile.reviews.map {
                                 ProfileReview(
+                                    id = it.id,
                                     authorName = it.authorName,
                                     authorRole = it.authorRole,
                                     content = it.content,

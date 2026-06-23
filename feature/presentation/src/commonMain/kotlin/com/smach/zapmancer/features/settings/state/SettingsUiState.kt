@@ -1,12 +1,10 @@
 package com.smach.zapmancer.features.settings.state
 
+import com.smach.zapmancer.domain.model.SettingsData
+
 data class SettingsUiState(
-    val email: String = "admin@zapmancer.io",
-    val organization: String = "Zapmancer Core Team",
-    val isTwoFactorEnabled: Boolean = true,
-    val isDarkModeEnabled: Boolean = true,
-    val isEmailNotificationsEnabled: Boolean = false,
-    val version: String = "v2.4.12-beta // ZAPMANCER_CORE_X64",
+    val settings : List<SettingsData> = emptyList(),
     val isLoading: Boolean = false,
-    val isClientModeEnabled: Boolean = false
 )
+
+

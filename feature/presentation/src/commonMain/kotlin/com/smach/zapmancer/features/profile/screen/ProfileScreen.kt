@@ -60,11 +60,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.domain.model.PortfolioItem
+import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.features.common.components.AppImage
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.profile.state.PortfolioItem
-import com.smach.zapmancer.features.profile.state.ProfileReview
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEffect
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
@@ -82,7 +82,7 @@ fun ProfileScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val viewModel: ProfileViewModel = koinViewModel(parameters = { parametersOf(userId) })
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -95,7 +95,7 @@ fun ProfileScreen(
     }
 
     ProfileContent(
-        state = uiState,
+        state = state,
         onEvent = { viewModel.onEvent(it) },
         onSearchClick = onSearchClick,
         onBackClick = onBackClick,

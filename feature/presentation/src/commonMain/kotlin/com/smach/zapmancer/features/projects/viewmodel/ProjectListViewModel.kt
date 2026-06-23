@@ -27,7 +27,7 @@ class ProjectListViewModel(
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
             is ProjectListEvent.CategorySelected -> {
-                updateState { copy(selectedCategory = event.category) }
+                updateState { copy(categorys = event.category) }
             }
 
             ProjectListEvent.SearchClicked -> {

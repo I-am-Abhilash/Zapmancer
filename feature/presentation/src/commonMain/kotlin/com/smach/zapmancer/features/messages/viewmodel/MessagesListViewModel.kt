@@ -3,8 +3,8 @@ package com.smach.zapmancer.features.messages.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.domain.usecase.GetConversationsUseCase
-import com.smach.zapmancer.features.messages.state.ConversationItem
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import kotlinx.coroutines.launch
 
@@ -18,10 +18,6 @@ class MessagesListViewModel(
     private val getConversationsUseCase: GetConversationsUseCase
 ) : BaseViewModel<MessagesListUiState, MessagesListEvent, Unit>(MessagesListUiState()) {
 
-    init {
-        loadConversations()
-    }
-
     override fun onEvent(event: MessagesListEvent) {
         when (event) {
             MessagesListEvent.Refresh -> loadConversations()
@@ -34,6 +30,11 @@ class MessagesListViewModel(
             }
         }
     }
+
+    init {
+        loadConversations()
+    }
+
 
     private fun loadConversations() {
         viewModelScope.launch {

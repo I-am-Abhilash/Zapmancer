@@ -61,10 +61,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.domain.model.MessageItem
+import com.smach.zapmancer.domain.model.MessageStatus
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.messages.state.MessageItem
-import com.smach.zapmancer.features.messages.state.MessageStatus
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
@@ -77,16 +77,16 @@ fun MessageDetailScreen(
     showSnackbar: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     MessageDetailContent(
-        state = uiState,
+        state = state,
         onEvent = viewModel::onEvent,
         onBackClick = onBackClick,
+        onProfileClick = onProfileClick,
         onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
         onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
         onMoreClick = { showSnackbar("More actions are not supported in this beta") },
-        onProfileClick = onProfileClick
     )
 }
 

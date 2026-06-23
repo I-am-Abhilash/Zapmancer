@@ -3,12 +3,12 @@ package com.smach.zapmancer.features.alerts.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.domain.model.NotificationAction
+import com.smach.zapmancer.domain.model.NotificationItem
+import com.smach.zapmancer.domain.model.NotificationType
 import com.smach.zapmancer.domain.usecase.ExecuteNotificationActionUseCase
 import com.smach.zapmancer.domain.usecase.GetNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
-import com.smach.zapmancer.features.alerts.state.NotificationAction
-import com.smach.zapmancer.features.alerts.state.NotificationItem
-import com.smach.zapmancer.features.alerts.state.NotificationType
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import kotlinx.coroutines.launch
 

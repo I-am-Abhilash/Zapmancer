@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.domain.model.SettingsData
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 import com.smach.zapmancer.features.settings.viewmodel.SettingsEvent
@@ -147,19 +148,18 @@ fun SettingsContent(
                 ) {
                     SettingsItem(
                         title = "Email Address",
-                        subtitle = uiState.email,
+                        subtitle = uiState.settings.email,
                         actionIcon = Icons.Outlined.Edit
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Organization",
-                        subtitle = uiState.organization,
+                        subtitle = uiState.settings.,
                         actionIcon = Icons.Outlined.CorporateFare
                     )
                 }
             }
 
-            // Security Section
             item {
                 SettingsSection(
                     title = "Security",
@@ -168,7 +168,7 @@ fun SettingsContent(
                     SettingsToggleItem(
                         title = "Two-Factor Authentication",
                         description = "Add an extra layer of security to your account.",
-                        checked = uiState.isTwoFactorEnabled,
+                        checked = uiState.settings.isTwoFactorEnabled,
                         onCheckedChange = onToggleTwoFactor
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
@@ -203,21 +203,21 @@ fun SettingsContent(
                     SettingsToggleItem(
                         title = "Dark Mode",
                         description = "Switch between light and dark interface themes.",
-                        checked = uiState.isDarkModeEnabled,
+                        checked = settingsData.isDarkModeEnabled,
                         onCheckedChange = onToggleDarkMode
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Email Notifications",
                         description = "Receive weekly performance reports and alerts.",
-                        checked = uiState.isEmailNotificationsEnabled,
+                        checked = settingsData.isEmailNotificationsEnabled,
                         onCheckedChange = onToggleNotifications
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Client Mode",
                         description = "Toggle to switch interface focus to hiring and project posting.",
-                        checked = uiState.isClientModeEnabled,
+                        checked = settingsData.isClientModeEnabled,
                         onCheckedChange = onToggleClientMode
                     )
                 }
@@ -271,7 +271,7 @@ fun SettingsContent(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        uiState.version,
+                        settingsData.version,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         fontWeight = FontWeight.Normal
@@ -418,6 +418,7 @@ fun SettingsPreview() {
         onToggleDarkMode = {},
         onToggleNotifications = {},
         onToggleClientMode = {},
-        onLogout = {}
+        onLogout = {},
+        settingsData = {}
     )
 }

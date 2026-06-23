@@ -44,9 +44,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.projects.state.PostProjectUiState
 import com.smach.zapmancer.features.projects.viewmodel.PostProjectEffect
 import com.smach.zapmancer.features.projects.viewmodel.PostProjectEvent
@@ -77,7 +79,6 @@ fun PostProjectScreen(
         onBackClick = onBackClick
     )
 }
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PostProjectContent(
@@ -513,5 +514,17 @@ fun PostProjectContent(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PostProjectScreenPreview(){
+    AppTheme {
+        PostProjectContent(
+            state = PostProjectUiState(),
+            onEvent = {},
+            onBackClick = {}
+        )
     }
 }
