@@ -46,7 +46,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.napier)
             implementation(libs.koin.core)
-            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.datastore.preferences)
             implementation(libs.okio)
             implementation(libs.coil.compose)
             implementation(libs.ktor.client.core)

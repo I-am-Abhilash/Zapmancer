@@ -48,7 +48,7 @@ kotlin {
             implementation(libs.adaptive)
             implementation(libs.adaptive.navigation)
             implementation(libs.napier)
-            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.datastore.preferences)
             implementation(libs.okio)
             implementation(libs.koin.core)
             implementation(libs.compose.uiTooling.preview)
