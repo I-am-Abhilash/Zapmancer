@@ -84,7 +84,6 @@ fun ProjectListScreen(
 @Composable
 fun ProjectListContent(
     state: ProjectListUiState,
-    onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit = {},
     onSearchClick: () -> Unit
 ) {

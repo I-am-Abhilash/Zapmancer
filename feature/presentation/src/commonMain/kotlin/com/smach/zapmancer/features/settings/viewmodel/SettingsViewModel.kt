@@ -45,14 +45,15 @@ class SettingsViewModel(
                 onSuccess = { settings ->
                     updateState {
                         copy(
-                            email = settings.email,
-                            organization = settings.organization,
-                            isTwoFactorEnabled = settings.isTwoFactorEnabled,
-                            isDarkModeEnabled = settings.isDarkModeEnabled,
-                            isEmailNotificationsEnabled = settings.isEmailNotificationsEnabled,
-                            version = settings.version,
-                            isLoading = false,
-                            isClientModeEnabled = settings.isClientModeEnabled
+                            settings = settings?.copy(
+                                email = settings.email,
+                                organization = settings.organization,
+                                isTwoFactorEnabled = settings.isTwoFactorEnabled,
+                                isDarkModeEnabled = settings.isDarkModeEnabled,
+                                isEmailNotificationsEnabled = settings.isEmailNotificationsEnabled,
+                                version = settings.version,
+                                isClientModeEnabled = settings.isClientModeEnabled
+                            ),
                         )
                     }
                 },
@@ -67,7 +68,13 @@ class SettingsViewModel(
         viewModelScope.launch {
             updateSettingsUseCase.updateTwoFactor(enabled).fold(
                 onSuccess = {
-                    updateState { copy(isTwoFactorEnabled = enabled) }
+                    updateState {
+                        copy(
+                            settings = settings?.copy(
+                                isTwoFactorEnabled = enabled
+                            ),
+                        )
+                    }
                 },
                 onFailure = {}
             )
@@ -78,7 +85,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             updateSettingsUseCase.updateDarkMode(enabled).fold(
                 onSuccess = {
-                    updateState { copy(isDarkModeEnabled = enabled) }
+                    updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) }
                 },
                 onFailure = {}
             )
@@ -89,7 +96,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             updateSettingsUseCase.updateEmailNotifications(enabled).fold(
                 onSuccess = {
-                    updateState { copy(isEmailNotificationsEnabled = enabled) }
+                    updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) }
                 },
                 onFailure = {}
             )
@@ -100,7 +107,13 @@ class SettingsViewModel(
         viewModelScope.launch {
             updateSettingsUseCase.updateClientMode(enabled).fold(
                 onSuccess = {
-                    updateState { copy(isClientModeEnabled = enabled) }
+                    updateState {
+                        copy(
+                            settings = settings?.copy(
+                                isClientModeEnabled = enabled
+                            )
+                        )
+                    }
                 },
                 onFailure = {}
             )

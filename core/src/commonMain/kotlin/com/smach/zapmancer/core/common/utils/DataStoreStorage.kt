@@ -1,25 +1,27 @@
 package com.smach.zapmancer.core.common.utils
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.smach.zapmancer.core.database.AppDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class DataStoreStorage(
-    private val dataStore: DataStore<Preferences>,
+    database: AppDatabase,
 ) {
+    private val queries = database.appDatabaseQueries
+
     suspend fun saveString(
         key: String,
         value: String,
     ) {
-        dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(key)] = value
-        }
+        queries.insertKeyValue(key, value)
     }
 
-    fun getString(key: String): Flow<String?> = dataStore.data.map { preferences ->
-        preferences[stringPreferencesKey(key)]
-    }
+    fun getString(key: String): Flow<String?> = 
+        queries.getValue(key)
+            .asFlow()
+            .mapToOneOrNull(Dispatchers.Default)
+            .map { it?.value_ }
 }

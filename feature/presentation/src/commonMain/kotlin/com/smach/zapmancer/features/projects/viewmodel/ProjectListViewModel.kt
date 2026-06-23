@@ -10,7 +10,6 @@ import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import kotlinx.coroutines.launch
 
 sealed interface ProjectListEvent {
-    data class CategorySelected(val category: String) : ProjectListEvent
     data object SearchClicked : ProjectListEvent
     data class ProjectClicked(val projectId: Int) : ProjectListEvent
     data object Refresh : ProjectListEvent
@@ -26,10 +25,6 @@ class ProjectListViewModel(
 
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
-            is ProjectListEvent.CategorySelected -> {
-                updateState { copy(categorys = event.category) }
-            }
-
             ProjectListEvent.SearchClicked -> {
                 // Implement search action if needed
             }

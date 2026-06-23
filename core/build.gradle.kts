@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
@@ -5,6 +7,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.room)
+    alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
 }
 
@@ -31,6 +34,18 @@ kotlin {
         }
     }
 
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.runtime)
@@ -46,7 +61,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.napier)
             implementation(libs.koin.core)
-            implementation(libs.datastore.preferences)
+            implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.okio)
             implementation(libs.coil.compose)
             implementation(libs.ktor.client.core)
@@ -58,17 +73,39 @@ kotlin {
             implementation(libs.navigation3.ui)
             implementation(libs.savedstateCompose)
             implementation(libs.lifecycle.viewmodel.navigation3)
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.sqlite.bundled)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.sqldelight.android.driver)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
+
+        val webSourceDir = "src/webMain/kotlin"
+        jsMain.get().apply {
+            kotlin.srcDirs(webSourceDir)
+            dependencies {
+                implementation(libs.sqldelight.webworker)
+            }
+        }
+        wasmJsMain.get().apply {
+            kotlin.srcDirs(webSourceDir)
+            dependencies {
+                implementation(libs.sqldelight.webworker)
+            }
+        }
+
         compilerOptions {
             freeCompilerArgs.add("-Xexpect-actual-classes")
+        }
+    }
+}
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.smach.zapmancer.core.database")
         }
     }
 }

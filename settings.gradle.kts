@@ -31,7 +31,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
     }
 }
-
+include(":webApp")
 include(":androidApp")
 include(":shared")
 include(":core")

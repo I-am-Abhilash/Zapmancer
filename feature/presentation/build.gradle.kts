@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
 
     alias(libs.plugins.kotlinMultiplatform)
@@ -24,6 +26,18 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feature:domain"))
@@ -48,7 +62,6 @@ kotlin {
             implementation(libs.adaptive)
             implementation(libs.adaptive.navigation)
             implementation(libs.napier)
-            implementation(libs.datastore.preferences)
             implementation(libs.okio)
             implementation(libs.koin.core)
             implementation(libs.compose.uiTooling.preview)
