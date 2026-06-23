@@ -56,8 +56,8 @@ fun AuthHeader(
             modifier = Modifier
                 .size(48.dp)
                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
-                .shadow(2.dp, RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center
+                .shadow(2.dp, RoundedCornerShape(999.dp)),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 Icons.Default.Bolt,
