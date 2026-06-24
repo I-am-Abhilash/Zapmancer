@@ -1,9 +1,9 @@
 package com.smach.zapmancer
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+//import androidx.compose.animation.AnimatedContent
+//import androidx.compose.animation.fadeIn
+//import androidx.compose.animation.fadeOut
+//import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -34,41 +34,77 @@ fun App() {
     val appState by mainViewModel.appState.collectAsState()
 
     AppTheme {
-        AnimatedContent(
-            targetState = appState,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-        ) { state ->
-            when (state) {
-                is AppState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-
-                is AppState.Onboarding -> {
-                    OnboardingScreen(
-                        onFinished = { mainViewModel.completeOnboarding() },
-                    )
-                }
-
-                is AppState.Unauthenticated -> {
-                    AuthGraph(
-                        onAuthSuccess = {},
-                    )
-                }
-
-                is AppState.Authenticated -> {
-                    MainGraph(
-                        onLogout = { mainViewModel.logout() },
-                        isClientMode = isClientMode,
-                    )
+        when (val state = appState) {
+            is AppState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
+
+            is AppState.Onboarding -> {
+                OnboardingScreen(
+                    onFinished = { mainViewModel.completeOnboarding() },
+                )
+            }
+
+            is AppState.Unauthenticated -> {
+                AuthGraph(
+                    onAuthSuccess = {},
+                )
+            }
+
+            is AppState.Authenticated -> {
+                MainGraph(
+                    onLogout = { mainViewModel.logout() },
+                    isClientMode = isClientMode,
+                )
+            }
         }
+
     }
+
+
+//    AppTheme {
+//        AnimatedContent(
+//            targetState = appState,
+//            transitionSpec = { fadeIn() togetherWith fadeOut() },
+//        ) { state ->
+//            when (state) {
+//                is AppState.Loading -> {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(MaterialTheme.colorScheme.background),
+//                        contentAlignment = Alignment.Center,
+//                    ) {
+//                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+//                    }
+//                }
+//
+//                is AppState.Onboarding -> {
+//                    OnboardingScreen(
+//                        onFinished = { mainViewModel.completeOnboarding() },
+//                    )
+//                }
+//
+//                is AppState.Unauthenticated -> {
+//                    AuthGraph(
+//                        onAuthSuccess = {},
+//                    )
+//                }
+//
+//                is AppState.Authenticated -> {
+//                    MainGraph(
+//                        onLogout = { mainViewModel.logout() },
+//                        isClientMode = isClientMode,
+//                    )
+//                }
+//            }
+//        }
+//    }
 }

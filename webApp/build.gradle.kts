@@ -25,28 +25,11 @@ kotlin {
 
         jsMain.dependencies {
             implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.3.2"))
+            implementation(npm("sql.js", "1.8.0"))
+
             implementation(libs.sqldelight.webworker)
+            implementation(projects.core)
+
         }
     }
-}
-
-val webpackConfigDir = project.file("webpack.config.d")
-
-tasks.register("generateWebpackPolyfills") {
-    description = "To generate the webpack missing Pollyfills"
-    doLast {
-        webpackConfigDir.mkdirs()
-        val polyfillFile = File(webpackConfigDir, "polyfills.js")
-        polyfillFile.writeText("""
-            config.resolve = config.resolve || {};
-            config.resolve.fallback = config.resolve.fallback || {};
-            config.resolve.fallback.os = false;
-            config.resolve.fallback.path = false;
-            config.resolve.fallback.fs = false;
-        """.trimIndent())
-    }
-}
-
-tasks.matching { it.name.contains("Webpack", ignoreCase = true) }.configureEach {
-    dependsOn("generateWebpackPolyfills")
 }
