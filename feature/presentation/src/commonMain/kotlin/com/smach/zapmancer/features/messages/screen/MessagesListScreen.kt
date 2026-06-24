@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -77,42 +78,9 @@ fun MessagesListContent(
     onConversationClick: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
     onMenuClick: () -> Unit = {},
+    showTopBar: Boolean = true,
 ) {
-    Scaffold(
-        topBar = {
-            ZapmancerTopBar(
-                titleContent = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text(
-                            "Zapmancer",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                        )
-                    }
-                },
-                showMenuButton = true,
-                onMenuClick = onMenuClick,
-                actions = {
-                    UserAvatar(
-                        onClick = { onProfileClick("me") },
-                        imageUrl = null,
-                        size = 32.dp,
-                        shape = MaterialTheme.shapes.extraLarge,
-                        borderWidth = 1.dp,
-                        borderColor = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(end = 4.dp),
-                    )
-                },
-                containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
+    val content = @Composable { padding: PaddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -158,6 +126,48 @@ fun MessagesListContent(
                 }
             }
         }
+    }
+
+    if (showTopBar) {
+        Scaffold(
+            topBar = {
+                ZapmancerTopBar(
+                    titleContent = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                "Zapmancer",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                            )
+                        }
+                    },
+                    showMenuButton = true,
+                    onMenuClick = onMenuClick,
+                    actions = {
+                        UserAvatar(
+                            onClick = { onProfileClick("me") },
+                            imageUrl = null,
+                            size = 32.dp,
+                            shape = MaterialTheme.shapes.extraLarge,
+                            borderWidth = 1.dp,
+                            borderColor = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(end = 4.dp),
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    drawBottomBorder = true,
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+        ) { padding ->
+            content(padding)
+        }
+    } else {
+        content(PaddingValues(0.dp))
     }
 }
 

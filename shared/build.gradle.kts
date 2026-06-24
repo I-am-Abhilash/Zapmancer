@@ -47,6 +47,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.material.icons.extended)
             implementation(libs.navigation3.ui)
+            implementation(libs.adaptive.layout)
+            implementation(libs.adaptive)
+            implementation(libs.adaptive.navigation)
             implementation(libs.savedstateCompose)
 
             implementation(libs.runtime)

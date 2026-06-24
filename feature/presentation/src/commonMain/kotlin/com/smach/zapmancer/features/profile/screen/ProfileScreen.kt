@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +43,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.domain.model.PortfolioItem
 import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.features.common.components.AppImage
@@ -112,6 +115,9 @@ fun ProfileContent(
     onBackClick: () -> Unit,
     onProfileClick: (String) -> Unit = {},
 ) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -133,66 +139,68 @@ fun ProfileContent(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(bottom = 32.dp),
-        ) {
-            item { IdentityHeader(state, onEvent) }
+        Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
+                contentPadding = PaddingValues(bottom = 32.dp),
+            ) {
+                item { IdentityHeader(state, onEvent) }
 
-            item {
-                ProfileSectionCard(title = "About") {
-                    Text(
-                        text = state.about,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 22.sp,
-                    )
+                item {
+                    ProfileSectionCard(title = "About") {
+                        Text(
+                            text = state.about,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 22.sp,
+                        )
+                    }
                 }
-            }
 
-            item {
-                ProfileSectionCard(title = "Skills") {
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        state.skills.forEach { skill ->
-                            SkillChip(skill)
+                item {
+                    ProfileSectionCard(title = "Skills") {
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            state.skills.forEach { skill ->
+                                SkillChip(skill)
+                            }
                         }
                     }
                 }
-            }
 
-            item {
-                SectionTitleRow(title = "Portfolio")
-            }
-            items(state.portfolioItems) { project ->
-                PortfolioCard(item = project)
-            }
-            item {
-                OnMoreButton(
-                    text = "See more",
-                    onClick = {
-                        onEvent(ProfileEvent.PortfolioMore)
-                    },
-                )
-            }
-            item {
-                SectionTitleRow(title = "Top Reviews")
-            }
-            items(state.reviews) { review ->
-                ReviewCard(review = review, onProfileClick = onProfileClick)
-            }
-            item {
-                OnMoreButton(
-                    text = "See more reviews",
-                    onClick = {
-                        onEvent(ProfileEvent.ReviewMore)
-                    },
-                )
+                item {
+                    SectionTitleRow(title = "Portfolio")
+                }
+                items(state.portfolioItems) { project ->
+                    PortfolioCard(item = project)
+                }
+                item {
+                    OnMoreButton(
+                        text = "See more",
+                        onClick = {
+                            onEvent(ProfileEvent.PortfolioMore)
+                        },
+                    )
+                }
+                item {
+                    SectionTitleRow(title = "Top Reviews")
+                }
+                items(state.reviews) { review ->
+                    ReviewCard(review = review, onProfileClick = onProfileClick)
+                }
+                item {
+                    OnMoreButton(
+                        text = "See more reviews",
+                        onClick = {
+                            onEvent(ProfileEvent.ReviewMore)
+                        },
+                    )
+                }
             }
         }
     }

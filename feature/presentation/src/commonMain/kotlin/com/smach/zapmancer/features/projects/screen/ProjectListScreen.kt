@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -84,28 +85,9 @@ fun ProjectListContent(
     onProjectClick: (Int) -> Unit = {},
     onSearchClick: () -> Unit,
     onEvent: (ProjectListEvent) -> Unit,
+    showTopBar: Boolean = true,
 ) {
-    val projects = state.projects
-
-    Scaffold(
-        topBar = {
-            ZapmancerTopBar(
-                title = "Zapmancer",
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.background,
-                drawBottomBorder = false,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
+    val content = @Composable { padding: PaddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -168,6 +150,32 @@ fun ProjectListContent(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+
+    if (showTopBar) {
+        Scaffold(
+            topBar = {
+                ZapmancerTopBar(
+                    title = "Zapmancer",
+                    actions = {
+                        IconButton(onClick = onSearchClick) {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.background,
+                    drawBottomBorder = false,
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+        ) { padding ->
+            content(padding)
+        }
+    } else {
+        content(PaddingValues(0.dp))
     }
 }
 

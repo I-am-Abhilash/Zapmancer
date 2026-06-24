@@ -112,33 +112,9 @@ fun ProjectDetailContent(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onApplyClick: () -> Unit,
+    showTopBar: Boolean = true,
 ) {
-    Scaffold(
-        topBar = {
-            ZapmancerTopBar(
-                title = "Zapmancer",
-                showBackButton = true,
-                onBackClick = onBackClick,
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                    UserAvatar(
-                        imageUrl = null,
-                        size = 32.dp,
-                        modifier = Modifier.padding(end = 12.dp),
-                    )
-                },
-                containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
+    val content = @Composable { padding: PaddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -160,6 +136,39 @@ fun ProjectDetailContent(
             item { ClientSummarySection(state) }
             item { Spacer(modifier = Modifier.height(48.dp)) }
         }
+    }
+
+    if (showTopBar) {
+        Scaffold(
+            topBar = {
+                ZapmancerTopBar(
+                    title = "Zapmancer",
+                    showBackButton = true,
+                    onBackClick = onBackClick,
+                    actions = {
+                        IconButton(onClick = {}) {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                        UserAvatar(
+                            imageUrl = null,
+                            size = 32.dp,
+                            modifier = Modifier.padding(end = 12.dp),
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    drawBottomBorder = true,
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+        ) { padding ->
+            content(padding)
+        }
+    } else {
+        content(PaddingValues(0.dp))
     }
 }
 

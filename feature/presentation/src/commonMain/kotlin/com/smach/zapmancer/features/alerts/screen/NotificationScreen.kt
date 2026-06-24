@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.domain.model.NotificationAction
 import com.smach.zapmancer.domain.model.NotificationItem
 import com.smach.zapmancer.domain.model.NotificationType
@@ -98,6 +100,9 @@ fun NotificationContent(
     onEvent: (NotificationEvent) -> Unit,
     onBackClick: () -> Unit = {},
 ) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -110,31 +115,35 @@ fun NotificationContent(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
-        ) {
-            val grouped = state.notifications.groupBy { it.section }
+        Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (!isCompact) Modifier.fillMaxWidth(0.7f) else Modifier.padding(horizontal = 16.dp)),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
+            ) {
+                val grouped = state.notifications.groupBy { it.section }
 
-            grouped.forEach { (section, items) ->
-                item {
-                    RibbonHeader(section)
-                }
-                items(items) { item ->
-                    NotificationCard(
-                        item = item,
-                        replyText = state.replyDrafts[item.id] ?: "",
-                        onReplyTextChanged = { text ->
-                            onEvent(NotificationEvent.OnReplyTextChanged(item.id, text))
-                        },
-                        onSendReply = {
-                            onEvent(NotificationEvent.SendQuickReply(item.id))
-                        },
-                        onActionClicked = { actionLabel ->
-                            onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel))
-                        },
-                    )
+                grouped.forEach { (section, items) ->
+                    item {
+                        RibbonHeader(section)
+                    }
+                    items(items) { item ->
+                        NotificationCard(
+                            item = item,
+                            replyText = state.replyDrafts[item.id] ?: "",
+                            onReplyTextChanged = { text ->
+                                onEvent(NotificationEvent.OnReplyTextChanged(item.id, text))
+                            },
+                            onSendReply = {
+                                onEvent(NotificationEvent.SendQuickReply(item.id))
+                            },
+                            onActionClicked = { actionLabel ->
+                                onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel))
+                            },
+                        )
+                    }
                 }
             }
         }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -31,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_9_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
@@ -89,6 +95,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeContent(
     state: HomeUiState,
@@ -97,13 +104,16 @@ fun HomeContent(
     onMenuClick: () -> Unit,
     onNavigateToProfile: () -> (() -> Unit)?,
 ) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+
     Scaffold(
         topBar = {
             ZapmancerTopBar(
                 titleContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             "Zapmancer",
@@ -137,7 +147,8 @@ fun HomeContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(padding),
+                .padding(padding)
+                .padding(horizontal = if (isCompact) 16.dp else 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Row(
@@ -162,10 +173,15 @@ fun HomeContent(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                val cardModifier = if (isCompact) Modifier.fillMaxWidth() else Modifier.weight(1f).height(160.dp)
                 if (state.isClientMode) {
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "Total Spent",
                         value = "$14,800.00",
                         accentColor = MaterialTheme.colorScheme.primary,
@@ -173,7 +189,7 @@ fun HomeContent(
                         growth = "+8.2%",
                     )
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "Active Job Posts",
                         value = "3",
                         accentColor = ZapGold,
@@ -181,7 +197,7 @@ fun HomeContent(
                         secondaryValue = "/ 5 capacity",
                     )
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "Proposals Received",
                         value = "12",
                         accentColor = MaterialTheme.colorScheme.secondary,
@@ -190,7 +206,7 @@ fun HomeContent(
                     )
                 } else {
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "Total Earnings",
                         value = state.totalEarnings,
                         accentColor = MaterialTheme.colorScheme.primary,
@@ -198,7 +214,7 @@ fun HomeContent(
                         growth = state.earningsGrowth,
                     )
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "Current Projects",
                         value = state.activeProjectsCount.toString(),
                         accentColor = ZapGold,
@@ -206,7 +222,7 @@ fun HomeContent(
                         secondaryValue = "/ ${state.totalCapacity} capacity",
                     )
                     StatCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = cardModifier,
                         title = "System Rating",
                         value = state.systemRating.toString(),
                         accentColor = MaterialTheme.colorScheme.secondary,
@@ -217,7 +233,7 @@ fun HomeContent(
             }
             Button(
                 onClick = onCreateProjectClick,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = if (isCompact) Modifier.fillMaxWidth() else Modifier.width(300.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 ),
@@ -250,14 +266,30 @@ fun HomeContent(
                         )
                     }
                 }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    state.recentActivities.forEach { activity ->
-                        ActivityRow(
-                            activity = activity,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        )
+                
+                if (isCompact) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        state.recentActivities.forEach { activity ->
+                            ActivityRow(
+                                activity = activity,
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                            )
+                        }
+                    }
+                } else {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        state.recentActivities.forEach { activity ->
+                            ActivityRow(
+                                activity = activity,
+                                modifier = Modifier.weight(1f).widthIn(min = 350.dp),
+                            )
+                        }
                     }
                 }
             }

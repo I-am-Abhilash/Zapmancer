@@ -100,88 +100,9 @@ fun MessageDetailContent(
     onVideocamClick: () -> Unit,
     onMoreClick: () -> Unit,
     onProfileClick: (String) -> Unit,
+    showTopBar: Boolean = true,
 ) {
-    Scaffold(
-        topBar = {
-            ZapmancerTopBar(
-                titleContent = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            onProfileClick(state.contactName)
-                        },
-                    ) {
-                        UserAvatar(
-                            imageUrl = state.contactAvatarUrl,
-                            size = 40.dp,
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                            Text(
-                                text = state.contactName,
-                                fontSize = 16.sp,
-                                lineHeight = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            if (state.isOnline) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary),
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        "Online",
-                                        fontSize = 12.sp,
-                                        lineHeight = 16.sp,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Medium,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                },
-                showBackButton = true,
-                onBackClick = onBackClick,
-                actions = {
-                    IconButton(onClick = { onVideocamClick() }) {
-                        Icon(
-                            Icons.Default.Videocam,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    IconButton(onClick = { onCallClick() }) {
-                        Icon(
-                            Icons.Default.Call,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    IconButton(onClick = { onMoreClick() }) {
-                        Icon(
-                            Icons.Default.MoreVert,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true,
-            )
-        },
-        bottomBar = {
-            MessageInput(
-                typingText = state.typingText,
-                onEvent = onEvent,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
+    val content = @Composable { padding: PaddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -246,6 +167,92 @@ fun MessageDetailContent(
                 }
             }
         }
+    }
+
+    Scaffold(
+        topBar = {
+            if (showTopBar) {
+                ZapmancerTopBar(
+                    titleContent = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                onProfileClick(state.contactName)
+                            },
+                        ) {
+                            UserAvatar(
+                                imageUrl = state.contactAvatarUrl,
+                                size = 40.dp,
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+                                Text(
+                                    text = state.contactName,
+                                    fontSize = 16.sp,
+                                    lineHeight = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                if (state.isOnline) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(8.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary),
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            "Online",
+                                            fontSize = 12.sp,
+                                            lineHeight = 16.sp,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Medium,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    showBackButton = true,
+                    onBackClick = onBackClick,
+                    actions = {
+                        IconButton(onClick = { onVideocamClick() }) {
+                            Icon(
+                                Icons.Default.Videocam,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        IconButton(onClick = { onCallClick() }) {
+                            Icon(
+                                Icons.Default.Call,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        IconButton(onClick = { onMoreClick() }) {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    drawBottomBorder = true,
+                )
+            }
+        },
+        bottomBar = {
+            MessageInput(
+                typingText = state.typingText,
+                onEvent = onEvent,
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { padding ->
+        content(padding)
     }
 }
 

@@ -49,8 +49,6 @@ import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
 
-// Flip7 Palette
-
 @Composable
 fun ForgotPasswordScreen(
     viewModel: ForgotPasswordViewModel = koinViewModel(),
@@ -94,7 +92,6 @@ private fun ForgotPasswordContent(
                 subtitle = "Enter your email to receive a recovery link",
             )
 
-            // Form Card
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = androidx.compose.foundation.BorderStroke(
