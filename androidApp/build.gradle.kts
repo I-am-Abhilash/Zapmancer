@@ -52,4 +52,5 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
+    implementation(libs.napier)
 }
