@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
+import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthDivider
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.SocialAuthButton
@@ -98,13 +99,7 @@ private fun LoginContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

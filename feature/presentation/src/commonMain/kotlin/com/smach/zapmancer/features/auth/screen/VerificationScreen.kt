@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.VerificationUiState
 import com.smach.zapmancer.features.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
+import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -87,13 +88,7 @@ private fun VerificationContent(
     val scrollState = rememberScrollState()
     val codeLength = 6
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -21,7 +21,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 
 data class OnboardingPage(
@@ -88,6 +89,8 @@ fun OnboardingScreen(
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -102,7 +105,8 @@ fun OnboardingScreen(
             // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                horizontalArrangement = if (isCompact) Arrangement.Center else Arrangement.Start,
             ) {
                 Icon(
                     Icons.Default.Bolt,
@@ -129,71 +133,125 @@ fun OnboardingScreen(
                     .fillMaxWidth(),
             ) { pageIndex ->
                 val page = pages[pageIndex]
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Box(
+                if (isCompact) {
+                    Column(
                         modifier = Modifier
-                            .size(160.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.radialGradient(
-                                    colors = page.gradientColors,
-                                ),
-                            ),
-                        contentAlignment = Alignment.Center,
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        Icon(
-                            imageVector = page.icon,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(72.dp),
+                        Box(
+                            modifier = Modifier
+                                .size(160.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = page.gradientColors,
+                                    ),
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = page.icon,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(72.dp),
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(48.dp))
+
+                        Text(
+                            text = page.title,
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = TextAlign.Center,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = page.description,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                textAlign = TextAlign.Center,
+                                lineHeight = 26.sp,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 48.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(64.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(320.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = page.gradientColors,
+                                    ),
+                                ),
+                            contentAlignment = Alignment.Center,
+                            ) {
+                            Icon(
+                                imageVector = page.icon,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(140.dp),
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(48.dp))
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = page.title,
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontWeight = FontWeight.ExtraBold,
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
 
-                    Text(
-                        text = page.title,
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Center,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
+                            Spacer(modifier = Modifier.height(24.dp))
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = page.description,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            textAlign = TextAlign.Center,
-                            lineHeight = 26.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                            Text(
+                                text = page.description,
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    lineHeight = 36.sp,
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
                 }
             }
 
             // Bottom Navigation Controls
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = if (isCompact) 0.dp else 48.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Page Indicator
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     repeat(pages.size) { index ->
                         val isSelected = pagerState.currentPage == index
                         Box(
                             modifier = Modifier
-                                .size(if (isSelected) 10.dp else 8.dp)
+                                .height(8.dp)
+                                .width(if (isSelected) 24.dp else 8.dp)
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected) {
@@ -243,6 +301,7 @@ fun OnboardingScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                         shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.height(48.dp).width(if (isLastPage) 160.dp else 120.dp),
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,

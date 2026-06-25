@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordViewModel
+import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
@@ -73,13 +74,7 @@ private fun ForgotPasswordContent(
 ) {
     val scrollState = rememberScrollState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
