@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -372,7 +373,7 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
         )
     },
 )
-
+@PreviewScreenSizes
 @Preview
 @Composable
 fun NotificationPreview() {
