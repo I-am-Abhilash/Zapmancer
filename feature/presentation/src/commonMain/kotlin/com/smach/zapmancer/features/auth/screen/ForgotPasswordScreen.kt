@@ -1,6 +1,5 @@
 package com.smach.zapmancer.features.auth.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordViewModel
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
@@ -56,13 +60,15 @@ fun ForgotPasswordScreen(
     onBackToLogin: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-    ForgotPasswordContent(
-        state = state,
-        onEmailChange = { viewModel.onEvent(ForgotPasswordEvent.EmailChanged(it)) },
-        onSubmit = { viewModel.onEvent(ForgotPasswordEvent.Submit) },
-        onBackToLogin = onBackToLogin,
-    )
+    val windowLayout = rememberWindowLayout()
+    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
+        ForgotPasswordContent(
+            state = state,
+            onEmailChange = { viewModel.onEvent(ForgotPasswordEvent.EmailChanged(it)) },
+            onSubmit = { viewModel.onEvent(ForgotPasswordEvent.Submit) },
+            onBackToLogin = onBackToLogin,
+        )
+    }
 }
 
 @Composable
@@ -78,6 +84,7 @@ private fun ForgotPasswordContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(max = 480.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -89,10 +96,7 @@ private fun ForgotPasswordContent(
 
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.outline,
-                ),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
             ) {
@@ -100,7 +104,6 @@ private fun ForgotPasswordContent(
                     modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    // Email Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             "Email Address",
@@ -166,11 +169,7 @@ private fun ForgotPasswordContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text(
-                                    "Send Recovery Link",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                )
+                                Text("Send Recovery Link", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
@@ -182,7 +181,6 @@ private fun ForgotPasswordContent(
                 }
             }
 
-            // Footer
             Text(
                 "Back to Login",
                 fontSize = 14.sp,
@@ -198,11 +196,13 @@ private fun ForgotPasswordContent(
 @Composable
 private fun ForgotPasswordPreview() {
     MaterialTheme {
-        ForgotPasswordContent(
-            state = ForgotPasswordUiState(),
-            onEmailChange = {},
-            onSubmit = {},
-            onBackToLogin = {},
-        )
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            ForgotPasswordContent(
+                state = ForgotPasswordUiState(),
+                onEmailChange = {},
+                onSubmit = {},
+                onBackToLogin = {},
+            )
+        }
     }
 }

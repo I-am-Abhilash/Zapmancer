@@ -2,7 +2,8 @@ package com.smach.zapmancer.features.profile.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.PortfolioItem
 import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
@@ -43,9 +44,8 @@ class ProfileViewModel(
     private fun loadProfile() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = getUserProfileUseCase(userId)) {
-                is Result.Success -> {
-                    val profile = result.data
+            getUserProfileUseCase(userId).foldTyped(
+                onSuccess = { profile ->
                     updateState {
                         copy(
                             name = profile.name,
@@ -82,39 +82,37 @@ class ProfileViewModel(
                             isOwnProfile = userId.isNullOrEmpty(),
                         )
                     }
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to load profile",
+                            error = error.toUserMessage(),
                         )
                     }
-                }
-            }
+                },
+            )
         }
     }
 
     private fun hireUser() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null, isHireSuccess = false) }
-            when (val result = hireUserUseCase(userId ?: "")) {
-                is Result.Success -> {
+            hireUserUseCase(userId ?: "").foldTyped(
+                onSuccess = {
                     updateState { copy(isLoading = false, isHireSuccess = true) }
                     sendEffect(ProfileEffect.ShowToast("Hire request processed successfully!"))
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to process hire request",
+                            error = error.toUserMessage(),
                         )
                     }
-                    sendEffect(ProfileEffect.ShowToast("Failed to process hire request"))
-                }
-            }
+                    sendEffect(ProfileEffect.ShowToast("Failed to process hire request: ${error.toUserMessage()}"))
+                },
+            )
         }
     }
 

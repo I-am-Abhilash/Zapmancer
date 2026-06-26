@@ -1,8 +1,0 @@
-feature/
-├── auth/       # Login/signup screens & logic
-├── alerts/     # Notifications handling
-├── common/     # Shared components, theme, shimmer effects
-├── messages/   # Chat/conversation UI
-├── profile/    # User profile screen
-├── projects/   # Project listing and detail views
-└── proposal/   # Proposal submission flow

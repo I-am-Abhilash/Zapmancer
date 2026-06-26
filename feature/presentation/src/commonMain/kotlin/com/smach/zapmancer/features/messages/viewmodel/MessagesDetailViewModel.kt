@@ -70,6 +70,7 @@ class MessagesDetailViewModel(
         viewModelScope.launch {
             updateState { copy(typingText = "") }
             sendMessageUseCase(conversationId, text)
+            // Result intentionally ignored; UI re-collects messages from getMessagesUseCase flow.
         }
     }
 

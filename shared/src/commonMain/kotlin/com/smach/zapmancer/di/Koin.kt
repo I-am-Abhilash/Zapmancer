@@ -12,33 +12,24 @@ import org.koin.dsl.module
 
 /**
  * Initializes Koin dependency injection container for the application.
- * 
- * @param appDeclaration Optional additional module declarations to include
+ *
+ * Note: [appModule] already includes [coreModule], [dataModule], and [presentationModule]
+ * via `includes(...)`, so passing them again at the top-level would double-register bindings.
  */
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
     startKoin {
-
-        modules(
-            coreModule,           // Core utilities and common dependencies first
-            dataModule,          // Data layer repositories next  
-            presentationModule,   // UI-related components last
-            appModule(),         // Main application view models
-        )
-        
+        modules(appModule())
         appDeclaration()
     }
 }
 
 /**
- * Creates the main application module with all necessary dependencies.
+ * Creates the main application module. Sub-modules are included here (not at the
+ * top-level) so each is registered exactly once.
  */
 fun appModule(): Module = module {
-    
-    /**
-     * Main ViewModel for managing overall app state and navigation.
-     */
     viewModelOf(::MainViewModel)
-    
+
     includes(
         coreModule,
         dataModule,

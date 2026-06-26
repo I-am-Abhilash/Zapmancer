@@ -2,7 +2,7 @@ package com.smach.zapmancer.features.proposal.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.domain.usecase.GetProjectProposalsUseCase
 import com.smach.zapmancer.features.proposal.state.ClientProposalsUiState
 import kotlinx.coroutines.launch
@@ -45,21 +45,12 @@ class ClientProposalsViewModel(
     private fun loadProposals() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = getProjectProposalsUseCase(projectId)) {
-                is Result.Success -> {
-                    updateState { copy(isLoading = false, proposals = result.data) }
-                }
-
-                is Result.Error -> {
-                    // Fallback to static mock proposals if the server returns error
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            proposals = fallbackProposals,
-                        )
-                    }
-                }
-            }
+            getProjectProposalsUseCase(projectId).foldTyped(
+                onSuccess = { proposals ->
+                    updateState { copy(isLoading = false, proposals = proposals) }
+                },
+                onError = { /* keep state; user can retry */ },
+            )
         }
     }
 

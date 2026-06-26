@@ -34,5 +34,10 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
+        }
     }
 }

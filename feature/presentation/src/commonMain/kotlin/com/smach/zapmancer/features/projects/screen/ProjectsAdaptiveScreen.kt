@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
+import com.smach.zapmancer.features.projects.screen.ProjectListContent
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf

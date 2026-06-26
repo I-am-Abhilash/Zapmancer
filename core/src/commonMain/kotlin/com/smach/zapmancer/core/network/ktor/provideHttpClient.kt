@@ -1,11 +1,14 @@
 package com.smach.zapmancer.core.network.ktor
 
+import com.smach.zapmancer.core.network.Environment
 import com.smach.zapmancer.core.network.model.RefreshTokenRequest
 import com.smach.zapmancer.core.network.model.RefreshTokenResponse
 import com.smach.zapmancer.core.network.session.SessionManager
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -24,7 +27,7 @@ import kotlinx.serialization.json.Json
 fun provideHttpClient(sessionManager: SessionManager): HttpClient {
     return HttpClient {
         defaultRequest {
-            url(NetworkConstants.BASE_URL)
+            url(Environment.config().baseUrl)
             contentType(ContentType.Application.Json)
         }
         install(ContentNegotiation) {
@@ -44,6 +47,16 @@ fun provideHttpClient(sessionManager: SessionManager): HttpClient {
                         Napier.v(tag = "HTTP Client", message = message)
                     }
                 }
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 30_000
+            connectTimeoutMillis = 10_000
+            socketTimeoutMillis = 30_000
+        }
+        install(HttpRequestRetry) {
+            retryOnException(maxRetries = 3, retryOnTimeout = true)
+            retryOnServerErrors(maxRetries = 2)
+            exponentialDelay(base = 2.0, maxDelayMs = 8_000)
         }
         install(Auth) {
             bearer {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -51,14 +53,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthDivider
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.SocialAuthButton
 import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
-
-// Flip7 Palette
 
 @Composable
 fun LoginScreen(
@@ -75,15 +78,19 @@ fun LoginScreen(
         }
     }
 
-    LoginContent(
-        state = state,
-        onEmailChanged = { viewModel.onEvent(LoginEvent.OnEmailChanged(it)) },
-        onPasswordChanged = { viewModel.onEvent(LoginEvent.OnPasswordChanged(it)) },
-        onSubmit = { viewModel.onEvent(LoginEvent.Submit) },
-        onTogglePassword = { viewModel.onEvent(LoginEvent.OnTogglePasswordVisibility) },
-        onNavigateToForgot = onNavigateToForgot,
-        onNavigateToSignup = onNavigateToSignup,
-    )
+    val windowLayout = rememberWindowLayout()
+
+    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
+        LoginContent(
+            state = state,
+            onEmailChanged = { viewModel.onEvent(LoginEvent.OnEmailChanged(it)) },
+            onPasswordChanged = { viewModel.onEvent(LoginEvent.OnPasswordChanged(it)) },
+            onSubmit = { viewModel.onEvent(LoginEvent.Submit) },
+            onTogglePassword = { viewModel.onEvent(LoginEvent.OnTogglePasswordVisibility) },
+            onNavigateToForgot = onNavigateToForgot,
+            onNavigateToSignup = onNavigateToSignup,
+        )
+    }
 }
 
 @Composable
@@ -103,6 +110,7 @@ private fun LoginContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(max = 520.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -112,7 +120,6 @@ private fun LoginContent(
                 subtitle = "Sign in to your dashboard",
             )
 
-            // Login Form Card
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = androidx.compose.foundation.BorderStroke(
@@ -126,7 +133,6 @@ private fun LoginContent(
                     modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    // Email Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             "Email Address",
@@ -144,14 +150,11 @@ private fun LoginContent(
                                 imeAction = ImeAction.Next,
                             ),
                             keyboardActions = KeyboardActions(onNext = {
-                                focusManager.moveFocus(
-                                    FocusDirection.Down,
-                                )
+                                focusManager.moveFocus(FocusDirection.Down)
                             }),
                         )
                     }
 
-                    // Password Field
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -191,7 +194,6 @@ private fun LoginContent(
                         Text(state.error, color = Color.Red, fontSize = 12.sp)
                     }
 
-                    // Sign In Button
                     Button(
                         onClick = onSubmit,
                         modifier = Modifier
@@ -236,7 +238,6 @@ private fun LoginContent(
                 }
             }
 
-            // Footer
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -255,7 +256,6 @@ private fun LoginContent(
                 )
             }
 
-            // System Status
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -280,14 +280,16 @@ private fun LoginContent(
 @Composable
 private fun LoginContentPreview() {
     MaterialTheme {
-        LoginContent(
-            state = LoginUiState(),
-            onEmailChanged = {},
-            onPasswordChanged = {},
-            onSubmit = {},
-            onTogglePassword = {},
-            onNavigateToForgot = {},
-            onNavigateToSignup = {},
-        )
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            LoginContent(
+                state = LoginUiState(),
+                onEmailChanged = {},
+                onPasswordChanged = {},
+                onSubmit = {},
+                onTogglePassword = {},
+                onNavigateToForgot = {},
+                onNavigateToSignup = {},
+            )
+        }
     }
 }

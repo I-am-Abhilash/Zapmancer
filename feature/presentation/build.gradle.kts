@@ -57,5 +57,11 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiTooling)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
+            implementation(libs.mokkery.runtime)
+        }
     }
 }

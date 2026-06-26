@@ -1,19 +1,17 @@
 package com.smach.zapmancer.domain.usecase
 
+import com.smach.zapmancer.core.common.utils.DataError
+import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.repository.HomeRepository
 
 class ExportActivityCsvUseCase(
     private val repository: HomeRepository,
 ) {
-    suspend operator fun invoke(activities: List<UserActivity>): Result<String> = try {
+    suspend operator fun invoke(activities: List<UserActivity>): Result<String, DataError.Network> {
         if (activities.isEmpty()) {
-            Result.failure(Exception("No activities to export"))
-        } else {
-            val filePath = repository.exportActivitiesToCsv(activities)
-            Result.success(filePath)
+            return Result.Error(DataError.Network.CLIENT_ERROR)
         }
-    } catch (e: Exception) {
-        Result.failure(e)
+        return repository.exportActivitiesToCsv(activities)
     }
 }

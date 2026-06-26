@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +34,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +42,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,6 +55,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
@@ -71,23 +75,24 @@ fun ProjectDetailScreen(
     val viewModel: ProjectDetailViewModel =
         koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
     val state by viewModel.uiState.collectAsState()
+    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ProjectDetailEffect.ShowToast -> {
-                    showSnackbar(effect.message)
-                }
+                is ProjectDetailEffect.ShowToast -> showSnackbar(effect.message)
             }
         }
     }
 
-    ProjectDetailScreen(
-        state = state,
-        onBackClick = onBackClick,
-        onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
-        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
-    )
+    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
+        ProjectDetailScreen(
+            state = state,
+            onBackClick = onBackClick,
+            onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
+            onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
+        )
+    }
 }
 
 @Composable
@@ -105,7 +110,6 @@ fun ProjectDetailScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDetailContent(
     state: ProjectDetailUiState,
@@ -114,27 +118,37 @@ fun ProjectDetailContent(
     onApplyClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
+    val windowLayout = LocalWindowLayout.current
+
     val content = @Composable { padding: PaddingValues ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            item { ProjectHeaderSection(state) }
-            item { BudgetSection(state) }
-            item { ProjectScopeSection(state) }
-            item { RequiredSkillsSection(state) }
-            item {
-                ApplySaveButtonSection(
-                    isSaved = state.isSaved,
-                    onApplyClick = onApplyClick,
-                    onSaveClick = onSaveClick,
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = windowLayout.contentMaxWidthDp.dp)
+                    .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item { ProjectHeaderSection(state) }
+                item { BudgetSection(state) }
+                item { ProjectScopeSection(state) }
+                item { RequiredSkillsSection(state) }
+                item {
+                    ApplySaveButtonSection(
+                        isSaved = state.isSaved,
+                        onApplyClick = onApplyClick,
+                        onSaveClick = onSaveClick,
+                    )
+                }
+                item { ClientSummarySection(state) }
+                item { Spacer(modifier = Modifier.height(48.dp)) }
             }
-            item { ClientSummarySection(state) }
-            item { Spacer(modifier = Modifier.height(48.dp)) }
         }
     }
 
@@ -143,7 +157,7 @@ fun ProjectDetailContent(
             topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
-                    showBackButton = true,
+                    showBackButton = windowLayout.isCompact,
                     onBackClick = onBackClick,
                     actions = {
                         IconButton(onClick = {}) {
@@ -164,9 +178,7 @@ fun ProjectDetailContent(
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,
-        ) { padding ->
-            content(padding)
-        }
+        ) { padding -> content(padding) }
     } else {
         content(PaddingValues(0.dp))
     }
@@ -181,12 +193,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Default.Code,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp),
-                )
+                Icon(Icons.Default.Code, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     state.category.uppercase(),
@@ -212,24 +219,11 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
             ) {
                 InfoItem(Icons.Default.Schedule, "Posted ${state.postedTime}")
                 InfoItem(Icons.Default.LocationOn, state.location)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 if (state.isPaymentVerified) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.Verified,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(14.dp),
-                        )
+                        Icon(Icons.Default.Verified, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            "Payment Verified",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                        )
+                        Text("Payment Verified", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -240,18 +234,9 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
 @Composable
 fun InfoItem(icon: ImageVector, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(14.dp),
-        )
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
         Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -263,46 +248,15 @@ fun BudgetSection(state: ProjectDetailUiState) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-            Text(
-                "TOTAL BUDGET",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp,
-            )
-            Text(
-                state.budgetRange,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Text(
-                state.projectType,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
-            )
+            Text("TOTAL BUDGET", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f), letterSpacing = 1.sp)
+            Text(state.budgetRange, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onBackground)
+            Text(state.projectType, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f))
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
-
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-            Text(
-                "TIMELINE",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp,
-            )
-            Text(
-                state.timeline,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Text(
-                "Est. Start: ${state.estStart}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
-            )
+            Text("TIMELINE", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f), letterSpacing = 1.sp)
+            Text(state.timeline, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+            Text("Est. Start: ${state.estStart}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f))
         }
     }
 }
@@ -315,46 +269,19 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "Project Scope",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Text("Project Scope", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                state.projectScope,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 24.sp,
-            )
+            Text(state.projectScope, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 24.sp)
             Spacer(modifier = Modifier.height(24.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "Key Deliverables",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Text("Key Deliverables", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(12.dp))
             state.deliverables.forEach { deliverable ->
-                Row(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp),
-                    )
+                Row(modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        deliverable,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Text(deliverable, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -370,12 +297,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-            Text(
-                "Required Skills",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Text("Required Skills", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(12.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -385,10 +307,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                     Surface(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(999.dp),
-                        border = BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
                     ) {
                         Text(
                             skill,
@@ -410,36 +329,28 @@ fun ApplySaveButtonSection(
     onApplyClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val windowLayout = LocalWindowLayout.current
+    val rowModifier = if (windowLayout.isExpanded) Modifier.fillMaxWidth(0.6f) else Modifier.fillMaxWidth()
+    Row(modifier = rowModifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Button(
             onClick = onApplyClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-            ),
+            modifier = Modifier.weight(1f),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(999.dp),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp),
         ) {
             Text("Apply Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
-
         Button(
             onClick = onSaveClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ),
+            modifier = Modifier.weight(1f),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface, contentColor = MaterialTheme.colorScheme.onSurface),
             shape = RoundedCornerShape(999.dp),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             contentPadding = PaddingValues(vertical = 12.dp),
         ) {
-            Text(
-                if (isSaved) "Unsave Project" else "Save Project",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-            )
+            Text(if (isSaved) "Unsave Project" else "Save Project", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }
@@ -457,26 +368,12 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    "Client Summary",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                Text("Client Summary", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 if (state.isClientActive) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            modifier = Modifier.size(8.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ) {}
+                        Surface(modifier = Modifier.size(8.dp), color = MaterialTheme.colorScheme.primary, shape = CircleShape) {}
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            "Active Now",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                        )
+                        Text("Active Now", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -487,88 +384,38 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         .size(64.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.background)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(8.dp),
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    // Placeholder for logo
-                }
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp)),
+                )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(
-                        state.clientName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        "${state.clientIndustry} · ${state.clientLocation}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Text(state.clientName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Text("${state.clientIndustry} · ${state.clientLocation}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant,
-                        RoundedCornerShape(8.dp),
-                    )
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "PROJECTS",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        state.clientProjectsCount.toString(),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
+                    Text("PROJECTS", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(state.clientProjectsCount.toString(), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "RATING",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Text("RATING", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            state.clientRating.toString(),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
+                        Text(state.clientRating.toString(), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            Icons.Default.Star,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(18.dp),
-                        )
+                        Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(18.dp))
                     }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "VERIFICATION",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Text("VERIFICATION", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(8.dp))
             VerificationItem("Payment Method Verified", state.isPaymentVerified)
             VerificationItem("Identity Verified", state.isIdentityVerified)
@@ -579,45 +426,29 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
 
 @Composable
 fun VerificationItem(text: String, isVerified: Boolean = false) {
-    Row(
-        modifier = Modifier.padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    Row(modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = if (isVerified) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                    alpha = 0.4f,
-                )
-            },
+            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
             modifier = Modifier.size(16.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+        Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
 @Composable
 fun VerticalDivider(color: Color) {
-    Box(
-        modifier = Modifier
-            .width(1.dp)
-            .height(40.dp)
-            .background(color),
-    )
+    Box(modifier = Modifier.width(1.dp).height(40.dp).background(color))
 }
 
 @Preview
 @Composable
 fun ProjectDetailScreenPreview() {
     MaterialTheme {
-        ProjectDetailScreen()
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            ProjectDetailScreen()
+        }
     }
 }

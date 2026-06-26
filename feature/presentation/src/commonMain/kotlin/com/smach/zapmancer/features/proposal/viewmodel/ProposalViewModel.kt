@@ -2,6 +2,8 @@ package com.smach.zapmancer.features.proposal.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.Proposal
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
 import com.smach.zapmancer.features.proposal.state.ProposalUiState
@@ -25,22 +27,10 @@ class ProposalViewModel(
 
     override fun onEvent(event: ProposalEvent) {
         when (event) {
-            is ProposalEvent.OnPitchChanged -> {
-                updateState { copy(pitchContent = event.pitch) }
-            }
-
-            is ProposalEvent.OnBudgetChanged -> {
-                updateState { copy(budget = event.budget) }
-            }
-
-            is ProposalEvent.OnTimelineChanged -> {
-                updateState { copy(timelineDays = event.timeline) }
-            }
-
-            is ProposalEvent.StepChanged -> {
-                updateState { copy(currentStep = event.step) }
-            }
-
+            is ProposalEvent.OnPitchChanged -> updateState { copy(pitchContent = event.pitch) }
+            is ProposalEvent.OnBudgetChanged -> updateState { copy(budget = event.budget) }
+            is ProposalEvent.OnTimelineChanged -> updateState { copy(timelineDays = event.timeline) }
+            is ProposalEvent.StepChanged -> updateState { copy(currentStep = event.step) }
             ProposalEvent.Submit -> submitProposal()
         }
     }
@@ -59,14 +49,14 @@ class ProposalViewModel(
                 projectType = current.projectType,
             )
 
-            submitProposalUseCase(domainProposal).fold(
+            submitProposalUseCase(domainProposal).foldTyped(
                 onSuccess = {
                     updateState { copy(isSubmitting = false, isSubmitted = true) }
                     sendEffect(ProposalEffect.ShowToast("Proposal submitted successfully!"))
                 },
-                onFailure = { error ->
+                onError = { error ->
                     updateState { copy(isSubmitting = false) }
-                    sendEffect(ProposalEffect.ShowToast("Submission failed: ${error.message}"))
+                    sendEffect(ProposalEffect.ShowToast("Submission failed: ${error.toUserMessage()}"))
                 },
             )
         }

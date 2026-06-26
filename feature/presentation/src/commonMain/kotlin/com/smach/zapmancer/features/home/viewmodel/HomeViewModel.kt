@@ -2,6 +2,8 @@ package com.smach.zapmancer.features.home.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.usecase.ExportActivityCsvUseCase
 import com.smach.zapmancer.domain.usecase.GetHomeDashboardUseCase
@@ -46,7 +48,7 @@ class HomeViewModel(
     private fun loadDashboard() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            getHomeDashboardUseCase().fold(
+            getHomeDashboardUseCase().foldTyped(
                 onSuccess = { dashboard ->
                     updateState {
                         copy(
@@ -71,9 +73,9 @@ class HomeViewModel(
                         )
                     }
                 },
-                onFailure = { exception ->
+                onError = { error ->
                     updateState { copy(isLoading = false) }
-                    sendEffect(HomeEffect.ShowToast("Failed to load dashboard: ${exception.message}"))
+                    sendEffect(HomeEffect.ShowToast("Failed to load dashboard: ${error.toUserMessage()}"))
                 },
             )
         }
@@ -92,12 +94,12 @@ class HomeViewModel(
                     monetaryValue = it.monetaryValue,
                 )
             }
-            exportActivityCsvUseCase(activities).fold(
+            exportActivityCsvUseCase(activities).foldTyped(
                 onSuccess = { filePath ->
                     sendEffect(HomeEffect.ShowToast("CSV exported to: $filePath"))
                 },
-                onFailure = { exception ->
-                    sendEffect(HomeEffect.ShowToast("Export failed: ${exception.message}"))
+                onError = { error ->
+                    sendEffect(HomeEffect.ShowToast("Export failed: ${error.toUserMessage()}"))
                 },
             )
         }

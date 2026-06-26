@@ -1,14 +1,12 @@
 package com.smach.zapmancer.domain.usecase
 
-import com.smach.zapmancer.domain.repository.SettingsRepository
+import com.smach.zapmancer.core.common.utils.DataError
+import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.domain.repository.AuthRepository
 
 class LogoutUseCase(
-    private val repository: SettingsRepository,
+    private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit> = try {
+    suspend operator fun invoke(): Result<Unit, DataError.Network> =
         repository.logout()
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
+import com.smach.zapmancer.features.messages.screen.MessagesListContent
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf

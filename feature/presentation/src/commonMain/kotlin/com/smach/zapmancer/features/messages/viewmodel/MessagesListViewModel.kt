@@ -2,7 +2,7 @@ package com.smach.zapmancer.features.messages.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.domain.usecase.GetConversationsUseCase
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
@@ -39,11 +39,11 @@ class MessagesListViewModel(
     private fun loadConversations() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            when (val result = getConversationsUseCase()) {
-                is Result.Success -> {
+            getConversationsUseCase().foldTyped(
+                onSuccess = { list ->
                     updateState {
                         copy(
-                            conversations = result.data.map { domainItem ->
+                            conversations = list.map { domainItem ->
                                 ConversationItem(
                                     id = domainItem.id,
                                     name = domainItem.name,
@@ -57,12 +57,9 @@ class MessagesListViewModel(
                             isLoading = false,
                         )
                     }
-                }
-
-                is Result.Error -> {
-                    updateState { copy(isLoading = false) }
-                }
-            }
+                },
+                onError = { updateState { copy(isLoading = false) } },
+            )
         }
     }
 }

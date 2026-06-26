@@ -1,6 +1,8 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
 import com.smach.zapmancer.domain.model.SettingsData
 import com.smach.zapmancer.domain.repository.SettingsRepository
@@ -18,105 +20,66 @@ class SettingsRepositoryImpl(
     private val client: HttpClient,
 ) : SettingsRepository {
 
-    private val _settingsFlow = MutableStateFlow(
-        SettingsData(
-            email = "admin@zapmancer.io",
-            organization = "Zapmancer Core Team",
-            isTwoFactorEnabled = true,
-            isDarkModeEnabled = true,
-            isEmailNotificationsEnabled = false,
-            version = "v2.4.12-beta // ZAPMANCER_CORE_X64",
-            isClientModeEnabled = false,
-        ),
-    )
-
+    // Start with sensible defaults so the UI has something to render before the
+    // first network response. Network responses replace these — we never silently
+    // fall back to fake seed values on error.
+    private val _settingsFlow = MutableStateFlow(SettingsData())
     override val settingsFlow: Flow<SettingsData> = _settingsFlow.asStateFlow()
 
-    override suspend fun getSettings(): SettingsData = when (
-        val result = safeApiCall<SettingsData> {
-            client.get("settings")
-        }
-    ) {
-        is Result.Success -> {
+    override suspend fun getSettings(): Result<SettingsData, DataError.Network> {
+        val result = safeApiCall<SettingsData> { client.get("settings") }
+        if (result is Result.Success) {
             _settingsFlow.value = result.data
-            result.data
         }
-
-        is Result.Error -> {
-            _settingsFlow.value
-        }
+        return result
     }
 
-    override suspend fun updateTwoFactor(enabled: Boolean) = when (
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun updateTwoFactor(enabled: Boolean): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.put("settings/2fa") {
                 setBody(UpdateSettingRequest(enabled = enabled))
             }
-        }
-    ) {
-        is Result.Success -> {
-            _settingsFlow.value = _settingsFlow.value.copy(isTwoFactorEnabled = enabled)
-        }
+        }.also { result ->
+            if (result is Result.Success) {
+                _settingsFlow.value = _settingsFlow.value.copy(isTwoFactorEnabled = enabled)
+            }
+        }.toUnitResult()
 
-        is Result.Error -> {
-            throw Exception("Failed to update 2FA: ${result.error}")
-        }
-    }
-
-    override suspend fun updateDarkMode(enabled: Boolean) = when (
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun updateDarkMode(enabled: Boolean): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.put("settings/dark-mode") {
                 setBody(UpdateSettingRequest(enabled = enabled))
             }
-        }
-    ) {
-        is Result.Success -> {
-            _settingsFlow.value = _settingsFlow.value.copy(isDarkModeEnabled = enabled)
-        }
+        }.also { result ->
+            if (result is Result.Success) {
+                _settingsFlow.value = _settingsFlow.value.copy(isDarkModeEnabled = enabled)
+            }
+        }.toUnitResult()
 
-        is Result.Error -> {
-            throw Exception("Failed to update dark mode: ${result.error}")
-        }
-    }
-
-    override suspend fun updateEmailNotifications(enabled: Boolean) = when (
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.put("settings/email-notifications") {
                 setBody(UpdateSettingRequest(enabled = enabled))
             }
-        }
-    ) {
-        is Result.Success -> {
-            _settingsFlow.value =
-                _settingsFlow.value.copy(isEmailNotificationsEnabled = enabled)
-        }
+        }.also { result ->
+            if (result is Result.Success) {
+                _settingsFlow.value = _settingsFlow.value.copy(isEmailNotificationsEnabled = enabled)
+            }
+        }.toUnitResult()
 
-        is Result.Error -> {
-            throw Exception("Failed to update email notifications: ${result.error}")
-        }
-    }
-
-    override suspend fun updateClientMode(enabled: Boolean) = when (
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun updateClientMode(enabled: Boolean): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.put("settings/client-mode") {
                 setBody(UpdateSettingRequest(enabled = enabled))
             }
-        }
-    ) {
-        is Result.Success -> {
-            _settingsFlow.value = _settingsFlow.value.copy(isClientModeEnabled = enabled)
-        }
+        }.also { result ->
+            if (result is Result.Success) {
+                _settingsFlow.value = _settingsFlow.value.copy(isClientModeEnabled = enabled)
+            }
+        }.toUnitResult()
 
-        is Result.Error -> {
-            throw Exception("Failed to update client mode: ${result.error}")
-        }
-    }
-
-    override suspend fun logout() {
-        safeApiCall<CommonResponse> {
-            client.post("auth/logout")
-        }
-    }
+    override suspend fun logout(): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("auth/logout") }.toUnitResult()
 }
 
 @Serializable

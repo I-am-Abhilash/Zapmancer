@@ -2,6 +2,7 @@ package com.smach.zapmancer.features.settings.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.domain.usecase.GetSettingsUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
 import com.smach.zapmancer.domain.usecase.UpdateSettingsUseCase
@@ -41,23 +42,11 @@ class SettingsViewModel(
     private fun loadSettings() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            getSettingsUseCase().fold(
+            getSettingsUseCase().foldTyped(
                 onSuccess = { settings ->
-                    updateState {
-                        copy(
-                            settings = settings.copy(
-                                email = settings.email,
-                                organization = settings.organization,
-                                isTwoFactorEnabled = settings.isTwoFactorEnabled,
-                                isDarkModeEnabled = settings.isDarkModeEnabled,
-                                isEmailNotificationsEnabled = settings.isEmailNotificationsEnabled,
-                                version = settings.version,
-                                isClientModeEnabled = settings.isClientModeEnabled,
-                            ),
-                        )
-                    }
+                    updateState { copy(isLoading = false, settings = settings) }
                 },
-                onFailure = {
+                onError = {
                     updateState { copy(isLoading = false) }
                 },
             )
@@ -66,56 +55,36 @@ class SettingsViewModel(
 
     private fun toggleTwoFactor(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateTwoFactor(enabled).fold(
-                onSuccess = {
-                    updateState {
-                        copy(
-                            settings = settings?.copy(
-                                isTwoFactorEnabled = enabled,
-                            ),
-                        )
-                    }
-                },
-                onFailure = {},
+            updateSettingsUseCase.updateTwoFactor(enabled).foldTyped(
+                onSuccess = { updateState { copy(settings = settings?.copy(isTwoFactorEnabled = enabled)) } },
+                onError = { /* keep prior state; user can retry */ },
             )
         }
     }
 
     private fun toggleDarkMode(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateDarkMode(enabled).fold(
-                onSuccess = {
-                    updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) }
-                },
-                onFailure = {},
+            updateSettingsUseCase.updateDarkMode(enabled).foldTyped(
+                onSuccess = { updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) } },
+                onError = { },
             )
         }
     }
 
     private fun toggleNotifications(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateEmailNotifications(enabled).fold(
-                onSuccess = {
-                    updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) }
-                },
-                onFailure = {},
+            updateSettingsUseCase.updateEmailNotifications(enabled).foldTyped(
+                onSuccess = { updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) } },
+                onError = { },
             )
         }
     }
 
     private fun toggleClientMode(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateClientMode(enabled).fold(
-                onSuccess = {
-                    updateState {
-                        copy(
-                            settings = settings?.copy(
-                                isClientModeEnabled = enabled,
-                            ),
-                        )
-                    }
-                },
-                onFailure = {},
+            updateSettingsUseCase.updateClientMode(enabled).foldTyped(
+                onSuccess = { updateState { copy(settings = settings?.copy(isClientModeEnabled = enabled)) } },
+                onError = { },
             )
         }
     }

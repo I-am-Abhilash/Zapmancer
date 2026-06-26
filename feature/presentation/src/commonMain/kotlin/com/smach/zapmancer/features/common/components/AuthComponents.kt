@@ -31,7 +31,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,78 +44,153 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
 
 @Composable
 fun AuthAdaptiveLayout(
     formContent: @Composable () -> Unit,
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
-
-    if (isCompact) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            formContent()
-        }
-    } else {
-        Row(modifier = Modifier.fillMaxSize()) {
-            // Branding Side
-            Box(
+    val windowLayout = LocalWindowLayout.current
+    when (windowLayout) {
+        WindowLayout.Compact -> {
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.primaryContainer,
-                            ),
-                        ),
-                    ),
-                contentAlignment = Alignment.Center,
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        Icons.Default.Bolt,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(120.dp),
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        "Zapmancer",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White,
-                    )
-                    Text(
-                        "Build the future of decentralized apps.",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 32.dp),
-                    )
-                }
-            }
-
-            // Form Side
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.background),
-                contentAlignment = Alignment.Center,
-            ) {
-                Box(modifier = Modifier.widthIn(max = 450.dp).padding(32.dp)) {
+                AuthBrandHeader()
+                Spacer(modifier = Modifier.height(24.dp))
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
                     formContent()
                 }
             }
         }
+
+        WindowLayout.Medium -> {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .fillMaxHeight()
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                ),
+                            ),
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AuthBrandPanel(iconSize = 96.dp, titleSize = 40.sp)
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(0.55f)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .widthIn(max = 480.dp)
+                            .padding(32.dp),
+                    ) {
+                        formContent()
+                    }
+                }
+            }
+        }
+
+        WindowLayout.Expanded -> {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(0.55f)
+                        .fillMaxHeight()
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                ),
+                            ),
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AuthBrandPanel(iconSize = 140.dp, titleSize = 56.sp)
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .widthIn(max = 520.dp)
+                            .padding(48.dp),
+                    ) {
+                        formContent()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AuthBrandHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            Icons.Default.Bolt,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(28.dp),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            "Zapmancer",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@Composable
+private fun AuthBrandPanel(iconSize: androidx.compose.ui.unit.Dp, titleSize: androidx.compose.ui.unit.TextUnit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            Icons.Default.Bolt,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(iconSize),
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            "Zapmancer",
+            style = MaterialTheme.typography.displayMedium.copy(fontSize = titleSize),
+            fontWeight = FontWeight.ExtraBold,
+            color = Color.White,
+        )
+        Text(
+            "Build the future of decentralized apps.",
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.White.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp),
+        )
     }
 }
 

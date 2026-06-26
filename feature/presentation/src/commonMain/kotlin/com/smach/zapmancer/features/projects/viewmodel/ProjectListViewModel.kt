@@ -2,6 +2,8 @@ package com.smach.zapmancer.features.projects.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.GetProjectsUseCase
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.state.toUiModel
@@ -23,29 +25,32 @@ class ProjectListViewModel(
 
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
-            ProjectListEvent.SearchClicked -> {
-            }
-
-            is ProjectListEvent.ProjectClicked -> {
-            }
-
+            ProjectListEvent.SearchClicked -> Unit
+            is ProjectListEvent.ProjectClicked -> Unit
             ProjectListEvent.Refresh -> loadProjects()
         }
     }
 
     private fun loadProjects() {
         viewModelScope.launch {
-            updateState { copy(projects = emptyList()) }
-            getProjectsUseCase().fold(
+            updateState { copy(projects = emptyList(), isLoading = true) }
+            getProjectsUseCase().foldTyped(
                 onSuccess = { list ->
                     updateState {
                         copy(
                             projects = list.map { it.toUiModel() },
+                            isLoading = false,
+                            error = null,
                         )
                     }
                 },
-                onFailure = { error ->
-                    updateState { copy(error = error.message ?: "An unknown error occurred") }
+                onError = { error ->
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            error = error.toUserMessage(),
+                        )
+                    }
                 },
             )
         }

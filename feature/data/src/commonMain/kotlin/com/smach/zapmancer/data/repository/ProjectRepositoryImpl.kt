@@ -1,6 +1,8 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
 import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectDetail
@@ -15,55 +17,28 @@ class ProjectRepositoryImpl(
     private val client: HttpClient,
 ) : ProjectRepository {
 
-    override suspend fun getProjects(): List<Project> = when (
-        val result = safeApiCall<List<Project>> {
-            client.get("projects")
-        }
-    ) {
-        is Result.Success -> result.data
-        is Result.Error -> throw Exception("Failed to fetch projects: ${result.error}")
-    }
+    override suspend fun getProjects(): Result<List<Project>, DataError.Network> =
+        safeApiCall<List<Project>> { client.get("projects") }
 
-    override suspend fun getProjectDetail(id: String): ProjectDetail = when (
-        val result = safeApiCall<ProjectDetail> {
-            client.get("projects/$id")
-        }
-    ) {
-        is Result.Success -> result.data
-        is Result.Error -> throw Exception("Failed to fetch project detail: ${result.error}")
-    }
+    override suspend fun getProjectDetail(id: String): Result<ProjectDetail, DataError.Network> =
+        safeApiCall<ProjectDetail> { client.get("projects/$id") }
 
-    override suspend fun saveProject(id: String, isSaved: Boolean) {
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun saveProject(id: String, isSaved: Boolean): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.post("projects/$id/save") {
                 setBody(SaveProjectRequest(isSaved = isSaved))
             }
-        }
-        if (result is Result.Error) {
-            throw Exception("Failed to save project: ${result.error}")
-        }
-    }
+        }.toUnitResult()
 
-    override suspend fun applyForProject(id: String) {
-        val result = safeApiCall<CommonResponse> {
-            client.post("projects/$id/apply")
-        }
-        if (result is Result.Error) {
-            throw Exception("Failed to apply for project: ${result.error}")
-        }
-    }
+    override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
 
-    override suspend fun postProject(project: ProjectDetail): Result<Unit, com.smach.zapmancer.core.common.utils.DataError.Network> {
-        val result = safeApiCall<CommonResponse> {
+    override suspend fun postProject(project: ProjectDetail): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
             client.post("projects") {
                 setBody(project)
             }
-        }
-        return when (result) {
-            is Result.Success -> Result.Success(Unit)
-            is Result.Error -> Result.Error(result.error)
-        }
-    }
+        }.toUnitResult()
 }
 
 @Serializable

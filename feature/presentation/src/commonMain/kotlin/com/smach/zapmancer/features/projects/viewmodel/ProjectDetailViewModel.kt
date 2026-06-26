@@ -2,6 +2,8 @@ package com.smach.zapmancer.features.projects.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.ApplyProjectUseCase
 import com.smach.zapmancer.domain.usecase.GetProjectDetailUseCase
 import com.smach.zapmancer.domain.usecase.SaveProjectUseCase
@@ -42,7 +44,7 @@ class ProjectDetailViewModel(
     private fun loadProject() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            getProjectDetailUseCase(projectId).fold(
+            getProjectDetailUseCase(projectId).foldTyped(
                 onSuccess = { detail ->
                     updateState {
                         copy(
@@ -72,9 +74,9 @@ class ProjectDetailViewModel(
                         )
                     }
                 },
-                onFailure = { error ->
+                onError = { error ->
                     updateState { copy(isLoading = false) }
-                    sendEffect(ProjectDetailEffect.ShowToast("Failed to load project details: ${error.message}"))
+                    sendEffect(ProjectDetailEffect.ShowToast("Failed to load project details: ${error.toUserMessage()}"))
                 },
             )
         }
@@ -83,13 +85,13 @@ class ProjectDetailViewModel(
     private fun toggleSave() {
         val nextSavedState = !uiState.value.isSaved
         viewModelScope.launch {
-            saveProjectUseCase(projectId, nextSavedState).fold(
+            saveProjectUseCase(projectId, nextSavedState).foldTyped(
                 onSuccess = {
                     updateState { copy(isSaved = nextSavedState) }
                     sendEffect(ProjectDetailEffect.ShowToast(if (nextSavedState) "Project Saved" else "Project Unsaved"))
                 },
-                onFailure = { error ->
-                    sendEffect(ProjectDetailEffect.ShowToast("Failed to update save state: ${error.message}"))
+                onError = { error ->
+                    sendEffect(ProjectDetailEffect.ShowToast("Failed to update save state: ${error.toUserMessage()}"))
                 },
             )
         }
@@ -97,12 +99,12 @@ class ProjectDetailViewModel(
 
     private fun apply() {
         viewModelScope.launch {
-            applyProjectUseCase(projectId).fold(
+            applyProjectUseCase(projectId).foldTyped(
                 onSuccess = {
                     sendEffect(ProjectDetailEffect.ShowToast("Applied successfully!"))
                 },
-                onFailure = { error ->
-                    sendEffect(ProjectDetailEffect.ShowToast("Failed to apply: ${error.message}"))
+                onError = { error ->
+                    sendEffect(ProjectDetailEffect.ShowToast("Failed to apply: ${error.toUserMessage()}"))
                 },
             )
         }

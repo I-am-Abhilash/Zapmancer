@@ -2,7 +2,8 @@ package com.smach.zapmancer.features.alerts.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.NotificationAction
 import com.smach.zapmancer.domain.model.NotificationItem
 import com.smach.zapmancer.domain.model.NotificationType
@@ -56,11 +57,11 @@ class NotificationViewModel(
     private fun loadNotifications() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = getNotificationsUseCase()) {
-                is Result.Success -> {
+            getNotificationsUseCase().foldTyped(
+                onSuccess = { data ->
                     updateState {
                         copy(
-                            notifications = result.data.map { domainItem ->
+                            notifications = data.map { domainItem ->
                                 NotificationItem(
                                     id = domainItem.id,
                                     type = NotificationType.valueOf(domainItem.type.name),
@@ -83,17 +84,16 @@ class NotificationViewModel(
                             isLoading = false,
                         )
                     }
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to load notifications",
+                            error = error.toUserMessage(),
                         )
                     }
-                }
-            }
+                },
+            )
         }
     }
 
@@ -103,8 +103,8 @@ class NotificationViewModel(
 
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = sendNotificationQuickReplyUseCase(notificationId, replyText)) {
-                is Result.Success -> {
+            sendNotificationQuickReplyUseCase(notificationId, replyText).foldTyped(
+                onSuccess = {
                     updateState {
                         copy(
                             isLoading = false,
@@ -113,39 +113,37 @@ class NotificationViewModel(
                     }
                     sendEffect(NotificationEffect.ShowToast("Quick reply sent!"))
                     loadNotifications()
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to send quick reply",
+                            error = error.toUserMessage(),
                         )
                     }
-                }
-            }
+                },
+            )
         }
     }
 
     private fun executeAction(notificationId: String, actionLabel: String) {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = executeNotificationActionUseCase(notificationId, actionLabel)) {
-                is Result.Success -> {
+            executeNotificationActionUseCase(notificationId, actionLabel).foldTyped(
+                onSuccess = {
                     updateState { copy(isLoading = false) }
                     sendEffect(NotificationEffect.ShowToast("Action executed: $actionLabel"))
                     loadNotifications()
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = "Failed to execute action",
+                            error = error.toUserMessage(),
                         )
                     }
-                }
-            }
+                },
+            )
         }
     }
 }

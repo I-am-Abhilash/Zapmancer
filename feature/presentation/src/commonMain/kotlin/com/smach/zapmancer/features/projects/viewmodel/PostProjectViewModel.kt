@@ -2,7 +2,8 @@ package com.smach.zapmancer.features.projects.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.ProjectDetail
 import com.smach.zapmancer.domain.usecase.PostProjectUseCase
 import com.smach.zapmancer.features.projects.state.PostProjectUiState
@@ -114,17 +115,16 @@ class PostProjectViewModel(
                 isIdentityVerified = true,
                 isPhoneVerified = true,
             )
-            when (val result = postProjectUseCase(project)) {
-                is Result.Success -> {
+            postProjectUseCase(project).foldTyped(
+                onSuccess = {
                     updateState { copy(isSubmitting = false, isSubmitted = true) }
                     sendEffect(PostProjectEffect.ShowToast("Project posted successfully!"))
-                }
-
-                is Result.Error -> {
-                    updateState { copy(isSubmitting = false, error = "Failed to post project") }
-                    sendEffect(PostProjectEffect.ShowToast("Failed to post project: ${result.error}"))
-                }
-            }
+                },
+                onError = { error ->
+                    updateState { copy(isSubmitting = false, error = error.toUserMessage()) }
+                    sendEffect(PostProjectEffect.ShowToast("Failed to post project: ${error.toUserMessage()}"))
+                },
+            )
         }
     }
 }

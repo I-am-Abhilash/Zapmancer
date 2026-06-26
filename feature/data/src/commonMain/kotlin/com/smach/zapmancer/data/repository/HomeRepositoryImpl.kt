@@ -1,5 +1,6 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.network.ktor.safeApiCall
 import com.smach.zapmancer.domain.model.HomeDashboard
@@ -15,25 +16,20 @@ class HomeRepositoryImpl(
     private val client: HttpClient,
 ) : HomeRepository {
 
-    override suspend fun getDashboardData(): HomeDashboard = when (
-        val result = safeApiCall<HomeDashboard> {
-            client.get("home/dashboard")
-        }
-    ) {
-        is Result.Success -> result.data
-        is Result.Error -> throw Exception("Failed to load dashboard: ${result.error}")
-    }
+    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> =
+        safeApiCall<HomeDashboard> { client.get("home/dashboard") }
 
-    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): String = when (
-        val result = safeApiCall<ExportResponse> {
+    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): Result<String, DataError.Network> =
+        safeApiCall<ExportResponse> {
             client.post("home/activities/export") {
                 setBody(ExportRequest(activities = activities))
             }
+        }.let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.data.filePath)
+                is Result.Error -> result
+            }
         }
-    ) {
-        is Result.Success -> result.data.filePath
-        is Result.Error -> "activities_export.csv" // fallback local path
-    }
 }
 
 @Serializable

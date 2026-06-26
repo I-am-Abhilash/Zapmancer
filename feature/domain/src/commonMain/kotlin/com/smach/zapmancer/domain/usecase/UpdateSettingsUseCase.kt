@@ -1,35 +1,21 @@
 package com.smach.zapmancer.domain.usecase
 
+import com.smach.zapmancer.core.common.utils.DataError
+import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.repository.SettingsRepository
 
 class UpdateSettingsUseCase(
     private val repository: SettingsRepository,
 ) {
-    suspend fun updateTwoFactor(enabled: Boolean): Result<Unit> = try {
+    suspend fun updateTwoFactor(enabled: Boolean): Result<Unit, DataError.Network> =
         repository.updateTwoFactor(enabled)
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
 
-    suspend fun updateDarkMode(enabled: Boolean): Result<Unit> = try {
+    suspend fun updateDarkMode(enabled: Boolean): Result<Unit, DataError.Network> =
         repository.updateDarkMode(enabled)
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
 
-    suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit> = try {
+    suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit, DataError.Network> =
         repository.updateEmailNotifications(enabled)
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
 
-    suspend fun updateClientMode(enabled: Boolean): Result<Unit> = try {
+    suspend fun updateClientMode(enabled: Boolean): Result<Unit, DataError.Network> =
         repository.updateClientMode(enabled)
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
 }

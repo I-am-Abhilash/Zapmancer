@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,6 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.VerificationUiState
 import com.smach.zapmancer.features.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
@@ -68,13 +72,16 @@ fun VerificationScreen(
         }
     }
 
-    VerificationContent(
-        email = email,
-        state = state,
-        onCodeChanged = { viewModel.onEvent(VerificationEvent.CodeChanged(it)) },
-        onSubmit = { viewModel.onEvent(VerificationEvent.Submit) },
-        onBack = onBack,
-    )
+    val windowLayout = rememberWindowLayout()
+    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
+        VerificationContent(
+            email = email,
+            state = state,
+            onCodeChanged = { viewModel.onEvent(VerificationEvent.CodeChanged(it)) },
+            onSubmit = { viewModel.onEvent(VerificationEvent.Submit) },
+            onBack = onBack,
+        )
+    }
 }
 
 @Composable
@@ -92,6 +99,7 @@ private fun VerificationContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .widthIn(max = 520.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -147,11 +155,7 @@ private fun VerificationContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text(
-                                    "Verify & Continue",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                )
+                                Text("Verify & Continue", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
@@ -172,7 +176,6 @@ private fun VerificationContent(
                 }
             }
 
-            // Footer
             Text(
                 "Change Email",
                 fontSize = 14.sp,
@@ -251,12 +254,14 @@ fun OtpInputField(
 @Composable
 private fun VerificationContentPreview() {
     MaterialTheme {
-        VerificationContent(
-            email = "test@example.com",
-            state = VerificationUiState(),
-            onCodeChanged = {},
-            onSubmit = {},
-            onBack = {},
-        )
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            VerificationContent(
+                email = "test@example.com",
+                state = VerificationUiState(),
+                onCodeChanged = {},
+                onSubmit = {},
+                onBack = {},
+            )
+        }
     }
 }
