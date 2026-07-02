@@ -17,3 +17,7 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.flyway.database.postgresql)
 }
+
+tasks.shadowJar {
+    isZip64 = true
+}
