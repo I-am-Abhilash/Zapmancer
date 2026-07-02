@@ -2,9 +2,7 @@ package com.smach.zapmancer.home.domain
 
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.feature.api.home.ExportActivitiesResponse
-import com.smach.zapmancer.feature.api.home.HomeDashboard
-import com.smach.zapmancer.feature.api.home.RecentActivity
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.home.data.HomeRepository
 import java.io.File
 

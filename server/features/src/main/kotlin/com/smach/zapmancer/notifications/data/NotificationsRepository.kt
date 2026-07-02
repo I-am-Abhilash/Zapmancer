@@ -3,8 +3,7 @@ package com.smach.zapmancer.notifications.data
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.NotificationActionsTable
 import com.smach.zapmancer.database.NotificationsTable
-import com.smach.zapmancer.notifications.api.NotificationAction
-import com.smach.zapmancer.notifications.api.NotificationItem
+import com.smach.zapmancer.core.common.dto.*
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.selectAll

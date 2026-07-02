@@ -8,9 +8,7 @@ import com.smach.zapmancer.database.ProjectsTable
 import com.smach.zapmancer.database.SavedProjectsTable
 import com.smach.zapmancer.database.UserProfilesTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.projects.api.CreateProjectRequest
-import com.smach.zapmancer.projects.api.Project
-import com.smach.zapmancer.projects.api.ProjectDetail
+import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.SortOrder

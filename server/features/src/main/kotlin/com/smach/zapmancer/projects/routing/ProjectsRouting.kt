@@ -1,8 +1,7 @@
 package com.smach.zapmancer.projects.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.projects.api.CreateProjectRequest
-import com.smach.zapmancer.projects.api.SaveProjectRequest
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.projects.domain.ProjectsService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode

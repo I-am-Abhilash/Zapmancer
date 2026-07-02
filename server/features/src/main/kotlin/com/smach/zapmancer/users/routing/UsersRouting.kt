@@ -1,9 +1,9 @@
 package com.smach.zapmancer.users.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.feature.api.user.UsersService
+import com.smach.zapmancer.users.domain.UsersService
 import com.smach.zapmancer.security.UserPrincipal
-import com.smach.zapmancer.users.api.UpdateProfileRequest
+import com.smach.zapmancer.core.common.dto.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal

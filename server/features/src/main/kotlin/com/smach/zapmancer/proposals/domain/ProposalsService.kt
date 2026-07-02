@@ -2,8 +2,7 @@ package com.smach.zapmancer.proposals.domain
 
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
-import com.smach.zapmancer.proposals.api.Proposal
-import com.smach.zapmancer.proposals.api.SubmitProposalRequest
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.proposals.data.ProposalsRepository
 
 class ProposalsService(private val repository: ProposalsRepository) {

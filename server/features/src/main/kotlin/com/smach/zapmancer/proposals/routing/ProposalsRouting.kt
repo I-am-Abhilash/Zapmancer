@@ -1,7 +1,7 @@
 package com.smach.zapmancer.proposals.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.proposals.api.SubmitProposalRequest
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.proposals.domain.ProposalsService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode

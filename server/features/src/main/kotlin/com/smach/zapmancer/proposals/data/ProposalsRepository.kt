@@ -2,8 +2,7 @@ package com.smach.zapmancer.proposals.data
 
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.ProposalsTable
-import com.smach.zapmancer.proposals.api.Proposal
-import com.smach.zapmancer.proposals.api.SubmitProposalRequest
+import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.eq

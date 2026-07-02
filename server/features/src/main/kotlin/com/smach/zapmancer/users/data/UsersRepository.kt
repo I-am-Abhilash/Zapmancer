@@ -6,10 +6,7 @@ import com.smach.zapmancer.database.ProfileSkillsTable
 import com.smach.zapmancer.database.ReviewsTable
 import com.smach.zapmancer.database.UserProfilesTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.users.api.PortfolioItem
-import com.smach.zapmancer.users.api.Review
-import com.smach.zapmancer.users.api.UpdateProfileRequest
-import com.smach.zapmancer.users.api.UserProfile
+import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.and

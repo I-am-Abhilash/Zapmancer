@@ -1,4 +1,4 @@
-package com.smach.zapmancer.proposals.api
+package com.smach.zapmancer.core.common.dto
 
 import kotlinx.serialization.Serializable
 

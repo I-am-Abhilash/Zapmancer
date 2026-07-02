@@ -1,7 +1,7 @@
 package com.smach.zapmancer.home.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.feature.api.home.ExportActivitiesRequest
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.home.domain.HomeService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode

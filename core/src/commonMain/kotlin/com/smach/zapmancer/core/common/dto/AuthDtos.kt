@@ -1,10 +1,6 @@
-package com.smach.zapmancer.feature.api.auth
+package com.smach.zapmancer.core.common.dto
 
 import kotlinx.serialization.Serializable
-
-// ---------------------------------------------------------------------------
-// Requests
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class LoginRequest(val email: String, val password: String)
@@ -21,14 +17,6 @@ data class VerifyOtpRequest(val email: String, val code: String)
 @Serializable
 data class RefreshTokenRequest(val refreshToken: String)
 
-// ---------------------------------------------------------------------------
-// Responses
-// ---------------------------------------------------------------------------
-
-/**
- * Standard auth response returned on login, register, and token refresh.
- * Maps directly to the `User` object expected by AuthRepositoryImpl in the KMP app.
- */
 @Serializable
 data class AuthResponse(
     val id: String,

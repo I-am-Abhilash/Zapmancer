@@ -1,5 +1,6 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -82,15 +83,3 @@ class AuthRepositoryImpl(
         )
     }
 }
-
-@Serializable
-private data class LoginRequest(val email: String, val password: String)
-
-@Serializable
-private data class SignUpRequest(val email: String, val username: String, val password: String)
-
-@Serializable
-private data class ForgotPasswordRequest(val email: String)
-
-@Serializable
-private data class VerifyOtpRequest(val email: String, val code: String)

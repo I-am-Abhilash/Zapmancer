@@ -3,9 +3,7 @@ package com.smach.zapmancer.projects.domain
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.projects.api.CreateProjectRequest
-import com.smach.zapmancer.projects.api.Project
-import com.smach.zapmancer.projects.api.ProjectDetail
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.projects.data.ProjectsRepository
 import com.smach.zapmancer.recommendations.GorseClient
 

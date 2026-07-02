@@ -5,7 +5,7 @@ import com.smach.zapmancer.auth.data.AuthRepository
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.feature.api.auth.AuthResponse
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.security.JwtConfig
 import java.util.UUID
 

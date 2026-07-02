@@ -1,4 +1,4 @@
-package com.smach.zapmancer.notifications.api
+package com.smach.zapmancer.core.common.dto
 
 import kotlinx.serialization.Serializable
 

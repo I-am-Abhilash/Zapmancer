@@ -1,10 +1,6 @@
-package com.smach.zapmancer.users.api
+package com.smach.zapmancer.core.common.dto
 
 import kotlinx.serialization.Serializable
-
-// ---------------------------------------------------------------------------
-// Public Profile DTOs
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class UserProfile(
@@ -41,10 +37,6 @@ data class Review(
     val rating: Int,
     val authorAvatarUrl: String?,
 )
-
-// ---------------------------------------------------------------------------
-// Requests
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class UpdateProfileRequest(

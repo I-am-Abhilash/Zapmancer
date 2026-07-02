@@ -2,7 +2,7 @@ package com.smach.zapmancer.notifications.domain
 
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
-import com.smach.zapmancer.notifications.api.NotificationItem
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.notifications.data.NotificationsRepository
 
 class NotificationsService(private val repository: NotificationsRepository) {

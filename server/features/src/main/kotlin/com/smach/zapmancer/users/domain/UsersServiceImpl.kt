@@ -3,9 +3,8 @@ package com.smach.zapmancer.users.domain
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.feature.api.user.UsersService
-import com.smach.zapmancer.users.api.UpdateProfileRequest
-import com.smach.zapmancer.users.api.UserProfile
+import com.smach.zapmancer.users.domain.UsersService
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.users.data.UsersRepository
 
 class UsersServiceImpl(

@@ -5,7 +5,7 @@ import com.smach.zapmancer.database.ProjectApplicationsTable
 import com.smach.zapmancer.database.ProjectsTable
 import com.smach.zapmancer.database.UserSettingsTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.feature.api.home.RecentActivity
+import com.smach.zapmancer.core.common.dto.*
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.isNull

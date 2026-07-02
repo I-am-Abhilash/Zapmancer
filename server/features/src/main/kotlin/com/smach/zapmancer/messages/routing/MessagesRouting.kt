@@ -4,7 +4,7 @@ import com.smach.zapmancer.common.ApiError
 import com.smach.zapmancer.common.ApiResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.feature.api.message.SendMessageRequest
+import com.smach.zapmancer.core.common.dto.*
 import com.smach.zapmancer.messages.domain.MessagesService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode

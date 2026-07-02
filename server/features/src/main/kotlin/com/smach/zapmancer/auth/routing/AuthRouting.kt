@@ -2,11 +2,7 @@ package com.smach.zapmancer.auth.routing
 
 import com.smach.zapmancer.auth.domain.AuthService
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.feature.api.auth.ForgotPasswordRequest
-import com.smach.zapmancer.feature.api.auth.LoginRequest
-import com.smach.zapmancer.feature.api.auth.RefreshTokenRequest
-import com.smach.zapmancer.feature.api.auth.SignUpRequest
-import com.smach.zapmancer.feature.api.auth.VerifyOtpRequest
+import com.smach.zapmancer.core.common.dto.*
 import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
