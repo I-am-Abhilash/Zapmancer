@@ -17,28 +17,23 @@ class ProjectRepositoryImpl(
     private val client: HttpClient,
 ) : ProjectRepository {
 
-    override suspend fun getProjects(): Result<List<Project>, DataError.Network> =
-        safeApiCall<List<Project>> { client.get("projects") }
+    override suspend fun getProjects(): Result<List<Project>, DataError.Network> = safeApiCall<List<Project>> { client.get("projects") }
 
-    override suspend fun getProjectDetail(id: String): Result<ProjectDetail, DataError.Network> =
-        safeApiCall<ProjectDetail> { client.get("projects/$id") }
+    override suspend fun getProjectDetail(id: String): Result<ProjectDetail, DataError.Network> = safeApiCall<ProjectDetail> { client.get("projects/$id") }
 
-    override suspend fun saveProject(id: String, isSaved: Boolean): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("projects/$id/save") {
-                setBody(SaveProjectRequest(isSaved = isSaved))
-            }
-        }.toUnitResult()
+    override suspend fun saveProject(id: String, isSaved: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("projects/$id/save") {
+            setBody(SaveProjectRequest(isSaved = isSaved))
+        }
+    }.toUnitResult()
 
-    override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
+    override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
 
-    override suspend fun postProject(project: ProjectDetail): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("projects") {
-                setBody(project)
-            }
-        }.toUnitResult()
+    override suspend fun postProject(project: ProjectDetail): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("projects") {
+            setBody(project)
+        }
+    }.toUnitResult()
 }
 
 @Serializable

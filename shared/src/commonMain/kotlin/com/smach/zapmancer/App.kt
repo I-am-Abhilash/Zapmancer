@@ -1,9 +1,9 @@
 package com.smach.zapmancer
 
-//import androidx.compose.animation.AnimatedContent
-//import androidx.compose.animation.fadeIn
-//import androidx.compose.animation.fadeOut
-//import androidx.compose.animation.togetherWith
+// import androidx.compose.animation.AnimatedContent
+// import androidx.compose.animation.fadeIn
+// import androidx.compose.animation.fadeOut
+// import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -65,9 +65,7 @@ fun App() {
                 )
             }
         }
-
     }
-
 
 //    AppTheme {
 //        AnimatedContent(

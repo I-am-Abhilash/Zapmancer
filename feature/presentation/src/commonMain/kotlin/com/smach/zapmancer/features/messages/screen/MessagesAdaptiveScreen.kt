@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import com.smach.zapmancer.features.messages.screen.MessagesListContent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
-import com.smach.zapmancer.features.messages.screen.MessagesListContent
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -42,7 +42,7 @@ fun MessagesAdaptiveScreen(
                         }
                     },
                     onProfileClick = onProfileClick,
-                    showTopBar = scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] != PaneAdaptedValue.Expanded
+                    showTopBar = scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] != PaneAdaptedValue.Expanded,
                 )
             }
         },
@@ -51,7 +51,7 @@ fun MessagesAdaptiveScreen(
                 scaffoldNavigator.currentDestination?.contentKey?.let { conversationId ->
                     val detailViewModel: MessagesDetailViewModel = koinViewModel(
                         key = conversationId,
-                        parameters = { parametersOf(conversationId) }
+                        parameters = { parametersOf(conversationId) },
                     )
                     val detailState by detailViewModel.uiState.collectAsState()
                     MessageDetailContent(
@@ -66,10 +66,10 @@ fun MessagesAdaptiveScreen(
                         onCallClick = { showSnackbar("Voice calling is not supported") },
                         onVideocamClick = { showSnackbar("Video calling is not supported") },
                         onMoreClick = { showSnackbar("More actions coming soon") },
-                        showTopBar = true
+                        showTopBar = true,
                     )
                 }
             }
-        }
+        },
     )
 }

@@ -165,14 +165,35 @@ fun StepIndicator(currentStep: Int) {
                         modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(when { isCompleted -> MaterialTheme.colorScheme.primary; isCurrent -> MaterialTheme.colorScheme.secondary; else -> MaterialTheme.colorScheme.onPrimary })
+                            .background(
+                                when {
+                                    isCompleted -> MaterialTheme.colorScheme.primary
+                                    isCurrent -> MaterialTheme.colorScheme.secondary
+                                    else -> MaterialTheme.colorScheme.onPrimary
+                                },
+                            )
                             .border(2.dp, if (isCompleted || isCurrent) Color.Transparent else MaterialTheme.colorScheme.outlineVariant, CircleShape),
                         contentAlignment = Alignment.Center,
                     ) {
-                        if (isCompleted) Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
-                        else Text(text = step.step.toString(), color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        if (isCompleted) {
+                            Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                        } else {
+                            Text(text = step.step.toString(), color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        }
                     }
-                    Text(text = step.title, color = if (isCurrent) MaterialTheme.colorScheme.secondary else if (isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium, modifier = Modifier.padding(top = 4.dp))
+                    Text(
+                        text = step.title,
+                        color = if (isCurrent) {
+                            MaterialTheme.colorScheme.secondary
+                        } else if (isCompleted) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        fontSize = 11.sp,
+                        fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
                 }
             }
         }

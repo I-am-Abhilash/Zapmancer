@@ -4,9 +4,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-//    alias(libs.plugins.room)
     alias(libs.plugins.sqldelight)
-//    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -22,6 +20,8 @@ kotlin {
                 .toInt()
     }
 
+    jvm()
+
     listOf(
         iosArm64(),
         iosSimulatorArm64(),
@@ -33,7 +33,13 @@ kotlin {
     }
 
     js {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useFirefox()
+                }
+            }
+        }
     }
 
     sourceSets {
@@ -65,6 +71,12 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.navigation3)
             implementation(libs.async.extensions1)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
+            implementation(libs.ktor.client.mock)
+        }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
@@ -72,6 +84,42 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.server.auth.jwt)
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.server.content.negotiation)
+            implementation(libs.ktor.server.request.validation)
+            implementation(libs.ktor.server.rate.limit)
+            implementation(libs.ktor.server.swagger)
+            implementation(libs.ktor.server.cors)
+            implementation(libs.ktor.server.status.pages)
+            implementation(libs.ktor.server.openapi)
+            implementation(libs.ktor.server.call.logging)
+            implementation(libs.ktor.server.call.id)
+            implementation(libs.ktor.server.metrics.micrometer)
+            implementation(libs.micrometer.registry.prometheus)
+            implementation(libs.jsoup)
+            implementation(libs.commonmark)
+            implementation(libs.kotlinx.datetime)
+            api(libs.koin.ktor)
+            implementation(libs.koin.logger.slf4j)
+            implementation(libs.google.cloud.storage)
+            implementation(libs.aws.s3)
+            
+            // Database-convention libraries
+            implementation(libs.exposed.core)
+            implementation(libs.exposed.dao)
+            implementation(libs.exposed.jdbc)
+            implementation(libs.exposed.kotlin.datetime)
+            implementation(libs.hikaricp)
+            implementation(libs.postgresql)
+            implementation(libs.flyway.core)
+            implementation(libs.flyway.database.postgresql)
         }
 
         val webSourceDir = "src/webMain/kotlin"
@@ -87,21 +135,12 @@ kotlin {
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
-
-    sourceSets {
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.turbine)
-            implementation(libs.ktor.client.mock)
-        }
-    }
 }
+
 sqldelight {
     databases {
         create("AppDatabase") {
             packageName.set("com.smach.zapmancer.core.database")
-
             generateAsync.set(true)
         }
     }

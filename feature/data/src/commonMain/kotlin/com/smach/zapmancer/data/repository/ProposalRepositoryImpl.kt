@@ -15,13 +15,11 @@ class ProposalRepositoryImpl(
     private val client: HttpClient,
 ) : ProposalRepository {
 
-    override suspend fun submitProposal(proposal: Proposal): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("proposals") {
-                setBody(proposal)
-            }
-        }.toUnitResult()
+    override suspend fun submitProposal(proposal: Proposal): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("proposals") {
+            setBody(proposal)
+        }
+    }.toUnitResult()
 
-    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> =
-        safeApiCall<List<Proposal>> { client.get("projects/$projectId/proposals") }
+    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> = safeApiCall<List<Proposal>> { client.get("projects/$projectId/proposals") }
 }

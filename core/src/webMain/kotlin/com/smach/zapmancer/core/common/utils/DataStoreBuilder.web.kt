@@ -8,7 +8,7 @@ actual fun createDatabaseDriver(): SqlDriver {
     val worker = Worker(
         // ❌ WRONG (My mistake): "@cashapp/sqldelight-sqljs-worker/worker.mjs"
         // ✅ CORRECT: "@cashapp/sqldelight-sqljs-worker/sqljs.worker.js"
-        js("""new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url)""")
+        js("""new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url)"""),
     )
 
     return WebWorkerDriver(worker)

@@ -111,7 +111,7 @@ fun MainGraph(
                 bottomBar = {
                     if (isCompact && navigator.currentScreen.isTopLevel) {
                         BottomNavigationBar(
-                            navController = navigator,
+                            mainNavigator = navigator,
                             navigationState = state,
                         )
                     }

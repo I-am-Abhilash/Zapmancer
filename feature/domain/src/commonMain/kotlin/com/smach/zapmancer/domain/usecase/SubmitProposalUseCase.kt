@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.ProposalRepository
 class SubmitProposalUseCase(
     private val repository: ProposalRepository,
 ) {
-    suspend operator fun invoke(proposal: Proposal): Result<Unit, DataError.Network> =
-        repository.submitProposal(proposal)
+    suspend operator fun invoke(proposal: Proposal): Result<Unit, DataError.Network> = repository.submitProposal(proposal)
 }

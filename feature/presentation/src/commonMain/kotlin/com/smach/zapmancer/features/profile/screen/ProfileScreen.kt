@@ -158,14 +158,18 @@ fun ProfileContent(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item { IdentityHeader(state, onEvent) }
-            item { ProfileSectionCard(title = "About") {
-                Text(state.about, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
-            } }
-            item { ProfileSectionCard(title = "Skills") {
-                FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    state.skills.forEach { SkillChip(it) }
+            item {
+                ProfileSectionCard(title = "About") {
+                    Text(state.about, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
                 }
-            } }
+            }
+            item {
+                ProfileSectionCard(title = "Skills") {
+                    FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        state.skills.forEach { SkillChip(it) }
+                    }
+                }
+            }
             item { SectionTitleRow(title = "Portfolio") }
             items(state.portfolioItems) { PortfolioCard(it) }
             item { OnMoreButton(text = "See more", onClick = { onEvent(ProfileEvent.PortfolioMore) }) }
@@ -374,9 +378,11 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                         Text(review.authorRole, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
-                Row { repeat(review.rating) {
-                    Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-                } }
+                Row {
+                    repeat(review.rating) {
+                        Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(

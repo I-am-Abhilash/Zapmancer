@@ -1,6 +1,5 @@
 package com.smach.zapmancer.core.network.ktor
 
-import com.smach.zapmancer.core.network.Environment
 import com.smach.zapmancer.core.network.model.RefreshTokenRequest
 import com.smach.zapmancer.core.network.model.RefreshTokenResponse
 import com.smach.zapmancer.core.network.session.SessionManager
@@ -27,7 +26,7 @@ import kotlinx.serialization.json.Json
 fun provideHttpClient(sessionManager: SessionManager): HttpClient {
     return HttpClient {
         defaultRequest {
-            url(Environment.config().baseUrl)
+            url(NetworkConstants.BASE_URL)
             contentType(ContentType.Application.Json)
         }
         install(ContentNegotiation) {

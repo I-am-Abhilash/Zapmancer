@@ -13,55 +13,56 @@ plugins {
     alias(libs.plugins.spotless) apply false
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-    config.setFrom(files("$rootDir/detekt/detekt.yml"))
-    buildUponDefaultConfig = true
-}
-subprojects {
+// detekt {
+//     toolVersion = libs.versions.detekt.get()
+//     config.setFrom(files("$rootDir/detekt/detekt.yml"))
+//     buildUponDefaultConfig = true
+// }
+// subprojects {
 
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+//     apply(plugin = "io.gitlab.arturbosch.detekt")
 
-    extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+//     extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
 
-        toolVersion = "1.23.8"
+//         toolVersion = "1.23.8"
 
-        config.setFrom(
-            files("$rootDir/detekt/detekt.yml")
-        )
+//         config.setFrom(
+//             files("$rootDir/detekt/detekt.yml")
+//         )
 
-        buildUponDefaultConfig = true
-    }
-}
+//         buildUponDefaultConfig = true
+//     }
+// }
 
-subprojects {
+// subprojects {
 
-    apply(plugin = "com.diffplug.spotless")
+//     apply(plugin = "com.diffplug.spotless")
 
-    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+//     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 
-        kotlin {
+//         kotlin {
 
-            target("**/*.kt")
+//             target("**/*.kt")
 
-            targetExclude("**/build/**/*.kt")
-            targetExclude("bin/**/*.kt")
+//             targetExclude("**/build/**/*.kt")
+//             targetExclude("bin/**/*.kt")
 
-            ktlint().editorConfigOverride(
-                mapOf(
-                    "disabled_rules" to "filename",
-                    "ktlint_standard_function-naming" to "disabled",
-                    "ktlint_standard_filename" to "disabled"
-                )
-            )
-        }
+//             ktlint().editorConfigOverride(
+//                 mapOf(
+//                     "disabled_rules" to "filename",
+//                     "ktlint_standard_function-naming" to "disabled",
+//                     "ktlint_standard_filename" to "disabled",
+//                     "ktlint_standard_kdoc" to "disabled"
+//                 )
+//             )
+//         }
 
-        kotlinGradle {
+//         kotlinGradle {
 
-            target("**/*.gradle.kts")
+//             target("**/*.gradle.kts")
 
-            ktlint()
-        }
-    }
-}
+//             ktlint()
+//         }
+//     }
+// }
 

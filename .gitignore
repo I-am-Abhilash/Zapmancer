@@ -18,3 +18,23 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 .aider*
+.claude
+CLAUDE.md
+aider.chat.history.md
+repomix-output.json
+repomix.config.json
+.repomixignore
+.gitignore
+
+# Backend specific ignores
+/rustfs_data
+/rustfs_logs
+.env
+.env.*
+secrets/
+keys/
+*.jks
+*.p12
+*.pem
+google-services.json
+firebase-adminsdk.json

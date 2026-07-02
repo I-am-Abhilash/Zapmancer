@@ -20,19 +20,17 @@ class AuthRepositoryImpl(
 
     override fun isOnboardingCompleted(): Flow<Boolean> = sessionManager.getOnboardingCompleted()
 
-    override suspend fun setOnboardingCompleted(completed: Boolean): Result<Unit, DataError.Network> =
-        runCatching { sessionManager.saveOnboardingCompleted(completed) }
-            .fold(
-                onSuccess = { Result.Success(Unit) },
-                onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
-            )
+    override suspend fun setOnboardingCompleted(completed: Boolean): Result<Unit, DataError.Network> = runCatching { sessionManager.saveOnboardingCompleted(completed) }
+        .fold(
+            onSuccess = { Result.Success(Unit) },
+            onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
+        )
 
-    override suspend fun saveTokens(accessToken: String, refreshToken: String): Result<Unit, DataError.Network> =
-        runCatching { sessionManager.saveTokens(accessToken, refreshToken) }
-            .fold(
-                onSuccess = { Result.Success(Unit) },
-                onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
-            )
+    override suspend fun saveTokens(accessToken: String, refreshToken: String): Result<Unit, DataError.Network> = runCatching { sessionManager.saveTokens(accessToken, refreshToken) }
+        .fold(
+            onSuccess = { Result.Success(Unit) },
+            onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
+        )
 
     override suspend fun login(email: String, password: String): Result<User, DataError.Network> {
         val result = safeApiCall<User> {
@@ -58,26 +56,23 @@ class AuthRepositoryImpl(
         return result
     }
 
-    override suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("auth/forgot-password") {
-                setBody(ForgotPasswordRequest(email = email))
-            }
-        }.toUnitResult()
+    override suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("auth/forgot-password") {
+            setBody(ForgotPasswordRequest(email = email))
+        }
+    }.toUnitResult()
 
-    override suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("auth/verify-otp") {
-                setBody(VerifyOtpRequest(email = email, code = code))
-            }
-        }.toUnitResult()
+    override suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("auth/verify-otp") {
+            setBody(VerifyOtpRequest(email = email, code = code))
+        }
+    }.toUnitResult()
 
-    override suspend fun logout(): Result<Unit, DataError.Network> =
-        runCatching { sessionManager.clearSession() }
-            .fold(
-                onSuccess = { Result.Success(Unit) },
-                onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
-            )
+    override suspend fun logout(): Result<Unit, DataError.Network> = runCatching { sessionManager.clearSession() }
+        .fold(
+            onSuccess = { Result.Success(Unit) },
+            onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
+        )
 
     private suspend fun persistSession(user: User) {
         sessionManager.saveSession(

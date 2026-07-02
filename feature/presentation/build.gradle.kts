@@ -24,7 +24,13 @@ kotlin {
     iosSimulatorArm64()
 
     js {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useFirefox()
+                }
+            }
+        }
     }
 
     sourceSets {

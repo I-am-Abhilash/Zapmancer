@@ -20,7 +20,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 
 @Composable
 fun BottomNavigationBar(
-    navController: MainNavigator,
+    mainNavigator: MainNavigator,
     navigationState: NavigationState,
 ) {
     NavigationBar(
@@ -34,7 +34,7 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 selected = destination == currentRoute,
                 onClick = {
-                    navController.navigate(destination)
+                    mainNavigator.navigate(destination)
                 },
                 icon = {
                     Icon(
@@ -80,7 +80,6 @@ fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): Snap
             )
         }
 
-    // Combine all active stacks (start stack + current top-level stack if different).
     return stacksInUse
         .flatMap { decoratedEntries[it] ?: emptyList() }
         .toMutableStateList()

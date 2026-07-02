@@ -19,6 +19,5 @@ class ProfileRepositoryImpl(
         return safeApiCall<UserProfile> { client.get(path) }
     }
 
-    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.post("users/$userId/hire") }.toUnitResult()
+    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("users/$userId/hire") }.toUnitResult()
 }

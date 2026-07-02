@@ -1,0 +1,55 @@
+# Google Cloud Build Configuration
+# This file tells Google Cloud how to build and deploy your Ktor application.
+# It runs entirely on Google's infrastructure, saving your GitHub Actions minutes.
+
+steps:
+  # 1. Build the Application using Gradle
+  # We use the JDK 21 image to run the buildFatJar task.
+  - name: 'gradle:9.5.0-jdk21'
+    entrypoint: 'gradle'
+    args: [ ':server-app:buildFatJar', '--no-daemon' ]
+
+  # 2. Build the Docker Image
+  # This uses the Dockerfile in your root directory.
+  # We tag it with the project ID and the image name 'scriptside-backend'.
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/scriptside-backend:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/scriptside-backend:latest',
+      '.'
+    ]
+
+  # 3. Push the Image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/$PROJECT_ID/scriptside-backend:$COMMIT_SHA' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/$PROJECT_ID/scriptside-backend:latest' ]
+
+  # 4. Deploy to Cloud Run
+  # This starts the application and makes it live.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'scriptside-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/scriptside-backend:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1' # You can change this to your preferred region
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated' # Makes the API public. Remove if you want it private.
+
+# Store the images in Google's Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/scriptside-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/scriptside-backend:latest'
+
+# Timeout for the entire build process (15 minutes)
+timeout: '900s'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

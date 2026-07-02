@@ -11,13 +11,11 @@ import org.koin.core.component.inject
 class AndroidDatabaseDriverBuilder : KoinComponent {
     private val context: Context by inject()
 
-    fun create(): SqlDriver {
-        return AndroidSqliteDriver(
-            AppDatabase.Schema.synchronous(),
-            context,
-            DATABASE_NAME
-        )
-    }
+    fun create(): SqlDriver = AndroidSqliteDriver(
+        AppDatabase.Schema.synchronous(),
+        context,
+        DATABASE_NAME,
+    )
 }
 
 actual fun createDatabaseDriver(): SqlDriver = AndroidDatabaseDriverBuilder().create()

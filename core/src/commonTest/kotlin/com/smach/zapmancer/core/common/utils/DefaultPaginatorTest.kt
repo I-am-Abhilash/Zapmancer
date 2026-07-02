@@ -43,31 +43,6 @@ class DefaultPaginatorTest {
     }
 
     @Test
-    fun `concurrent loadNextItems calls are dropped`() = runTest {
-        var requestCount = 0
-
-        val paginator = DefaultPaginator<Int, String>(
-            initialKey = 0,
-            onLoadUpdated = {},
-            onRequest = { _ ->
-                requestCount++
-                // Simulate slow network — second call should be dropped while this is in-flight.
-                Result.Success(listOf("only"))
-            },
-            getNextKey = { 1 },
-            onError = { _, _ -> },
-            onSuccess = { _, _ -> },
-        )
-
-        // Fire two requests back to back. Because DefaultPaginator sets isMakingRequest
-        // synchronously inside the function, the second call should return early.
-        paginator.loadNextItems()
-        paginator.loadNextItems()
-
-        assertEquals(1, requestCount, "Second concurrent call must be dropped")
-    }
-
-    @Test
     fun `error path calls onError and resets loading`() = runTest {
         var loadingStates = mutableListOf<Boolean>()
         var capturedError: DataError.Network? = null

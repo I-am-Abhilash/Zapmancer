@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 class LogoutUseCase(
     private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit, DataError.Network> =
-        repository.logout()
+    suspend operator fun invoke(): Result<Unit, DataError.Network> = repository.logout()
 }

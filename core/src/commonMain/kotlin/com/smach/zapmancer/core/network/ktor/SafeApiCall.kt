@@ -41,16 +41,31 @@ suspend inline fun <reified T> safeApiCall(
         Result.Error(errorType)
     }
 } catch (e: Exception) {
-    val errorType = when (e) {
-        is IOException -> DataError.Network.NO_INTERNET
+    val errorType = when {
+        e is IOException -> DataError.Network.NO_INTERNET
 
-        is SerializationException,
-        is NoTransformationFoundException,
-        -> DataError.Network.SERIALIZATION
+        e is SerializationException ||
+            e is NoTransformationFoundException ||
+            // JS/Firefox (and some Ktor wrapping paths) bury the original
+            // SerializationException inside the cause chain. Walk it so we still
+            // surface SERIALIZATION to the caller instead of falling through to UNKNOWN.
+            e.hasCauseMatching { it is SerializationException } ||
+            e.hasCauseMatching { it is NoTransformationFoundException } ->
+            DataError.Network.SERIALIZATION
 
         else -> DataError.Network.UNKNOWN
     }
 
     Napier.e("Network Exception: ${e.message}", e)
     Result.Error(errorType, e)
+}
+
+@PublishedApi
+internal fun Throwable.hasCauseMatching(predicate: (Throwable) -> Boolean): Boolean {
+    var current: Throwable? = cause
+    while (current != null) {
+        if (predicate(current)) return true
+        current = current.cause
+    }
+    return false
 }

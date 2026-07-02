@@ -1,13 +1,5 @@
 package com.smach.zapmancer.core.common.utils
 
-/**
- * Helpers for working with the project's typed [Result] (a sealed interface
- * modelling `Result<D, E : DataError>`).
- *
- * These exist to keep repository implementations terse and consistent — call
- * sites read `.toUnit()` instead of writing `when (result) { is Success -> Success(Unit); is Error -> Error(...) }`.
- */
-
 /** Identity for the typed Result; provided so repository call sites can chain uniformly. */
 inline fun <D, E : DataError> Result<D, E>.orElsePropagate(): Result<D, E> = this
 

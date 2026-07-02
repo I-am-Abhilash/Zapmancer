@@ -16,20 +16,18 @@ class HomeRepositoryImpl(
     private val client: HttpClient,
 ) : HomeRepository {
 
-    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> =
-        safeApiCall<HomeDashboard> { client.get("home/dashboard") }
+    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> = safeApiCall<HomeDashboard> { client.get("home/dashboard") }
 
-    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): Result<String, DataError.Network> =
-        safeApiCall<ExportResponse> {
-            client.post("home/activities/export") {
-                setBody(ExportRequest(activities = activities))
-            }
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.filePath)
-                is Result.Error -> result
-            }
+    override suspend fun exportActivitiesToCsv(activities: List<UserActivity>): Result<String, DataError.Network> = safeApiCall<ExportResponse> {
+        client.post("home/activities/export") {
+            setBody(ExportRequest(activities = activities))
         }
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.filePath)
+            is Result.Error -> result
+        }
+    }
 }
 
 @Serializable

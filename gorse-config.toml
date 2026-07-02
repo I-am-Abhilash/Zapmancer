@@ -1,0 +1,20 @@
+# Gorse configuration
+[database]
+# Data Store: Persistent storage for users, items, and feedback
+data_store = "postgres://postgres:password@db:5432/gorse_metadata?sslmode=disable"
+# Cache Store: Replaces Redis for intermediate results
+cache_store = "postgres://postgres:password@db:5432/gorse_cache?sslmode=disable"
+
+[recommend]
+# The types of feedback to use for training
+feedback_types = ["clap", "bookmark", "read"]
+# The weight of different feedback types
+positive_feedback_types = ["clap", "bookmark"]
+click_feedback_types = ["read"]
+
+[master]
+port = 8086
+http_port = 8088
+
+[server]
+default_n = 10

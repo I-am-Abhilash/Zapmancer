@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +27,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -34,13 +36,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
 
@@ -68,12 +69,13 @@ fun ProjectListContent(
     onProjectClick: (Int) -> Unit,
     onSearchClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
+    onCreateProjectClick: () -> Unit = {},
     showTopBar: Boolean = true,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (showTopBar) {
             TopAppBar(
-                onProjectClick = onProjectClick,
+                onCreateProjectClick = onCreateProjectClick,
                 onSearchClick = onSearchClick,
                 onCategoryClick = { category -> onEvent(ProjectListEvent.CategorySelected(category)) },
                 selectedCategory = state.category,
@@ -89,7 +91,7 @@ fun ProjectListContent(
 
 @Composable
 fun TopAppBar(
-    onProjectClick: () -> Unit,
+    onCreateProjectClick: () -> Unit,
     onSearchClick: () -> Unit,
     onCategoryClick: (ProjectCategory) -> Unit,
     selectedCategory: ProjectCategory,
@@ -98,15 +100,14 @@ fun TopAppBar(
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(56.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            // App title
             Text(
                 text = "Zapmancer",
                 fontWeight = FontWeight.Bold,
@@ -119,7 +120,7 @@ fun TopAppBar(
             // Search and filter
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedTextField(
                     value = "", // placeholder - in real implementation would come from state
@@ -130,7 +131,7 @@ fun TopAppBar(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search",
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(24.dp),
                             )
                         }
                     },
@@ -142,13 +143,13 @@ fun TopAppBar(
                     ),
                     modifier = Modifier
                         .width(180.dp)
-                        .height(36.dp)
+                        .height(36.dp),
                 )
 
                 // Category chips
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     ProjectCategory.values().forEach { category ->
                         val isSelected = category == selectedCategory
@@ -157,7 +158,7 @@ fun TopAppBar(
                             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                             contentColor = if (isSelected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                             shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
-                            modifier = Modifier.size(height = 32.dp, width = 72.dp)
+                            modifier = Modifier.size(height = 32.dp, width = 72.dp),
                         ) {
                             Text(
                                 text = category.displayName,
@@ -174,16 +175,16 @@ fun TopAppBar(
 
             // New project button
             Button(
-                onClick = onProjectClick,
+                onClick = onCreateProjectClick,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = MaterialTheme.shapes.small,
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "New Project",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }
@@ -196,9 +197,12 @@ fun ProjectListPane(
     onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit,
 ) {
-    val windowLayout = androidx.compose.material3.adaptive.layout.LocalWindowLayout.current
-    val projects = if (state.category == ProjectCategory.ALL) state.projects
-    else state.projects.filter { it.category == state.category }
+    val windowLayout = rememberWindowLayout()
+    val projects = if (state.category == ProjectCategory.ALL) {
+        state.projects
+    } else {
+        state.projects.filter { it.category == state.category }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -249,39 +253,39 @@ fun ProjectListPane(
     }
 }
 
-@Composable
-private fun PortfolioHeader() {
-    Column {
-        Text(
-            "Get Projects ",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        DashedDivider()
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            "Manage and track your active development and design cycles.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
+// @Composable
+// private fun PortfolioHeader() {
+//    Column {
+//        Text(
+//            "Get Projects ",
+//            style = MaterialTheme.typography.headlineMedium,
+//            fontWeight = FontWeight.Bold,
+//            color = MaterialTheme.colorScheme.onSurface,
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        DashedDivider()
+//        Spacer(modifier = Modifier.height(12.dp))
+//        Text(
+//            "Manage and track your active development and design cycles.",
+//            style = MaterialTheme.typography.bodyMedium,
+//            color = MaterialTheme.colorScheme.onSurfaceVariant,
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//    }
+// }
 
-@Composable
-private fun DashedDivider() {
-    val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-    Canvas(Modifier.fillMaxWidth().height(1.dp)) {
-        drawLine(
-            color = drawLineColor,
-            start = Offset(0f, 0f),
-            end = Offset(size.width, 0f),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
-        )
-    }
-}
+// @Composable
+// private fun DashedDivider() {
+//    val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+//    Canvas(Modifier.fillMaxWidth().height(1.dp)) {
+//        drawLine(
+//            color = drawLineColor,
+//            start = Offset(0f, 0f),
+//            end = Offset(size.width, 0f),
+//            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
+//        )
+//    }
+// }
 
 @Composable
 fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {

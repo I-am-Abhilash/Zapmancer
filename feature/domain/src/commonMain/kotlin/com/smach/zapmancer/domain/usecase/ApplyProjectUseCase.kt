@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.ProjectRepository
 class ApplyProjectUseCase(
     private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> =
-        repository.applyForProject(id)
+    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> = repository.applyForProject(id)
 }

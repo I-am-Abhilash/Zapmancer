@@ -17,7 +17,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 enum class WindowLayout {
     Compact,
     Medium,
-    Expanded;
+    Expanded,
+    ;
 
     val isCompact: Boolean get() = this == Compact
     val isMedium: Boolean get() = this == Medium

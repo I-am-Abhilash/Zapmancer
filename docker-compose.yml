@@ -1,0 +1,107 @@
+services:
+  # Main App Database (now also handles Gorse)
+  db:
+    image: postgres:16-alpine
+    container_name: zap_db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+
+  # Gorse Master
+  gorse-master:
+    image: zhenghaoz/gorse-master
+    container_name: gorse-master_zap
+    command: "-c /etc/gorse/config.toml"
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./gorse-config.toml:/etc/gorse/config.toml
+    depends_on:
+      - db
+
+  # Gorse Worker
+  gorse-worker:
+    image: zhenghaoz/gorse-worker
+    container_name: gorse-worker_zap
+    command: "-c /etc/gorse/config.toml"
+    volumes:
+      - ./gorse-config.toml:/etc/gorse/config.toml
+    depends_on:
+      - gorse-master
+
+  # Main Application
+  app:
+    build: .
+    container_name: zapktor_app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - GORSE_URL=http://gorse-master:8088
+      - STORAGE_JDBC_URL=jdbc:postgresql://db:5432/postgres
+      - STORAGE_USER=postgres
+      - STORAGE_PASSWORD=password
+    depends_on:
+      - db
+      - gorse-master
+
+  # Directus - Professional Admin Dashboard
+  #  directus:
+  #    image: directus/directus:10.10
+  #    container_name: directus_ui
+  #    ports:
+  #      - "8055:8055"
+  #    environment:
+  #      KEY: "scriptside-random-key"
+  #      SECRET: "scriptside-random-secret"
+  #      DB_CLIENT: "pg"
+  #      DB_HOST: "db"
+  #      DB_PORT: "5432"
+  #      DB_DATABASE: "postgres"
+  #      DB_USER: "postgres"
+  #      DB_PASSWORD: "password"
+  #      # Admin User for Directus Login
+  #      ADMIN_EMAIL: "admin@example.com"
+  #      ADMIN_PASSWORD: "password"
+  #      # To allow Directus to see your existing tables without its own schema prefix
+  #      DB_SEARCH_PATH: "public"
+  #    depends_on:
+  #      - db
+
+  # pgAdmin - Database Management Tool
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_ui_zap
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    depends_on:
+      - db
+
+  # RustFS - Lightweight S3-compatible storage
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs_storage_zap
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Console UI
+    environment:
+      - RUSTFS_ACCESS_KEY=admin
+      - RUSTFS_SECRET_KEY=password
+      - RUSTFS_VOLUMES=/data
+      - RUSTFS_CONSOLE_ENABLE=true
+    volumes:
+      - ./rustfs_data:/data
+      - ./rustfs_logs:/logs
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

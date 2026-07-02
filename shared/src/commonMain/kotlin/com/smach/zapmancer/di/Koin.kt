@@ -4,6 +4,7 @@ import com.smach.zapmancer.MainViewModel
 import com.smach.zapmancer.core.common.di.coreModule
 import com.smach.zapmancer.data.di.dataModule
 import com.smach.zapmancer.features.common.di.presentationModule
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
@@ -16,11 +17,9 @@ import org.koin.dsl.module
  * Note: [appModule] already includes [coreModule], [dataModule], and [presentationModule]
  * via `includes(...)`, so passing them again at the top-level would double-register bindings.
  */
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
-    startKoin {
-        modules(appModule())
-        appDeclaration()
-    }
+fun initKoin(appDeclaration: KoinAppDeclaration = {}): KoinApplication = startKoin {
+    modules(appModule())
+    appDeclaration()
 }
 
 /**
@@ -29,12 +28,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
  */
 fun appModule(): Module = module {
     viewModelOf(::MainViewModel)
-
     includes(
         coreModule,
         dataModule,
         presentationModule,
     )
 }
-
-

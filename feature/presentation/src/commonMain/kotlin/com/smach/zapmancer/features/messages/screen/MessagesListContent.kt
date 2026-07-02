@@ -67,13 +67,13 @@ fun TopAppBar(
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(56.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // App title
             Text(
@@ -88,7 +88,7 @@ fun TopAppBar(
             // Search and filter
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedTextField(
                     value = searchQuery,
@@ -98,7 +98,7 @@ fun TopAppBar(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
@@ -109,13 +109,13 @@ fun TopAppBar(
                     ),
                     modifier = Modifier
                         .width(180.dp)
-                        .height(36.dp)
+                        .height(36.dp),
                 )
 
                 // Filter chips
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     listOf("All", "Unread", "Archived").forEach { filter ->
                         val isSelected = filter == selectedFilter
@@ -124,7 +124,7 @@ fun TopAppBar(
                             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                             contentColor = if (isSelected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                             shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
-                            modifier = Modifier.size(height = 32.dp, width = 56.dp)
+                            modifier = Modifier.size(height = 32.dp, width = 56.dp),
                         ) {
                             Text(
                                 text = filter,

@@ -34,52 +34,47 @@ class SettingsRepositoryImpl(
         return result
     }
 
-    override suspend fun updateTwoFactor(enabled: Boolean): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.put("settings/2fa") {
-                setBody(UpdateSettingRequest(enabled = enabled))
-            }
-        }.also { result ->
-            if (result is Result.Success) {
-                _settingsFlow.value = _settingsFlow.value.copy(isTwoFactorEnabled = enabled)
-            }
-        }.toUnitResult()
+    override suspend fun updateTwoFactor(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.put("settings/2fa") {
+            setBody(UpdateSettingRequest(enabled = enabled))
+        }
+    }.also { result ->
+        if (result is Result.Success) {
+            _settingsFlow.value = _settingsFlow.value.copy(isTwoFactorEnabled = enabled)
+        }
+    }.toUnitResult()
 
-    override suspend fun updateDarkMode(enabled: Boolean): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.put("settings/dark-mode") {
-                setBody(UpdateSettingRequest(enabled = enabled))
-            }
-        }.also { result ->
-            if (result is Result.Success) {
-                _settingsFlow.value = _settingsFlow.value.copy(isDarkModeEnabled = enabled)
-            }
-        }.toUnitResult()
+    override suspend fun updateDarkMode(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.put("settings/dark-mode") {
+            setBody(UpdateSettingRequest(enabled = enabled))
+        }
+    }.also { result ->
+        if (result is Result.Success) {
+            _settingsFlow.value = _settingsFlow.value.copy(isDarkModeEnabled = enabled)
+        }
+    }.toUnitResult()
 
-    override suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.put("settings/email-notifications") {
-                setBody(UpdateSettingRequest(enabled = enabled))
-            }
-        }.also { result ->
-            if (result is Result.Success) {
-                _settingsFlow.value = _settingsFlow.value.copy(isEmailNotificationsEnabled = enabled)
-            }
-        }.toUnitResult()
+    override suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.put("settings/email-notifications") {
+            setBody(UpdateSettingRequest(enabled = enabled))
+        }
+    }.also { result ->
+        if (result is Result.Success) {
+            _settingsFlow.value = _settingsFlow.value.copy(isEmailNotificationsEnabled = enabled)
+        }
+    }.toUnitResult()
 
-    override suspend fun updateClientMode(enabled: Boolean): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.put("settings/client-mode") {
-                setBody(UpdateSettingRequest(enabled = enabled))
-            }
-        }.also { result ->
-            if (result is Result.Success) {
-                _settingsFlow.value = _settingsFlow.value.copy(isClientModeEnabled = enabled)
-            }
-        }.toUnitResult()
+    override suspend fun updateClientMode(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.put("settings/client-mode") {
+            setBody(UpdateSettingRequest(enabled = enabled))
+        }
+    }.also { result ->
+        if (result is Result.Success) {
+            _settingsFlow.value = _settingsFlow.value.copy(isClientModeEnabled = enabled)
+        }
+    }.toUnitResult()
 
-    override suspend fun logout(): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.post("auth/logout") }.toUnitResult()
+    override suspend fun logout(): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("auth/logout") }.toUnitResult()
 }
 
 @Serializable

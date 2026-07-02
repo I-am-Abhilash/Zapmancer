@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import com.smach.zapmancer.features.projects.screen.ProjectListContent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
-import com.smach.zapmancer.features.projects.screen.ProjectListContent
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -41,7 +41,7 @@ fun ProjectsAdaptiveScreen(
                         }
                     },
                     onSearchClick = { },
-                    showTopBar = scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] != PaneAdaptedValue.Expanded
+                    showTopBar = scaffoldNavigator.scaffoldValue[ListDetailPaneScaffoldRole.Detail] != PaneAdaptedValue.Expanded,
                 )
             }
         },
@@ -50,7 +50,7 @@ fun ProjectsAdaptiveScreen(
                 scaffoldNavigator.currentDestination?.contentKey?.let { projectId ->
                     val detailViewModel: ProjectDetailViewModel = koinViewModel(
                         key = projectId,
-                        parameters = { parametersOf(projectId) }
+                        parameters = { parametersOf(projectId) },
                     )
                     val detailState by detailViewModel.uiState.collectAsState()
                     ProjectDetailContent(
@@ -62,10 +62,10 @@ fun ProjectsAdaptiveScreen(
                         },
                         onSaveClick = { detailViewModel.onEvent(com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent.ToggleSave) },
                         onApplyClick = { detailViewModel.onEvent(com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent.Apply) },
-                        showTopBar = true
+                        showTopBar = true,
                     )
                 }
             }
-        }
+        },
     )
 }

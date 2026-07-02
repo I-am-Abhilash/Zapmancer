@@ -142,40 +142,46 @@ fun SettingsContent(
                 }
             }
 
-            item { SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
-                SettingsItem(title = "Email Address", subtitle = uiState.settings?.email ?: "", actionIcon = Icons.Outlined.Edit)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                SettingsItem(title = "Organization", subtitle = uiState.settings?.organization ?: "", actionIcon = Icons.Outlined.CorporateFare)
-            } }
+            item {
+                SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
+                    SettingsItem(title = "Email Address", subtitle = uiState.settings?.email ?: "", actionIcon = Icons.Outlined.Edit)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    SettingsItem(title = "Organization", subtitle = uiState.settings?.organization ?: "", actionIcon = Icons.Outlined.CorporateFare)
+                }
+            }
 
-            item { SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
-                SettingsToggleItem(title = "Two-Factor Authentication", description = "Add an extra layer of security to your account.", checked = uiState.settings?.isTwoFactorEnabled ?: false, onCheckedChange = onToggleTwoFactor)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                SettingsItem(
-                    title = "Change Password",
-                    subtitle = "Last changed 4 months ago",
-                    actionContent = {
-                        Button(
-                            onClick = {},
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            shape = RoundedCornerShape(4.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                            modifier = Modifier.height(32.dp),
-                        ) {
-                            Text("Update", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                )
-            } }
+            item {
+                SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
+                    SettingsToggleItem(title = "Two-Factor Authentication", description = "Add an extra layer of security to your account.", checked = uiState.settings?.isTwoFactorEnabled ?: false, onCheckedChange = onToggleTwoFactor)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    SettingsItem(
+                        title = "Change Password",
+                        subtitle = "Last changed 4 months ago",
+                        actionContent = {
+                            Button(
+                                onClick = {},
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(4.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                                modifier = Modifier.height(32.dp),
+                            ) {
+                                Text("Update", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        },
+                    )
+                }
+            }
 
-            item { SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
-                SettingsToggleItem(title = "Dark Mode", description = "Switch between light and dark interface themes.", checked = uiState.settings?.isDarkModeEnabled ?: false, onCheckedChange = onToggleDarkMode)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                SettingsToggleItem(title = "Email Notifications", description = "Receive weekly performance reports and alerts.", checked = uiState.settings?.isEmailNotificationsEnabled ?: false, onCheckedChange = onToggleNotifications)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                SettingsToggleItem(title = "Client Mode", description = "Toggle to switch interface focus to hiring and project posting.", checked = uiState.settings?.isClientModeEnabled ?: false, onCheckedChange = onToggleClientMode)
-            } }
+            item {
+                SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
+                    SettingsToggleItem(title = "Dark Mode", description = "Switch between light and dark interface themes.", checked = uiState.settings?.isDarkModeEnabled ?: false, onCheckedChange = onToggleDarkMode)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    SettingsToggleItem(title = "Email Notifications", description = "Receive weekly performance reports and alerts.", checked = uiState.settings?.isEmailNotificationsEnabled ?: false, onCheckedChange = onToggleNotifications)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    SettingsToggleItem(title = "Client Mode", description = "Toggle to switch interface focus to hiring and project posting.", checked = uiState.settings?.isClientModeEnabled ?: false, onCheckedChange = onToggleClientMode)
+                }
+            }
 
             item {
                 Surface(

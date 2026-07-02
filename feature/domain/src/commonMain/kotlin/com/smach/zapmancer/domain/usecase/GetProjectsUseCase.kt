@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.ProjectRepository
 class GetProjectsUseCase(
     private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(): Result<List<Project>, DataError.Network> =
-        repository.getProjects()
+    suspend operator fun invoke(): Result<List<Project>, DataError.Network> = repository.getProjects()
 }

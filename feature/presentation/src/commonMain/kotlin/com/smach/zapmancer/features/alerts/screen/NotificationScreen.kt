@@ -185,7 +185,10 @@ fun RibbonHeader(text: String) {
             modifier = Modifier.size(8.dp).align(Alignment.BottomStart).offset(x = (-16).dp, y = 8.dp),
         ) {
             val path = Path().apply {
-                moveTo(16f, 0f); lineTo(16f, 16f); lineTo(0f, 0f); close()
+                moveTo(16f, 0f)
+                lineTo(16f, 16f)
+                lineTo(0f, 0f)
+                close()
             }
             drawPath(path, color = pathColor)
         }

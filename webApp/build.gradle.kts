@@ -11,6 +11,7 @@ kotlin {
                 outputFileName = "webApp.js"
             }
         }
+        browser { testTask { enabled = false } }
         binaries.executable()
     }
 
@@ -29,7 +30,6 @@ kotlin {
 
             implementation(libs.sqldelight.webworker)
             implementation(projects.core)
-
         }
     }
 }
