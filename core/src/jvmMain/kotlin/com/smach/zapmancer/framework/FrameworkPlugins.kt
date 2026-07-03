@@ -58,6 +58,7 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
     }
 
     install(CallLogging) {
+        level = org.slf4j.event.Level.INFO
         callIdMdc("requestId")
     }
 

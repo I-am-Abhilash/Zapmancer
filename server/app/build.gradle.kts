@@ -18,6 +18,21 @@ dependencies {
     implementation(libs.flyway.database.postgresql)
 }
 
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("androidx.savedstate:savedstate-compose-desktop"))
+            .using(module("org.jetbrains.androidx.savedstate:savedstate-compose-desktop:${libs.versions.savedstateCompose.get()}"))
+        substitute(module("androidx.savedstate:savedstate-compose"))
+            .using(module("org.jetbrains.androidx.savedstate:savedstate-compose:${libs.versions.savedstateCompose.get()}"))
+    }
+}
+
 tasks.shadowJar {
     isZip64 = true
+    mergeServiceFiles()
+    append("reference.conf")
+}
+
+tasks.withType<Zip> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
