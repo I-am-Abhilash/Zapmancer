@@ -1,0 +1,17 @@
+# Ignore everything
+**
+
+# Docker files
+!Dockerfile
+!docker-compose.yml
+
+# Configuration files needed by Compose
+!gorse-config.toml
+!init-db.sh
+
+# The fat JAR
+!server/
+!server/app/
+!server/app/build/
+!server/app/build/libs/
+!server/app/build/libs/server-app-all.jar

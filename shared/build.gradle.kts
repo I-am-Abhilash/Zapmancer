@@ -32,15 +32,15 @@ kotlin {
         }
     }
 
-    js {
-        browser {
-            testTask {
-                useKarma {
-                    useFirefox()
-                }
-            }
-        }
-    }
+//    js {
+//        browser {
+//            testTask {
+//                useKarma {
+//                    useFirefox()
+//                }
+//            }
+//        }
+//    }
 
     sourceSets {
         commonMain.dependencies {
@@ -73,6 +73,7 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
+            implementation(libs.mokkery.runtime)
         }
     }
 }

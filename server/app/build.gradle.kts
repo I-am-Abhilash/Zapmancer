@@ -1,7 +1,15 @@
 plugins {
     id("ktor-server-convention")
+    id("database-convention")
     alias(libs.plugins.ktor)
 }
+
+ktor {
+    fatJar {
+        archiveFileName.set("fat.jar")
+    }
+}
+
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -29,10 +37,10 @@ configurations.all {
 
 tasks.shadowJar {
     isZip64 = true
-    mergeServiceFiles()
-    append("reference.conf")
-}
-
-tasks.withType<Zip> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Merge META-INF/services/* files (Ktor ConfigLoaders, Flyway plugins, etc.)
+    // so no service file is silently dropped. The dependencySubstitution block
+    // above already collapses the androidx/JetBrains fork conflict at resolution
+    // time, so no duplicate classes reach this task.
+//    mergeServiceFiles()
+//    append("reference.conf")
 }

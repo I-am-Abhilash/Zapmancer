@@ -12,6 +12,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # Gorse Master
   gorse-master:
@@ -23,17 +28,24 @@ services:
     volumes:
       - ./gorse-config.toml:/etc/gorse/config.toml
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+       # --- ADD THIS HEALTHCHECK ---
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8088/api/dashboard/cluster"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
 
   # Gorse Worker
   gorse-worker:
     image: zhenghaoz/gorse-worker
     container_name: gorse-worker_zap
-    command: "-c /etc/gorse/config.toml"
-    volumes:
-      - ./gorse-config.toml:/etc/gorse/config.toml
+    command: "--master-host gorse-master --master-port 8086"
     depends_on:
       - gorse-master
+    restart: unless-stopped
 
   # Main Application
   app:
@@ -42,40 +54,22 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PORT=8080
+      # Ktor's Netty EngineMain only honors the system property form for the
+      # port override; passing PORT alone is not picked up by application.conf.
+      - JAVA_TOOL_OPTIONS=-Dktor.deployment.port=8080
       - GORSE_URL=http://gorse-master:8088
       - STORAGE_JDBC_URL=jdbc:postgresql://db:5432/postgres
       - STORAGE_USER=postgres
       - STORAGE_PASSWORD=password
     depends_on:
-      - db
-      - gorse-master
-
-  # Directus - Professional Admin Dashboard
-  #  directus:
-  #    image: directus/directus:10.10
-  #    container_name: directus_ui
-  #    ports:
-  #      - "8055:8055"
-  #    environment:
-  #      KEY: "scriptside-random-key"
-  #      SECRET: "scriptside-random-secret"
-  #      DB_CLIENT: "pg"
-  #      DB_HOST: "db"
-  #      DB_PORT: "5432"
-  #      DB_DATABASE: "postgres"
-  #      DB_USER: "postgres"
-  #      DB_PASSWORD: "password"
-  #      # Admin User for Directus Login
-  #      ADMIN_EMAIL: "admin@example.com"
-  #      ADMIN_PASSWORD: "password"
-  #      # To allow Directus to see your existing tables without its own schema prefix
-  #      DB_SEARCH_PATH: "public"
-  #    depends_on:
-  #      - db
+      db:
+        condition: service_healthy
+      gorse-master:
+        condition: service_started
+#    restart: unless-stopped
 
   # pgAdmin - Database Management Tool
-  pgadmin:
+  pgAdmin:
     image: dpage/pgadmin4
     container_name: pgadmin_ui_zap
     ports:

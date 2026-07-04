@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 }
 
 // Client Multiplatform Modules
-include(":webApp")
+//include(":webApp")
 include(":androidApp")
 include(":shared")
 include(":core")

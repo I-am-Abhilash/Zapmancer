@@ -21,15 +21,15 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    js {
-        browser {
-            testTask {
-                useKarma {
-                    useFirefox()
-                }
-            }
-        }
-    }
+//    js {
+//        browser {
+//            testTask {
+//                useKarma {
+//                    useFirefox()
+//                }
+//            }
+//        }
+//    }
 
     sourceSets {
         commonMain.dependencies {

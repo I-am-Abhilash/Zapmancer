@@ -32,15 +32,15 @@ kotlin {
         }
     }
 
-    js {
-        browser {
-            testTask {
-                useKarma {
-                    useFirefox()
-                }
-            }
-        }
-    }
+//    js {
+//        browser {
+//            testTask {
+//                useKarma {
+//                    useFirefox()
+//                }
+//            }
+//        }
+//    }
 
     sourceSets {
         commonMain.dependencies {
