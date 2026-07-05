@@ -198,8 +198,12 @@ private fun appEntryProvider(
             showSnackbar = showSnackbar,
         )
     }
-    entry<Screen.MessagesDetail> {
+    entry<Screen.MessagesDetail> { key ->
         MessageDetailScreen(
+            conversationId = key.conversationId,
+            contactName = key.contactName,
+            contactAvatarUrl = key.contactAvatarUrl,
+            isOnline = key.isOnline,
             onBackClick = { navigator.goBack() },
             onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
             showSnackbar = showSnackbar,

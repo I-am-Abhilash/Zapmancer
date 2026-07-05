@@ -37,10 +37,4 @@ configurations.all {
 
 tasks.shadowJar {
     isZip64 = true
-    // Merge META-INF/services/* files (Ktor ConfigLoaders, Flyway plugins, etc.)
-    // so no service file is silently dropped. The dependencySubstitution block
-    // above already collapses the androidx/JetBrains fork conflict at resolution
-    // time, so no duplicate classes reach this task.
-//    mergeServiceFiles()
-//    append("reference.conf")
 }

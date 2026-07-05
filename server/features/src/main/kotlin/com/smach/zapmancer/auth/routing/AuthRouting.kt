@@ -1,8 +1,12 @@
 package com.smach.zapmancer.auth.routing
 
 import com.smach.zapmancer.auth.domain.AuthService
+import com.smach.zapmancer.common.CommonResponse
+import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.respondResult
 import com.smach.zapmancer.core.common.dto.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
@@ -48,6 +52,20 @@ fun Route.authRouting() {
             post("/refresh") {
                 val req = call.receive<RefreshTokenRequest>()
                 call.respondResult(service.refresh(req.refreshToken))
+            }
+        }
+    }
+
+    // Logout is authenticated (client must present a valid JWT) and intentionally
+    // lives outside the public rate-limited block. JWTs are stateless on this
+    // server, so the handler just acknowledges — token revocation is the client's
+    // responsibility (drop it from local storage).
+    authenticate("local-jwt") {
+        route("/auth") {
+            post("/logout") {
+                call.respondResult(
+                    DomainResult.Success(CommonResponse(success = true, message = "Logged out.")),
+                )
             }
         }
     }

@@ -63,12 +63,9 @@ class SettingsViewModel(
     }
 
     private fun toggleDarkMode(enabled: Boolean) {
-        viewModelScope.launch {
-            updateSettingsUseCase.updateDarkMode(enabled).foldTyped(
-                onSuccess = { updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) } },
-                onError = { },
-            )
-        }
+        // Dark mode is device-local — no network call. Update UI state immediately so the
+        // theme switch is instant; the server's SettingsData.isDarkModeEnabled is ignored.
+        updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) }
     }
 
     private fun toggleNotifications(enabled: Boolean) {

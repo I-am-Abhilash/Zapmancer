@@ -19,10 +19,19 @@ sealed class MessagesDetailEvent {
 
 class MessagesDetailViewModel(
     private val conversationId: String,
+    private val contactName: String,
+    private val contactAvatarUrl: String,
+    private val isOnline: Boolean,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val markConversationAsReadUseCase: MarkConversationAsReadUseCase,
-) : BaseViewModel<MessagesDetailUiState, MessagesDetailEvent, Unit>(MessagesDetailUiState()) {
+) : BaseViewModel<MessagesDetailUiState, MessagesDetailEvent, Unit>(
+    MessagesDetailUiState(
+        contactName = contactName,
+        contactAvatarUrl = contactAvatarUrl,
+        isOnline = isOnline,
+    ),
+) {
 
     override fun onEvent(event: MessagesDetailEvent) {
         when (event) {
@@ -40,10 +49,12 @@ class MessagesDetailViewModel(
         observeMessages()
         markAsRead()
     }
+
     private fun observeMessages() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
             getMessagesUseCase(conversationId).collectLatest { domainMessages ->
+                val date = domainMessages.firstOrNull()?.timestamp.orEmpty()
                 updateState {
                     copy(
                         messages = domainMessages.map { domainItem ->
@@ -56,6 +67,7 @@ class MessagesDetailViewModel(
                                 avatarUrl = domainItem.avatarUrl,
                             )
                         },
+                        conversationDate = date,
                         isLoading = false,
                     )
                 }

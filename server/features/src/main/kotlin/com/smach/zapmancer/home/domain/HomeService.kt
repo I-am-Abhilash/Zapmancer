@@ -13,14 +13,16 @@ class HomeService(private val repository: HomeRepository) {
             ?: return DomainResult.Error(ErrorCode.NOT_FOUND, "User not found.")
 
         val activeCount = repository.getActiveProjectsCount(userId)
+        val capacity = repository.getCapacity(userId)
         val activities = repository.getRecentActivities(userId)
 
         val dashboard = HomeDashboard(
             userName = context.name,
-            totalEarnings = "$0.00", // Grows as payment milestones are implemented
+            // Earnings and rating are populated once payment milestones are implemented.
+            totalEarnings = "$0.00",
             earningsGrowth = "+0.0%",
             activeProjectsCount = activeCount,
-            totalCapacity = 5,
+            totalCapacity = capacity,
             systemRating = 0.0,
             recentActivities = activities,
             isClientMode = context.isClientMode,

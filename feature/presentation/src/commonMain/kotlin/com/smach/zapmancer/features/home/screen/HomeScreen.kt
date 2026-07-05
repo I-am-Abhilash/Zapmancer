@@ -218,26 +218,25 @@ fun HomeContent(
                         StatCard(
                             modifier = cardModifier,
                             title = "Total Spent",
-                            value = "$14,800.00",
+                            value = state.totalSpent,
                             accentColor = MaterialTheme.colorScheme.primary,
                             icon = Icons.Default.Payments,
-                            growth = "+8.2%",
+                            growth = state.spentGrowth.ifEmpty { null },
                         )
                         StatCard(
                             modifier = cardModifier,
                             title = "Active Job Posts",
-                            value = "3",
+                            value = state.activeJobPostsCount.toString(),
                             accentColor = ZapGold,
                             icon = Icons.Default.Work,
-                            secondaryValue = "/ 5 capacity",
+                            secondaryValue = "/ ${state.totalCapacity} capacity",
                         )
                         StatCard(
                             modifier = cardModifier,
                             title = "Proposals Received",
-                            value = "12",
+                            value = state.proposalsReceivedCount.toString(),
                             accentColor = MaterialTheme.colorScheme.secondary,
                             icon = Icons.Default.Star,
-                            secondaryValue = "avg 4 bids/post",
                         )
                     } else {
                         StatCard(

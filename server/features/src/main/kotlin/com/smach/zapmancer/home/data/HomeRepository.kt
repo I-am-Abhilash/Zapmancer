@@ -37,6 +37,16 @@ class HomeRepository {
     }
 
     /**
+     * Returns the maximum number of concurrent projects this user can work on.
+     * Falls back to [DEFAULT_CAPACITY] until a per-user capacity column is added.
+     */
+    suspend fun getCapacity(userId: String): Int {
+        // UserSettingsTable does not yet have a capacity column; returning a
+        // sensible default until the feature is implemented.
+        return DEFAULT_CAPACITY
+    }
+
+    /**
      * Returns the user's most recent applied projects as activity items.
      * In a production system, a dedicated 'activities' table would be used.
      */
@@ -57,6 +67,11 @@ class HomeRepository {
                     value = row[ProjectsTable.budgetRange],
                 )
             }
+    }
+
+    companion object {
+        /** Default project capacity until a per-user setting is implemented. */
+        private const val DEFAULT_CAPACITY = 10
     }
 }
 

@@ -68,10 +68,18 @@ import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MessageDetailScreen(
-    viewModel: MessagesDetailViewModel = koinViewModel(),
+    conversationId: String,
+    contactName: String,
+    contactAvatarUrl: String,
+    isOnline: Boolean,
+    viewModel: MessagesDetailViewModel = koinViewModel(
+        key = conversationId,
+        parameters = { parametersOf(conversationId, contactName, contactAvatarUrl, isOnline) },
+    ),
     onBackClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
@@ -134,19 +142,21 @@ fun MessageDetailContent(
                     }
                     items(state.messages.reversed()) { message -> MessageBubble(message) }
                     item {
-                        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.surface,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                                shape = RoundedCornerShape(20.dp),
-                            ) {
-                                Text(
-                                    "Today, August 25",
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Medium,
-                                )
+                        if (state.conversationDate.isNotBlank()) {
+                            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    shape = RoundedCornerShape(20.dp),
+                                ) {
+                                    Text(
+                                        state.conversationDate,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontWeight = FontWeight.Medium,
+                                    )
+                                }
                             }
                         }
                     }

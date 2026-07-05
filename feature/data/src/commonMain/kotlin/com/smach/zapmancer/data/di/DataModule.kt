@@ -39,6 +39,7 @@ import com.smach.zapmancer.domain.usecase.SendMessageUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
 import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
+import com.smach.zapmancer.domain.usecase.UpdateProfileUseCase
 import com.smach.zapmancer.domain.usecase.UpdateSettingsUseCase
 import com.smach.zapmancer.domain.usecase.VerifyOtpUseCase
 import org.koin.core.module.dsl.bind
@@ -85,6 +86,7 @@ val dataModule = module {
     singleOf(::ProfileRepositoryImpl) { bind<ProfileRepository>() }
     factoryOf(::GetUserProfileUseCase)
     factoryOf(::HireUserUseCase)
+    factoryOf(::UpdateProfileUseCase)
 
     factoryOf(::PostProjectUseCase)
     factoryOf(::GetProjectProposalsUseCase)

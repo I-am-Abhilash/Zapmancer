@@ -58,7 +58,12 @@ sealed class Screen(
     ) : Screen("Profile")
 
     @Serializable
-    data object MessagesDetail : Screen("MessagesDetail")
+    data class MessagesDetail(
+        val conversationId: String,
+        val contactName: String,
+        val contactAvatarUrl: String,
+        val isOnline: Boolean,
+    ) : Screen("MessagesDetail")
 
     @Serializable
     data object MessagesList : Screen("Messages")
