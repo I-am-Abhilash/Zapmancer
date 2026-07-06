@@ -80,6 +80,7 @@ services:
       - db
 
   # RustFS - Lightweight S3-compatible storage
+  # Inside your rustfs service:
   rustfs:
     image: rustfs/rustfs:latest
     container_name: rustfs_storage_zap
@@ -92,9 +93,11 @@ services:
       - RUSTFS_VOLUMES=/data
       - RUSTFS_CONSOLE_ENABLE=true
     volumes:
-      - ./rustfs_data:/data
-      - ./rustfs_logs:/logs
+      - rustfs_data:/data
+      - rustfs_logs:/logs
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  rustfs_data:
+  rustfs_logs:
