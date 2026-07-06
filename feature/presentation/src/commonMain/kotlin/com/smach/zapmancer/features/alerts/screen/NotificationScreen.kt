@@ -64,24 +64,20 @@ import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEffect
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEvent
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
-import com.smach.zapmancer.features.common.adaptive.AdaptiveScaffold
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.NavDestination
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import org.koin.compose.viewmodel.koinViewModel
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.Scaffold
+
 @Composable
 fun NotificationScreen(
     viewModel: NotificationViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToMessages: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
-    currentRoute: String = NavDestination.Notifications.route,
     showSnackbar: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -97,18 +93,8 @@ fun NotificationScreen(
     }
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        AdaptiveScaffold(
-            currentRoute = currentRoute,
-            onNavigate = { dest ->
-                when (dest) {
-                    NavDestination.Home -> onNavigateToHome()
-                    NavDestination.Projects -> onNavigateToProjects()
-                    NavDestination.Messages -> onNavigateToMessages()
-                    NavDestination.Notifications -> Unit
-                    NavDestination.Profile -> onNavigateToProfile()
-                }
-            },
-            title = {
+        Scaffold(
+            topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = windowLayout.isCompact,
@@ -117,6 +103,8 @@ fun NotificationScreen(
                     drawBottomBorder = true,
                 )
             },
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = WindowInsets(0),
         ) { padding ->
             NotificationContent(
                 paddingValues = padding,

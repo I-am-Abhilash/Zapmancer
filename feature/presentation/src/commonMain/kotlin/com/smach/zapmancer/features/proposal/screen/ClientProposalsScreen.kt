@@ -42,11 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.AdaptiveScaffold
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.NavDestination
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.Scaffold
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
@@ -62,12 +62,6 @@ fun ClientProposalsScreen(
     viewModel: ClientProposalsViewModel = koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) }),
     onBackClick: () -> Unit = {},
     onFreelancerClick: (String) -> Unit = {},
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToMessages: () -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
-    currentRoute: String = NavDestination.Projects.route,
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -83,18 +77,8 @@ fun ClientProposalsScreen(
     }
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        AdaptiveScaffold(
-            currentRoute = currentRoute,
-            onNavigate = { dest ->
-                when (dest) {
-                    NavDestination.Home -> onNavigateToHome()
-                    NavDestination.Projects -> onNavigateToProjects()
-                    NavDestination.Messages -> onNavigateToMessages()
-                    NavDestination.Notifications -> onNavigateToNotifications()
-                    NavDestination.Profile -> onNavigateToProfile()
-                }
-            },
-            title = {
+        Scaffold(
+            topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = windowLayout.isCompact,
@@ -103,6 +87,8 @@ fun ClientProposalsScreen(
                     drawBottomBorder = true,
                 )
             },
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = WindowInsets(0),
         ) { padding ->
             ClientProposalsBody(
                 paddingValues = padding,

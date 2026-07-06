@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,9 +54,7 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
-import com.smach.zapmancer.features.common.adaptive.AdaptiveScaffold
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.NavDestination
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.LocalDrawerController
@@ -75,10 +75,6 @@ fun HomeScreen(
     onCreateProjectClick: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onExportCsvClick: () -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToMessages: () -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    currentRoute: String = NavDestination.Home.route,
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -96,19 +92,8 @@ fun HomeScreen(
     }
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        AdaptiveScaffold(
-            currentRoute = currentRoute,
-            onNavigate = { dest ->
-                when (dest) {
-                    NavDestination.Home -> Unit
-                    NavDestination.Projects -> onNavigateToProjects()
-                    NavDestination.Messages -> onNavigateToMessages()
-                    NavDestination.Notifications -> onNavigateToNotifications()
-                    NavDestination.Profile -> onNavigateToProfile()
-                }
-            },
-            onCreateProjectClick = onCreateProjectClick,
-            title = {
+        Scaffold(
+            topBar = {
                 ZapmancerTopBar(
                     titleContent = {
                         Row(
@@ -139,6 +124,8 @@ fun HomeScreen(
                     drawBottomBorder = true,
                 )
             },
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = WindowInsets(0),
         ) { padding ->
             HomeContent(
                 paddingValues = padding,

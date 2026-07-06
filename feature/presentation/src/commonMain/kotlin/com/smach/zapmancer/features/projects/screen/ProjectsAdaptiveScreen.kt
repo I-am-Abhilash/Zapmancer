@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import com.smach.zapmancer.features.projects.screen.ProjectListContent
+import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import kotlinx.coroutines.launch
@@ -60,8 +60,8 @@ fun ProjectsAdaptiveScreen(
                                 scaffoldNavigator.navigateBack()
                             }
                         },
-                        onSaveClick = { detailViewModel.onEvent(com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent.ToggleSave) },
-                        onApplyClick = { detailViewModel.onEvent(com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent.Apply) },
+                        onSaveClick = { detailViewModel.onEvent(ProjectDetailEvent.ToggleSave) },
+                        onApplyClick = { detailViewModel.onEvent(ProjectDetailEvent.Apply) },
                         showTopBar = true,
                     )
                 }

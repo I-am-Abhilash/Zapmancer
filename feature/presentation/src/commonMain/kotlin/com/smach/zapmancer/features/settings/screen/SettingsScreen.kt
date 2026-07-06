@@ -48,11 +48,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.AdaptiveScaffold
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.NavDestination
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.Scaffold
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.settings.state.SettingsUiState
@@ -64,29 +64,13 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
     onBackClick: () -> Unit,
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToMessages: () -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
-    currentRoute: String = NavDestination.Profile.route,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val windowLayout = rememberWindowLayout()
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        AdaptiveScaffold(
-            currentRoute = currentRoute,
-            onNavigate = { dest ->
-                when (dest) {
-                    NavDestination.Home -> onNavigateToHome()
-                    NavDestination.Projects -> onNavigateToProjects()
-                    NavDestination.Messages -> onNavigateToMessages()
-                    NavDestination.Notifications -> onNavigateToNotifications()
-                    NavDestination.Profile -> onNavigateToProfile()
-                }
-            },
-            title = {
+        Scaffold(
+            topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = true,
@@ -101,6 +85,8 @@ fun SettingsScreen(
                     drawBottomBorder = true,
                 )
             },
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = WindowInsets(0),
         ) { padding ->
             SettingsContent(
                 paddingValues = padding,

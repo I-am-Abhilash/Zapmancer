@@ -19,9 +19,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +39,9 @@ fun MessagesListContent(
     onProfileClick: (String) -> Unit = {},
     showTopBar: Boolean = true,
 ) {
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(Unit) { focusManager.clearFocus() }
+
     Column(modifier = Modifier.fillMaxSize()) {
         if (showTopBar) {
             TopAppBar(
@@ -75,7 +80,6 @@ fun TopAppBar(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // App title
             Text(
                 text = "Zapmancer",
                 fontWeight = FontWeight.Bold,
@@ -85,7 +89,6 @@ fun TopAppBar(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Search and filter
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -112,7 +115,6 @@ fun TopAppBar(
                         .height(36.dp),
                 )
 
-                // Filter chips
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -139,7 +141,6 @@ fun TopAppBar(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Profile avatar
             UserAvatar(
                 onClick = { onProfileClick("me") },
                 imageUrl = null,
