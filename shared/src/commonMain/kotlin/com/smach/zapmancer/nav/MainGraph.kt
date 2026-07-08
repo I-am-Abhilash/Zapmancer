@@ -17,6 +17,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -29,17 +31,13 @@ import com.smach.zapmancer.features.alerts.screen.NotificationScreen
 import com.smach.zapmancer.features.common.components.AppDrawerScaffold
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.home.screen.HomeScreen
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
-import com.smach.zapmancer.features.messages.screen.MessagesAdaptiveScreen
 import com.smach.zapmancer.features.messages.screen.MessagesListScreen
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
 import com.smach.zapmancer.features.profile.screen.ProfileScreen
 import com.smach.zapmancer.features.projects.screen.PostProjectScreen
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
 import com.smach.zapmancer.features.projects.screen.ProjectListScreen
-import com.smach.zapmancer.features.projects.screen.ProjectsAdaptiveScreen
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import com.smach.zapmancer.features.proposal.screen.ClientProposalsScreen
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
@@ -155,7 +153,7 @@ private fun appEntryProvider(
             onEvent = { viewModel.onEvent(it) },
             onProjectClick = { id ->
                 navigator.navigate(Screen.ProjectDetail(id.toString()))
-            }
+            },
         )
     }
 
@@ -219,12 +217,12 @@ private fun appEntryProvider(
                         contactName = contactName,
                         contactAvatarUrl = contactAvatarUrl,
                         isOnline = isOnline,
-                    )
+                    ),
                 )
             },
             onProfileClick = { userId ->
                 navigator.navigate(Screen.Profile(userId))
-            }
+            },
         )
     }
     entry<Screen.MessagesDetail> { key ->

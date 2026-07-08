@@ -1,7 +1,7 @@
 package com.smach.zapmancer.settings.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.ToggleRequest
 import com.smach.zapmancer.security.UserPrincipal
 import com.smach.zapmancer.settings.domain.SettingsService
 import io.ktor.http.HttpStatusCode

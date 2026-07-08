@@ -1,9 +1,9 @@
 package com.smach.zapmancer.settings.data
 
+import com.smach.zapmancer.core.common.dto.SettingsData
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.UserSettingsTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.core.common.dto.*
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll

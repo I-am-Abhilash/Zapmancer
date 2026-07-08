@@ -1,11 +1,12 @@
 package com.smach.zapmancer.home.data
 
+import com.smach.zapmancer.core.common.dto.RecentActivity
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.ProjectApplicationsTable
 import com.smach.zapmancer.database.ProjectsTable
 import com.smach.zapmancer.database.UserSettingsTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.home.data.HomeRepository.Companion.DEFAULT_CAPACITY
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.isNull

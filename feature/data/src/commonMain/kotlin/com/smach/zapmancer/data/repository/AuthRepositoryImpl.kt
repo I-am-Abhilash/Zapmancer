@@ -1,6 +1,9 @@
 package com.smach.zapmancer.data.repository
 
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
+import com.smach.zapmancer.core.common.dto.LoginRequest
+import com.smach.zapmancer.core.common.dto.SignUpRequest
+import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -12,7 +15,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.Serializable
 
 class AuthRepositoryImpl(
     private val client: HttpClient,

@@ -1,7 +1,8 @@
 package com.smach.zapmancer.projects.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.CreateProjectRequest
+import com.smach.zapmancer.core.common.dto.SaveProjectRequest
 import com.smach.zapmancer.projects.domain.ProjectsService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode
@@ -20,7 +21,6 @@ fun Route.projectsRouting() {
 
     authenticate("local-jwt") {
         route("/projects") {
-
             /** GET /projects — project board */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
@@ -31,7 +31,7 @@ fun Route.projectsRouting() {
             get("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
                 val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.getProjectById(id,principal.uid))
+                call.respondResult(service.getProjectById(id, principal.uid))
             }
 
             /** POST /projects/{id}/save */
@@ -46,7 +46,7 @@ fun Route.projectsRouting() {
             post("/{id}/apply") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val id = call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.applyToProject(principal.uid,id))
+                call.respondResult(service.applyToProject(principal.uid, id))
             }
 
             /** POST /projects — create new project (client mode) */

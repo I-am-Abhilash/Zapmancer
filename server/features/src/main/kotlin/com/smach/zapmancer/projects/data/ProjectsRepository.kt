@@ -1,5 +1,8 @@
 package com.smach.zapmancer.projects.data
 
+import com.smach.zapmancer.core.common.dto.CreateProjectRequest
+import com.smach.zapmancer.core.common.dto.Project
+import com.smach.zapmancer.core.common.dto.ProjectDetail
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.ProjectApplicationsTable
 import com.smach.zapmancer.database.ProjectDeliverablesTable
@@ -8,7 +11,6 @@ import com.smach.zapmancer.database.ProjectsTable
 import com.smach.zapmancer.database.SavedProjectsTable
 import com.smach.zapmancer.database.UserProfilesTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.SortOrder
@@ -41,7 +43,7 @@ class ProjectsRepository {
                     budgetRange = row[ProjectsTable.budgetRange],
                     projectType = row[ProjectsTable.projectType],
                     skills = skills,
-                    isSaved = isSaved
+                    isSaved = isSaved,
                 )
             }
     }
@@ -82,7 +84,7 @@ class ProjectsRepository {
             isSaved = isSaved,
             isClientActive = row[ProjectsTable.isClientActive],
             isIdentityVerified = row[ProjectsTable.isIdentityVerified],
-            isPhoneVerified = row[ProjectsTable.isPhoneVerified]
+            isPhoneVerified = row[ProjectsTable.isPhoneVerified],
         )
     }
 
@@ -148,18 +150,15 @@ class ProjectsRepository {
         id
     }
 
-    private fun getSkills(projectId: String): List<String> =
-        ProjectSkillsTable.selectAll()
-            .where { ProjectSkillsTable.projectId eq projectId }
-            .map { it[ProjectSkillsTable.skill] }
+    private fun getSkills(projectId: String): List<String> = ProjectSkillsTable.selectAll()
+        .where { ProjectSkillsTable.projectId eq projectId }
+        .map { it[ProjectSkillsTable.skill] }
 
-    private fun getDeliverables(projectId: String): List<String> =
-        ProjectDeliverablesTable.selectAll()
-            .where { ProjectDeliverablesTable.projectId eq projectId }
-            .map { it[ProjectDeliverablesTable.deliverable] }
+    private fun getDeliverables(projectId: String): List<String> = ProjectDeliverablesTable.selectAll()
+        .where { ProjectDeliverablesTable.projectId eq projectId }
+        .map { it[ProjectDeliverablesTable.deliverable] }
 
-    private fun isSavedByUser(userId: String, projectId: String): Boolean =
-        SavedProjectsTable.selectAll()
-            .where { (SavedProjectsTable.userId eq userId) and (SavedProjectsTable.projectId eq projectId) }
-            .count() > 0
+    private fun isSavedByUser(userId: String, projectId: String): Boolean = SavedProjectsTable.selectAll()
+        .where { (SavedProjectsTable.userId eq userId) and (SavedProjectsTable.projectId eq projectId) }
+        .count() > 0
 }

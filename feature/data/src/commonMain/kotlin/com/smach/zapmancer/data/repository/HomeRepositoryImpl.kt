@@ -1,6 +1,5 @@
 package com.smach.zapmancer.data.repository
 
-import com.smach.zapmancer.core.common.dto.HomeDashboard as HomeDashboardDto
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.network.ktor.safeApiCall
@@ -15,20 +14,20 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.serialization.Serializable
+import com.smach.zapmancer.core.common.dto.HomeDashboard as HomeDashboardDto
 
 class HomeRepositoryImpl(
     private val client: HttpClient,
 ) : HomeRepository {
 
-    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> =
-        safeApiCall<HomeDashboardDto> {
-            client.get("home/dashboard")
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.toDomain())
-                is Result.Error -> result
-            }
+    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> = safeApiCall<HomeDashboardDto> {
+        client.get("home/dashboard")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
         }
+    }
 
     override suspend fun exportActivitiesToCsv(
         activities: List<UserActivity>,

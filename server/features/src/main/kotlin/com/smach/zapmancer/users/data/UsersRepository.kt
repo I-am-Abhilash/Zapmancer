@@ -1,12 +1,15 @@
 package com.smach.zapmancer.users.data
 
+import com.smach.zapmancer.core.common.dto.PortfolioItem
+import com.smach.zapmancer.core.common.dto.Review
+import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
+import com.smach.zapmancer.core.common.dto.UserProfile
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.PortfolioItemsTable
 import com.smach.zapmancer.database.ProfileSkillsTable
 import com.smach.zapmancer.database.ReviewsTable
 import com.smach.zapmancer.database.UserProfilesTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.and
@@ -50,19 +53,19 @@ class UsersRepository {
                     id = row[PortfolioItemsTable.id],
                     title = row[PortfolioItemsTable.title],
                     description = row[PortfolioItemsTable.description],
-                    imageUrl = row[PortfolioItemsTable.imageUrl]
+                    imageUrl = row[PortfolioItemsTable.imageUrl],
                 )
             }
         val reviews = ReviewsTable
             .leftJoin(
                 otherTable = UsersTable,
                 onColumn = { ReviewsTable.authorId },
-                otherColumn = { UsersTable.id }
+                otherColumn = { UsersTable.id },
             )
             .leftJoin(
                 otherTable = UserProfilesTable,
                 onColumn = { UsersTable.id },
-                otherColumn = { UserProfilesTable.userId }
+                otherColumn = { UserProfilesTable.userId },
             )
             .selectAll()
             .where { ReviewsTable.subjectId eq userId }
@@ -73,7 +76,7 @@ class UsersRepository {
                     authorRole = row.getOrNull(UserProfilesTable.roleTitle) ?: "",
                     content = row[ReviewsTable.content],
                     rating = row[ReviewsTable.rating],
-                    authorAvatarUrl = row[UsersTable.avatarUrl]
+                    authorAvatarUrl = row[UsersTable.avatarUrl],
                 )
             }
         UserProfile(
@@ -90,7 +93,7 @@ class UsersRepository {
             skills = skills,
             portfolioItems = portfolioItems,
             reviews = reviews,
-            avatarUrl = userRow[UsersTable.avatarUrl]
+            avatarUrl = userRow[UsersTable.avatarUrl],
         )
     }
 
@@ -107,7 +110,6 @@ class UsersRepository {
             if (newName != null) it[username] = newName
             if (newAvatar != null) it[avatarUrl] = newAvatar
         }
-
 
         // Upsert profile row
         val exists = UserProfilesTable.selectAll()

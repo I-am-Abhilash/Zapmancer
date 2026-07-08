@@ -3,17 +3,18 @@ package com.smach.zapmancer.projects.domain
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.CreateProjectRequest
+import com.smach.zapmancer.core.common.dto.Project
+import com.smach.zapmancer.core.common.dto.ProjectDetail
 import com.smach.zapmancer.projects.data.ProjectsRepository
 import com.smach.zapmancer.recommendations.GorseClient
 
 class ProjectsService(
     private val repository: ProjectsRepository,
-    private val gorseClient: GorseClient
+    private val gorseClient: GorseClient,
 ) {
 
-    suspend fun getProjects(userId: String): DomainResult<List<Project>> =
-        DomainResult.Success(repository.getAllProjects(userId))
+    suspend fun getProjects(userId: String): DomainResult<List<Project>> = DomainResult.Success(repository.getAllProjects(userId))
 
     suspend fun getProjectById(projectId: String, userId: String): DomainResult<ProjectDetail> {
         val detail = repository.findById(projectId, userId)

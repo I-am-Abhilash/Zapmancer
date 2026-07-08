@@ -12,7 +12,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import kotlinx.serialization.Serializable
 
 class ProjectRepositoryImpl(
     private val client: HttpClient,

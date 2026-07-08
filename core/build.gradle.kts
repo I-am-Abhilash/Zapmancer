@@ -110,7 +110,7 @@ kotlin {
             implementation(libs.koin.logger.slf4j)
             implementation(libs.google.cloud.storage)
             implementation(libs.aws.s3)
-            
+
             // Database-convention libraries
             implementation(libs.exposed.core)
             implementation(libs.exposed.dao)

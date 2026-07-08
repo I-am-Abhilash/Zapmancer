@@ -1,7 +1,8 @@
 package com.smach.zapmancer.notifications.routing
 
 import com.smach.zapmancer.common.respondResult
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
+import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
 import com.smach.zapmancer.notifications.domain.NotificationsService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode
@@ -20,7 +21,6 @@ fun Route.notificationsRouting() {
 
     authenticate("local-jwt") {
         route("/notifications") {
-
             /** GET /notifications */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
@@ -28,7 +28,6 @@ fun Route.notificationsRouting() {
             }
 
             route("/{notificationId}") {
-
                 /** POST /notifications/{notificationId}/action */
                 post("/action") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)

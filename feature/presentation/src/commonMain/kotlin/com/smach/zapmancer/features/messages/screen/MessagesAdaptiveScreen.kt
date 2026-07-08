@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun MessagesAdaptiveScreen(
@@ -49,7 +48,6 @@ fun MessagesAdaptiveScreen(
         detailPane = {
             AnimatedPane {
                 scaffoldNavigator.currentDestination?.contentKey?.let { conversationId ->
-                    // Find the conversation item to pass contact metadata to the ViewModel.
                     val conversation = listState.conversations.find { it.id == conversationId }
                     val contactName = conversation?.name.orEmpty()
                     val contactAvatarUrl = conversation?.avatarUrl.orEmpty()

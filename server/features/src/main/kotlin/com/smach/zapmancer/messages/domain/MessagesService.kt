@@ -2,7 +2,8 @@ package com.smach.zapmancer.messages.domain
 
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.ConversationItem
+import com.smach.zapmancer.core.common.dto.MessageItem
 import com.smach.zapmancer.messages.data.MessagesRepository
 
 class MessagesService(private val repository: MessagesRepository) {

@@ -1,8 +1,9 @@
 package com.smach.zapmancer.proposals.data
 
+import com.smach.zapmancer.core.common.dto.Proposal
+import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.ProposalsTable
-import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.eq
@@ -39,7 +40,7 @@ class ProposalsRepository {
                     pitchContent = row[ProposalsTable.pitchContent],
                     budget = row[ProposalsTable.budget],
                     timelineDays = row[ProposalsTable.timelineDays],
-                    projectType = row[ProposalsTable.projectType]
+                    projectType = row[ProposalsTable.projectType],
                 )
             }
     }

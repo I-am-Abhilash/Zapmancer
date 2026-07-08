@@ -3,7 +3,7 @@ package com.smach.zapmancer.settings.domain
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.SettingsData
 import com.smach.zapmancer.settings.data.SettingsField
 import com.smach.zapmancer.settings.data.SettingsRepository
 

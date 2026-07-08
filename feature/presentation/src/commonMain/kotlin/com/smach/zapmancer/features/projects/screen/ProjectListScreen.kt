@@ -228,7 +228,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 
-        ) {
+    ) {
         val icon = when (project.category) {
             ProjectCategory.DESIGN -> Icons.Outlined.Palette
             ProjectCategory.DEVELOPMENT -> Icons.Outlined.Devices

@@ -3,12 +3,12 @@ package com.smach.zapmancer.users.domain
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.ErrorCode
-import com.smach.zapmancer.users.domain.UsersService
-import com.smach.zapmancer.core.common.dto.*
+import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
+import com.smach.zapmancer.core.common.dto.UserProfile
 import com.smach.zapmancer.users.data.UsersRepository
 
 class UsersServiceImpl(
-    private val repository: UsersRepository
+    private val repository: UsersRepository,
 ) : UsersService {
 
     override suspend fun getOwnProfile(userId: String): DomainResult<UserProfile> {
@@ -25,7 +25,7 @@ class UsersServiceImpl(
 
     override suspend fun updateProfile(
         userId: String,
-        request: UpdateProfileRequest
+        request: UpdateProfileRequest,
     ): DomainResult<UserProfile> {
         repository.updateProfile(userId, request)
         val updated = repository.findProfile(userId)
@@ -35,14 +35,14 @@ class UsersServiceImpl(
 
     override suspend fun hireFreelancer(
         clientId: String,
-        freelancerId: String
+        freelancerId: String,
     ): DomainResult<CommonResponse> {
         if (!repository.freelancerExists(freelancerId)) {
             return DomainResult.Error(ErrorCode.NOT_FOUND, "Freelancer not found.")
         }
         // TODO: send a real notification via NotificationsService
         return DomainResult.Success(
-            CommonResponse(success = true, message = "Hire offer notification dispatched.")
+            CommonResponse(success = true, message = "Hire offer notification dispatched."),
         )
     }
 }

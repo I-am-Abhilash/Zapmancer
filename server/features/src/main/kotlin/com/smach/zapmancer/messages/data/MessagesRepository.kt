@@ -1,10 +1,11 @@
 package com.smach.zapmancer.messages.data
 
+import com.smach.zapmancer.core.common.dto.ConversationItem
+import com.smach.zapmancer.core.common.dto.MessageItem
 import com.smach.zapmancer.database.ConversationsTable
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.MessagesTable
 import com.smach.zapmancer.database.UsersTable
-import com.smach.zapmancer.core.common.dto.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.SortOrder

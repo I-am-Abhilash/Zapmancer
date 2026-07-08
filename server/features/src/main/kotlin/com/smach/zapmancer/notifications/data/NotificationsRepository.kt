@@ -1,9 +1,10 @@
 package com.smach.zapmancer.notifications.data
 
+import com.smach.zapmancer.core.common.dto.NotificationAction
+import com.smach.zapmancer.core.common.dto.NotificationItem
 import com.smach.zapmancer.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.database.NotificationActionsTable
 import com.smach.zapmancer.database.NotificationsTable
-import com.smach.zapmancer.core.common.dto.*
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -22,7 +23,7 @@ class NotificationsRepository {
                         NotificationAction(
                             label = a[NotificationActionsTable.label],
                             isPrimary = a[NotificationActionsTable.isPrimary],
-                            isError = a[NotificationActionsTable.isError]
+                            isError = a[NotificationActionsTable.isError],
                         )
                     }
                 NotificationItem(
@@ -35,7 +36,7 @@ class NotificationsRepository {
                     codeSnippet = row[NotificationsTable.codeSnippet],
                     isItalic = row[NotificationsTable.isItalic],
                     actions = actions,
-                    quickReply = row[NotificationsTable.quickReply]
+                    quickReply = row[NotificationsTable.quickReply],
                 )
             }
     }
