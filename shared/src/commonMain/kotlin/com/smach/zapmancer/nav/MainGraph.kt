@@ -29,16 +29,23 @@ import com.smach.zapmancer.features.alerts.screen.NotificationScreen
 import com.smach.zapmancer.features.common.components.AppDrawerScaffold
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.home.screen.HomeScreen
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.features.messages.screen.MessagesAdaptiveScreen
+import com.smach.zapmancer.features.messages.screen.MessagesListScreen
+import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
 import com.smach.zapmancer.features.profile.screen.ProfileScreen
 import com.smach.zapmancer.features.projects.screen.PostProjectScreen
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
+import com.smach.zapmancer.features.projects.screen.ProjectListScreen
 import com.smach.zapmancer.features.projects.screen.ProjectsAdaptiveScreen
+import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import com.smach.zapmancer.features.proposal.screen.ClientProposalsScreen
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
 import com.smach.zapmancer.features.settings.screen.SettingsScreen
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * MainGraph is the entry point for authenticated app content.
@@ -142,8 +149,13 @@ private fun appEntryProvider(
     }
 
     entry<Screen.ProjectList> {
-        ProjectsAdaptiveScreen(
-            showSnackbar = showSnackbar,
+        val viewModel: ProjectListViewModel = koinViewModel()
+        ProjectListScreen(
+            viewModel = viewModel,
+            onEvent = { viewModel.onEvent(it) },
+            onProjectClick = { id ->
+                navigator.navigate(Screen.ProjectDetail(id.toString()))
+            }
         )
     }
 
@@ -192,9 +204,27 @@ private fun appEntryProvider(
     }
 
     entry<Screen.MessagesList> {
-        MessagesAdaptiveScreen(
-            onProfileClick = { userId -> navigator.navigate(Screen.Profile(userId)) },
-            showSnackbar = showSnackbar,
+        val viewModel: MessagesListViewModel = koinViewModel()
+        val state by viewModel.uiState.collectAsState()
+        MessagesListScreen(
+            viewModel = viewModel,
+            onConversationClick = { conversationId ->
+                val conversation = state.conversations.find { it.id == conversationId }
+                val contactName = conversation?.name.orEmpty()
+                val contactAvatarUrl = conversation?.avatarUrl.orEmpty()
+                val isOnline = conversation?.isOnline ?: false
+                navigator.navigate(
+                    Screen.MessagesDetail(
+                        conversationId = conversationId,
+                        contactName = contactName,
+                        contactAvatarUrl = contactAvatarUrl,
+                        isOnline = isOnline,
+                    )
+                )
+            },
+            onProfileClick = { userId ->
+                navigator.navigate(Screen.Profile(userId))
+            }
         )
     }
     entry<Screen.MessagesDetail> { key ->

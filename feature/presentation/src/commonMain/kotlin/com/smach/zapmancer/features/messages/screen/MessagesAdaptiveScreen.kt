@@ -16,17 +16,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-/**
- * Adaptive two-pane messages layout.
- *
- * On compact screens the list and detail panes are shown in sequence (like a
- * bottom-nav flow). On medium/expanded the [ListDetailPaneScaffold] shows both
- * side-by-side.
- *
- * Contact metadata (name, avatar, online status) is read from the list state when the
- * user taps a conversation and passed directly into [MessagesDetailViewModel] — no
- * extra network round-trip needed.
- */
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun MessagesAdaptiveScreen(

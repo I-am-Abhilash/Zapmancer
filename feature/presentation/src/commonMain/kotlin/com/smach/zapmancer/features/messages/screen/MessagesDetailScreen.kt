@@ -161,7 +161,7 @@ fun MessageDetailContent(
                         }
                     }
                 }
-                MessageInput(typingText = state.typingText, onEvent = onEvent)
+//                MessageInput(typingText = state.typingText, onEvent = onEvent)
             }
         }
     }

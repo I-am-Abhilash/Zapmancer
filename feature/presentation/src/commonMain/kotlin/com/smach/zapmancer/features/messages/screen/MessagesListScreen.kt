@@ -10,25 +10,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,18 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ConversationItem
-import com.smach.zapmancer.features.common.adaptive.AdaptiveScaffold
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.NavDestination
-import com.smach.zapmancer.features.common.adaptive.TwoPane
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
@@ -61,28 +57,80 @@ fun MessagesListScreen(
     viewModel: MessagesListViewModel = koinViewModel(),
     onConversationClick: (String) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToProjects: () -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    currentRoute: String = NavDestination.Messages.route,
 ) {
     val state by viewModel.uiState.collectAsState()
     val drawerController = LocalDrawerController.current
-    val windowLayout = rememberWindowLayout()
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        AdaptiveScaffold(
-            currentRoute = currentRoute,
-            onNavigate = { dest ->
-                when (dest) {
-                    NavDestination.Home -> onNavigateToHome()
-                    NavDestination.Projects -> onNavigateToProjects()
-                    NavDestination.Messages -> Unit
-                    NavDestination.Notifications -> onNavigateToNotifications()
-                    NavDestination.Profile -> onProfileClick("me")
+    MessagesListContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onConversationClick = onConversationClick,
+        onProfileClick = onProfileClick,
+        onMenuClick = { drawerController.open() },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MessagesListContent(
+    state: MessagesListUiState,
+    onEvent: (MessagesListEvent) -> Unit,
+    onConversationClick: (String) -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    showTopBar: Boolean = true,
+) {
+    val content = @Composable { padding: PaddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            MessagesSearchAndFilter(
+                searchQuery = state.searchQuery,
+                selectedFilter = state.selectedFilter,
+                onEvent = onEvent,
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
+            ) {
+                if (state.conversations.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "No conversations found",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
                 }
-            },
-            title = {
+                items(state.conversations, key = { it.id }) { conversation ->
+                    ConversationItemRow(
+                        item = conversation,
+                        isSelected = false,
+                        onClick = { onConversationClick(conversation.id) },
+                    )
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        thickness = 1.dp,
+                    )
+                }
+            }
+        }
+    }
+
+    if (showTopBar) {
+        Scaffold(
+            topBar = {
                 ZapmancerTopBar(
                     titleContent = {
                         Row(
@@ -97,8 +145,8 @@ fun MessagesListScreen(
                             )
                         }
                     },
-                    showMenuButton = windowLayout.isCompact,
-                    onMenuClick = { drawerController.open() },
+                    showMenuButton = true,
+                    onMenuClick = onMenuClick,
                     actions = {
                         UserAvatar(
                             onClick = { onProfileClick("me") },
@@ -114,118 +162,12 @@ fun MessagesListScreen(
                     drawBottomBorder = true,
                 )
             },
+            containerColor = MaterialTheme.colorScheme.background,
         ) { padding ->
-            MessagesListBody(
-                paddingValues = padding,
-                state = state,
-                onEvent = viewModel::onEvent,
-                onConversationClick = onConversationClick,
-            )
+            content(padding)
         }
-    }
-}
-
-@Composable
-fun MessagesListBody(
-    paddingValues: PaddingValues,
-    state: MessagesListUiState,
-    onEvent: (MessagesListEvent) -> Unit,
-    onConversationClick: (String) -> Unit,
-) {
-    val windowLayout = LocalWindowLayout.current
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        TwoPane(
-            windowLayout = windowLayout,
-            primary = {
-                MessagesListPane(
-                    state = state,
-                    onEvent = onEvent,
-                    onConversationClick = onConversationClick,
-                )
-            },
-            secondary = {
-                if (!windowLayout.isCompact) {
-                    MessagesDetailPlaceholder()
-                }
-            },
-        )
-    }
-}
-
-@Composable
-fun MessagesListPane(
-    state: MessagesListUiState,
-    onEvent: (MessagesListEvent) -> Unit,
-    onConversationClick: (String) -> Unit,
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        MessagesSearchAndFilter(
-            searchQuery = state.searchQuery,
-            selectedFilter = state.selectedFilter,
-            onEvent = onEvent,
-        )
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
-        ) {
-            if (state.conversations.isEmpty()) {
-                item {
-                    Box(
-                        modifier = Modifier.fillParentMaxSize().padding(32.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = "No conversations found",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                }
-            }
-            items(state.conversations, key = { it.id }) { conversation ->
-                ConversationItemRow(
-                    item = conversation,
-                    isSelected = false,
-                    onClick = { onConversationClick(conversation.id) },
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    thickness = 1.dp,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MessagesDetailPlaceholder() {
-    val windowLayout = LocalWindowLayout.current
-    Box(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                "Select a conversation",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                "Pick a conversation on the left to view messages.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp).widthIn(max = 320.dp),
-            )
-        }
+    } else {
+        content(PaddingValues(0.dp))
     }
 }
 
@@ -269,9 +211,9 @@ fun MessagesSearchAndFilter(
                 Surface(
                     onClick = { onEvent(MessagesListEvent.OnFilterSelected(filter)) },
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
-                    contentColor = if (isSelected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                     shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.size(width = 0.dp, height = 32.dp),
+                    modifier = Modifier.height(32.dp),
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -316,7 +258,9 @@ fun ConversationItemRow(
             size = 48.dp,
             isOnline = item.isOnline,
         )
+
         Spacer(modifier = Modifier.width(12.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -346,10 +290,14 @@ fun ConversationItemRow(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+
         if (item.isUnread) {
             Spacer(modifier = Modifier.width(8.dp))
             Box(
-                modifier = Modifier.size(10.dp).clip(CircleShape).background(MaterialTheme.colorScheme.secondary),
+                modifier = Modifier
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary),
             )
         }
     }
@@ -359,18 +307,32 @@ fun ConversationItemRow(
 @Composable
 fun MessagesListScreenPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-            MessagesListBody(
-                paddingValues = PaddingValues(0.dp),
-                state = MessagesListUiState(
-                    conversations = listOf(
-                        ConversationItem(id = "1", name = "Alex Rivera", avatarUrl = "", lastMessage = "The deployment pipeline is successfully configured...", timestamp = "09:42 AM", isUnread = true, isOnline = true),
-                        ConversationItem(id = "2", name = "Sarah Chen", avatarUrl = "", lastMessage = "I've reviewed the latest pull request. Just a few minor...", timestamp = "Yesterday", isUnread = false, isOnline = false),
+        MessagesListContent(
+            state = MessagesListUiState(
+                conversations = listOf(
+                    ConversationItem(
+                        id = "1",
+                        name = "Alex Rivera",
+                        avatarUrl = "",
+                        lastMessage = "The deployment pipeline is successfully configured...",
+                        timestamp = "09:42 AM",
+                        isUnread = true,
+                        isOnline = true,
+                    ),
+                    ConversationItem(
+                        id = "2",
+                        name = "Sarah Chen",
+                        avatarUrl = "",
+                        lastMessage = "I've reviewed the latest pull request. Just a few minor...",
+                        timestamp = "Yesterday",
+                        isUnread = false,
+                        isOnline = false,
                     ),
                 ),
-                onEvent = {},
-                onConversationClick = {},
-            )
-        }
+            ),
+            onEvent = {},
+            onProfileClick = {},
+            onConversationClick = {},
+        )
     }
 }
