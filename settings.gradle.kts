@@ -42,9 +42,6 @@ include(":feature:data")
 include(":feature:domain")
 include(":feature:presentation")
 
-// Server Ktor Modules
-include(":server-app")
-project(":server-app").projectDir = file("server/app")
-
-include(":server-features")
-project(":server-features").projectDir = file("server/features")
+// Server Ktor Module
+include(":server")
+//project(":server").projectDir = file("server")

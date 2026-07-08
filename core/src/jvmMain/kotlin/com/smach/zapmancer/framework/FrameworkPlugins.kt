@@ -44,13 +44,11 @@ val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
  */
 @Suppress("LongMethod")
 fun Application.configureFramework(modules: List<Module> = emptyList()) {
-    // 1. Koin - Dependency Injection
     install(Koin) {
         slf4jLogger()
         modules(modules)
     }
 
-    // CallId and Logging for MDC
     install(CallId) {
         header(HttpHeaders.XRequestId)
         generate { UUID.randomUUID().toString() }

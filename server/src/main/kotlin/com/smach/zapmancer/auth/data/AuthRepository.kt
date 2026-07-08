@@ -78,7 +78,6 @@ class AuthRepository {
             it[UsersTable.passwordHash] = passwordHash
             it[UsersTable.createdAt] = now()
         }
-        // Create default settings row
         UserSettingsTable.insert {
             it[UserSettingsTable.userId] = id
         }
