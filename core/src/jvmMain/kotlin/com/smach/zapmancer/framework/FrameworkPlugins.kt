@@ -10,6 +10,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.calllogging.CallLogging
@@ -114,6 +115,17 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
                 ApiResponse<Unit>(
                     false,
                     error = ApiError("VALIDATION_ERROR", cause.reasons.joinToString()),
+                ),
+            )
+        }
+
+        exception<BadRequestException> { call, cause ->
+            logger.warn("Bad request: ${cause.message}")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(
+                    false,
+                    error = ApiError("BAD_REQUEST", cause.message ?: "Malformed request body or parameters"),
                 ),
             )
         }

@@ -1,10 +1,10 @@
-package com.smach.zapmancer.proposals.domain
+package com.smach.zapmancer.proposal.domain
 
 import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
-import com.smach.zapmancer.proposals.data.ProposalsRepository
+import com.smach.zapmancer.proposal.data.ProposalsRepository
 
 class ProposalsService(private val repository: ProposalsRepository) {
 

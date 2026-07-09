@@ -1,4 +1,4 @@
-package com.smach.zapmancer.proposals.data
+package com.smach.zapmancer.proposal.data
 
 import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest

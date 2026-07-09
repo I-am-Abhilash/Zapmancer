@@ -10,8 +10,8 @@
 !init-db.sh
 
 # The fat JAR
-!server/
-!server/app/
-!server/app/build/
-!server/app/build/libs/
-!server/app/build/libs/server-app-all.jar
+#!server/
+#!server/app/
+!server/build/
+#!server/app/build/libs/
+!server/build/libs/fat.jar

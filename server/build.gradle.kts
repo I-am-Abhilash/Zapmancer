@@ -19,7 +19,6 @@ tasks.shadowJar {
     isZip64 = true
 }
 
-
 dependencies {
     implementation(project(":core"))
 

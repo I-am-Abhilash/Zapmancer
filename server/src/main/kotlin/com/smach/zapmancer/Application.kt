@@ -14,8 +14,8 @@ import com.smach.zapmancer.notifications.di.notificationsModule
 import com.smach.zapmancer.notifications.routing.notificationsRouting
 import com.smach.zapmancer.projects.di.projectsModule
 import com.smach.zapmancer.projects.routing.projectsRouting
-import com.smach.zapmancer.proposals.di.proposalsModule
-import com.smach.zapmancer.proposals.routing.proposalsRouting
+import com.smach.zapmancer.proposal.di.proposalsModule
+import com.smach.zapmancer.proposal.routing.proposalsRouting
 import com.smach.zapmancer.recommendations.createGorseModule
 import com.smach.zapmancer.security.configureSecurity
 import com.smach.zapmancer.settings.di.settingsModule
