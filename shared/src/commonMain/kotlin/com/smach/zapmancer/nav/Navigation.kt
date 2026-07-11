@@ -58,6 +58,11 @@ sealed class Screen(
     ) : Screen("Profile")
 
     @Serializable
+    data class EditProfile(
+        val isNewUser: Boolean = false,
+    ) : Screen("Edit Profile")
+
+    @Serializable
     data class MessagesDetail(
         val conversationId: String,
         val contactName: String,
@@ -97,6 +102,9 @@ sealed class Screen(
     data class Detail(
         val id: Int,
     ) : Screen("Detail")
+
+    @Serializable
+    data object Search : Screen("Search")
 }
 
 /**
@@ -243,11 +251,13 @@ val navConfig =
                     subclass(Screen.ProjectList::class, Screen.ProjectList.serializer())
                     subclass(Screen.ProjectDetail::class, Screen.ProjectDetail.serializer())
                     subclass(Screen.Profile::class, Screen.Profile.serializer())
+                    subclass(Screen.EditProfile::class, Screen.EditProfile.serializer())
                     subclass(Screen.Proposal::class, Screen.Proposal.serializer())
                     subclass(Screen.Settings::class, Screen.Settings.serializer())
                     subclass(Screen.PostProject::class, Screen.PostProject.serializer())
                     subclass(Screen.ClientProposals::class, Screen.ClientProposals.serializer())
                     subclass(Screen.Detail::class, Screen.Detail.serializer())
+                    subclass(Screen.Search::class, Screen.Search.serializer())
                 }
             }
     }

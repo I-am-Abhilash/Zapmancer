@@ -64,6 +64,7 @@ import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
@@ -366,7 +367,7 @@ fun TypingIndicator() {
 @Preview
 @Composable
 fun MessageDetailScreenPreview() {
-    MaterialTheme {
+    AppTheme {
         CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             MessageDetailContent(
                 state = MessagesDetailUiState(

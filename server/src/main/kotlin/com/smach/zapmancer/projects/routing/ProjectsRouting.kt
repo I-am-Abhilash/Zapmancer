@@ -24,7 +24,21 @@ fun Route.projectsRouting() {
             /** GET /projects — project board */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                call.respondResult(service.getProjects(principal.uid))
+                val query = call.request.queryParameters["query"]
+                val category = call.request.queryParameters["category"]
+                val sortBy = call.request.queryParameters["sortBy"]
+                val page = call.request.queryParameters["page"]?.toIntOrNull()
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+                call.respondResult(
+                    service.getProjects(
+                        userId = principal.uid,
+                        query = query,
+                        category = category,
+                        sortBy = sortBy,
+                        page = page,
+                        limit = limit
+                    )
+                )
             }
 
             /** GET /projects/{id} */

@@ -19,4 +19,5 @@ data class HomeUiState(
     val recentActivities: List<UserActivity> = emptyList(),
     val isLoading: Boolean = false,
     val isClientMode: Boolean = false,
+    val showCompleteProfileBanner: Boolean = false,
 )

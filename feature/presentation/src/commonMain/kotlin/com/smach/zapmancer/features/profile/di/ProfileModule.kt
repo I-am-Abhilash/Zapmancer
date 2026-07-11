@@ -12,4 +12,10 @@ val profileModule = module {
             hireUserUseCase = get(),
         )
     }
+    viewModel {
+        com.smach.zapmancer.features.profile.viewmodel.EditProfileViewModel(
+            getUserProfileUseCase = get(),
+            updateProfileUseCase = get(),
+        )
+    }
 }

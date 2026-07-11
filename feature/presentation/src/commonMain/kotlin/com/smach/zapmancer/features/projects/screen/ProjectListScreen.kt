@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
+import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.Warning
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
@@ -67,6 +68,7 @@ fun ProjectListScreen(
     viewModel: ProjectListViewModel = koinViewModel(),
     onEvent: (ProjectListEvent) -> Unit,
     onProjectClick: (Int) -> Unit = {},
+    onSearchClick: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -74,7 +76,7 @@ fun ProjectListScreen(
         state = state,
         onEvent = onEvent,
         onProjectClick = onProjectClick,
-        onSearchClick = {},
+        onSearchClick = onSearchClick,
     )
 }
 
@@ -129,12 +131,10 @@ fun ProjectListContent(
 
             if (projects.isEmpty() && !state.isLoading && state.error == null) {
                 item {
-                    Text(
-                        text = "No projects found for this category.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
-                        textAlign = TextAlign.Center,
+                    EmptyState(
+                        title = "No projects found",
+                        description = "There are no projects available in the ${state.category.displayName} category.",
+                        icon = Icons.Outlined.Devices,
                     )
                 }
             }
@@ -228,7 +228,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
 
-    ) {
+        ) {
         val icon = when (project.category) {
             ProjectCategory.DESIGN -> Icons.Outlined.Palette
             ProjectCategory.DEVELOPMENT -> Icons.Outlined.Devices
@@ -503,3 +503,5 @@ object ProjectPreviewData {
         ),
     )
 }
+
+

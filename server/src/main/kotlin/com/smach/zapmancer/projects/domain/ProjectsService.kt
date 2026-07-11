@@ -14,7 +14,23 @@ class ProjectsService(
     private val gorseClient: GorseClient,
 ) {
 
-    suspend fun getProjects(userId: String): DomainResult<List<Project>> = DomainResult.Success(repository.getAllProjects(userId))
+    suspend fun getProjects(
+        userId: String,
+        query: String? = null,
+        category: String? = null,
+        sortBy: String? = null,
+        page: Int? = null,
+        limit: Int? = null
+    ): DomainResult<List<Project>> = DomainResult.Success(
+        repository.getAllProjects(
+            userId = userId,
+            query = query,
+            category = category,
+            sortBy = sortBy,
+            page = page,
+            limit = limit
+        )
+    )
 
     suspend fun getProjectById(projectId: String, userId: String): DomainResult<ProjectDetail> {
         val detail = repository.findById(projectId, userId)

@@ -81,11 +81,16 @@ fun ProfileScreen(
     userId: String? = null,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
+    onEditProfileClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
 ) {
     val viewModel: ProfileViewModel = koinViewModel(parameters = { parametersOf(userId) })
     val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(ProfileEvent.Refresh)
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -102,6 +107,7 @@ fun ProfileScreen(
         onEvent = { viewModel.onEvent(it) },
         onSearchClick = onSearchClick,
         onBackClick = onBackClick,
+        onEditProfileClick = onEditProfileClick,
         onProfileClick = onProfileClick,
     )
 }
@@ -113,6 +119,7 @@ fun ProfileContent(
     onEvent: (ProfileEvent) -> Unit,
     onSearchClick: () -> Unit,
     onBackClick: () -> Unit,
+    onEditProfileClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -146,7 +153,7 @@ fun ProfileContent(
                     .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
                 contentPadding = PaddingValues(bottom = 32.dp),
             ) {
-                item { IdentityHeader(state, onEvent) }
+                item { IdentityHeader(state, onEvent, onEditProfileClick) }
 
                 item {
                     ProfileSectionCard(title = "About") {
@@ -241,6 +248,7 @@ fun OnMoreButton(onClick: () -> Unit, text: String) {
 fun IdentityHeader(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
+    onEditProfileClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -354,13 +362,13 @@ fun IdentityHeader(
                 )
             }
 
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             if (!state.isOwnProfile) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
                 Button(
                     onClick = {
                         onEvent(ProfileEvent.HireMe)
@@ -376,6 +384,24 @@ fun IdentityHeader(
                 ) {
                     Text(
                         text = "Hire Me",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                    )
+                }
+            } else {
+                Button(
+                    onClick = onEditProfileClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    shape = RoundedCornerShape(999.dp),
+                ) {
+                    Text(
+                        text = "Edit Profile",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                     )

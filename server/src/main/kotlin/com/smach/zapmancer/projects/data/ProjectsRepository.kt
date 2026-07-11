@@ -16,6 +16,8 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.like
+import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -26,26 +28,58 @@ class ProjectsRepository {
 
     private fun now() = System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-    suspend fun getAllProjects(userId: String): List<Project> = dbQuery {
-        ProjectsTable.selectAll()
-            .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
-            .map { row ->
-                val projectId = row[ProjectsTable.id]
-                val skills = getSkills(projectId)
-                val isSaved = isSavedByUser(userId, projectId)
-                Project(
-                    id = projectId,
-                    category = row[ProjectsTable.category],
-                    title = row[ProjectsTable.title],
-                    postedTime = row[ProjectsTable.postedTime],
-                    location = row[ProjectsTable.location],
-                    isPaymentVerified = row[ProjectsTable.isPaymentVerified],
-                    budgetRange = row[ProjectsTable.budgetRange],
-                    projectType = row[ProjectsTable.projectType],
-                    skills = skills,
-                    isSaved = isSaved,
-                )
+    suspend fun getAllProjects(
+        userId: String,
+        query: String? = null,
+        category: String? = null,
+        sortBy: String? = null,
+        page: Int? = null,
+        limit: Int? = null
+    ): List<Project> = dbQuery {
+        var expr = ProjectsTable.selectAll()
+
+        if (!category.isNullOrBlank() && !category.equals("ALL", ignoreCase = true)) {
+            expr = expr.where { ProjectsTable.category eq category }
+        }
+
+        if (!query.isNullOrBlank()) {
+            expr = expr.where {
+                (ProjectsTable.title like "%$query%") or (ProjectsTable.projectScope like "%$query%")
             }
+        }
+
+        if (sortBy != null) {
+            when (sortBy.uppercase()) {
+                "NEWEST" -> expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+                "BUDGET" -> expr = expr.orderBy(ProjectsTable.budgetRange, SortOrder.DESC)
+                else -> expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+            }
+        } else {
+            expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+        }
+
+        if (page != null && limit != null) {
+            val offset = ((page - 1) * limit).toLong()
+            expr = expr.limit(limit).offset(offset)
+        }
+
+        expr.map { row ->
+            val projectId = row[ProjectsTable.id]
+            val skills = getSkills(projectId)
+            val isSaved = isSavedByUser(userId, projectId)
+            Project(
+                id = projectId,
+                category = row[ProjectsTable.category],
+                title = row[ProjectsTable.title],
+                postedTime = row[ProjectsTable.postedTime],
+                location = row[ProjectsTable.location],
+                isPaymentVerified = row[ProjectsTable.isPaymentVerified],
+                budgetRange = row[ProjectsTable.budgetRange],
+                projectType = row[ProjectsTable.projectType],
+                skills = skills,
+                isSaved = isSaved,
+            )
+        }
     }
 
     suspend fun findById(projectId: String, userId: String): ProjectDetail? = dbQuery {

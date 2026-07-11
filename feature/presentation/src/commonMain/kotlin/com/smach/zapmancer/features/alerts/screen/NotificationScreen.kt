@@ -24,9 +24,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.outlined.Work
+import com.smach.zapmancer.features.common.components.EmptyState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -125,25 +127,37 @@ fun NotificationContent(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter,
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
-        ) {
-            val grouped = state.notifications.groupBy { it.section }
-            grouped.forEach { (section, items) ->
-                item { RibbonHeader(section) }
-                items(items) { item ->
-                    NotificationCard(
-                        item = item,
-                        replyText = state.replyDrafts[item.id] ?: "",
-                        onReplyTextChanged = { text -> onEvent(NotificationEvent.OnReplyTextChanged(item.id, text)) },
-                        onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
-                        onActionClicked = { actionLabel -> onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel)) },
-                    )
+        if (state.notifications.isEmpty()) {
+            if (!state.isLoading && state.error == null) {
+                EmptyState(
+                    title = "All caught up!",
+                    description = "You have no unread notifications or tasks requiring action.",
+                    icon = Icons.Outlined.Notifications,
+                    buttonText = "Refresh",
+                    onButtonClick = { onEvent(NotificationEvent.Refresh) },
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = windowLayout.contentMaxWidthDp.dp)
+                    .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
+            ) {
+                val grouped = state.notifications.groupBy { it.section }
+                grouped.forEach { (section, items) ->
+                    item { RibbonHeader(section) }
+                    items(items) { item ->
+                        NotificationCard(
+                            item = item,
+                            replyText = state.replyDrafts[item.id] ?: "",
+                            onReplyTextChanged = { text -> onEvent(NotificationEvent.OnReplyTextChanged(item.id, text)) },
+                            onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
+                            onActionClicked = { actionLabel -> onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel)) },
+                        )
+                    }
                 }
             }
         }

@@ -34,6 +34,7 @@ import com.smach.zapmancer.features.home.screen.HomeScreen
 import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.features.messages.screen.MessagesListScreen
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
+import com.smach.zapmancer.features.profile.screen.EditProfileScreen
 import com.smach.zapmancer.features.profile.screen.ProfileScreen
 import com.smach.zapmancer.features.projects.screen.PostProjectScreen
 import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
@@ -41,6 +42,8 @@ import com.smach.zapmancer.features.projects.screen.ProjectListScreen
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
 import com.smach.zapmancer.features.proposal.screen.ClientProposalsScreen
 import com.smach.zapmancer.features.proposal.screen.ProposalScreen
+import com.smach.zapmancer.features.search.screen.SearchScreen
+import com.smach.zapmancer.features.search.viewmodel.SearchViewModel
 import com.smach.zapmancer.features.settings.screen.SettingsScreen
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -142,7 +145,9 @@ private fun appEntryProvider(
     entry<Screen.Home> {
         HomeScreen(
             onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
+            onCompleteProfileClick = { navigator.navigate(Screen.EditProfile(isNewUser = true)) },
             showSnackbar = showSnackbar,
+            onSearchClick = {navigator.navigate(Screen.Search)},
         )
     }
 
@@ -153,6 +158,9 @@ private fun appEntryProvider(
             onEvent = { viewModel.onEvent(it) },
             onProjectClick = { id ->
                 navigator.navigate(Screen.ProjectDetail(id.toString()))
+            },
+            onSearchClick = {
+                navigator.navigate(Screen.Search)
             },
         )
     }
@@ -175,6 +183,14 @@ private fun appEntryProvider(
         ProfileScreen(
             userId = key.userId,
             onSearchClick = { navigator.navigate(Screen.ProjectList) },
+            onBackClick = { navigator.goBack() },
+            onEditProfileClick = { navigator.navigate(Screen.EditProfile(isNewUser = false)) },
+            showSnackbar = showSnackbar,
+        )
+    }
+    entry<Screen.EditProfile> { key ->
+        EditProfileScreen(
+            isNewUser = key.isNewUser,
             onBackClick = { navigator.goBack() },
             showSnackbar = showSnackbar,
         )
@@ -241,6 +257,17 @@ private fun appEntryProvider(
         NotificationScreen(
             onBackClick = { navigator.goBack() },
             showSnackbar = showSnackbar,
+        )
+    }
+
+    entry<Screen.Search> {
+        val viewModel: SearchViewModel = koinViewModel()
+        SearchScreen(
+            viewModel = viewModel,
+            onBackClick = { navigator.goBack() },
+            onProjectClick = { id ->
+                navigator.navigate(Screen.ProjectDetail(id.toString()))
+            },
         )
     }
 }

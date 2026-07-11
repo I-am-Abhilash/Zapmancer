@@ -7,6 +7,7 @@ import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.usecase.ExportActivityCsvUseCase
 import com.smach.zapmancer.domain.usecase.GetHomeDashboardUseCase
+import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
 import com.smach.zapmancer.features.home.state.HomeUiState
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,7 @@ class HomeViewModel(
     private val getHomeDashboardUseCase: GetHomeDashboardUseCase,
     private val exportActivityCsvUseCase: ExportActivityCsvUseCase,
     private val settingsRepository: com.smach.zapmancer.domain.repository.SettingsRepository,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
 ) : BaseViewModel<HomeUiState, HomeEvent, HomeEffect>(HomeUiState()) {
 
     override fun onEvent(event: HomeEvent) {
@@ -48,6 +50,22 @@ class HomeViewModel(
     private fun loadDashboard() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
+
+            launch {
+                getUserProfileUseCase(null).foldTyped(
+                    onSuccess = { profile ->
+                        val incomplete = profile.name.isBlank() ||
+                                profile.role.isBlank() ||
+                                profile.location.isBlank() ||
+                                profile.about.isBlank() ||
+                                profile.skills.isEmpty()
+                        updateState { copy(showCompleteProfileBanner = incomplete) }
+                    },
+                    onError = {
+                        // Fail silently for dashboard onboarding alert
+                    }
+                )
+            }
             getHomeDashboardUseCase().foldTyped(
                 onSuccess = { dashboard ->
                     updateState {
