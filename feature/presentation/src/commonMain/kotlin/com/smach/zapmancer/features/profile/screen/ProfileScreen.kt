@@ -98,6 +98,9 @@ fun ProfileScreen(
                 is ProfileEffect.ShowToast -> {
                     showSnackbar(effect.message)
                 }
+                ProfileEffect.NavigateToSearch -> onSearchClick()
+                ProfileEffect.NavigateBack -> onBackClick()
+                ProfileEffect.NavigateToEditProfile -> onEditProfileClick()
             }
         }
     }
@@ -105,9 +108,6 @@ fun ProfileScreen(
     ProfileContent(
         state = state,
         onEvent = { viewModel.onEvent(it) },
-        onSearchClick = onSearchClick,
-        onBackClick = onBackClick,
-        onEditProfileClick = onEditProfileClick,
         onProfileClick = onProfileClick,
     )
 }
@@ -117,9 +117,6 @@ fun ProfileScreen(
 fun ProfileContent(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
-    onSearchClick: () -> Unit,
-    onBackClick: () -> Unit,
-    onEditProfileClick: () -> Unit = {},
     onProfileClick: (String) -> Unit = {},
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -130,9 +127,9 @@ fun ProfileContent(
             ZapmancerTopBar(
                 title = "Zapmancer",
                 showBackButton = true,
-                onBackClick = onBackClick,
+                onBackClick = { onEvent(ProfileEvent.BackClicked) },
                 actions = {
-                    IconButton(onClick = { onSearchClick() }) {
+                    IconButton(onClick = { onEvent(ProfileEvent.SearchClicked) }) {
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
@@ -153,7 +150,7 @@ fun ProfileContent(
                     .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
                 contentPadding = PaddingValues(bottom = 32.dp),
             ) {
-                item { IdentityHeader(state, onEvent, onEditProfileClick) }
+                item { IdentityHeader(state, onEvent) }
 
                 item {
                     ProfileSectionCard(title = "About") {
@@ -248,7 +245,6 @@ fun OnMoreButton(onClick: () -> Unit, text: String) {
 fun IdentityHeader(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
-    onEditProfileClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -390,7 +386,7 @@ fun IdentityHeader(
                 }
             } else {
                 Button(
-                    onClick = onEditProfileClick,
+                    onClick = { onEvent(ProfileEvent.EditProfileClicked) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -681,8 +677,6 @@ fun ProfileScreenPreview() {
         ProfileContent(
             state = ProfileUiState(),
             onEvent = {},
-            onSearchClick = {},
-            onBackClick = {},
             onProfileClick = {},
         )
     }

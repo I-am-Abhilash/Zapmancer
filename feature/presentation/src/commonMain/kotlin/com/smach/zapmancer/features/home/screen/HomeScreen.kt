@@ -84,7 +84,6 @@ fun HomeScreen(
     onCreateProjectClick: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onCompleteProfileClick: () -> Unit = {},
-    onExportCsvClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {},
     onSearchClick: () -> Unit,
 ) {
@@ -98,6 +97,10 @@ fun HomeScreen(
                 is HomeEffect.ShowToast -> {
                     showSnackbar(effect.message)
                 }
+                HomeEffect.NavigateToProfile -> onNavigateToProfile()
+                HomeEffect.NavigateToCompleteProfile -> onCompleteProfileClick()
+                HomeEffect.NavigateToSearch -> onSearchClick()
+                HomeEffect.NavigateToCreateProject -> onCreateProjectClick()
             }
         }
     }
@@ -122,7 +125,7 @@ fun HomeScreen(
                     onMenuClick = { drawerController.open() },
                     actions = {
                         UserAvatar(
-                            onClick = onNavigateToProfile,
+                            onClick = { viewModel.onEvent(HomeEvent.ProfileClicked) },
                             imageUrl = null,
                             size = 32.dp,
                             shape = MaterialTheme.shapes.extraLarge,
@@ -141,10 +144,7 @@ fun HomeScreen(
             HomeContent(
                 paddingValues = padding,
                 state = state,
-                onCreateProjectClick = onCreateProjectClick,
-                onCompleteProfileClick = onCompleteProfileClick,
-                onExportCsvClick = onExportCsvClick,
-                onSearchClick = onSearchClick,
+                onEvent = viewModel::onEvent,
             )
         }
     }
@@ -154,10 +154,7 @@ fun HomeScreen(
 fun HomeContent(
     paddingValues: PaddingValues,
     state: HomeUiState,
-    onCreateProjectClick: () -> Unit,
-    onCompleteProfileClick: () -> Unit,
-    onExportCsvClick: () -> Unit,
-    onSearchClick: () -> Unit,
+    onEvent: (HomeEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -185,7 +182,7 @@ fun HomeContent(
         }
 
         if (state.showCompleteProfileBanner) {
-            CompleteProfileBanner(onCompleteProfileClick = onCompleteProfileClick)
+            CompleteProfileBanner(onCompleteProfileClick = { onEvent(HomeEvent.CompleteProfileClicked) })
         }
 
         Column(
@@ -248,7 +245,7 @@ fun HomeContent(
 
         // 4. Primary Action Button
         Button(
-            onClick = onCreateProjectClick,
+            onClick = { onEvent(HomeEvent.CreateProjectClicked) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -275,7 +272,7 @@ fun HomeContent(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )
-                IconButton(onClick = onExportCsvClick) {
+                IconButton(onClick = { onEvent(HomeEvent.ExportCsv) }) {
                     Icon(
                         Icons.Default.Print,
                         contentDescription = null,
@@ -731,10 +728,7 @@ fun HomeScreenPreview() {
                     ),
                 ),
             ),
-            onCreateProjectClick = {},
-            onCompleteProfileClick = {},
-            onExportCsvClick = {},
-            onSearchClick = {},
+            onEvent = {},
         )
     }
 }

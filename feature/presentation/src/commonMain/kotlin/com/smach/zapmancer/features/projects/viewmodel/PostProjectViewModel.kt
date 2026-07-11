@@ -22,10 +22,12 @@ sealed interface PostProjectEvent {
     data object AddSkill : PostProjectEvent
     data class RemoveSkill(val index: Int) : PostProjectEvent
     data object Submit : PostProjectEvent
+    data object BackClicked : PostProjectEvent
 }
 
 sealed interface PostProjectEffect {
     data class ShowToast(val message: String) : PostProjectEffect
+    data object NavigateBack : PostProjectEffect
 }
 
 class PostProjectViewModel(
@@ -34,6 +36,7 @@ class PostProjectViewModel(
 
     override fun onEvent(event: PostProjectEvent) {
         when (event) {
+            PostProjectEvent.BackClicked -> sendEffect(PostProjectEffect.NavigateBack)
             is PostProjectEvent.OnTitleChanged -> updateState { copy(title = event.title) }
 
             is PostProjectEvent.OnCategoryChanged -> updateState { copy(category = event.category) }

@@ -15,6 +15,13 @@ sealed class MessagesDetailEvent {
     data class OnTextChanged(val text: String) : MessagesDetailEvent()
     data object SendMessage : MessagesDetailEvent()
     data object MarkAsRead : MessagesDetailEvent()
+    data object BackClicked : MessagesDetailEvent()
+    data class ProfileClicked(val contactName: String) : MessagesDetailEvent()
+}
+
+sealed class MessagesDetailEffect {
+    data object NavigateBack : MessagesDetailEffect()
+    data class NavigateToProfile(val contactName: String) : MessagesDetailEffect()
 }
 
 class MessagesDetailViewModel(
@@ -25,7 +32,7 @@ class MessagesDetailViewModel(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val markConversationAsReadUseCase: MarkConversationAsReadUseCase,
-) : BaseViewModel<MessagesDetailUiState, MessagesDetailEvent, Unit>(
+) : BaseViewModel<MessagesDetailUiState, MessagesDetailEvent, MessagesDetailEffect>(
     MessagesDetailUiState(
         contactName = contactName,
         contactAvatarUrl = contactAvatarUrl,
@@ -42,6 +49,10 @@ class MessagesDetailViewModel(
             MessagesDetailEvent.SendMessage -> sendMessage()
 
             MessagesDetailEvent.MarkAsRead -> markAsRead()
+
+            MessagesDetailEvent.BackClicked -> sendEffect(MessagesDetailEffect.NavigateBack)
+
+            is MessagesDetailEvent.ProfileClicked -> sendEffect(MessagesDetailEffect.NavigateToProfile(event.contactName))
         }
     }
 

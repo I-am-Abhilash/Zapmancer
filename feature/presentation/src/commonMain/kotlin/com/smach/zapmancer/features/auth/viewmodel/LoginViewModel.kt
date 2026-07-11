@@ -36,11 +36,13 @@ sealed class LoginSideEffect {
     ) : LoginSideEffect()
 
     data object NavigateToForgotPassword : LoginSideEffect()
+    data object NavigateToSignup : LoginSideEffect()
+    data object NavigateToHome : LoginSideEffect()
 }
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
-) : BaseViewModel<LoginUiState, LoginEvent, Unit>(LoginUiState()) {
+) : BaseViewModel<LoginUiState, LoginEvent, LoginSideEffect>(LoginUiState()) {
     override fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.OnEmailChanged -> updateState { copy(email = event.email) }
@@ -56,11 +58,11 @@ class LoginViewModel(
             LoginEvent.Submit -> submit()
 
             LoginEvent.OnForgotPasswordClicked -> {
-                /* Handle click */
+                sendEffect(LoginSideEffect.NavigateToForgotPassword)
             }
 
             LoginEvent.OnRegisterHereClicked -> {
-                /* Handle click */
+                sendEffect(LoginSideEffect.NavigateToSignup)
             }
         }
     }
@@ -73,6 +75,7 @@ class LoginViewModel(
             when (val result = loginUseCase(currentState.email, currentState.password)) {
                 is Result.Success -> {
                     updateState { copy(isLoading = false, isSuccess = true) }
+                    sendEffect(LoginSideEffect.NavigateToHome)
                 }
 
                 is Result.Error -> {

@@ -15,10 +15,14 @@ sealed interface ProposalEvent {
     data class OnTimelineChanged(val timeline: String) : ProposalEvent
     data class StepChanged(val step: Int) : ProposalEvent
     data object Submit : ProposalEvent
+    data object BackClicked : ProposalEvent
+    data object DashboardClicked : ProposalEvent
 }
 
 sealed interface ProposalEffect {
     data class ShowToast(val message: String) : ProposalEffect
+    data object NavigateBack : ProposalEffect
+    data object NavigateHome : ProposalEffect
 }
 
 class ProposalViewModel(
@@ -32,6 +36,8 @@ class ProposalViewModel(
             is ProposalEvent.OnTimelineChanged -> updateState { copy(timelineDays = event.timeline) }
             is ProposalEvent.StepChanged -> updateState { copy(currentStep = event.step) }
             ProposalEvent.Submit -> submitProposal()
+            ProposalEvent.BackClicked -> sendEffect(ProposalEffect.NavigateBack)
+            ProposalEvent.DashboardClicked -> sendEffect(ProposalEffect.NavigateHome)
         }
     }
 

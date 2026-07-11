@@ -47,9 +47,11 @@ import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import androidx.compose.runtime.LaunchedEffect
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
+import com.smach.zapmancer.features.messages.viewmodel.MessagesListEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -61,11 +63,18 @@ fun MessagesListScreen(
     val state by viewModel.uiState.collectAsState()
     val drawerController = LocalDrawerController.current
 
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is MessagesListEffect.NavigateToConversation -> onConversationClick(effect.id)
+                is MessagesListEffect.NavigateToProfile -> onProfileClick(effect.id)
+            }
+        }
+    }
+
     MessagesListContent(
         state = state,
         onEvent = viewModel::onEvent,
-        onConversationClick = onConversationClick,
-        onProfileClick = onProfileClick,
         onMenuClick = { drawerController.open() },
     )
 }
@@ -75,8 +84,6 @@ fun MessagesListScreen(
 fun MessagesListContent(
     state: MessagesListUiState,
     onEvent: (MessagesListEvent) -> Unit,
-    onConversationClick: (String) -> Unit = {},
-    onProfileClick: (String) -> Unit = {},
     onMenuClick: () -> Unit = {},
     showTopBar: Boolean = true,
 ) {
@@ -117,7 +124,7 @@ fun MessagesListContent(
                     ConversationItemRow(
                         item = conversation,
                         isSelected = false,
-                        onClick = { onConversationClick(conversation.id) },
+                        onClick = { onEvent(MessagesListEvent.ConversationClicked(conversation.id)) },
                     )
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
@@ -149,7 +156,7 @@ fun MessagesListContent(
                     onMenuClick = onMenuClick,
                     actions = {
                         UserAvatar(
-                            onClick = { onProfileClick("me") },
+                            onClick = { onEvent(MessagesListEvent.ProfileClicked("me")) },
                             imageUrl = null,
                             size = 32.dp,
                             shape = MaterialTheme.shapes.extraLarge,
@@ -331,8 +338,6 @@ fun MessagesListScreenPreview() {
                 ),
             ),
             onEvent = {},
-            onProfileClick = {},
-            onConversationClick = {},
         )
     }
 }

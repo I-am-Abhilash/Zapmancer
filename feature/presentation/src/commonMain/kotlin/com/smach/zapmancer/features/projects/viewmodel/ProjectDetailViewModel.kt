@@ -14,10 +14,12 @@ sealed interface ProjectDetailEvent {
     data object LoadProject : ProjectDetailEvent
     data object ToggleSave : ProjectDetailEvent
     data object Apply : ProjectDetailEvent
+    data object BackClicked : ProjectDetailEvent
 }
 
 sealed interface ProjectDetailEffect {
     data class ShowToast(val message: String) : ProjectDetailEffect
+    data object NavigateBack : ProjectDetailEffect
 }
 
 class ProjectDetailViewModel(
@@ -38,6 +40,7 @@ class ProjectDetailViewModel(
             ProjectDetailEvent.LoadProject -> loadProject()
             ProjectDetailEvent.ToggleSave -> toggleSave()
             ProjectDetailEvent.Apply -> apply()
+            ProjectDetailEvent.BackClicked -> sendEffect(ProjectDetailEffect.NavigateBack)
         }
     }
 

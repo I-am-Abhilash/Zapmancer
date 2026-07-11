@@ -66,17 +66,27 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ProjectListScreen(
     viewModel: ProjectListViewModel = koinViewModel(),
-    onEvent: (ProjectListEvent) -> Unit,
-    onProjectClick: (Int) -> Unit = {},
-    onSearchClick: () -> Unit = {},
+    onNavigateToProjectDetail: (String) -> Unit = {},
+    onNavigateToSearch: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ProjectListEffect.NavigateToProjectDetail -> {
+                    onNavigateToProjectDetail(effect.projectId)
+                }
+                ProjectListEffect.NavigateToSearch -> {
+                    onNavigateToSearch()
+                }
+            }
+        }
+    }
+
     ProjectListContent(
         state = state,
-        onEvent = onEvent,
-        onProjectClick = onProjectClick,
-        onSearchClick = onSearchClick,
+        onEvent = { viewModel.onEvent(it) },
     )
 }
 
@@ -84,8 +94,6 @@ fun ProjectListScreen(
 @Composable
 fun ProjectListContent(
     state: ProjectListUiState,
-    onProjectClick: (Int) -> Unit = {},
-    onSearchClick: () -> Unit,
     onEvent: (ProjectListEvent) -> Unit,
     showTopBar: Boolean = true,
 ) {
@@ -142,7 +150,7 @@ fun ProjectListContent(
             items(projects) { project ->
                 ProjectItemCard(
                     project = project,
-                    onClick = { onProjectClick(project.id) },
+                    onClick = { onEvent(ProjectListEvent.ProjectClicked(project.id)) },
                 )
             }
 
@@ -158,7 +166,7 @@ fun ProjectListContent(
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     actions = {
-                        IconButton(onClick = onSearchClick) {
+                        IconButton(onClick = { onEvent(ProjectListEvent.SearchClicked) }) {
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = "Search",
@@ -458,7 +466,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
 }
 
 data class ProjectUiModel(
-    val id: Int,
+    val id: String,
     val category: ProjectCategory,
     val status: ProjectStatus,
     val title: String,
@@ -482,7 +490,7 @@ object ProjectPreviewData {
 
     val projects = listOf(
         ProjectUiModel(
-            id = 1,
+            id = "1",
             category = ProjectCategory.DEVELOPMENT,
             status = ProjectStatus.ACTIVE,
             title = "Neural Engine Alpha",
@@ -493,7 +501,7 @@ object ProjectPreviewData {
         ),
 
         ProjectUiModel(
-            id = 2,
+            id = "2",
             category = ProjectCategory.DESIGN,
             status = ProjectStatus.PENDING,
             title = "Lumina Design System",

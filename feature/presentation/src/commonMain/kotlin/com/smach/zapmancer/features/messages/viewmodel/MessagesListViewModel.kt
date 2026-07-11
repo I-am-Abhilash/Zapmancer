@@ -12,11 +12,18 @@ sealed class MessagesListEvent {
     data object Refresh : MessagesListEvent()
     data class OnSearchQueryChanged(val query: String) : MessagesListEvent()
     data class OnFilterSelected(val filter: String) : MessagesListEvent()
+    data class ConversationClicked(val id: String) : MessagesListEvent()
+    data class ProfileClicked(val id: String) : MessagesListEvent()
+}
+
+sealed class MessagesListEffect {
+    data class NavigateToConversation(val id: String) : MessagesListEffect()
+    data class NavigateToProfile(val id: String) : MessagesListEffect()
 }
 
 class MessagesListViewModel(
     private val getConversationsUseCase: GetConversationsUseCase,
-) : BaseViewModel<MessagesListUiState, MessagesListEvent, Unit>(MessagesListUiState()) {
+) : BaseViewModel<MessagesListUiState, MessagesListEvent, MessagesListEffect>(MessagesListUiState()) {
 
     override fun onEvent(event: MessagesListEvent) {
         when (event) {
@@ -28,6 +35,14 @@ class MessagesListViewModel(
 
             is MessagesListEvent.OnFilterSelected -> {
                 updateState { copy(selectedFilter = event.filter) }
+            }
+
+            is MessagesListEvent.ConversationClicked -> {
+                sendEffect(MessagesListEffect.NavigateToConversation(event.id))
+            }
+
+            is MessagesListEvent.ProfileClicked -> {
+                sendEffect(MessagesListEffect.NavigateToProfile(event.id))
             }
         }
     }

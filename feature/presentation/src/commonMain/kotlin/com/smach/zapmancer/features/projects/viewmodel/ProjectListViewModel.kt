@@ -12,14 +12,19 @@ import kotlinx.coroutines.launch
 
 sealed interface ProjectListEvent {
     data object SearchClicked : ProjectListEvent
-    data class ProjectClicked(val projectId: Int) : ProjectListEvent
+    data class ProjectClicked(val projectId: String) : ProjectListEvent
     data object Refresh : ProjectListEvent
     data class CategorySelected(val category: ProjectCategory) : ProjectListEvent
 }
 
+sealed interface ProjectListEffect {
+    data class NavigateToProjectDetail(val projectId: String) : ProjectListEffect
+    data object NavigateToSearch : ProjectListEffect
+}
+
 class ProjectListViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
-) : BaseViewModel<ProjectListUiState, ProjectListEvent, Unit>(ProjectListUiState()) {
+) : BaseViewModel<ProjectListUiState, ProjectListEvent, ProjectListEffect>(ProjectListUiState()) {
 
     init {
         loadProjects()
@@ -27,8 +32,8 @@ class ProjectListViewModel(
 
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
-            ProjectListEvent.SearchClicked -> Unit
-            is ProjectListEvent.ProjectClicked -> Unit
+            ProjectListEvent.SearchClicked -> sendEffect(ProjectListEffect.NavigateToSearch)
+            is ProjectListEvent.ProjectClicked -> sendEffect(ProjectListEffect.NavigateToProjectDetail(event.projectId))
             ProjectListEvent.Refresh -> loadProjects()
             is ProjectListEvent.CategorySelected -> updateState { copy(category = event.category) }
         }

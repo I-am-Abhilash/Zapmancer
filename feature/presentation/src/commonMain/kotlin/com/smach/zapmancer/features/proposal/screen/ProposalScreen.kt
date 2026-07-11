@@ -73,6 +73,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProposalScreen(
     viewModel: ProposalViewModel = koinViewModel(),
     onBackClick: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -82,6 +83,8 @@ fun ProposalScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ProposalEffect.ShowToast -> showSnackbar(effect.message)
+                ProposalEffect.NavigateBack -> onBackClick()
+                ProposalEffect.NavigateHome -> onNavigateToHome()
             }
         }
     }
@@ -90,7 +93,7 @@ fun ProposalScreen(
         ProposalScreen(
             state = state,
             onEvent = viewModel::onEvent,
-            onBackClick = onBackClick,
+            onBackClick = { viewModel.onEvent(ProposalEvent.BackClicked) },
         )
     }
 }
@@ -145,7 +148,7 @@ fun ProposalContent(state: ProposalUiState, onEvent: (ProposalEvent) -> Unit, mo
                 1 -> DetailsStep(state, onNext = { onEvent(ProposalEvent.StepChanged(2)) })
                 2 -> PitchStep(state, onPitchChange = { onEvent(ProposalEvent.OnPitchChanged(it)) }, onBudgetChange = { onEvent(ProposalEvent.OnBudgetChanged(it)) }, onTimelineChange = { onEvent(ProposalEvent.OnTimelineChanged(it)) }, onNext = { onEvent(ProposalEvent.StepChanged(3)) }, onBack = { onEvent(ProposalEvent.StepChanged(1)) })
                 3 -> ReviewStep(state, onNext = { onEvent(ProposalEvent.StepChanged(4)) }, onBack = { onEvent(ProposalEvent.StepChanged(2)) })
-                4 -> FinalizeStep(state, onBack = { onEvent(ProposalEvent.StepChanged(3)) }, onSubmit = { onEvent(ProposalEvent.Submit) })
+                4 -> FinalizeStep(state, onBack = { onEvent(ProposalEvent.StepChanged(3)) }, onSubmit = { onEvent(ProposalEvent.Submit) }, onDashboardClick = { onEvent(ProposalEvent.DashboardClicked) })
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
@@ -309,7 +312,7 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
 }
 
 @Composable
-fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Unit) {
+fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Unit, onDashboardClick: () -> Unit) {
     if (state.isSubmitted) {
         Column(modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(80.dp))
@@ -317,7 +320,7 @@ fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Uni
             Text("Proposal Submitted!", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Text("Good luck! The client will review your pitch shortly.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 32.dp).padding(top = 8.dp))
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { /* Navigate Home */ }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) { Text("Back to Dashboard", fontWeight = FontWeight.Bold) }
+            Button(onClick = onDashboardClick, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) { Text("Back to Dashboard", fontWeight = FontWeight.Bold) }
         }
     } else {
         Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)) {

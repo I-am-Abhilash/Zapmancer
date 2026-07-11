@@ -16,13 +16,19 @@ sealed class SettingsEvent {
     data class ToggleClientMode(val enabled: Boolean) : SettingsEvent()
     data object Logout : SettingsEvent()
     data object LoadSettings : SettingsEvent()
+    data object BackClicked : SettingsEvent()
+}
+
+sealed class SettingsEffect {
+    data object NavigateBack : SettingsEffect()
+    data object NavigateToLogin : SettingsEffect()
 }
 
 class SettingsViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val updateSettingsUseCase: UpdateSettingsUseCase,
     private val logoutUseCase: LogoutUseCase,
-) : BaseViewModel<SettingsUiState, SettingsEvent, Unit>(SettingsUiState()) {
+) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
 
     init {
         loadSettings()
@@ -36,6 +42,7 @@ class SettingsViewModel(
             is SettingsEvent.ToggleClientMode -> toggleClientMode(event.enabled)
             SettingsEvent.Logout -> logout()
             SettingsEvent.LoadSettings -> loadSettings()
+            SettingsEvent.BackClicked -> sendEffect(SettingsEffect.NavigateBack)
         }
     }
 
@@ -88,7 +95,10 @@ class SettingsViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            logoutUseCase()
+            logoutUseCase().foldTyped(
+                onSuccess = { sendEffect(SettingsEffect.NavigateToLogin) },
+                onError = { sendEffect(SettingsEffect.NavigateToLogin) }
+            )
         }
     }
 }

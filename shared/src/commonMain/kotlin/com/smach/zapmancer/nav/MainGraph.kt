@@ -126,7 +126,7 @@ fun MainGraph(
             ) { innerPadding ->
                 NavDisplay(
                     modifier = Modifier.padding(innerPadding),
-                    entries = state.toEntries(appEntryProvider(navigator, showSnackbar)),
+                    entries = state.toEntries(appEntryProvider(navigator, showSnackbar, onLogout)),
                     onBack = { navigator.goBack() },
                 )
             }
@@ -141,13 +141,15 @@ fun MainGraph(
 private fun appEntryProvider(
     navigator: MainNavigator,
     showSnackbar: (String) -> Unit,
+    onLogout: () -> Unit,
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
     entry<Screen.Home> {
         HomeScreen(
             onNavigateToProfile = { navigator.navigate(Screen.Profile()) },
             onCompleteProfileClick = { navigator.navigate(Screen.EditProfile(isNewUser = true)) },
             showSnackbar = showSnackbar,
-            onSearchClick = {navigator.navigate(Screen.Search)},
+            onSearchClick = { navigator.navigate(Screen.Search) },
+            onCreateProjectClick = { navigator.navigate(Screen.PostProject) },
         )
     }
 
@@ -155,11 +157,10 @@ private fun appEntryProvider(
         val viewModel: ProjectListViewModel = koinViewModel()
         ProjectListScreen(
             viewModel = viewModel,
-            onEvent = { viewModel.onEvent(it) },
-            onProjectClick = { id ->
-                navigator.navigate(Screen.ProjectDetail(id.toString()))
+            onNavigateToProjectDetail = { id ->
+                navigator.navigate(Screen.ProjectDetail(id))
             },
-            onSearchClick = {
+            onNavigateToSearch = {
                 navigator.navigate(Screen.Search)
             },
         )
@@ -176,6 +177,7 @@ private fun appEntryProvider(
     entry<Screen.Proposal> {
         ProposalScreen(
             onBackClick = { navigator.goBack() },
+            onNavigateToHome = { navigator.navigate(Screen.Home) },
             showSnackbar = showSnackbar,
         )
     }
@@ -198,6 +200,7 @@ private fun appEntryProvider(
     entry<Screen.Settings> {
         SettingsScreen(
             onBackClick = { navigator.goBack() },
+            onLogoutClick = onLogout,
         )
     }
 
@@ -266,7 +269,7 @@ private fun appEntryProvider(
             viewModel = viewModel,
             onBackClick = { navigator.goBack() },
             onProjectClick = { id ->
-                navigator.navigate(Screen.ProjectDetail(id.toString()))
+                navigator.navigate(Screen.ProjectDetail(id))
             },
         )
     }

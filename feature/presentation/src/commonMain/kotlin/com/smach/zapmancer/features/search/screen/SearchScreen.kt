@@ -100,17 +100,23 @@ import com.smach.zapmancer.features.search.viewmodel.SearchViewModel
 fun SearchScreen(
     viewModel: SearchViewModel,
     onBackClick: () -> Unit,
-    onProjectClick: (Int) -> Unit,
+    onProjectClick: (String) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Display VM toast messages using Snackbar
+    // Display VM toast messages and handle navigation side-effects
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is com.smach.zapmancer.features.search.viewmodel.SearchEffect.ShowToast -> {
                     snackbarHostState.showSnackbar(effect.message)
+                }
+                is com.smach.zapmancer.features.search.viewmodel.SearchEffect.NavigateToProjectDetail -> {
+                    onProjectClick(effect.projectId)
+                }
+                com.smach.zapmancer.features.search.viewmodel.SearchEffect.NavigateBack -> {
+                    onBackClick()
                 }
             }
         }
@@ -123,9 +129,7 @@ fun SearchScreen(
         SearchContent(
             modifier = Modifier.padding(paddingValues),
             state = state,
-            onEvent = viewModel::onEvent,
-            onBackClick = onBackClick,
-            onProjectClick = onProjectClick
+            onEvent = viewModel::onEvent
         )
     }
 }
@@ -136,8 +140,6 @@ private fun SearchContent(
     modifier: Modifier = Modifier,
     state: SearchUiState,
     onEvent: (SearchEvent) -> Unit,
-    onBackClick: () -> Unit,
-    onProjectClick: (Int) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
@@ -174,7 +176,7 @@ private fun SearchContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = onBackClick,
+                onClick = { onEvent(SearchEvent.BackClicked) },
                 modifier = Modifier.semantics { contentDescription = "Go Back" }
             ) {
                 Icon(
@@ -302,8 +304,7 @@ private fun SearchContent(
                                 project = project,
                                 query = state.query,
                                 onClick = {
-                                    onEvent(SearchEvent.AddRecentSearch(state.query))
-                                    onProjectClick(project.id)
+                                    onEvent(SearchEvent.ProjectClicked(project.id))
                                 }
                             )
                         }

@@ -94,13 +94,10 @@ fun EditProfileScreen(
                 is EditProfileEffect.ShowToast -> {
                     showSnackbar(effect.message)
                 }
+                EditProfileEffect.NavigateBack -> {
+                    onBackClick()
+                }
             }
-        }
-    }
-
-    LaunchedEffect(state.isSaveSuccess) {
-        if (state.isSaveSuccess) {
-            onBackClick()
         }
     }
 
@@ -112,7 +109,7 @@ fun EditProfileScreen(
             ZapmancerTopBar(
                 title = if (isNewUser) "Profile Onboarding" else "Edit Profile",
                 showBackButton = !isNewUser,
-                onBackClick = onBackClick,
+                onBackClick = { viewModel.onEvent(EditProfileEvent.BackClicked) },
                 containerColor = MaterialTheme.colorScheme.surface,
                 drawBottomBorder = true,
                 actions = {

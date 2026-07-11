@@ -14,10 +14,18 @@ import kotlinx.coroutines.launch
 sealed class HomeEvent {
     data object LoadDashboard : HomeEvent()
     data object ExportCsv : HomeEvent()
+    data object ProfileClicked : HomeEvent()
+    data object CompleteProfileClicked : HomeEvent()
+    data object SearchClicked : HomeEvent()
+    data object CreateProjectClicked : HomeEvent()
 }
 
 sealed class HomeEffect {
     data class ShowToast(val message: String) : HomeEffect()
+    data object NavigateToProfile : HomeEffect()
+    data object NavigateToCompleteProfile : HomeEffect()
+    data object NavigateToSearch : HomeEffect()
+    data object NavigateToCreateProject : HomeEffect()
 }
 
 class HomeViewModel(
@@ -31,6 +39,10 @@ class HomeViewModel(
         when (event) {
             HomeEvent.LoadDashboard -> loadDashboard()
             HomeEvent.ExportCsv -> exportCsv()
+            HomeEvent.ProfileClicked -> sendEffect(HomeEffect.NavigateToProfile)
+            HomeEvent.CompleteProfileClicked -> sendEffect(HomeEffect.NavigateToCompleteProfile)
+            HomeEvent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
+            HomeEvent.CreateProjectClicked -> sendEffect(HomeEffect.NavigateToCreateProject)
         }
     }
 

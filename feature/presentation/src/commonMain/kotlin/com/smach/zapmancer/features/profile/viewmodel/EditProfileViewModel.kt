@@ -21,10 +21,12 @@ sealed class EditProfileEvent {
     data class AddSkill(val skill: String) : EditProfileEvent()
     data class RemoveSkill(val skill: String) : EditProfileEvent()
     data object SaveProfile : EditProfileEvent()
+    data object BackClicked : EditProfileEvent()
 }
 
 sealed class EditProfileEffect {
     data class ShowToast(val message: String) : EditProfileEffect()
+    data object NavigateBack : EditProfileEffect()
 }
 
 class EditProfileViewModel(
@@ -48,6 +50,7 @@ class EditProfileViewModel(
             is EditProfileEvent.AddSkill -> addSkill(event.skill)
             is EditProfileEvent.RemoveSkill -> removeSkill(event.skill)
             EditProfileEvent.SaveProfile -> saveProfile()
+            EditProfileEvent.BackClicked -> sendEffect(EditProfileEffect.NavigateBack)
         }
     }
 
@@ -108,6 +111,7 @@ class EditProfileViewModel(
                 onSuccess = {
                     updateState { copy(isLoading = false, isSaveSuccess = true) }
                     sendEffect(EditProfileEffect.ShowToast("Profile saved successfully!"))
+                    sendEffect(EditProfileEffect.NavigateBack)
                 },
                 onError = { error ->
                     updateState { copy(isLoading = false, error = error.toUserMessage()) }

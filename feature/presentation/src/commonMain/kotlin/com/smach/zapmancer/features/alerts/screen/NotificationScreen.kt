@@ -89,6 +89,7 @@ fun NotificationScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is NotificationEffect.ShowToast -> showSnackbar(effect.message)
+                NotificationEffect.NavigateBack -> onBackClick()
             }
         }
     }
@@ -99,7 +100,7 @@ fun NotificationScreen(
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = windowLayout.isCompact,
-                    onBackClick = onBackClick,
+                    onBackClick = { viewModel.onEvent(NotificationEvent.BackClicked) },
                     containerColor = MaterialTheme.colorScheme.surface,
                     drawBottomBorder = true,
                 )

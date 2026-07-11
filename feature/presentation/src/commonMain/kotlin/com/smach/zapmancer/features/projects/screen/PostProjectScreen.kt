@@ -73,6 +73,7 @@ fun PostProjectScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is PostProjectEffect.ShowToast -> showSnackbar(effect.message)
+                PostProjectEffect.NavigateBack -> onBackClick()
             }
         }
     }
@@ -81,7 +82,7 @@ fun PostProjectScreen(
         PostProjectContent(
             state = state,
             onEvent = viewModel::onEvent,
-            onBackClick = onBackClick,
+            onBackClick = { viewModel.onEvent(PostProjectEvent.BackClicked) },
         )
     }
 }

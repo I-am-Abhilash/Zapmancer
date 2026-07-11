@@ -81,6 +81,7 @@ fun ProjectDetailScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ProjectDetailEffect.ShowToast -> showSnackbar(effect.message)
+                ProjectDetailEffect.NavigateBack -> onBackClick()
             }
         }
     }
@@ -88,7 +89,7 @@ fun ProjectDetailScreen(
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         ProjectDetailScreen(
             state = state,
-            onBackClick = onBackClick,
+            onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
             onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
             onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
         )

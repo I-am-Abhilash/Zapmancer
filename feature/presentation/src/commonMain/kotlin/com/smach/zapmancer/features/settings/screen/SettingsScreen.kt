@@ -64,9 +64,19 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
     onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val windowLayout = rememberWindowLayout()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                SettingsEffect.NavigateBack -> onBackClick()
+                SettingsEffect.NavigateToLogin -> onLogoutClick()
+            }
+        }
+    }
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         Scaffold(
@@ -74,7 +84,7 @@ fun SettingsScreen(
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = true,
-                    onBackClick = onBackClick,
+                    onBackClick = { viewModel.onEvent(SettingsEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = {}) {
                             Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)

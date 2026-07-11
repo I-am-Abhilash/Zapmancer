@@ -11,10 +11,14 @@ sealed interface ClientProposalsEvent {
     data object Refresh : ClientProposalsEvent
     data class AcceptBid(val freelancerName: String) : ClientProposalsEvent
     data class MessageFreelancer(val freelancerName: String) : ClientProposalsEvent
+    data object BackClicked : ClientProposalsEvent
+    data class FreelancerClicked(val freelancerId: String) : ClientProposalsEvent
 }
 
 sealed interface ClientProposalsEffect {
     data class ShowToast(val message: String) : ClientProposalsEffect
+    data object NavigateBack : ClientProposalsEffect
+    data class NavigateToFreelancerProfile(val freelancerId: String) : ClientProposalsEffect
 }
 
 class ClientProposalsViewModel(
@@ -38,6 +42,14 @@ class ClientProposalsViewModel(
 
             is ClientProposalsEvent.MessageFreelancer -> {
                 sendEffect(ClientProposalsEffect.ShowToast("Initiated chat room with ${event.freelancerName}."))
+            }
+
+            ClientProposalsEvent.BackClicked -> {
+                sendEffect(ClientProposalsEffect.NavigateBack)
+            }
+
+            is ClientProposalsEvent.FreelancerClicked -> {
+                sendEffect(ClientProposalsEffect.NavigateToFreelancerProfile(event.freelancerId))
             }
         }
     }

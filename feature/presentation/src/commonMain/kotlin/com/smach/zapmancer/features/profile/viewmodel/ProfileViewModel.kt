@@ -16,10 +16,16 @@ sealed class ProfileEvent {
     data object ReviewMore : ProfileEvent()
     data object PortfolioMore : ProfileEvent()
     data object HireMe : ProfileEvent()
+    data object SearchClicked : ProfileEvent()
+    data object BackClicked : ProfileEvent()
+    data object EditProfileClicked : ProfileEvent()
 }
 
 sealed class ProfileEffect {
     data class ShowToast(val message: String) : ProfileEffect()
+    data object NavigateToSearch : ProfileEffect()
+    data object NavigateBack : ProfileEffect()
+    data object NavigateToEditProfile : ProfileEffect()
 }
 
 class ProfileViewModel(
@@ -34,6 +40,9 @@ class ProfileViewModel(
             ProfileEvent.ReviewMore -> onReviewMoreClick()
             ProfileEvent.PortfolioMore -> onLoadMorePortfolio()
             ProfileEvent.HireMe -> hireUser()
+            ProfileEvent.SearchClicked -> sendEffect(ProfileEffect.NavigateToSearch)
+            ProfileEvent.BackClicked -> sendEffect(ProfileEffect.NavigateBack)
+            ProfileEvent.EditProfileClicked -> sendEffect(ProfileEffect.NavigateToEditProfile)
         }
     }
 

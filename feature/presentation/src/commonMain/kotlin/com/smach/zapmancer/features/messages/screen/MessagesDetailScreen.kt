@@ -49,6 +49,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -88,12 +90,19 @@ fun MessageDetailScreen(
     val state by viewModel.uiState.collectAsState()
     val windowLayout = rememberWindowLayout()
 
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                MessagesDetailEffect.NavigateBack -> onBackClick()
+                is MessagesDetailEffect.NavigateToProfile -> onProfileClick(effect.contactName)
+            }
+        }
+    }
+
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         MessageDetailContent(
             state = state,
             onEvent = viewModel::onEvent,
-            onBackClick = onBackClick,
-            onProfileClick = onProfileClick,
             onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
             onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
             onMoreClick = { showSnackbar("More actions are not supported in this beta") },
@@ -106,11 +115,9 @@ fun MessageDetailScreen(
 fun MessageDetailContent(
     state: MessagesDetailUiState,
     onEvent: (MessagesDetailEvent) -> Unit,
-    onBackClick: () -> Unit = {},
     onCallClick: () -> Unit,
     onVideocamClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onProfileClick: (String) -> Unit,
     showTopBar: Boolean = true,
 ) {
     val windowLayout = LocalWindowLayout.current
@@ -174,7 +181,7 @@ fun MessageDetailContent(
                     titleContent = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onProfileClick(state.contactName) },
+                            modifier = Modifier.clickable { onEvent(MessagesDetailEvent.ProfileClicked(state.contactName)) },
                         ) {
                             UserAvatar(imageUrl = state.contactAvatarUrl, size = 40.dp)
                             Spacer(modifier = Modifier.width(12.dp))
@@ -191,7 +198,7 @@ fun MessageDetailContent(
                         }
                     },
                     showBackButton = windowLayout.isCompact,
-                    onBackClick = onBackClick,
+                    onBackClick = { onEvent(MessagesDetailEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = { onVideocamClick() }) {
                             Icon(Icons.Default.Videocam, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -380,12 +387,11 @@ fun MessageDetailScreenPreview() {
                     ),
                     isContactTyping = true,
                 ),
-                onEvent = {},
-                onCallClick = {},
-                onVideocamClick = {},
-                onMoreClick = {},
-                onProfileClick = {},
-            )
+            onEvent = {},
+            onCallClick = {},
+            onVideocamClick = {},
+            onMoreClick = {},
+        )
         }
     }
 }

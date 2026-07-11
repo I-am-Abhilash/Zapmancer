@@ -19,10 +19,12 @@ sealed class NotificationEvent {
 
     data class SendQuickReply(val notificationId: String) : NotificationEvent()
     data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent()
+    data object BackClicked : NotificationEvent()
 }
 
 sealed class NotificationEffect {
     data class ShowToast(val message: String) : NotificationEffect()
+    data object NavigateBack : NotificationEffect()
 }
 
 class NotificationViewModel(
@@ -51,6 +53,8 @@ class NotificationViewModel(
                 event.notificationId,
                 event.actionLabel,
             )
+
+            NotificationEvent.BackClicked -> sendEffect(NotificationEffect.NavigateBack)
         }
     }
 

@@ -72,6 +72,8 @@ fun ClientProposalsScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ClientProposalsEffect.ShowToast -> showSnackbar(effect.message)
+                ClientProposalsEffect.NavigateBack -> onBackClick()
+                is ClientProposalsEffect.NavigateToFreelancerProfile -> onFreelancerClick(effect.freelancerId)
             }
         }
     }
@@ -82,7 +84,7 @@ fun ClientProposalsScreen(
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = windowLayout.isCompact,
-                    onBackClick = onBackClick,
+                    onBackClick = { viewModel.onEvent(ClientProposalsEvent.BackClicked) },
                     containerColor = MaterialTheme.colorScheme.surface,
                     drawBottomBorder = true,
                 )
@@ -94,7 +96,6 @@ fun ClientProposalsScreen(
                 paddingValues = padding,
                 state = state,
                 onEvent = viewModel::onEvent,
-                onFreelancerClick = onFreelancerClick,
             )
         }
     }
@@ -105,7 +106,6 @@ fun ClientProposalsBody(
     paddingValues: PaddingValues,
     state: ClientProposalsUiState,
     onEvent: (ClientProposalsEvent) -> Unit,
-    onFreelancerClick: (String) -> Unit,
 ) {
     val windowLayout = LocalWindowLayout.current
     Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
@@ -133,7 +133,7 @@ fun ClientProposalsBody(
                         proposal = proposal,
                         onFreelancerClick = {
                             val id = if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
-                            onFreelancerClick(id)
+                            onEvent(ClientProposalsEvent.FreelancerClicked(id))
                         },
                         onAccept = { onEvent(ClientProposalsEvent.AcceptBid(proposal.freelancerName)) },
                         onMessage = { onEvent(ClientProposalsEvent.MessageFreelancer(proposal.freelancerName)) },
@@ -203,7 +203,6 @@ fun ClientProposalScreenPreview() {
             paddingValues = PaddingValues(0.dp),
             state = ClientProposalsUiState(),
             onEvent = {},
-            onFreelancerClick = {},
         )
     }
 }

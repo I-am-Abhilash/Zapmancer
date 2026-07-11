@@ -28,10 +28,14 @@ sealed class SearchEvent {
     data class ChangeSortOption(val sortOption: SearchSortOption) : SearchEvent()
     data object Refresh : SearchEvent()
     data object LoadNextPage : SearchEvent()
+    data class ProjectClicked(val id: String) : SearchEvent()
+    data object BackClicked : SearchEvent()
 }
 
 sealed class SearchEffect {
     data class ShowToast(val message: String) : SearchEffect()
+    data class NavigateToProjectDetail(val projectId: String) : SearchEffect()
+    data object NavigateBack : SearchEffect()
 }
 
 @OptIn(FlowPreview::class)
@@ -115,6 +119,15 @@ class SearchViewModel(
 
             SearchEvent.LoadNextPage -> {
                 loadNextPage()
+            }
+
+            is SearchEvent.ProjectClicked -> {
+                addRecent(uiState.value.query)
+                sendEffect(SearchEffect.NavigateToProjectDetail(event.id))
+            }
+
+            SearchEvent.BackClicked -> {
+                sendEffect(SearchEffect.NavigateBack)
             }
         }
     }
