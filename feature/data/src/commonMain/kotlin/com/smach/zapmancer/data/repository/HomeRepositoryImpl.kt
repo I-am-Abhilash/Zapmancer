@@ -10,6 +10,7 @@ import com.smach.zapmancer.core.network.ktor.safeApiCall
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.domain.model.EarningStats
 import com.smach.zapmancer.domain.model.HomeDashboard
+import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStats
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.repository.HomeRepository
@@ -49,8 +50,8 @@ class HomeRepositoryImpl(
 private fun HomeDashboardDto.toDomain(): HomeDashboard = HomeDashboard(
     userName = userName,
     earnings = EarningStats(
-        amount = totalEarnings,
-        growthPercentage = earningsGrowth,
+        amount = totalEarnings.replace("$", "").replace(",", "").toDoubleOrNull() ?: 0.0,
+        growthPercentage = earningsGrowth.replace("%", "").toDoubleOrNull() ?: 0.0,
     ),
     projectStats = ProjectStats(
         activeCount = activeProjectsCount,
@@ -61,22 +62,23 @@ private fun HomeDashboardDto.toDomain(): HomeDashboard = HomeDashboard(
         UserActivity(
             id = activity.id,
             projectName = activity.projectName,
-            category = activity.category,
+            category = ProjectCategory.from(activity.category),
             tag = activity.categoryTag,
             status = runCatching { ActivityStatus.valueOf(activity.status) }
                 .getOrDefault(ActivityStatus.IN_PROGRESS),
-            timestamp = activity.date,
+            timestamp = activity.date.toLongOrNull() ?: 0L,
             monetaryValue = activity.value,
         )
     },
+    clientStats = null, // Set to null/default as it is client mode specific or not returned on default dashboard endpoint
 )
 
 private fun UserActivity.toDto(): RecentActivity = RecentActivity(
     id = id,
     projectName = projectName,
-    category = category,
+    category = category.name,
     categoryTag = tag,
     status = status.name,
-    date = timestamp,
+    date = timestamp.toString(),
     value = monetaryValue,
 )

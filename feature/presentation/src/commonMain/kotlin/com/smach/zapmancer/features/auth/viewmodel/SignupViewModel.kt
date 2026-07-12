@@ -8,25 +8,32 @@ import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import kotlinx.coroutines.launch
 
-sealed class SignupEvent {
+import com.smach.zapmancer.core.common.utils.foldTyped
+
+sealed interface SignupEvent {
     data class EmailChanged(
         val email: String,
-    ) : SignupEvent()
+    ) : SignupEvent
 
     data class UsernameChanged(
         val username: String,
-    ) : SignupEvent()
+    ) : SignupEvent
 
     data class PasswordChanged(
         val password: String,
-    ) : SignupEvent()
+    ) : SignupEvent
 
-    object Submit : SignupEvent()
+    data object Submit : SignupEvent
+}
+
+sealed interface SignupEffect {
+    data class NavigateToVerification(val email: String) : SignupEffect
 }
 
 class SignupViewModel(
     private val signUpUseCase: SignUpUseCase,
-) : BaseViewModel<SignupUiState, SignupEvent, Unit>(SignupUiState()) {
+) : BaseViewModel<SignupUiState, SignupEvent, SignupEffect>(SignupUiState()) {
+
     override fun onEvent(event: SignupEvent) {
         when (event) {
             is SignupEvent.EmailChanged -> updateState { copy(email = event.email) }
@@ -41,21 +48,19 @@ class SignupViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
 
-            when (
-                val result = signUpUseCase(
-                    currentState.email,
-                    currentState.username,
-                    currentState.password,
-                )
-            ) {
-                is Result.Success -> {
+            signUpUseCase(
+                currentState.email,
+                currentState.username,
+                currentState.password,
+            ).foldTyped(
+                onSuccess = {
                     updateState { copy(isLoading = false, isSuccess = true) }
+                    sendEffect(SignupEffect.NavigateToVerification(currentState.email))
+                },
+                onError = { error ->
+                    updateState { copy(isLoading = false, error = error.toUserMessage()) }
                 }
-
-                is Result.Error -> {
-                    updateState { copy(isLoading = false, error = result.error.toUserMessage()) }
-                }
-            }
+            )
         }
     }
 }

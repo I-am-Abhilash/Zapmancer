@@ -8,41 +8,44 @@ import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import kotlinx.coroutines.launch
 
-sealed class LoginEvent {
+import com.smach.zapmancer.core.common.utils.foldTyped
+
+sealed interface LoginEvent {
     data class OnEmailChanged(
         val email: String,
-    ) : LoginEvent()
+    ) : LoginEvent
 
     data class OnPasswordChanged(
         val password: String,
-    ) : LoginEvent()
+    ) : LoginEvent
 
     data class OnRememberMeChanged(
         val isChecked: Boolean,
-    ) : LoginEvent()
+    ) : LoginEvent
 
-    data object OnForgotPasswordClicked : LoginEvent()
+    data object OnForgotPasswordClicked : LoginEvent
 
-    data object OnTogglePasswordVisibility : LoginEvent()
+    data object OnTogglePasswordVisibility : LoginEvent
 
-    data object OnRegisterHereClicked : LoginEvent()
+    data object OnRegisterHereClicked : LoginEvent
 
-    data object Submit : LoginEvent()
+    data object Submit : LoginEvent
 }
 
-sealed class LoginSideEffect {
+sealed interface LoginSideEffect {
     data class NavigateToOtp(
         val email: String,
-    ) : LoginSideEffect()
+    ) : LoginSideEffect
 
-    data object NavigateToForgotPassword : LoginSideEffect()
-    data object NavigateToSignup : LoginSideEffect()
-    data object NavigateToHome : LoginSideEffect()
+    data object NavigateToForgotPassword : LoginSideEffect
+    data object NavigateToSignup : LoginSideEffect
+    data object NavigateToHome : LoginSideEffect
 }
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
 ) : BaseViewModel<LoginUiState, LoginEvent, LoginSideEffect>(LoginUiState()) {
+
     override fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.OnEmailChanged -> updateState { copy(email = event.email) }
@@ -50,7 +53,7 @@ class LoginViewModel(
             is LoginEvent.OnPasswordChanged -> updateState { copy(password = event.password) }
 
             is LoginEvent.OnRememberMeChanged -> {
-                /* Handle remember me check */
+                updateState { copy(isRememberMe = event.isChecked) }
             }
 
             LoginEvent.OnTogglePasswordVisibility -> updateState { copy(togglePassword = !togglePassword) }
@@ -72,21 +75,20 @@ class LoginViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
 
-            when (val result = loginUseCase(currentState.email, currentState.password)) {
-                is Result.Success -> {
+            loginUseCase(currentState.email, currentState.password).foldTyped(
+                onSuccess = {
                     updateState { copy(isLoading = false, isSuccess = true) }
                     sendEffect(LoginSideEffect.NavigateToHome)
-                }
-
-                is Result.Error -> {
+                },
+                onError = { error ->
                     updateState {
                         copy(
                             isLoading = false,
-                            error = result.error.toUserMessage(),
+                            error = error.toUserMessage(),
                         )
                     }
                 }
-            }
+            )
         }
     }
 }

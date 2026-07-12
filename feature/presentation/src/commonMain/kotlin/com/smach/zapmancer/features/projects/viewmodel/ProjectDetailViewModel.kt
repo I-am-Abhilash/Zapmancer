@@ -46,7 +46,7 @@ class ProjectDetailViewModel(
 
     private fun loadProject() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
+            updateState { copy(isLoading = true, error = null) }
             getProjectDetailUseCase(projectId).foldTyped(
                 onSuccess = { detail ->
                     updateState {
@@ -74,11 +74,12 @@ class ProjectDetailViewModel(
                             isIdentityVerified = detail.isIdentityVerified,
                             isPhoneVerified = detail.isPhoneVerified,
                             isLoading = false,
+                            error = null,
                         )
                     }
                 },
                 onError = { error ->
-                    updateState { copy(isLoading = false) }
+                    updateState { copy(isLoading = false, error = error.toUserMessage()) }
                     sendEffect(ProjectDetailEffect.ShowToast("Failed to load project details: ${error.toUserMessage()}"))
                 },
             )

@@ -1,8 +1,5 @@
 package com.smach.zapmancer.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class ProjectDetail(
     val id: String,
     val category: String,
@@ -10,13 +7,13 @@ data class ProjectDetail(
     val postedTime: String,
     val location: String,
     val isPaymentVerified: Boolean,
-    val projectScope: String,
+    val projectScope: String?,
     val deliverables: List<String>,
     val skills: List<String>,
     val budgetRange: String,
     val projectType: String,
-    val timeline: String,
-    val estStart: String,
+    val timeline: String?,
+    val estStart: String?,
     val clientName: String,
     val clientIndustry: String,
     val clientLocation: String,

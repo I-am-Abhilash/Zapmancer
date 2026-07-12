@@ -2,31 +2,31 @@ package com.smach.zapmancer.features.profile.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
 import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
+import com.smach.zapmancer.domain.model.UpdateProfileParams
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
 import com.smach.zapmancer.domain.usecase.UpdateProfileUseCase
 import com.smach.zapmancer.features.profile.state.EditProfileUiState
 import kotlinx.coroutines.launch
 
-sealed class EditProfileEvent {
-    data object LoadProfile : EditProfileEvent()
-    data class NameChanged(val name: String) : EditProfileEvent()
-    data class RoleTitleChanged(val role: String) : EditProfileEvent()
-    data class LocationChanged(val location: String) : EditProfileEvent()
-    data class ExperienceChanged(val experience: String) : EditProfileEvent()
-    data class AboutChanged(val about: String) : EditProfileEvent()
-    data class AvatarUrlChanged(val avatarUrl: String) : EditProfileEvent()
-    data class AddSkill(val skill: String) : EditProfileEvent()
-    data class RemoveSkill(val skill: String) : EditProfileEvent()
-    data object SaveProfile : EditProfileEvent()
-    data object BackClicked : EditProfileEvent()
+sealed interface EditProfileEvent {
+    data object LoadProfile : EditProfileEvent
+    data class NameChanged(val name: String) : EditProfileEvent
+    data class RoleTitleChanged(val role: String) : EditProfileEvent
+    data class LocationChanged(val location: String) : EditProfileEvent
+    data class ExperienceChanged(val experience: String) : EditProfileEvent
+    data class AboutChanged(val about: String) : EditProfileEvent
+    data class AvatarUrlChanged(val avatarUrl: String) : EditProfileEvent
+    data class AddSkill(val skill: String) : EditProfileEvent
+    data class RemoveSkill(val skill: String) : EditProfileEvent
+    data object SaveProfile : EditProfileEvent
+    data object BackClicked : EditProfileEvent
 }
 
-sealed class EditProfileEffect {
-    data class ShowToast(val message: String) : EditProfileEffect()
-    data object NavigateBack : EditProfileEffect()
+sealed interface EditProfileEffect {
+    data class ShowToast(val message: String) : EditProfileEffect
+    data object NavigateBack : EditProfileEffect
 }
 
 class EditProfileViewModel(
@@ -98,7 +98,7 @@ class EditProfileViewModel(
         viewModelScope.launch {
             val state = uiState.value
             updateState { copy(isLoading = true, error = null) }
-            val request = UpdateProfileRequest(
+            val params = UpdateProfileParams(
                 name = state.name.ifBlank { null },
                 roleTitle = state.roleTitle.ifBlank { null },
                 location = state.location.ifBlank { null },
@@ -107,7 +107,7 @@ class EditProfileViewModel(
                 skills = state.skills,
                 avatarUrl = state.avatarUrl.ifBlank { null },
             )
-            updateProfileUseCase(request).foldTyped(
+            updateProfileUseCase(params).foldTyped(
                 onSuccess = {
                     updateState { copy(isLoading = false, isSaveSuccess = true) }
                     sendEffect(EditProfileEffect.ShowToast("Profile saved successfully!"))

@@ -5,33 +5,43 @@ import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.domain.usecase.GetSettingsUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
-import com.smach.zapmancer.domain.usecase.UpdateSettingsUseCase
+import com.smach.zapmancer.domain.usecase.UpdateTwoFactorUseCase
+import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
+import com.smach.zapmancer.domain.usecase.UpdateClientModeUseCase
+import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
+import com.smach.zapmancer.domain.usecase.UpdateDarkModeUseCase
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import kotlinx.coroutines.launch
+import com.smach.zapmancer.core.common.utils.toUserMessage
 
-sealed class SettingsEvent {
-    data class ToggleTwoFactor(val enabled: Boolean) : SettingsEvent()
-    data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent()
-    data class ToggleEmailNotifications(val enabled: Boolean) : SettingsEvent()
-    data class ToggleClientMode(val enabled: Boolean) : SettingsEvent()
-    data object Logout : SettingsEvent()
-    data object LoadSettings : SettingsEvent()
-    data object BackClicked : SettingsEvent()
+sealed interface SettingsEvent {
+    data class ToggleTwoFactor(val enabled: Boolean) : SettingsEvent
+    data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent
+    data class ToggleEmailNotifications(val enabled: Boolean) : SettingsEvent
+    data class ToggleClientMode(val enabled: Boolean) : SettingsEvent
+    data object Logout : SettingsEvent
+    data object BackClicked : SettingsEvent
 }
 
-sealed class SettingsEffect {
-    data object NavigateBack : SettingsEffect()
-    data object NavigateToLogin : SettingsEffect()
+sealed interface SettingsEffect {
+    data object NavigateBack : SettingsEffect
+    data object NavigateToLogin : SettingsEffect
+    data class ShowToast(val message: String) : SettingsEffect
 }
 
 class SettingsViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
-    private val updateSettingsUseCase: UpdateSettingsUseCase,
+    private val updateTwoFactorUseCase: UpdateTwoFactorUseCase,
+    private val updateEmailNotificationsUseCase: UpdateEmailNotificationsUseCase,
+    private val updateClientModeUseCase: UpdateClientModeUseCase,
+    private val getDarkModeUseCase: GetDarkModeUseCase,
+    private val updateDarkModeUseCase: UpdateDarkModeUseCase,
     private val logoutUseCase: LogoutUseCase,
 ) : BaseViewModel<SettingsUiState, SettingsEvent, SettingsEffect>(SettingsUiState()) {
 
     init {
         loadSettings()
+        observeDarkMode()
     }
 
     override fun onEvent(event: SettingsEvent) {
@@ -41,54 +51,68 @@ class SettingsViewModel(
             is SettingsEvent.ToggleEmailNotifications -> toggleNotifications(event.enabled)
             is SettingsEvent.ToggleClientMode -> toggleClientMode(event.enabled)
             SettingsEvent.Logout -> logout()
-            SettingsEvent.LoadSettings -> loadSettings()
             SettingsEvent.BackClicked -> sendEffect(SettingsEffect.NavigateBack)
         }
     }
 
     private fun loadSettings() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
+            updateState { copy(isLoading = true, error = null) }
             getSettingsUseCase().foldTyped(
                 onSuccess = { settings ->
                     updateState { copy(isLoading = false, settings = settings) }
                 },
-                onError = {
-                    updateState { copy(isLoading = false) }
+                onError = { error ->
+                    updateState { copy(isLoading = false, error = error.toUserMessage()) }
+                    sendEffect(SettingsEffect.ShowToast("Failed to load settings: ${error.toUserMessage()}"))
                 },
             )
+        }
+    }
+
+    private fun observeDarkMode() {
+        viewModelScope.launch {
+            getDarkModeUseCase().collect { isDark ->
+                updateState { copy(isDarkModeEnabled = isDark) }
+            }
         }
     }
 
     private fun toggleTwoFactor(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateTwoFactor(enabled).foldTyped(
+            updateTwoFactorUseCase(enabled).foldTyped(
                 onSuccess = { updateState { copy(settings = settings?.copy(isTwoFactorEnabled = enabled)) } },
-                onError = { /* keep prior state; user can retry */ },
+                onError = { error ->
+                    sendEffect(SettingsEffect.ShowToast("Failed to toggle 2FA: ${error.toUserMessage()}"))
+                },
             )
         }
     }
 
     private fun toggleDarkMode(enabled: Boolean) {
-        // Dark mode is device-local — no network call. Update UI state immediately so the
-        // theme switch is instant; the server's SettingsData.isDarkModeEnabled is ignored.
-        updateState { copy(settings = settings?.copy(isDarkModeEnabled = enabled)) }
+        viewModelScope.launch {
+            updateDarkModeUseCase(enabled)
+        }
     }
 
     private fun toggleNotifications(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateEmailNotifications(enabled).foldTyped(
+            updateEmailNotificationsUseCase(enabled).foldTyped(
                 onSuccess = { updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) } },
-                onError = { },
+                onError = { error ->
+                    sendEffect(SettingsEffect.ShowToast("Failed to toggle notifications: ${error.toUserMessage()}"))
+                },
             )
         }
     }
 
     private fun toggleClientMode(enabled: Boolean) {
         viewModelScope.launch {
-            updateSettingsUseCase.updateClientMode(enabled).foldTyped(
+            updateClientModeUseCase(enabled).foldTyped(
                 onSuccess = { updateState { copy(settings = settings?.copy(isClientModeEnabled = enabled)) } },
-                onError = { },
+                onError = { error ->
+                    sendEffect(SettingsEffect.ShowToast("Failed to toggle client mode: ${error.toUserMessage()}"))
+                },
             )
         }
     }

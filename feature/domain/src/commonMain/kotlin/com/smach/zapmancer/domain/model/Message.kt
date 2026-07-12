@@ -1,8 +1,5 @@
 package com.smach.zapmancer.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class MessageItem(
     val id: String,
     val text: String,
@@ -12,7 +9,6 @@ data class MessageItem(
     val avatarUrl: String? = null,
 )
 
-@Serializable
 enum class MessageStatus {
     SENT,
     DELIVERED,

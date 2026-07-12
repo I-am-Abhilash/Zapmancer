@@ -20,4 +20,5 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val isClientMode: Boolean = false,
     val showCompleteProfileBanner: Boolean = false,
+    val error: String? = null,
 )

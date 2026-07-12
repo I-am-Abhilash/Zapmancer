@@ -12,5 +12,6 @@ fun DataError.toUserMessage(): String = when (this) {
     DataError.Network.UNKNOWN -> "An unexpected network error occurred."
     DataError.Local.DISK_FULL -> "Your device storage is full."
     DataError.Local.PERMISSION_DENIED -> "Required permissions were denied."
+    DataError.Local.INVALID_INPUT -> "The provided input is invalid."
     DataError.Local.UNKNOWN -> "An unexpected local error occurred."
 }

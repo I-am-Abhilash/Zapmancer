@@ -56,11 +56,12 @@ import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun VerificationScreen(
     email: String,
-    viewModel: VerificationViewModel = koinViewModel(),
+    viewModel: VerificationViewModel = koinViewModel { parametersOf(email) },
     onBack: () -> Unit,
     onVerificationSuccess: () -> Unit,
 ) {

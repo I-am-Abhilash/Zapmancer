@@ -1,6 +1,10 @@
 package com.smach.zapmancer.features.messages.screen
 
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -160,7 +165,7 @@ fun MessageDetailContent(
                                     Text(
                                         state.conversationDate,
                                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                                        fontSize = 12.sp,
+                                        style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium,
                                     )
@@ -169,7 +174,6 @@ fun MessageDetailContent(
                         }
                     }
                 }
-//                MessageInput(typingText = state.typingText, onEvent = onEvent)
             }
         }
     }
@@ -186,12 +190,12 @@ fun MessageDetailContent(
                             UserAvatar(imageUrl = state.contactAvatarUrl, size = 40.dp)
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                                Text(state.contactName, fontSize = 16.sp, lineHeight = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                                Text(state.contactName, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
                                 if (state.isOnline) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Online", fontSize = 12.sp, lineHeight = 16.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+                                        Text("Online", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
                                     }
                                 }
                             }
@@ -201,13 +205,13 @@ fun MessageDetailContent(
                     onBackClick = { onEvent(MessagesDetailEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = { onVideocamClick() }) {
-                            Icon(Icons.Default.Videocam, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.Videocam, contentDescription = "Video call", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         IconButton(onClick = { onCallClick() }) {
-                            Icon(Icons.Default.Call, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.Call, contentDescription = "Voice call", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         IconButton(onClick = { onMoreClick() }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -251,16 +255,15 @@ fun MessageBubble(message: MessageItem) {
                 Text(
                     text = message.text,
                     modifier = Modifier.padding(12.dp),
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface,
-                    lineHeight = 20.sp,
                 )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
             ) {
-                Text(message.timestamp, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(message.timestamp, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
                     val icon = when (message.status) {
@@ -344,7 +347,7 @@ fun MessageInput(
 
 @Composable
 fun TypingIndicator() {
-    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "TypingIndicator")
+    val transition = rememberInfiniteTransition(label = "TypingIndicator")
     Row(
         modifier = Modifier.padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -354,16 +357,16 @@ fun TypingIndicator() {
             val translationY by transition.animateFloat(
                 initialValue = 0f,
                 targetValue = -8f,
-                animationSpec = androidx.compose.animation.core.infiniteRepeatable(
-                    animation = androidx.compose.animation.core.tween(400, delayMillis = index * 150),
-                    repeatMode = androidx.compose.animation.core.RepeatMode.Reverse,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(400, delayMillis = index * 150),
+                    repeatMode = RepeatMode.Reverse,
                 ),
                 label = "DotTranslation",
             )
             Box(
                 modifier = Modifier
+                    .graphicsLayer { this.translationY = translationY }
                     .size(6.dp)
-                    .padding(top = 0.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.secondary),
             )

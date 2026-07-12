@@ -91,12 +91,18 @@ import com.smach.zapmancer.features.alerts.screen.drawAccentLine
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
-import com.smach.zapmancer.features.common.components.CategoryFilterBar
+import com.smach.zapmancer.features.common.components.CategoryFilterChip
+import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.EmptyState
+import com.smach.zapmancer.features.common.components.ErrorState
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.components.icon
+import com.smach.zapmancer.features.common.components.accentColor
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.common.theme.Warning
+import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
+import com.smach.zapmancer.features.projects.state.ProjectUiModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEffect
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEvent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
@@ -212,12 +218,11 @@ fun ProjectListContent(
                 color = MaterialTheme.colorScheme.primary,
             )
         } else if (state.error != null) {
-            EmptyState(
+            ErrorState(
                 title = state.error,
-                description = "No projects found",
+                description = "Failed to load projects.",
                 buttonText = "Refresh",
                 onButtonClick = { onEvent(ProjectListEvent.Refresh) },
-                icon = Icons.Default.Search
             )
         } else {
             val projects = if (state.category == ProjectCategory.ALL) {
@@ -288,119 +293,22 @@ fun CategoryFilterBar(
     ) {
         items(ProjectCategory.entries.toList()) { category ->
             val isSelected = selectedCategory == category
-            val tintColor = when (category) {
-                ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
-                ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
-                ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
-                ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
-                ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
-                ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
-                ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
-                ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
-                ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
-                ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
-                ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
-                ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
-                ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
-            }
-            FilterChip(
-                selected = isSelected,
+            CategoryFilterChip(
+                category = category,
+                isSelected = isSelected,
                 onClick = { onCategoryChange(category) },
-                label = {
-                    Text(
-                        category.displayName,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                    )
-                },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = tintColor.copy(alpha = 0.15f),
-                    selectedLabelColor = tintColor,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = if (isSelected) tintColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                ),
-                shape = RoundedCornerShape(20.dp),
             )
         }
     }
 }
 
-@Composable
-fun PortfolioHeader() {
-    Column {
-        Text(
-            "Get Projects ",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        DashedDivider()
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            "Manage and track your active development and design cycles.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
 
-@Composable
-fun DashedDivider() {
-    val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-    Canvas(
-        Modifier
-            .fillMaxWidth()
-            .height(1.dp),
-    ) {
-        drawLine(
-            color = drawLineColor,
-            start = Offset(0f, 0f),
-            end = Offset(size.width, 0f),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
-        )
-    }
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
-    val icon = when (project.category) {
-        ProjectCategory.DESIGN -> Icons.Outlined.Palette
-        ProjectCategory.DEVELOPMENT -> Icons.Outlined.Devices
-        ProjectCategory.MARKETING -> Icons.Outlined.Campaign
-        ProjectCategory.ALL -> Icons.Outlined.Devices
-        ProjectCategory.WRITING -> Icons.Outlined.Translate
-        ProjectCategory.MULTIMEDIA -> Icons.Outlined.VideoLibrary
-        ProjectCategory.CONSULTING -> Icons.Outlined.BusinessCenter
-        ProjectCategory.ADMIN -> Icons.Outlined.Assignment
-        ProjectCategory.FINANCE -> Icons.Outlined.AccountBalance
-        ProjectCategory.LEGAL -> Icons.Outlined.Gavel
-        ProjectCategory.ANALYTICS -> Icons.Outlined.Analytics
-        ProjectCategory.SECURITY -> Icons.Outlined.Security
-        ProjectCategory.CUSTOMER_SUPPORT -> Icons.Outlined.SupportAgent
-    }
-
-    val accentColor = when (project.category) {
-        ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
-        ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
-        ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
-        ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
-        ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
-        ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
-        ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
-        ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
-        ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
-        ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
-        ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
-        ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
-        ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
-    }
+    val icon = project.category.icon()
+    val accentColor = project.category.accentColor(MaterialTheme.colorScheme)
 
     Card(
         modifier = Modifier
@@ -446,29 +354,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     }
                 }
 
-                Surface(
-                    color = project.status.color().copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(project.status.color())
-                        )
-                        Text(
-                            project.status.displayName,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = project.status.color(),
-                            fontWeight = FontWeight.ExtraBold,
-                        )
-                    }
-                }
+                ProjectStatusBadge(status = project.status)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -750,26 +636,7 @@ fun AutoTypingSearchBarEmptyState(
 }
 
 
-data class ProjectUiModel(
-    val id: String,
-    val category: ProjectCategory,
-    val status: ProjectStatus,
-    val title: String,
-    val description: String,
-    val progress: Int? = null,
-    val tags: List<String> = emptyList(),
-    val showImagePlaceholder: Boolean = false,
-    val footerText: String? = null,
-    val footerIcon: ImageVector? = null,
-    val membersCount: Int = 0,
-)
 
-@Composable
-fun ProjectStatus.color(): Color = when (this) {
-    ProjectStatus.ACTIVE -> MaterialTheme.colorScheme.primary
-    ProjectStatus.PENDING -> Warning
-    ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

@@ -13,18 +13,18 @@ import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
 import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import kotlinx.coroutines.launch
 
-sealed class NotificationEvent {
-    data object Refresh : NotificationEvent()
-    data class OnReplyTextChanged(val notificationId: String, val text: String) : NotificationEvent()
+sealed interface NotificationEvent {
+    data object Refresh : NotificationEvent
+    data class OnReplyTextChanged(val notificationId: String, val text: String) : NotificationEvent
 
-    data class SendQuickReply(val notificationId: String) : NotificationEvent()
-    data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent()
-    data object BackClicked : NotificationEvent()
+    data class SendQuickReply(val notificationId: String) : NotificationEvent
+    data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent
+    data object BackClicked : NotificationEvent
 }
 
-sealed class NotificationEffect {
-    data class ShowToast(val message: String) : NotificationEffect()
-    data object NavigateBack : NotificationEffect()
+sealed interface NotificationEffect {
+    data class ShowToast(val message: String) : NotificationEffect
+    data object NavigateBack : NotificationEffect
 }
 
 class NotificationViewModel(
@@ -59,6 +59,7 @@ class NotificationViewModel(
     }
 
     private fun loadNotifications() {
+        if (uiState.value.isLoading) return
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
             getNotificationsUseCase().foldTyped(
@@ -68,7 +69,7 @@ class NotificationViewModel(
                             notifications = data.map { domainItem ->
                                 NotificationItem(
                                     id = domainItem.id,
-                                    type = NotificationType.valueOf(domainItem.type.name),
+                                    type = domainItem.type.toUiType(),
                                     title = domainItem.title,
                                     description = domainItem.description,
                                     timestamp = domainItem.timestamp,
@@ -106,7 +107,7 @@ class NotificationViewModel(
         if (replyText.isBlank()) return
 
         viewModelScope.launch {
-            updateState { copy(isLoading = true, error = null) }
+            updateState { copy(isLoading = true) }
             sendNotificationQuickReplyUseCase(notificationId, replyText).foldTyped(
                 onSuccess = {
                     updateState {
@@ -119,12 +120,8 @@ class NotificationViewModel(
                     loadNotifications()
                 },
                 onError = { error ->
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            error = error.toUserMessage(),
-                        )
-                    }
+                    updateState { copy(isLoading = false) }
+                    sendEffect(NotificationEffect.ShowToast("Failed to send quick reply: ${error.toUserMessage()}"))
                 },
             )
         }
@@ -132,7 +129,7 @@ class NotificationViewModel(
 
     private fun executeAction(notificationId: String, actionLabel: String) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, error = null) }
+            updateState { copy(isLoading = true) }
             executeNotificationActionUseCase(notificationId, actionLabel).foldTyped(
                 onSuccess = {
                     updateState { copy(isLoading = false) }
@@ -140,14 +137,19 @@ class NotificationViewModel(
                     loadNotifications()
                 },
                 onError = { error ->
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            error = error.toUserMessage(),
-                        )
-                    }
+                    updateState { copy(isLoading = false) }
+                    sendEffect(NotificationEffect.ShowToast("Failed to execute action: ${error.toUserMessage()}"))
                 },
             )
+        }
+    }
+
+    private fun com.smach.zapmancer.domain.model.NotificationType.toUiType(): com.smach.zapmancer.domain.model.NotificationType {
+        return when (this) {
+            com.smach.zapmancer.domain.model.NotificationType.INFO -> com.smach.zapmancer.domain.model.NotificationType.INFO
+            com.smach.zapmancer.domain.model.NotificationType.WARNING -> com.smach.zapmancer.domain.model.NotificationType.WARNING
+            com.smach.zapmancer.domain.model.NotificationType.ALERT -> com.smach.zapmancer.domain.model.NotificationType.ALERT
+            com.smach.zapmancer.domain.model.NotificationType.SUCCESS -> com.smach.zapmancer.domain.model.NotificationType.SUCCESS
         }
     }
 }

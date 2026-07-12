@@ -44,9 +44,11 @@ class ProposalViewModel(
     private fun submitProposal() {
         val current = uiState.value
         viewModelScope.launch {
-            updateState { copy(isSubmitting = true) }
+            updateState { copy(isSubmitting = true, error = null) }
 
             val domainProposal = Proposal(
+                id = "",
+                projectId = "",
                 freelancerName = current.freelancerName,
                 freelancerRole = current.freelancerRole,
                 pitchContent = current.pitchContent,
@@ -61,7 +63,7 @@ class ProposalViewModel(
                     sendEffect(ProposalEffect.ShowToast("Proposal submitted successfully!"))
                 },
                 onError = { error ->
-                    updateState { copy(isSubmitting = false) }
+                    updateState { copy(isSubmitting = false, error = error.toUserMessage()) }
                     sendEffect(ProposalEffect.ShowToast("Submission failed: ${error.toUserMessage()}"))
                 },
             )

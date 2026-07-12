@@ -11,4 +11,5 @@ data class MessagesDetailUiState(
     val isContactTyping: Boolean = false,
     val conversationDate: String = "",
     val isLoading: Boolean = false,
+    val error: String? = null,
 )

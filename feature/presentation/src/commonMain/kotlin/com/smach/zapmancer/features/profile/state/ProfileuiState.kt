@@ -22,3 +22,20 @@ data class ProfileUiState(
     val isHireSuccess: Boolean = false,
     val isOwnProfile: Boolean = true,
 )
+
+fun com.smach.zapmancer.domain.model.UserProfile.toUiState(isOwnProfile: Boolean): ProfileUiState = ProfileUiState(
+    name = name,
+    role = role,
+    location = location,
+    ranking = ranking,
+    isTopRated = isTopRated,
+    projectsCount = projectsCount,
+    rating = rating,
+    experience = experience,
+    about = about,
+    skills = skills,
+    portfolioItems = portfolioItems,
+    reviews = reviews,
+    avatarUrl = avatarUrl.orEmpty(),
+    isOwnProfile = isOwnProfile,
+)

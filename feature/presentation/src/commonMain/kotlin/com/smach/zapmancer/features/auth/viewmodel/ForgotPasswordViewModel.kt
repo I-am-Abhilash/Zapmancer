@@ -8,17 +8,24 @@ import com.smach.zapmancer.domain.usecase.ForgotPasswordUseCase
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import kotlinx.coroutines.launch
 
-sealed class ForgotPasswordEvent {
+import com.smach.zapmancer.core.common.utils.foldTyped
+
+sealed interface ForgotPasswordEvent {
     data class EmailChanged(
         val email: String,
-    ) : ForgotPasswordEvent()
+    ) : ForgotPasswordEvent
 
-    data object Submit : ForgotPasswordEvent()
+    data object Submit : ForgotPasswordEvent
+}
+
+sealed interface ForgotPasswordEffect {
+    data object NavigateToLogin : ForgotPasswordEffect
 }
 
 class ForgotPasswordViewModel(
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
-) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordEvent, Unit>(ForgotPasswordUiState()) {
+) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordEvent, ForgotPasswordEffect>(ForgotPasswordUiState()) {
+
     override fun onEvent(event: ForgotPasswordEvent) {
         when (event) {
             is ForgotPasswordEvent.EmailChanged -> updateState { copy(email = event.email) }
@@ -30,15 +37,15 @@ class ForgotPasswordViewModel(
         val currentState = uiState.value
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
-            when (val result = forgotPasswordUseCase(currentState.email)) {
-                is Result.Success -> {
+            forgotPasswordUseCase(currentState.email).foldTyped(
+                onSuccess = {
                     updateState { copy(isLoading = false, isSuccess = true) }
+                    sendEffect(ForgotPasswordEffect.NavigateToLogin)
+                },
+                onError = { error ->
+                    updateState { copy(isLoading = false, error = error.toUserMessage()) }
                 }
-
-                is Result.Error -> {
-                    updateState { copy(isLoading = false, error = result.error.toUserMessage()) }
-                }
-            }
+            )
         }
     }
 }

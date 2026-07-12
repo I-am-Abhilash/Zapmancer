@@ -11,21 +11,23 @@ import com.smach.zapmancer.domain.usecase.HireUserUseCase
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import kotlinx.coroutines.launch
 
-sealed class ProfileEvent {
-    data object Refresh : ProfileEvent()
-    data object ReviewMore : ProfileEvent()
-    data object PortfolioMore : ProfileEvent()
-    data object HireMe : ProfileEvent()
-    data object SearchClicked : ProfileEvent()
-    data object BackClicked : ProfileEvent()
-    data object EditProfileClicked : ProfileEvent()
+import com.smach.zapmancer.features.profile.state.toUiState
+
+sealed interface ProfileEvent {
+    data object Refresh : ProfileEvent
+    data object ReviewMore : ProfileEvent
+    data object PortfolioMore : ProfileEvent
+    data object HireMe : ProfileEvent
+    data object SearchClicked : ProfileEvent
+    data object BackClicked : ProfileEvent
+    data object EditProfileClicked : ProfileEvent
 }
 
-sealed class ProfileEffect {
-    data class ShowToast(val message: String) : ProfileEffect()
-    data object NavigateToSearch : ProfileEffect()
-    data object NavigateBack : ProfileEffect()
-    data object NavigateToEditProfile : ProfileEffect()
+sealed interface ProfileEffect {
+    data class ShowToast(val message: String) : ProfileEffect
+    data object NavigateToSearch : ProfileEffect
+    data object NavigateBack : ProfileEffect
+    data object NavigateToEditProfile : ProfileEffect
 }
 
 class ProfileViewModel(
@@ -33,6 +35,10 @@ class ProfileViewModel(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val hireUserUseCase: HireUserUseCase,
 ) : BaseViewModel<ProfileUiState, ProfileEvent, ProfileEffect>(ProfileUiState()) {
+
+    init {
+        loadProfile()
+    }
 
     override fun onEvent(event: ProfileEvent) {
         when (event) {
@@ -46,50 +52,14 @@ class ProfileViewModel(
         }
     }
 
-    init {
-        loadProfile()
-    }
-
     private fun loadProfile() {
         viewModelScope.launch {
             updateState { copy(isLoading = true, error = null) }
             getUserProfileUseCase(userId).foldTyped(
                 onSuccess = { profile ->
                     updateState {
-                        copy(
-                            name = profile.name,
-                            role = profile.role,
-                            location = profile.location,
-                            ranking = profile.ranking,
-                            isTopRated = profile.isTopRated,
-                            projectsCount = profile.projectsCount,
-                            rating = profile.rating,
-                            experience = profile.experience,
-                            about = profile.about,
-                            skills = profile.skills,
-                            portfolioItems = profile.portfolioItems.map {
-                                PortfolioItem(
-                                    id = it.id,
-                                    title = it.title,
-                                    description = it.description,
-                                    imageUrl = it.imageUrl,
-                                )
-                            },
-                            reviews = profile.reviews.map {
-                                ProfileReview(
-                                    id = it.id,
-                                    authorName = it.authorName,
-                                    authorRole = it.authorRole,
-                                    content = it.content,
-                                    rating = it.rating,
-                                    authorAvatarUrl = it.authorAvatarUrl.orEmpty(),
-                                    authorId = it.authorId,
-                                )
-                            },
-                            avatarUrl = profile.avatarUrl.orEmpty(),
-                            isLoading = false,
-                            isOwnProfile = userId.isNullOrEmpty(),
-                        )
+                        profile.toUiState(isOwnProfile = userId.isNullOrEmpty())
+                            .copy(isLoading = false)
                     }
                 },
                 onError = { error ->
@@ -106,19 +76,14 @@ class ProfileViewModel(
 
     private fun hireUser() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, error = null, isHireSuccess = false) }
+            updateState { copy(isLoading = true, isHireSuccess = false) }
             hireUserUseCase(userId ?: "").foldTyped(
                 onSuccess = {
                     updateState { copy(isLoading = false, isHireSuccess = true) }
                     sendEffect(ProfileEffect.ShowToast("Hire request processed successfully!"))
                 },
                 onError = { error ->
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            error = error.toUserMessage(),
-                        )
-                    }
+                    updateState { copy(isLoading = false) }
                     sendEffect(ProfileEffect.ShowToast("Failed to process hire request: ${error.toUserMessage()}"))
                 },
             )
@@ -126,10 +91,12 @@ class ProfileViewModel(
     }
 
     private fun onReviewMoreClick() {
+        // TODO: implement pagination
         sendEffect(ProfileEffect.ShowToast("More reviews coming soon"))
     }
 
     private fun onLoadMorePortfolio() {
+        // TODO: implement pagination
         sendEffect(ProfileEffect.ShowToast("More portfolio items coming soon"))
     }
 }

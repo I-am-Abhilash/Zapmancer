@@ -7,7 +7,9 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
+import com.smach.zapmancer.domain.model.CreateProjectParams
 import com.smach.zapmancer.domain.model.Project
+import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectDetail
 import com.smach.zapmancer.domain.repository.ProjectRepository
 import io.ktor.client.HttpClient
@@ -21,8 +23,22 @@ class ProjectRepositoryImpl(
     private val client: HttpClient,
 ) : ProjectRepository {
 
-    override suspend fun getProjects(): Result<List<Project>, DataError.Network> = safeApiCall<List<ProjectDto>> {
-        client.get("projects")
+    override suspend fun getProjects(
+        query: String?,
+        category: ProjectCategory?,
+        sortBy: String?,
+        page: Int?,
+        pageSize: Int?,
+    ): Result<List<Project>, DataError.Network> = safeApiCall<List<ProjectDto>> {
+        client.get("projects") {
+            url {
+                query?.let { parameters.append("query", it) }
+                category?.let { parameters.append("category", it.name) }
+                sortBy?.let { parameters.append("sortBy", it) }
+                page?.let { parameters.append("page", it.toString()) }
+                pageSize?.let { parameters.append("pageSize", it.toString()) }
+            }
+        }
     }.let { result ->
         when (result) {
             is Result.Success -> Result.Success(result.data.map { it.toDomain() })
@@ -47,20 +63,20 @@ class ProjectRepositoryImpl(
 
     override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
 
-    override suspend fun postProject(project: ProjectDetail): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+    override suspend fun postProject(params: CreateProjectParams): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.post("projects") {
             setBody(
                 CreateProjectRequest(
-                    category = project.category,
-                    title = project.title,
-                    location = project.location,
-                    budgetRange = project.budgetRange,
-                    projectType = project.projectType,
-                    projectScope = project.projectScope,
-                    deliverables = project.deliverables,
-                    skills = project.skills,
-                    timeline = project.timeline,
-                    estStart = project.estStart,
+                    category = params.category,
+                    title = params.title,
+                    location = "Remote",
+                    budgetRange = params.budgetRange,
+                    projectType = "Fixed Price",
+                    projectScope = params.description,
+                    deliverables = params.deliverables,
+                    skills = params.skills,
+                    timeline = params.timeline,
+                    estStart = null,
                 ),
             )
         }
@@ -75,8 +91,7 @@ private fun ProjectDto.toDomain(): Project = Project(
     description = "$projectType project located in $location. Budget: $budgetRange.",
     progress = null,
     tags = skills,
-    showImagePlaceholder = false,
-    footerText = postedTime,
+    postedTime = postedTime,
     membersCount = 0,
 )
 
@@ -87,13 +102,13 @@ private fun ProjectDetailDto.toDomain(): ProjectDetail = ProjectDetail(
     postedTime = postedTime,
     location = location,
     isPaymentVerified = isPaymentVerified,
-    projectScope = projectScope.orEmpty(),
+    projectScope = projectScope,
     deliverables = deliverables,
     skills = skills,
     budgetRange = budgetRange,
     projectType = projectType,
-    timeline = timeline.orEmpty(),
-    estStart = estStart.orEmpty(),
+    timeline = timeline,
+    estStart = estStart,
     clientName = clientName,
     clientIndustry = clientIndustry,
     clientLocation = clientLocation,

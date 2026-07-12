@@ -47,8 +47,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -88,18 +86,24 @@ import androidx.compose.ui.window.Dialog
 import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
+import com.smach.zapmancer.features.common.components.CategoryFilterChip
+import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.EmptyState
+import com.smach.zapmancer.features.common.components.shimmerEffect
+import com.smach.zapmancer.features.common.components.icon
+import com.smach.zapmancer.features.common.components.accentColor
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.search.state.SearchSortOption
 import com.smach.zapmancer.features.search.state.SearchUiState
 import com.smach.zapmancer.features.search.viewmodel.SearchEffect
 import com.smach.zapmancer.features.search.viewmodel.SearchEvent
 import com.smach.zapmancer.features.search.viewmodel.SearchViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel,
+    viewModel: SearchViewModel = koinViewModel(),
     onBackClick: () -> Unit,
     onProjectClick: (String) -> Unit,
 ) {
@@ -174,16 +178,7 @@ fun SearchContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-//            IconButton(
-//                onClick = { onEvent(SearchEvent.BackClicked) },
-//                modifier = Modifier.semantics { contentDescription = "Go Back" },
-//            ) {
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                    contentDescription = null,
-//                    tint = MaterialTheme.colorScheme.onBackground,
-//                )
-//            }
+
 
             Spacer(modifier = Modifier.width(4.dp))
 
@@ -344,44 +339,10 @@ private fun SearchFilterHeader(
         ) {
             items(ProjectCategory.entries.toList()) { category ->
                 val isSelected = selectedCategory == category
-                val tintColor = when (category) {
-                    ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
-                    ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
-                    ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
-                    ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
-                    ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
-                    ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
-                    ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
-                    ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
-                    ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
-                    ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
-                    ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
-                    ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
-                    ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
-                }
-                FilterChip(
-                    selected = isSelected,
+                CategoryFilterChip(
+                    category = category,
+                    isSelected = isSelected,
                     onClick = { onCategoryChange(category) },
-                    label = {
-                        Text(
-                            category.displayName,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                        )
-                    },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = tintColor.copy(alpha = 0.15f),
-                        selectedLabelColor = tintColor,
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = if (isSelected) tintColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant.copy(
-                            alpha = 0.5f
-                        )
-                    ),
-                    shape = RoundedCornerShape(20.dp),
                 )
             }
         }
@@ -545,38 +506,7 @@ private fun SearchInitialView(
     }
 }
 
-@Composable
-private fun shimmerBrush(
-    showShimmer: Boolean = true,
-    targetValue: Float = 1000f
-): Brush {
-    return if (showShimmer) {
-        val transition = rememberInfiniteTransition()
-        val translateAnimation by transition.animateFloat(
-            initialValue = 0f,
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 1200, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-        Brush.linearGradient(
-            colors = listOf(
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f),
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-            ),
-            start = androidx.compose.ui.geometry.Offset.Zero,
-            end = androidx.compose.ui.geometry.Offset(x = translateAnimation, y = translateAnimation)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.Transparent),
-            start = androidx.compose.ui.geometry.Offset.Zero,
-            end = androidx.compose.ui.geometry.Offset.Zero
-        )
-    }
-}
+
 
 @Composable
 private fun SearchResultCard(
@@ -716,29 +646,7 @@ private fun SearchResultCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Status indicator
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    val statusColor = when (project.status) {
-                        ProjectStatus.ACTIVE -> Color(0xFF4CAF50)
-                        ProjectStatus.PENDING -> Color(0xFFFF9800)
-                        ProjectStatus.DONE -> Color(0xFF2196F3)
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(statusColor)
-                    )
-                    Text(
-                        text = project.status.displayName,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                ProjectStatusBadge(status = project.status)
 
                 // Other metadata (members, footer text)
                 Row(
@@ -752,7 +660,7 @@ private fun SearchResultCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Group,
-                                contentDescription = null,
+                                contentDescription = "${project.membersCount} members",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                                 modifier = Modifier.size(16.dp)
                             )
@@ -786,7 +694,6 @@ private fun SearchResultCard(
 
 @Composable
 private fun SearchSkeletonCard() {
-    val brush = shimmerBrush()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -805,33 +712,33 @@ private fun SearchSkeletonCard() {
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .height(18.dp)
-                    .background(brush, RoundedCornerShape(4.dp)),
+                    .shimmerEffect(RoundedCornerShape(4.dp)),
             )
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .height(14.dp)
-                    .background(brush, RoundedCornerShape(4.dp)),
+                    .shimmerEffect(RoundedCornerShape(4.dp)),
             )
             Spacer(modifier = Modifier.height(6.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(14.dp)
-                    .background(brush, RoundedCornerShape(4.dp)),
+                    .shimmerEffect(RoundedCornerShape(4.dp)),
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Box(
                     modifier = Modifier
                         .size(width = 60.dp, height = 20.dp)
-                        .background(brush, RoundedCornerShape(10.dp)),
+                        .shimmerEffect(RoundedCornerShape(10.dp)),
                 )
                 Box(
                     modifier = Modifier
                         .size(width = 60.dp, height = 20.dp)
-                        .background(brush, RoundedCornerShape(10.dp)),
+                        .shimmerEffect(RoundedCornerShape(10.dp)),
                 )
             }
         }

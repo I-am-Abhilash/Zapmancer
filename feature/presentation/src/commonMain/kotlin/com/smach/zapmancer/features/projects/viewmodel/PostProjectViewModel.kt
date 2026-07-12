@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
-import com.smach.zapmancer.domain.model.ProjectDetail
+import com.smach.zapmancer.domain.model.CreateProjectParams
 import com.smach.zapmancer.domain.usecase.PostProjectUseCase
 import com.smach.zapmancer.features.projects.state.PostProjectUiState
 import kotlinx.coroutines.launch
@@ -95,31 +95,16 @@ class PostProjectViewModel(
         }
         viewModelScope.launch {
             updateState { copy(isSubmitting = true, error = null) }
-            val project = ProjectDetail(
-                id = "",
+            val params = CreateProjectParams(
                 category = state.category,
                 title = state.title,
-                postedTime = "Just now",
-                location = "Remote",
-                isPaymentVerified = true,
-                projectScope = state.description,
+                description = state.description,
+                budgetRange = state.budgetRange,
+                timeline = state.timeline,
                 deliverables = state.deliverables,
                 skills = state.skills,
-                budgetRange = state.budgetRange,
-                projectType = "Fixed Price",
-                timeline = state.timeline,
-                estStart = "Immediate",
-                clientName = "You",
-                clientIndustry = "Tech",
-                clientLocation = "Remote",
-                clientProjectsCount = 1,
-                clientRating = 5.0,
-                isSaved = false,
-                isClientActive = true,
-                isIdentityVerified = true,
-                isPhoneVerified = true,
             )
-            postProjectUseCase(project).foldTyped(
+            postProjectUseCase(params).foldTyped(
                 onSuccess = {
                     updateState { copy(isSubmitting = false, isSubmitted = true) }
                     sendEffect(PostProjectEffect.ShowToast("Project posted successfully!"))

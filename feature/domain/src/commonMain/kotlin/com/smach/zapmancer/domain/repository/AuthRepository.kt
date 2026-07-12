@@ -9,12 +9,8 @@ import kotlinx.coroutines.flow.Flow
  * Authentication + onboarding contract.
  *
  * Every method that can fail returns [Result] with [DataError.Network] — no method throws.
- * Methods whose only failure mode is local (saving tokens to DataStore) return [Result]
- * too, so callers have one consistent shape to handle.
  */
 interface AuthRepository {
-    suspend fun saveTokens(accessToken: String, refreshToken: String): Result<Unit, DataError.Network>
-
     fun isOnboardingCompleted(): Flow<Boolean>
     suspend fun setOnboardingCompleted(completed: Boolean): Result<Unit, DataError.Network>
 

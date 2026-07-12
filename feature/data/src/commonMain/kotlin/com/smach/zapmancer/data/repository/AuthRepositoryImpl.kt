@@ -31,12 +31,6 @@ class AuthRepositoryImpl(
             onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
         )
 
-    override suspend fun saveTokens(accessToken: String, refreshToken: String): Result<Unit, DataError.Network> = runCatching { sessionManager.saveTokens(accessToken, refreshToken) }
-        .fold(
-            onSuccess = { Result.Success(Unit) },
-            onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
-        )
-
     override suspend fun login(email: String, password: String): Result<User, DataError.Network> {
         val result = safeApiCall<AuthResponse> {
             client.post("auth/login") {
@@ -46,7 +40,13 @@ class AuthRepositoryImpl(
         return when (result) {
             is Result.Success -> {
                 val domainUser = result.data.toDomain()
-                persistSession(domainUser)
+                runCatching {
+                    sessionManager.saveSession(
+                        userId = domainUser.id,
+                        accessToken = result.data.accessToken,
+                        refreshToken = result.data.refreshToken,
+                    )
+                }
                 Result.Success(domainUser)
             }
             is Result.Error -> result
@@ -66,7 +66,13 @@ class AuthRepositoryImpl(
         return when (result) {
             is Result.Success -> {
                 val domainUser = result.data.toDomain()
-                persistSession(domainUser)
+                runCatching {
+                    sessionManager.saveSession(
+                        userId = domainUser.id,
+                        accessToken = result.data.accessToken,
+                        refreshToken = result.data.refreshToken,
+                    )
+                }
                 Result.Success(domainUser)
             }
             is Result.Error -> result
@@ -85,11 +91,6 @@ class AuthRepositoryImpl(
         }
     }.toUnitResult()
 
-    /**
-     * Hits the server's POST /auth/logout first; on success the local session is cleared.
-     * A network failure still attempts the local clear so the user is never stuck signed in
-     * on the device when the server is unreachable — the next login will mint a fresh token.
-     */
     override suspend fun logout(): Result<Unit, DataError.Network> {
         val networkResult = safeApiCall<CommonResponse> { client.post("auth/logout") }
         return runCatching { sessionManager.clearSession() }
@@ -103,20 +104,10 @@ class AuthRepositoryImpl(
                 onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
             )
     }
-
-    private suspend fun persistSession(user: User) {
-        sessionManager.saveSession(
-            userId = user.id,
-            accessToken = user.accessToken ?: "",
-            refreshToken = user.refreshToken ?: "",
-        )
-    }
 }
 
 private fun AuthResponse.toDomain(): User = User(
     id = id,
     email = email.orEmpty(),
-    accessToken = accessToken,
-    refreshToken = refreshToken,
     isNewUser = isNewUser,
 )

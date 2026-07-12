@@ -1,8 +1,5 @@
 package com.smach.zapmancer.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Project(
     val id: String,
     val category: ProjectCategory,
@@ -11,38 +8,14 @@ data class Project(
     val description: String,
     val progress: Int? = null,
     val tags: List<String> = emptyList(),
-    val showImagePlaceholder: Boolean = false,
-    val footerText: String? = null,
+    val postedTime: String,
     val membersCount: Int = 0,
 )
-
-    enum class ProjectCategory(val displayName: String) {
-        ALL("All"),
-        DEVELOPMENT("Development"),
-        DESIGN("Design"),
-        MARKETING("Marketing"),
-        WRITING("Writing & Translation"),
-        MULTIMEDIA("Video & Animation"),
-        CONSULTING("Business & Consulting"),
-        ADMIN("Admin Support"),
-        FINANCE("Finance & Accounting"),
-        LEGAL("Legal & Compliance"),
-        ANALYTICS("Data Science & Analytics"),
-        SECURITY("Cybersecurity & IT"),
-        CUSTOMER_SUPPORT("Customer Support"),
-        ;
-
-    companion object {
-        fun from(value: String): ProjectCategory = entries.firstOrNull {
-            it.name.equals(value, ignoreCase = true)
-        } ?: ALL
-    }
-}
 
 enum class ProjectStatus(val displayName: String) {
     ACTIVE("Active"),
     PENDING("Pending"),
-    DONE("Done"),
+    COMPLETED("Completed"),
     ;
 
     companion object {

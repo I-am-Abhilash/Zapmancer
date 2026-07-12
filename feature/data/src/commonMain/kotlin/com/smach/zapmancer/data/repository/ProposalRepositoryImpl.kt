@@ -22,7 +22,7 @@ class ProposalRepositoryImpl(
         client.post("proposals") {
             setBody(
                 SubmitProposalRequest(
-                    projectId = "1", // Fallback placeholder since client-side UI proposal submission is currently a general drawer item without a specific project context
+                    projectId = proposal.projectId.ifBlank { "1" },
                     freelancerName = proposal.freelancerName,
                     freelancerRole = proposal.freelancerRole,
                     pitchContent = proposal.pitchContent,
@@ -46,6 +46,8 @@ class ProposalRepositoryImpl(
 }
 
 private fun ProposalDto.toDomain(): Proposal = Proposal(
+    id = id.toString(),
+    projectId = "",
     freelancerName = freelancerName,
     freelancerRole = freelancerRole,
     pitchContent = pitchContent,

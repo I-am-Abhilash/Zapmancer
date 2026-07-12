@@ -7,6 +7,8 @@ import com.smach.zapmancer.domain.usecase.GetProjectProposalsUseCase
 import com.smach.zapmancer.features.proposal.state.ClientProposalsUiState
 import kotlinx.coroutines.launch
 
+import com.smach.zapmancer.core.common.utils.toUserMessage
+
 sealed interface ClientProposalsEvent {
     data object Refresh : ClientProposalsEvent
     data class AcceptBid(val freelancerName: String) : ClientProposalsEvent
@@ -61,7 +63,10 @@ class ClientProposalsViewModel(
                 onSuccess = { proposals ->
                     updateState { copy(isLoading = false, proposals = proposals) }
                 },
-                onError = { /* keep state; user can retry */ },
+                onError = { error ->
+                    updateState { copy(isLoading = false, error = error.toUserMessage()) }
+                    sendEffect(ClientProposalsEffect.ShowToast("Failed to load proposals: ${error.toUserMessage()}"))
+                },
             )
         }
     }

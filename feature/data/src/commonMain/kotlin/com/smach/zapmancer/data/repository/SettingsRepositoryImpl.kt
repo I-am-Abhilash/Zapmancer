@@ -4,6 +4,7 @@ import com.smach.zapmancer.core.common.dto.SettingsData as SettingsDataDto
 import com.smach.zapmancer.core.common.dto.ToggleRequest
 import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
+import com.smach.zapmancer.core.common.utils.DataStoreStorage
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
@@ -16,22 +17,27 @@ import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 
 class SettingsRepositoryImpl(
     private val client: HttpClient,
+    private val storage: DataStoreStorage,
 ) : SettingsRepository {
 
-    // Start with sensible defaults so the UI has something to render before the
-    // first network response. Network responses replace these — we never silently
-    // fall back to fake seed values on error.
+    companion object {
+        private const val KEY_DARK_MODE = "dark_mode_enabled"
+    }
+
     private val _settingsFlow = MutableStateFlow(SettingsData())
     override val settingsFlow: Flow<SettingsData> = _settingsFlow.asStateFlow()
+
+    override val darkModeFlow: Flow<Boolean> = storage.getString(KEY_DARK_MODE).map { it == "true" }
 
     override suspend fun getSettings(): Result<SettingsData, DataError.Network> {
         val result = safeApiCall<SettingsDataDto> { client.get("settings") }
         return when (result) {
             is Result.Success -> {
-                val domainData = result.data.toDomain(isDarkMode = _settingsFlow.value.isDarkModeEnabled)
+                val domainData = result.data.toDomain()
                 _settingsFlow.value = domainData
                 Result.Success(domainData)
             }
@@ -68,13 +74,16 @@ class SettingsRepositoryImpl(
             _settingsFlow.value = _settingsFlow.value.copy(isClientModeEnabled = enabled)
         }
     }.toUnitResult()
+
+    override suspend fun updateDarkMode(enabled: Boolean) {
+        storage.saveString(KEY_DARK_MODE, enabled.toString())
+    }
 }
 
-private fun SettingsDataDto.toDomain(isDarkMode: Boolean): SettingsData = SettingsData(
+private fun SettingsDataDto.toDomain(): SettingsData = SettingsData(
     email = email,
     organization = organization.orEmpty(),
     isTwoFactorEnabled = isTwoFactorEnabled,
-    isDarkModeEnabled = isDarkMode,
     isEmailNotificationsEnabled = isEmailNotificationsEnabled,
     version = version,
     isClientModeEnabled = isClientModeEnabled,

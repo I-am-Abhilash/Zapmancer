@@ -10,6 +10,6 @@ import org.koin.dsl.module
 val authModule = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::SignupViewModel)
-    viewModelOf(::VerificationViewModel)
+    viewModel { (email: String) -> VerificationViewModel(email = email, verifyOtpUseCase = get()) }
     viewModelOf(::ForgotPasswordViewModel)
 }

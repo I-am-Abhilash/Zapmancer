@@ -17,26 +17,26 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-sealed class SearchEvent {
-    data class QueryChanged(val query: String) : SearchEvent()
-    data object ClearQuery : SearchEvent()
-    data object StartVoiceSearch : SearchEvent()
-    data object StopVoiceSearch : SearchEvent()
-    data class AddRecentSearch(val query: String) : SearchEvent()
-    data class RemoveRecentSearch(val query: String) : SearchEvent()
-    data object ClearRecentSearches : SearchEvent()
-    data class ChangeCategoryFilter(val category: ProjectCategory) : SearchEvent()
-    data class ChangeSortOption(val sortOption: SearchSortOption) : SearchEvent()
-    data object Refresh : SearchEvent()
-    data object LoadNextPage : SearchEvent()
-    data class ProjectClicked(val id: String) : SearchEvent()
-    data object BackClicked : SearchEvent()
+sealed interface SearchEvent {
+    data class QueryChanged(val query: String) : SearchEvent
+    data object ClearQuery : SearchEvent
+    data object StartVoiceSearch : SearchEvent
+    data object StopVoiceSearch : SearchEvent
+    data class AddRecentSearch(val query: String) : SearchEvent
+    data class RemoveRecentSearch(val query: String) : SearchEvent
+    data object ClearRecentSearches : SearchEvent
+    data class ChangeCategoryFilter(val category: ProjectCategory) : SearchEvent
+    data class ChangeSortOption(val sortOption: SearchSortOption) : SearchEvent
+    data object Refresh : SearchEvent
+    data object LoadNextPage : SearchEvent
+    data class ProjectClicked(val id: String) : SearchEvent
+    data object BackClicked : SearchEvent
 }
 
-sealed class SearchEffect {
-    data class ShowToast(val message: String) : SearchEffect()
-    data class NavigateToProjectDetail(val projectId: String) : SearchEffect()
-    data object NavigateBack : SearchEffect()
+sealed interface SearchEffect {
+    data class ShowToast(val message: String) : SearchEffect
+    data class NavigateToProjectDetail(val projectId: String) : SearchEffect
+    data object NavigateBack : SearchEffect
 }
 
 @OptIn(FlowPreview::class)

@@ -54,7 +54,7 @@ private fun NotificationItemDto.toDomain(): NotificationItem = NotificationItem(
     type = try {
         NotificationType.valueOf(type)
     } catch (e: Exception) {
-        NotificationType.GENERAL
+        NotificationType.UNKNOWN
     },
     title = title,
     description = description,
@@ -64,6 +64,7 @@ private fun NotificationItemDto.toDomain(): NotificationItem = NotificationItem(
     isItalic = isItalic,
     actions = actions.map { it.toDomain() },
     quickReply = quickReply,
+    isRead = false,
 )
 
 private fun com.smach.zapmancer.core.common.dto.NotificationAction.toDomain(): com.smach.zapmancer.domain.model.NotificationAction =

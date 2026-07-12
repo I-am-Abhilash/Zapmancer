@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 // val OutlineDark = Color(0xFF5F6665)
 
 // Brand
+val ZapGold = Color(0xFFFFD700)
 val BluePrimary = Color(0xFF2563EB)
 val BluePrimaryDark = Color(0xFF60A5FA)
 

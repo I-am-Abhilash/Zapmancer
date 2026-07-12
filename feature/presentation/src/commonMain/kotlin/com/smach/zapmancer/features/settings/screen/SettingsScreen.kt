@@ -56,6 +56,7 @@ import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import com.smach.zapmancer.features.settings.viewmodel.SettingsEffect
 import com.smach.zapmancer.features.settings.viewmodel.SettingsEvent
@@ -88,9 +89,6 @@ fun SettingsScreen(
                     showBackButton = true,
                     onBackClick = { viewModel.onEvent(SettingsEvent.BackClicked) },
                     actions = {
-                        IconButton(onClick = {}) {
-                            Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
                         UserAvatar(imageUrl = null, size = 32.dp, modifier = Modifier.padding(end = 12.dp))
                     },
                     containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
@@ -135,8 +133,8 @@ fun SettingsContent(
         ) {
             item {
                 Column {
-                    Text("Settings", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                    Text("Manage your account preferences and security protocols.", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+                    Text("Settings", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                    Text("Manage your account preferences and security protocols.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
                 }
             }
 
@@ -164,7 +162,7 @@ fun SettingsContent(
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                                 modifier = Modifier.height(32.dp),
                             ) {
-                                Text("Update", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text("Update", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
                             }
                         },
                     )
@@ -173,7 +171,7 @@ fun SettingsContent(
 
             item {
                 SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
-                    SettingsToggleItem(title = "Dark Mode", description = "Switch between light and dark interface themes.", checked = uiState.settings?.isDarkModeEnabled ?: false, onCheckedChange = onToggleDarkMode)
+                    SettingsToggleItem(title = "Dark Mode", description = "Switch between light and dark interface themes.", checked = uiState.isDarkModeEnabled, onCheckedChange = onToggleDarkMode)
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(title = "Email Notifications", description = "Receive weekly performance reports and alerts.", checked = uiState.settings?.isEmailNotificationsEnabled ?: false, onCheckedChange = onToggleNotifications)
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
@@ -207,8 +205,8 @@ fun SettingsContent(
 
             item {
                 Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), horizontalAlignment = Alignment.Start) {
-                    Text(uiState.settings?.version ?: "", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontWeight = FontWeight.Normal)
-                    Text("© 2024 Zapmancer. All systems operational.", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), modifier = Modifier.padding(top = 4.dp))
+                    Text(uiState.settings?.version ?: "", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontWeight = FontWeight.Normal)
+                    Text("© 2024 Zapmancer. All systems operational.", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), modifier = Modifier.padding(top = 4.dp))
                 }
             }
         }
@@ -219,14 +217,14 @@ fun SettingsContent(
 fun SettingsSection(title: String, icon: ImageVector, content: @Composable ColumnScope.() -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
     ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
+                Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
             Column(content = content)
@@ -240,15 +238,17 @@ fun SettingsItem(
     subtitle: String,
     actionIcon: ImageVector? = null,
     actionContent: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
 ) {
+    val clickableModifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     Row(
-        modifier = Modifier.fillMaxWidth().clickable {}.padding(16.dp),
+        modifier = Modifier.fillMaxWidth().then(clickableModifier).padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
-            Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (actionContent != null) {
             actionContent()
@@ -267,8 +267,8 @@ fun SettingsToggleItem(
 ) {
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
-            Text(description, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+            Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Switch(
             checked = checked,
@@ -286,15 +286,17 @@ fun SettingsToggleItem(
 @Composable
 @Preview
 fun SettingsPreview() {
-    CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-        SettingsContent(
-            paddingValues = PaddingValues(0.dp),
-            uiState = SettingsUiState(),
-            onToggleTwoFactor = {},
-            onToggleDarkMode = {},
-            onToggleNotifications = {},
-            onToggleClientMode = {},
-            onLogout = {},
-        )
+    AppTheme {
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            SettingsContent(
+                paddingValues = PaddingValues(0.dp),
+                uiState = SettingsUiState(),
+                onToggleTwoFactor = {},
+                onToggleDarkMode = {},
+                onToggleNotifications = {},
+                onToggleClientMode = {},
+                onLogout = {},
+            )
+        }
     }
 }

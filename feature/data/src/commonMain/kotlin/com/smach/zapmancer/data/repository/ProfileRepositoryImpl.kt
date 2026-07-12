@@ -7,6 +7,7 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
+import com.smach.zapmancer.domain.model.UpdateProfileParams
 import com.smach.zapmancer.domain.model.UserProfile
 import com.smach.zapmancer.domain.repository.ProfileRepository
 import io.ktor.client.HttpClient
@@ -33,9 +34,19 @@ class ProfileRepositoryImpl(
         client.post("users/$userId/hire")
     }.toUnitResult()
 
-    override suspend fun updateProfile(request: UpdateProfileRequest): Result<UserProfile, DataError.Network> = safeApiCall<UserProfileDto> {
+    override suspend fun updateProfile(params: UpdateProfileParams): Result<UserProfile, DataError.Network> = safeApiCall<UserProfileDto> {
         client.put("users/profile") {
-            setBody(request)
+            setBody(
+                UpdateProfileRequest(
+                    name = params.name,
+                    roleTitle = params.roleTitle,
+                    location = params.location,
+                    about = params.about,
+                    experience = params.experience,
+                    skills = params.skills,
+                    avatarUrl = params.avatarUrl,
+                )
+            )
         }
     }.let { result ->
         when (result) {
@@ -49,13 +60,13 @@ private fun UserProfileDto.toDomain(): UserProfile = UserProfile(
     id = id,
     name = name,
     role = role,
-    location = location.orEmpty(),
-    ranking = ranking.orEmpty(),
+    location = location,
+    ranking = ranking,
     isTopRated = isTopRated,
     projectsCount = projectsCount,
     rating = rating,
-    experience = experience.orEmpty(),
-    about = about.orEmpty(),
+    experience = experience,
+    about = about,
     skills = skills,
     portfolioItems = portfolioItems.map { it.toDomain() },
     reviews = reviews.map { it.toDomain() },
@@ -64,10 +75,10 @@ private fun UserProfileDto.toDomain(): UserProfile = UserProfile(
 
 private fun com.smach.zapmancer.core.common.dto.PortfolioItem.toDomain(): com.smach.zapmancer.domain.model.PortfolioItem =
     com.smach.zapmancer.domain.model.PortfolioItem(
-        id = id.toString(),
+        id = id,
         title = title,
-        description = description.orEmpty(),
-        imageUrl = imageUrl.orEmpty(),
+        description = description,
+        imageUrl = imageUrl,
     )
 
 private fun com.smach.zapmancer.core.common.dto.Review.toDomain(): com.smach.zapmancer.domain.model.ProfileReview =

@@ -7,5 +7,10 @@ import com.smach.zapmancer.domain.repository.ProfileRepository
 class HireUserUseCase(
     private val repository: ProfileRepository,
 ) {
-    suspend operator fun invoke(userId: String): Result<Unit, DataError.Network> = repository.hireUser(userId)
+    suspend operator fun invoke(userId: String): Result<Unit, DataError> {
+        if (userId.isBlank()) {
+            return Result.Error(DataError.Local.INVALID_INPUT)
+        }
+        return repository.hireUser(userId)
+    }
 }

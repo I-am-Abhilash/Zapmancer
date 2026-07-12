@@ -8,5 +8,10 @@ import com.smach.zapmancer.domain.repository.ProposalRepository
 class SubmitProposalUseCase(
     private val repository: ProposalRepository,
 ) {
-    suspend operator fun invoke(proposal: Proposal): Result<Unit, DataError.Network> = repository.submitProposal(proposal)
+    suspend operator fun invoke(proposal: Proposal): Result<Unit, DataError> {
+        if (proposal.pitchContent.isBlank() || proposal.budget.isBlank()) {
+            return Result.Error(DataError.Local.INVALID_INPUT)
+        }
+        return repository.submitProposal(proposal)
+    }
 }

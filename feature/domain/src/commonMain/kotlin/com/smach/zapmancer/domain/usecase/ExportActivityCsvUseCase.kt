@@ -8,9 +8,9 @@ import com.smach.zapmancer.domain.repository.HomeRepository
 class ExportActivityCsvUseCase(
     private val repository: HomeRepository,
 ) {
-    suspend operator fun invoke(activities: List<UserActivity>): Result<String, DataError.Network> {
+    suspend operator fun invoke(activities: List<UserActivity>): Result<String, DataError> {
         if (activities.isEmpty()) {
-            return Result.Error(DataError.Network.CLIENT_ERROR)
+            return Result.Error(DataError.Local.INVALID_INPUT)
         }
         return repository.exportActivitiesToCsv(activities)
     }

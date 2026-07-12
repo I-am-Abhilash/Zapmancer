@@ -48,6 +48,8 @@ import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.components.shimmerEffect
+import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListEffect
 import com.smach.zapmancer.features.messages.viewmodel.MessagesListEvent
@@ -104,7 +106,15 @@ fun MessagesListContent(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface),
             ) {
-                if (state.conversations.isEmpty()) {
+                if (state.isLoading) {
+                    items(5) {
+                        ConversationShimmerRow()
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            thickness = 1.dp,
+                        )
+                    }
+                } else if (state.conversations.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -119,17 +129,18 @@ fun MessagesListContent(
                             )
                         }
                     }
-                }
-                items(state.conversations, key = { it.id }) { conversation ->
-                    ConversationItemRow(
-                        item = conversation,
-                        isSelected = false,
-                        onClick = { onEvent(MessagesListEvent.ConversationClicked(conversation.id)) },
-                    )
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        thickness = 1.dp,
-                    )
+                } else {
+                    items(state.conversations, key = { it.id }) { conversation ->
+                        ConversationItemRow(
+                            item = conversation,
+                            isSelected = false,
+                            onClick = { onEvent(MessagesListEvent.ConversationClicked(conversation.id)) },
+                        )
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            thickness = 1.dp,
+                        )
+                    }
                 }
             }
         }
@@ -147,8 +158,7 @@ fun MessagesListContent(
                             Text(
                                 "Zapmancer",
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                             )
                         }
                     },
@@ -195,7 +205,7 @@ fun MessagesSearchAndFilter(
             value = searchQuery,
             onValueChange = { onEvent(MessagesListEvent.OnSearchQueryChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search conversations...", fontSize = 14.sp) },
+            placeholder = { Text("Search conversations...", style = MaterialTheme.typography.bodyMedium) },
             leadingIcon = {
                 Icon(
                     Icons.Default.Search,
@@ -226,7 +236,7 @@ fun MessagesSearchAndFilter(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     ) {
-                        Text(filter, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(filter, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
                     }
                 }
             }
@@ -276,22 +286,20 @@ fun ConversationItemRow(
             ) {
                 Text(
                     text = item.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = item.timestamp,
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium,
                 )
             }
             Text(
                 text = item.lastMessage,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -310,10 +318,61 @@ fun ConversationItemRow(
     }
 }
 
+@Composable
+private fun ConversationShimmerRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .shimmerEffect(),
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect(),
+                )
+                Box(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect(),
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(14.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmerEffect(),
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun MessagesListScreenPreview() {
-    MaterialTheme {
+    AppTheme {
         MessagesListContent(
             state = MessagesListUiState(
                 conversations = listOf(

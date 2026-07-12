@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessageRepository {
     suspend fun getConversations(): Result<List<ConversationItem>, DataError.Network>
-    fun getMessages(conversationId: String): Flow<List<MessageItem>>
+    fun getMessages(conversationId: String): Flow<Result<List<MessageItem>, DataError.Network>>
     suspend fun sendMessage(conversationId: String, text: String): Result<Unit, DataError.Network>
     suspend fun markAsRead(conversationId: String): Result<Unit, DataError.Network>
 }

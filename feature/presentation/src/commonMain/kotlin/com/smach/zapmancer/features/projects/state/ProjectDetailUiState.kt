@@ -37,4 +37,5 @@ data class ProjectDetailUiState(
     val isLoading: Boolean = false,
     val isIdentityVerified: Boolean = false,
     val isPhoneVerified: Boolean = false,
+    val error: String? = null,
 )

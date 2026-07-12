@@ -40,7 +40,13 @@ import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
 import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
 import com.smach.zapmancer.domain.usecase.UpdateProfileUseCase
-import com.smach.zapmancer.domain.usecase.UpdateSettingsUseCase
+import com.smach.zapmancer.domain.usecase.UpdateTwoFactorUseCase
+import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
+import com.smach.zapmancer.domain.usecase.UpdateClientModeUseCase
+import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
+import com.smach.zapmancer.domain.usecase.UpdateDarkModeUseCase
+import com.smach.zapmancer.domain.usecase.IsOnboardingCompletedUseCase
+import com.smach.zapmancer.domain.usecase.SetOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.VerifyOtpUseCase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -63,7 +69,11 @@ val dataModule = module {
 
     singleOf(::SettingsRepositoryImpl) { bind<SettingsRepository>() }
     factoryOf(::GetSettingsUseCase)
-    factoryOf(::UpdateSettingsUseCase)
+    factoryOf(::UpdateTwoFactorUseCase)
+    factoryOf(::UpdateEmailNotificationsUseCase)
+    factoryOf(::UpdateClientModeUseCase)
+    factoryOf(::GetDarkModeUseCase)
+    factoryOf(::UpdateDarkModeUseCase)
     factoryOf(::LogoutUseCase)
 
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
@@ -71,6 +81,8 @@ val dataModule = module {
     factoryOf(::SignUpUseCase)
     factoryOf(::ForgotPasswordUseCase)
     factoryOf(::VerifyOtpUseCase)
+    factoryOf(::IsOnboardingCompletedUseCase)
+    factoryOf(::SetOnboardingCompletedUseCase)
 
     singleOf(::MessageRepositoryImpl) { bind<MessageRepository>() }
     factoryOf(::GetConversationsUseCase)
