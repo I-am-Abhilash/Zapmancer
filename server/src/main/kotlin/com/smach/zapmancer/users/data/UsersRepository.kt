@@ -72,6 +72,7 @@ class UsersRepository {
             .map { row ->
                 Review(
                     id = row[ReviewsTable.id],
+                    authorId = row[ReviewsTable.authorId],
                     authorName = row[UsersTable.username],
                     authorRole = row.getOrNull(UserProfilesTable.roleTitle) ?: "",
                     content = row[ReviewsTable.content],

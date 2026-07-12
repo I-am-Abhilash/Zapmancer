@@ -1,5 +1,9 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.HomeDashboard as HomeDashboardDto
+import com.smach.zapmancer.core.common.dto.RecentActivity
+import com.smach.zapmancer.core.common.dto.ExportActivitiesRequest
+import com.smach.zapmancer.core.common.dto.ExportActivitiesResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.network.ktor.safeApiCall
@@ -13,8 +17,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import kotlinx.serialization.Serializable
-import com.smach.zapmancer.core.common.dto.HomeDashboard as HomeDashboardDto
 
 class HomeRepositoryImpl(
     private val client: HttpClient,
@@ -31,9 +33,9 @@ class HomeRepositoryImpl(
 
     override suspend fun exportActivitiesToCsv(
         activities: List<UserActivity>,
-    ): Result<String, DataError.Network> = safeApiCall<ExportResponse> {
+    ): Result<String, DataError.Network> = safeApiCall<ExportActivitiesResponse> {
         client.post("home/activities/export") {
-            setBody(ExportRequest(activities = activities))
+            setBody(ExportActivitiesRequest(activities = activities.map { it.toDto() }))
         }
     }.let { result ->
         when (result) {
@@ -69,8 +71,12 @@ private fun HomeDashboardDto.toDomain(): HomeDashboard = HomeDashboard(
     },
 )
 
-@Serializable
-private data class ExportRequest(val activities: List<UserActivity>)
-
-@Serializable
-private data class ExportResponse(val filePath: String)
+private fun UserActivity.toDto(): RecentActivity = RecentActivity(
+    id = id,
+    projectName = projectName,
+    category = category,
+    categoryTag = tag,
+    status = status.name,
+    date = timestamp,
+    value = monetaryValue,
+)

@@ -4,48 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
-import androidx.compose.material.icons.outlined.ChatBubble
-import androidx.compose.material.icons.outlined.PersonAdd
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Sync
-import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material.icons.outlined.Work
-import com.smach.zapmancer.features.common.components.EmptyState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,6 +37,7 @@ import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
+import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import org.koin.compose.viewmodel.koinViewModel
@@ -128,16 +95,15 @@ fun NotificationContent(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter,
     ) {
-        if (state.notifications.isEmpty()) {
-            if (!state.isLoading && state.error == null) {
-                EmptyState(
-                    title = "All caught up!",
-                    description = "You have no unread notifications or tasks requiring action.",
-                    icon = Icons.Outlined.Notifications,
-                    buttonText = "Refresh",
-                    onButtonClick = { onEvent(NotificationEvent.Refresh) },
-                )
-            }
+        if (state.notifications.isEmpty() && !state.isLoading && state.error == null) {
+            EmptyState(
+                title = "All caught up!",
+                description = "You have no unread notifications or tasks requiring action.",
+                icon = Icons.Outlined.Notifications,
+                buttonText = "Refresh",
+                onButtonClick = { onEvent(NotificationEvent.Refresh) },
+            )
+
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -154,9 +120,23 @@ fun NotificationContent(
                         NotificationCard(
                             item = item,
                             replyText = state.replyDrafts[item.id] ?: "",
-                            onReplyTextChanged = { text -> onEvent(NotificationEvent.OnReplyTextChanged(item.id, text)) },
+                            onReplyTextChanged = { text ->
+                                onEvent(
+                                    NotificationEvent.OnReplyTextChanged(
+                                        item.id,
+                                        text
+                                    )
+                                )
+                            },
                             onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
-                            onActionClicked = { actionLabel -> onEvent(NotificationEvent.ExecuteAction(item.id, actionLabel)) },
+                            onActionClicked = { actionLabel ->
+                                onEvent(
+                                    NotificationEvent.ExecuteAction(
+                                        item.id,
+                                        actionLabel
+                                    )
+                                )
+                            },
                         )
                     }
                 }
@@ -254,13 +234,27 @@ fun NotificationCard(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                         color = if (item.type == NotificationType.ALERT) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface,
                     )
-                    Text(item.timestamp, style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        item.timestamp,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Spacer(Modifier.height(4.dp))
                 if (item.isItalic) {
-                    Text("\"${item.description}\"", style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
+                    Text(
+                        "\"${item.description}\"",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp
+                    )
                 } else {
-                    Text(text = item.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
+                    Text(
+                        text = item.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp
+                    )
                 }
                 if (item.actions.isNotEmpty()) {
                     Spacer(Modifier.height(16.dp))
@@ -273,11 +267,17 @@ fun NotificationCard(
                                     contentColor = if (action.isPrimary) (if (action.isError) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary) else MaterialTheme.colorScheme.onSurfaceVariant,
                                 ),
                                 shape = MaterialTheme.shapes.small,
-                                border = if (!action.isPrimary) BorderStroke(1.dp, MaterialTheme.colorScheme.outline) else null,
+                                border = if (!action.isPrimary) BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outline
+                                ) else null,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier.height(32.dp),
                             ) {
-                                Text(action.label, style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
+                                Text(
+                                    action.label,
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                )
                             }
                         }
                     }
@@ -304,9 +304,15 @@ fun NotificationCard(
                         )
                         IconButton(
                             onClick = onSendReply,
-                            modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small),
+                            modifier = Modifier.size(36.dp)
+                                .background(MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small),
                         ) {
-                            Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = "Send", tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                            Icon(
+                                Icons.AutoMirrored.Outlined.Send,
+                                contentDescription = "Send",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 }
@@ -331,11 +337,53 @@ fun Modifier.drawAccentLine(color: Color) = this.then(
 fun NotificationPreview() {
     val sampleState = NotificationUiState(
         notifications = listOf(
-            NotificationItem(id = "1", type = NotificationType.MILESTONE, title = "Neural Mesh Deployment", description = "Automated deployment of the v2.4.1-alpha build was successful on the production cluster.", timestamp = "2m ago", section = "Today", actions = listOf(NotificationAction("View Logs", isPrimary = true), NotificationAction("Dismiss"))),
-            NotificationItem(id = "2", type = NotificationType.MESSAGE, title = "Message from Sarah Connor", description = "The latency on the North-East edge node has stabilized. Should we increase the load distribution?", timestamp = "1h ago", section = "Today", isItalic = true, quickReply = true),
-            NotificationItem(id = "3", type = NotificationType.ALERT, title = "Database Connection Spike", description = "Unauthorized access attempts detected from IP 192.168.1.104. Security protocols initiated.", timestamp = "4h ago", section = "Today", actions = listOf(NotificationAction("Block IP", isPrimary = true, isError = true), NotificationAction("Investigate"))),
-            NotificationItem(id = "4", type = NotificationType.GENERAL, title = "Weekly Backup Complete", description = "All system partitions have been mirrored to the secure vault. Integrity check: 100%.", timestamp = "1d ago", section = "Yesterday"),
-            NotificationItem(id = "5", type = NotificationType.COLLABORATOR, title = "New Collaborator Joined", description = "David Chen was added to the \"Project Phoenix\" team by Admin.", timestamp = "1d ago", section = "Yesterday"),
+            NotificationItem(
+                id = "1",
+                type = NotificationType.MILESTONE,
+                title = "Neural Mesh Deployment",
+                description = "Automated deployment of the v2.4.1-alpha build was successful on the production cluster.",
+                timestamp = "2m ago",
+                section = "Today",
+                actions = listOf(NotificationAction("View Logs", isPrimary = true), NotificationAction("Dismiss"))
+            ),
+            NotificationItem(
+                id = "2",
+                type = NotificationType.MESSAGE,
+                title = "Message from Sarah Connor",
+                description = "The latency on the North-East edge node has stabilized. Should we increase the load distribution?",
+                timestamp = "1h ago",
+                section = "Today",
+                isItalic = true,
+                quickReply = true
+            ),
+            NotificationItem(
+                id = "3",
+                type = NotificationType.ALERT,
+                title = "Database Connection Spike",
+                description = "Unauthorized access attempts detected from IP 192.168.1.104. Security protocols initiated.",
+                timestamp = "4h ago",
+                section = "Today",
+                actions = listOf(
+                    NotificationAction("Block IP", isPrimary = true, isError = true),
+                    NotificationAction("Investigate")
+                )
+            ),
+            NotificationItem(
+                id = "4",
+                type = NotificationType.GENERAL,
+                title = "Weekly Backup Complete",
+                description = "All system partitions have been mirrored to the secure vault. Integrity check: 100%.",
+                timestamp = "1d ago",
+                section = "Yesterday"
+            ),
+            NotificationItem(
+                id = "5",
+                type = NotificationType.COLLABORATOR,
+                title = "New Collaborator Joined",
+                description = "David Chen was added to the \"Project Phoenix\" team by Admin.",
+                timestamp = "1d ago",
+                section = "Yesterday"
+            ),
         ),
     )
     CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {

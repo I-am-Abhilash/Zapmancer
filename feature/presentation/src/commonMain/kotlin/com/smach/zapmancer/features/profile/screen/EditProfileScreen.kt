@@ -94,6 +94,7 @@ fun EditProfileScreen(
                 is EditProfileEffect.ShowToast -> {
                     showSnackbar(effect.message)
                 }
+
                 EditProfileEffect.NavigateBack -> {
                     onBackClick()
                 }
@@ -132,7 +133,7 @@ fun EditProfileScreen(
                             Text("Save", fontWeight = FontWeight.Bold)
                         }
                     }
-                }
+                },
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
@@ -413,7 +414,7 @@ private fun EditProfileContent(
                                             modifier = Modifier
                                                 .size(14.dp)
                                                 .clip(CircleShape)
-                                                .clickable { onEvent(EditProfileEvent.RemoveSkill(skill)) }
+                                                .clickable { onEvent(EditProfileEvent.RemoveSkill(skill)) },
                                         )
                                     }
                                 }

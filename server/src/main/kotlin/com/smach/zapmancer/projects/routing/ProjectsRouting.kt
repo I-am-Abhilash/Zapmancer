@@ -36,8 +36,8 @@ fun Route.projectsRouting() {
                         category = category,
                         sortBy = sortBy,
                         page = page,
-                        limit = limit
-                    )
+                        limit = limit,
+                    ),
                 )
             }
 

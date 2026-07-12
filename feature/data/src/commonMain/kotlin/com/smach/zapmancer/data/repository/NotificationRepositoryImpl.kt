@@ -1,22 +1,34 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.NotificationItem as NotificationItemDto
+import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
+import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
 import com.smach.zapmancer.domain.model.NotificationItem
+import com.smach.zapmancer.domain.model.NotificationType
 import com.smach.zapmancer.domain.repository.NotificationRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import kotlinx.serialization.Serializable
 
 class NotificationRepositoryImpl(
     private val client: HttpClient,
 ) : NotificationRepository {
 
-    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> = safeApiCall<List<NotificationItem>> { client.get("notifications") }
+    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> =
+        safeApiCall<List<NotificationItemDto>> {
+            client.get("notifications")
+        }.let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+                is Result.Error -> result
+            }
+        }
 
     override suspend fun executeAction(
         notificationId: String,
@@ -37,8 +49,26 @@ class NotificationRepositoryImpl(
     }.toUnitResult()
 }
 
-@Serializable
-private data class ExecuteActionRequest(val actionLabel: String)
+private fun NotificationItemDto.toDomain(): NotificationItem = NotificationItem(
+    id = id.toString(),
+    type = try {
+        NotificationType.valueOf(type)
+    } catch (e: Exception) {
+        NotificationType.GENERAL
+    },
+    title = title,
+    description = description,
+    timestamp = timestamp,
+    section = section,
+    codeSnippet = codeSnippet,
+    isItalic = isItalic,
+    actions = actions.map { it.toDomain() },
+    quickReply = quickReply,
+)
 
-@Serializable
-private data class SendQuickReplyRequest(val replyText: String)
+private fun com.smach.zapmancer.core.common.dto.NotificationAction.toDomain(): com.smach.zapmancer.domain.model.NotificationAction =
+    com.smach.zapmancer.domain.model.NotificationAction(
+        label = label,
+        isPrimary = isPrimary,
+        isError = isError,
+    )

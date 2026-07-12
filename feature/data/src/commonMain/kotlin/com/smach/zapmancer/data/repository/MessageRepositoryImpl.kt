@@ -1,5 +1,6 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult

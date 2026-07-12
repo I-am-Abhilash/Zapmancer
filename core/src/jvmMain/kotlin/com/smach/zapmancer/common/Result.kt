@@ -1,29 +1,12 @@
 package com.smach.zapmancer.common
 
+import com.smach.zapmancer.core.network.ktor.ApiResponse
+import com.smach.zapmancer.core.network.ktor.ApiError
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import kotlinx.serialization.Serializable
-
-/**
- * A standardized wrapper for all API responses.
- * This ensures that the frontend always receives a consistent JSON structure.
- */
-@Serializable
-data class ApiResponse<T>(
-    val success: Boolean,
-    val data: T? = null,
-    val error: ApiError? = null,
-)
-
-/**
- * Details of an API error.
- */
-@Serializable
-data class ApiError(
-    val code: String,
-    val message: String,
-)
 
 /**
  * DomainResult is a 'Result' pattern used by Services and Repositories.
@@ -44,16 +27,6 @@ enum class ErrorCode(val httpStatusCode: HttpStatusCode) {
     CONFLICT(HttpStatusCode.Conflict),
     INTERNAL_SERVER_ERROR(HttpStatusCode.InternalServerError),
 }
-
-/**
- * Shared response DTO for simple success/failure acknowledgements.
- * Used across home, projects, proposals, messages, notifications, settings.
- */
-@Serializable
-data class CommonResponse(
-    val success: Boolean,
-    val message: String,
-)
 
 /**
  * Extension function to automatically map a DomainResult to an HTTP response.
@@ -81,3 +54,7 @@ suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: Domai
         }
     }
 }
+
+typealias ApiResponse<T> = com.smach.zapmancer.core.network.ktor.ApiResponse<T>
+typealias ApiError = com.smach.zapmancer.core.network.ktor.ApiError
+typealias CommonResponse = com.smach.zapmancer.core.common.dto.CommonResponse

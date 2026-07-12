@@ -1,5 +1,8 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.SettingsData as SettingsDataDto
+import com.smach.zapmancer.core.common.dto.ToggleRequest
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -13,7 +16,6 @@ import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.Serializable
 
 class SettingsRepositoryImpl(
     private val client: HttpClient,
@@ -26,16 +28,20 @@ class SettingsRepositoryImpl(
     override val settingsFlow: Flow<SettingsData> = _settingsFlow.asStateFlow()
 
     override suspend fun getSettings(): Result<SettingsData, DataError.Network> {
-        val result = safeApiCall<SettingsData> { client.get("settings") }
-        if (result is Result.Success) {
-            _settingsFlow.value = result.data
+        val result = safeApiCall<SettingsDataDto> { client.get("settings") }
+        return when (result) {
+            is Result.Success -> {
+                val domainData = result.data.toDomain(isDarkMode = _settingsFlow.value.isDarkModeEnabled)
+                _settingsFlow.value = domainData
+                Result.Success(domainData)
+            }
+            is Result.Error -> result
         }
-        return result
     }
 
     override suspend fun updateTwoFactor(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.put("settings/2fa") {
-            setBody(UpdateSettingRequest(enabled = enabled))
+            setBody(ToggleRequest(enabled = enabled))
         }
     }.also { result ->
         if (result is Result.Success) {
@@ -45,7 +51,7 @@ class SettingsRepositoryImpl(
 
     override suspend fun updateEmailNotifications(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.put("settings/email-notifications") {
-            setBody(UpdateSettingRequest(enabled = enabled))
+            setBody(ToggleRequest(enabled = enabled))
         }
     }.also { result ->
         if (result is Result.Success) {
@@ -55,7 +61,7 @@ class SettingsRepositoryImpl(
 
     override suspend fun updateClientMode(enabled: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.put("settings/client-mode") {
-            setBody(UpdateSettingRequest(enabled = enabled))
+            setBody(ToggleRequest(enabled = enabled))
         }
     }.also { result ->
         if (result is Result.Success) {
@@ -64,5 +70,12 @@ class SettingsRepositoryImpl(
     }.toUnitResult()
 }
 
-@Serializable
-private data class UpdateSettingRequest(val enabled: Boolean)
+private fun SettingsDataDto.toDomain(isDarkMode: Boolean): SettingsData = SettingsData(
+    email = email,
+    organization = organization.orEmpty(),
+    isTwoFactorEnabled = isTwoFactorEnabled,
+    isDarkModeEnabled = isDarkMode,
+    isEmailNotificationsEnabled = isEmailNotificationsEnabled,
+    version = version,
+    isClientModeEnabled = isClientModeEnabled,
+)

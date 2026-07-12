@@ -51,8 +51,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
-import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
 import com.smach.zapmancer.features.auth.viewmodel.LoginSideEffect
+import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
@@ -76,8 +76,11 @@ fun LoginScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is LoginSideEffect.NavigateToForgotPassword -> onNavigateToForgot()
+
                 is LoginSideEffect.NavigateToSignup -> onNavigateToSignup()
+
                 is LoginSideEffect.NavigateToHome -> onLoginSuccess()
+
                 is LoginSideEffect.NavigateToOtp -> {
                     // Navigate to OTP if needed
                 }

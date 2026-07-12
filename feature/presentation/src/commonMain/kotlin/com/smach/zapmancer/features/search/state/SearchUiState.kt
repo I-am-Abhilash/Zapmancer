@@ -6,7 +6,7 @@ import com.smach.zapmancer.domain.model.ProjectCategory
 enum class SearchSortOption(val displayName: String) {
     RELEVANCE("Most Relevant"),
     NEWEST("Newest"),
-    BUDGET("Highest Budget")
+    BUDGET("Highest Budget"),
 }
 
 data class SearchUiState(
@@ -19,7 +19,7 @@ data class SearchUiState(
         "KMP Application",
         "Material 3 Design System",
         "WebAssembly (Wasm)",
-        "Rust Backend integration"
+        "Rust Backend integration",
     ),
     val categoryFilter: ProjectCategory = ProjectCategory.ALL,
     val sortBy: SearchSortOption = SearchSortOption.RELEVANCE,
@@ -28,5 +28,5 @@ data class SearchUiState(
     val isRefreshing: Boolean = false,
     val error: String? = null,
     val hasMore: Boolean = false,
-    val page: Int = 1
+    val page: Int = 1,
 )

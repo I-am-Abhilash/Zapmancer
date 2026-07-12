@@ -4,6 +4,8 @@ import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
+import com.smach.zapmancer.core.common.dto.AuthResponse
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -36,13 +38,19 @@ class AuthRepositoryImpl(
         )
 
     override suspend fun login(email: String, password: String): Result<User, DataError.Network> {
-        val result = safeApiCall<User> {
+        val result = safeApiCall<AuthResponse> {
             client.post("auth/login") {
                 setBody(LoginRequest(email = email, password = password))
             }
         }
-        if (result is Result.Success) persistSession(result.data)
-        return result
+        return when (result) {
+            is Result.Success -> {
+                val domainUser = result.data.toDomain()
+                persistSession(domainUser)
+                Result.Success(domainUser)
+            }
+            is Result.Error -> result
+        }
     }
 
     override suspend fun signUp(
@@ -50,13 +58,19 @@ class AuthRepositoryImpl(
         username: String,
         password: String,
     ): Result<User, DataError.Network> {
-        val result = safeApiCall<User> {
+        val result = safeApiCall<AuthResponse> {
             client.post("auth/register") {
                 setBody(SignUpRequest(email = email, username = username, password = password))
             }
         }
-        if (result is Result.Success) persistSession(result.data)
-        return result
+        return when (result) {
+            is Result.Success -> {
+                val domainUser = result.data.toDomain()
+                persistSession(domainUser)
+                Result.Success(domainUser)
+            }
+            is Result.Error -> result
+        }
     }
 
     override suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
@@ -98,3 +112,11 @@ class AuthRepositoryImpl(
         )
     }
 }
+
+private fun AuthResponse.toDomain(): User = User(
+    id = id,
+    email = email.orEmpty(),
+    accessToken = accessToken,
+    refreshToken = refreshToken,
+    isNewUser = isNewUser,
+)

@@ -47,10 +47,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +67,7 @@ import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.messages.state.MessagesDetailUiState
+import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEffect
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailEvent
 import com.smach.zapmancer.features.messages.viewmodel.MessagesDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -387,11 +387,11 @@ fun MessageDetailScreenPreview() {
                     ),
                     isContactTyping = true,
                 ),
-            onEvent = {},
-            onCallClick = {},
-            onVideocamClick = {},
-            onMoreClick = {},
-        )
+                onEvent = {},
+                onCallClick = {},
+                onVideocamClick = {},
+                onMoreClick = {},
+            )
         }
     }
 }

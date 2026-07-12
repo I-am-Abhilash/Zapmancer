@@ -1,5 +1,8 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.Proposal as ProposalDto
+import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -17,9 +20,36 @@ class ProposalRepositoryImpl(
 
     override suspend fun submitProposal(proposal: Proposal): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.post("proposals") {
-            setBody(proposal)
+            setBody(
+                SubmitProposalRequest(
+                    projectId = "1", // Fallback placeholder since client-side UI proposal submission is currently a general drawer item without a specific project context
+                    freelancerName = proposal.freelancerName,
+                    freelancerRole = proposal.freelancerRole,
+                    pitchContent = proposal.pitchContent,
+                    budget = proposal.budget,
+                    timelineDays = proposal.timelineDays,
+                    projectType = proposal.projectType,
+                ),
+            )
         }
     }.toUnitResult()
 
-    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> = safeApiCall<List<Proposal>> { client.get("projects/$projectId/proposals") }
+    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> =
+        safeApiCall<List<ProposalDto>> {
+            client.get("projects/$projectId/proposals")
+        }.let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+                is Result.Error -> result
+            }
+        }
 }
+
+private fun ProposalDto.toDomain(): Proposal = Proposal(
+    freelancerName = freelancerName,
+    freelancerRole = freelancerRole,
+    pitchContent = pitchContent,
+    budget = budget,
+    timelineDays = timelineDays,
+    projectType = projectType,
+)

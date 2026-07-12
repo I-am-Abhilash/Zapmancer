@@ -1,5 +1,6 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.SaveProjectRequest
 import com.smach.zapmancer.core.common.utils.DataError
@@ -59,8 +60,8 @@ class ProjectRepositoryImpl(
                     deliverables = project.deliverables,
                     skills = project.skills,
                     timeline = project.timeline,
-                    estStart = project.estStart
-                )
+                    estStart = project.estStart,
+                ),
             )
         }
     }.toUnitResult()
@@ -76,7 +77,7 @@ private fun ProjectDto.toDomain(): Project = Project(
     tags = skills,
     showImagePlaceholder = false,
     footerText = postedTime,
-    membersCount = 0
+    membersCount = 0,
 )
 
 private fun ProjectDetailDto.toDomain(): ProjectDetail = ProjectDetail(
@@ -101,5 +102,5 @@ private fun ProjectDetailDto.toDomain(): ProjectDetail = ProjectDetail(
     isSaved = isSaved,
     isClientActive = isClientActive,
     isIdentityVerified = isIdentityVerified,
-    isPhoneVerified = isPhoneVerified
+    isPhoneVerified = isPhoneVerified,
 )

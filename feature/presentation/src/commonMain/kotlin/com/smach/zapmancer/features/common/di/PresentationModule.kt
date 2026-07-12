@@ -7,8 +7,8 @@ import com.smach.zapmancer.features.messages.di.messagesModule
 import com.smach.zapmancer.features.profile.di.profileModule
 import com.smach.zapmancer.features.projects.di.projectsModule
 import com.smach.zapmancer.features.proposal.di.proposalModule
-import com.smach.zapmancer.features.settings.di.settingsModule
 import com.smach.zapmancer.features.search.di.searchModule
+import com.smach.zapmancer.features.settings.di.settingsModule
 import org.koin.dsl.module
 
 /**

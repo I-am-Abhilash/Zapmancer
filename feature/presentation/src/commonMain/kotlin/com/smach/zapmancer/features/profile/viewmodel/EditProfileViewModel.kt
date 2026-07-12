@@ -75,7 +75,7 @@ class EditProfileViewModel(
                 onError = { error ->
                     updateState { copy(isLoading = false, error = error.toUserMessage()) }
                     sendEffect(EditProfileEffect.ShowToast("Failed to load profile: ${error.toUserMessage()}"))
-                }
+                },
             )
         }
     }
@@ -116,7 +116,7 @@ class EditProfileViewModel(
                 onError = { error ->
                     updateState { copy(isLoading = false, error = error.toUserMessage()) }
                     sendEffect(EditProfileEffect.ShowToast("Failed to save profile: ${error.toUserMessage()}"))
-                }
+                },
             )
         }
     }

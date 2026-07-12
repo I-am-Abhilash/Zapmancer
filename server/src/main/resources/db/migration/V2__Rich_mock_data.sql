@@ -57,9 +57,14 @@ INSERT INTO reviews (subject_id, author_id, content, rating, created_at) VALUES
 
 -- 7. Projects
 INSERT INTO projects (id, category, title, posted_time, location, is_payment_verified, budget_range, project_type, project_scope, timeline, est_start, client_id, is_identity_verified, is_phone_verified, is_client_active, created_at) VALUES
-('proj_kmp_dashboard', 'Mobile Development', 'Compose Multiplatform Admin Dashboard', '2 hours ago', 'Remote', TRUE, '$8,000 - $12,000', 'Fixed Price', 'We are looking for an expert KMP developer to build a responsive admin dashboard that works on iOS, Android, and Desktop. The app should display real-time usage statistics and connect via Ktor WebSockets.', '2 months', 'Immediate', 'user_client_1', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '2 hours'),
-('proj_ktor_api', 'Backend Systems', 'Scalable Ktor REST API with PostgreSQL', '1 day ago', 'Remote', TRUE, '$5,000 - $7,500', 'Fixed Price', 'Need a senior Kotlin backend engineer to build our core user service. High availability, JWT auth, integration with pgvector, and thorough unit/integration tests are required.', '1 month', 'In 2 weeks', 'user_client_2', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '1 day'),
-('proj_figma_redesign', 'UI/UX Design', 'Creative Mobile Landing Page System', '3 days ago', 'Hybrid (Austin)', FALSE, '$3,000 - $4,500', 'Fixed Price', 'Looking for a Figma designer to build a premium landing page system for a creator platform. Needs light/dark mode and responsive layouts for mobile and web screens.', '3 weeks', 'Immediate', 'user_client_1', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP - INTERVAL '3 days');
+('proj_kmp_dashboard', 'DEVELOPMENT', 'Compose Multiplatform Admin Dashboard', '2 hours ago', 'Remote', TRUE, '$8,000 - $12,000', 'Fixed Price', 'We are looking for an expert KMP developer to build a responsive admin dashboard that works on iOS, Android, and Desktop. The app should display real-time usage statistics and connect via Ktor WebSockets.', '2 months', 'Immediate', 'user_client_1', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '2 hours'),
+('proj_ktor_api', 'DEVELOPMENT', 'Scalable Ktor REST API with PostgreSQL', '1 day ago', 'Remote', TRUE, '$5,000 - $7,500', 'Fixed Price', 'Need a senior Kotlin backend engineer to build our core user service. High availability, JWT auth, integration with pgvector, and thorough unit/integration tests are required.', '1 month', 'In 2 weeks', 'user_client_2', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+('proj_figma_redesign', 'DESIGN', 'Creative Mobile Landing Page System', '3 days ago', 'Hybrid (Austin)', FALSE, '$3,000 - $4,500', 'Fixed Price', 'Looking for a Figma designer to build a premium landing page system for a creator platform. Needs light/dark mode and responsive layouts for mobile and web screens.', '3 weeks', 'Immediate', 'user_client_1', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP - INTERVAL '3 days'),
+('proj_neural_engine', 'DEVELOPMENT', 'Neural Engine Alpha Optimization', '4 hours ago', 'Remote', TRUE, '$15,000 - $20,000', 'Fixed Price', 'High-performance tensor runtime optimization. Optimize latency and throughput for model inference on Edge devices and custom servers.', '3 months', 'Immediate', 'user_client_2', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '4 hours'),
+('proj_lumina_design', 'DESIGN', 'Lumina Design System Architecture', '5 hours ago', 'Remote', TRUE, '$4,000 - $6,000', 'Hourly', 'Establish a token-based architecture for a unified design system. We need UI styles, component catalogs, and responsive grids mapped in Figma.', '6 weeks', 'Immediate', 'user_client_1', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '5 hours'),
+('proj_marketing_brand', 'MARKETING', 'Premium Global Branding Campaign', '6 hours ago', 'Remote', TRUE, '$12,000 - $18,000', 'Fixed Price', 'Design and run a global customer acquisition and brand visibility campaign across social, web, and search platforms.', '2 months', 'In 1 week', 'user_client_2', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '6 hours'),
+('proj_ios_rust', 'DEVELOPMENT', 'iOS Rust Backend Bindings', '2 days ago', 'Remote', TRUE, '$10,000 - $14,000', 'Fixed Price', 'Bridge Rust performance engines with Swift iOS UI layers using UniFFI bindings. Secure memory management and testing suites are required.', '1 month', 'In 3 weeks', 'user_client_1', TRUE, TRUE, TRUE, CURRENT_TIMESTAMP - INTERVAL '2 days'),
+('proj_saas_metrics', 'MARKETING', 'SaaS Growth Hacking & SEO Audit', '4 days ago', 'Remote', FALSE, '$3,500 - $5,000', 'Hourly', 'Help us optimize our conversion funnels and audit technical SEO to maximize organic traffic to our developer platform.', '1 month', 'Immediate', 'user_client_2', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP - INTERVAL '4 days');
 
 -- 8. Project Skills
 INSERT INTO project_skills (project_id, skill) VALUES
@@ -73,7 +78,23 @@ INSERT INTO project_skills (project_id, skill) VALUES
 ('proj_ktor_api', 'JWT'),
 ('proj_figma_redesign', 'UI/UX Design'),
 ('proj_figma_redesign', 'Figma'),
-('proj_figma_redesign', 'Design Systems');
+('proj_figma_redesign', 'Design Systems'),
+('proj_neural_engine', 'Kotlin'),
+('proj_neural_engine', 'Machine Learning'),
+('proj_neural_engine', 'C++'),
+('proj_neural_engine', 'Optimization'),
+('proj_lumina_design', 'Figma'),
+('proj_lumina_design', 'UI/UX Design'),
+('proj_lumina_design', 'Design Tokens'),
+('proj_marketing_brand', 'Growth Marketing'),
+('proj_marketing_brand', 'SEO'),
+('proj_marketing_brand', 'Social Media'),
+('proj_ios_rust', 'Rust'),
+('proj_ios_rust', 'Swift'),
+('proj_ios_rust', 'UniFFI'),
+('proj_saas_metrics', 'SEO'),
+('proj_saas_metrics', 'Analytics'),
+('proj_saas_metrics', 'Copywriting');
 
 -- 9. Project Deliverables
 INSERT INTO project_deliverables (project_id, deliverable) VALUES
@@ -83,7 +104,18 @@ INSERT INTO project_deliverables (project_id, deliverable) VALUES
 ('proj_kmp_dashboard', '4. Deployment and staging verification for iOS, Android, and Desktop'),
 ('proj_ktor_api', '1. Database migrations and connection pooling setup'),
 ('proj_ktor_api', '2. Authentication endpoints and JWT security filters'),
-('proj_ktor_api', '3. Full API documentation and integration test suite');
+('proj_ktor_api', '3. Full API documentation and integration test suite'),
+('proj_neural_engine', '1. Benchmark report of current inference throughput'),
+('proj_neural_engine', '2. Custom C++ native library wrapped in Kotlin Native bindings'),
+('proj_neural_engine', '3. 40% reduction in memory footprint and latency optimized pipeline'),
+('proj_lumina_design', '1. Interactive design token library in Figma'),
+('proj_lumina_design', '2. Component catalog covering buttons, typography, inputs, and dialogs'),
+('proj_marketing_brand', '1. Competitor keyword analysis and landing page optimization copies'),
+('proj_marketing_brand', '2. Multi-channel ad creative setup and weekly conversion tracking reports'),
+('proj_ios_rust', '1. Swift integration tests running Rust engine directly on Simulator'),
+('proj_ios_rust', '2. Build automated script exporting cocoapods package / xcframework'),
+('proj_saas_metrics', '1. Complete SEO audit and organic traffic recommendations'),
+('proj_saas_metrics', '2. Conversion optimization pipeline and setup of Amplitude/Google Analytics');
 
 -- 10. Saved Projects
 INSERT INTO saved_projects (user_id, project_id) VALUES

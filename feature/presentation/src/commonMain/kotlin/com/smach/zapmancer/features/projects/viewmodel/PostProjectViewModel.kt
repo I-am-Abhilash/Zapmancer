@@ -37,6 +37,7 @@ class PostProjectViewModel(
     override fun onEvent(event: PostProjectEvent) {
         when (event) {
             PostProjectEvent.BackClicked -> sendEffect(PostProjectEffect.NavigateBack)
+
             is PostProjectEvent.OnTitleChanged -> updateState { copy(title = event.title) }
 
             is PostProjectEvent.OnCategoryChanged -> updateState { copy(category = event.category) }

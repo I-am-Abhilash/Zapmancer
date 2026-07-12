@@ -97,7 +97,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             logoutUseCase().foldTyped(
                 onSuccess = { sendEffect(SettingsEffect.NavigateToLogin) },
-                onError = { sendEffect(SettingsEffect.NavigateToLogin) }
+                onError = { sendEffect(SettingsEffect.NavigateToLogin) },
             )
         }
     }

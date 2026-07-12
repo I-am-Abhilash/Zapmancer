@@ -34,7 +34,7 @@ class ProjectsRepository {
         category: String? = null,
         sortBy: String? = null,
         page: Int? = null,
-        limit: Int? = null
+        limit: Int? = null,
     ): List<Project> = dbQuery {
         var expr = ProjectsTable.selectAll()
 

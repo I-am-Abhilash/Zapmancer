@@ -39,6 +39,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -56,6 +57,7 @@ import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.settings.state.SettingsUiState
+import com.smach.zapmancer.features.settings.viewmodel.SettingsEffect
 import com.smach.zapmancer.features.settings.viewmodel.SettingsEvent
 import com.smach.zapmancer.features.settings.viewmodel.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel

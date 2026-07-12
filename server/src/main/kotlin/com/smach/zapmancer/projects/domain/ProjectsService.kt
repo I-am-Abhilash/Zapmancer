@@ -20,7 +20,7 @@ class ProjectsService(
         category: String? = null,
         sortBy: String? = null,
         page: Int? = null,
-        limit: Int? = null
+        limit: Int? = null,
     ): DomainResult<List<Project>> = DomainResult.Success(
         repository.getAllProjects(
             userId = userId,
@@ -28,8 +28,8 @@ class ProjectsService(
             category = category,
             sortBy = sortBy,
             page = page,
-            limit = limit
-        )
+            limit = limit,
+        ),
     )
 
     suspend fun getProjectById(projectId: String, userId: String): DomainResult<ProjectDetail> {

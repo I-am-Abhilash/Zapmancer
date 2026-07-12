@@ -65,6 +65,7 @@ import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEffect
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEvent
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProjectDetailScreen(
@@ -73,7 +74,8 @@ fun ProjectDetailScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val viewModel: ProjectDetailViewModel =
-        koinViewModel(parameters = { org.koin.core.parameter.parametersOf(projectId) })
+        koinViewModel(parameters = { parametersOf(projectId) })
+
     val state by viewModel.uiState.collectAsState()
     val windowLayout = rememberWindowLayout()
 
@@ -87,28 +89,13 @@ fun ProjectDetailScreen(
     }
 
     CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        ProjectDetailScreen(
+        ProjectDetailContent(
             state = state,
             onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
             onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
             onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
         )
     }
-}
-
-@Composable
-fun ProjectDetailScreen(
-    state: ProjectDetailUiState = ProjectDetailUiState(),
-    onBackClick: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onApplyClick: () -> Unit = {},
-) {
-    ProjectDetailContent(
-        state = state,
-        onBackClick = onBackClick,
-        onSaveClick = onSaveClick,
-        onApplyClick = onApplyClick,
-    )
 }
 
 @Composable
@@ -449,7 +436,13 @@ fun VerticalDivider(color: Color) {
 fun ProjectDetailScreenPreview() {
     MaterialTheme {
         CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-            ProjectDetailScreen()
+            ProjectDetailContent(
+                state = ProjectDetailUiState(),
+                onBackClick = {},
+                onSaveClick = {},
+                onApplyClick = {},
+                showTopBar = true,
+            )
         }
     }
 }

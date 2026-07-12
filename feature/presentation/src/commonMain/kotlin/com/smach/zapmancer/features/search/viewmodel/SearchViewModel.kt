@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 sealed class SearchEvent {
     data class QueryChanged(val query: String) : SearchEvent()
@@ -51,7 +52,7 @@ class SearchViewModel(
         // Initialize recent searches
         updateState {
             copy(
-                recentSearches = listOf("Smart Contract", "KMP Application", "Compose Multiplatform")
+                recentSearches = listOf("Smart Contract", "KMP Application", "Compose Multiplatform"),
             )
         }
 
@@ -61,7 +62,7 @@ class SearchViewModel(
         // Debounce text search changes
         viewModelScope.launch {
             queryFlow
-                .debounce(300)
+                .debounce(300.milliseconds)
                 .collect { debouncedQuery ->
                     executeSearch(debouncedQuery, resetPage = true)
                 }
@@ -144,10 +145,10 @@ class SearchViewModel(
                     updateState {
                         copy(
                             isLoading = false,
-                            error = error.toUserMessage()
+                            error = error.toUserMessage(),
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -160,19 +161,18 @@ class SearchViewModel(
                 updateState { copy(isLoading = true) }
             }
 
-            // Simulate slight network delay for premium feel of loading indicator/skeleton
             if (query.isNotEmpty()) {
-                delay(350)
+                delay(350.milliseconds)
             }
 
             val filtered = allFetchedProjects.filter { project ->
                 val matchesQuery = query.isEmpty() ||
-                        project.title.contains(query, ignoreCase = true) ||
-                        project.description.contains(query, ignoreCase = true) ||
-                        project.tags.any { it.contains(query, ignoreCase = true) }
+                    project.title.contains(query, ignoreCase = true) ||
+                    project.description.contains(query, ignoreCase = true) ||
+                    project.tags.any { it.contains(query, ignoreCase = true) }
 
                 val matchesCategory = uiState.value.categoryFilter == ProjectCategory.ALL ||
-                        project.category == uiState.value.categoryFilter
+                    project.category == uiState.value.categoryFilter
 
                 matchesQuery && matchesCategory
             }
@@ -189,16 +189,16 @@ class SearchViewModel(
                         score
                     }
                 }
+
                 SearchSortOption.NEWEST -> {
                     filtered.sortedByDescending { it.id }
                 }
+
                 SearchSortOption.BUDGET -> {
-                    // membersCount acts as a budget indicator for the premium sort mockup
                     filtered.sortedByDescending { it.membersCount }
                 }
             }
 
-            // Paginate results (simulate page size of 5)
             val pageSize = 5
             val currentPage = if (resetPage) 1 else uiState.value.page
             val itemsToShow = currentPage * pageSize
@@ -211,7 +211,7 @@ class SearchViewModel(
                     isLoading = false,
                     isRefreshing = false,
                     hasMore = hasMore,
-                    page = currentPage
+                    page = currentPage,
                 )
             }
         }
@@ -229,13 +229,12 @@ class SearchViewModel(
         voiceSearchJob?.cancel()
         voiceSearchJob = viewModelScope.launch {
             updateState { copy(isListening = true) }
-            // Simulate voice input detection
-            delay(2500)
+            delay(2500.milliseconds)
             val recognizedText = uiState.value.trendingSearches.random()
             updateState {
                 copy(
                     query = recognizedText,
-                    isListening = false
+                    isListening = false,
                 )
             }
             queryFlow.value = recognizedText
@@ -256,10 +255,10 @@ class SearchViewModel(
                     updateState {
                         copy(
                             isRefreshing = false,
-                            error = error.toUserMessage()
+                            error = error.toUserMessage(),
                         )
                     }
-                }
+                },
             )
         }
     }

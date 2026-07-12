@@ -98,8 +98,11 @@ fun ProfileScreen(
                 is ProfileEffect.ShowToast -> {
                     showSnackbar(effect.message)
                 }
+
                 ProfileEffect.NavigateToSearch -> onSearchClick()
+
                 ProfileEffect.NavigateBack -> onBackClick()
+
                 ProfileEffect.NavigateToEditProfile -> onEditProfileClick()
             }
         }
