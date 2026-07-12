@@ -63,7 +63,6 @@ import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.common.theme.NikeAccentTeal
 import com.smach.zapmancer.features.common.theme.pill
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.viewmodel.HomeEffect
@@ -227,7 +226,7 @@ fun HomeContent(
                         modifier = cardModifier,
                         title = "Active Job Posts",
                         value = state.activeJobPostsCount.toString(),
-                        accentColor = NikeAccentTeal,
+                        accentColor = MaterialTheme.colorScheme.tertiary,
                         icon = Icons.Default.Work,
                         secondaryValue = "/ ${state.totalCapacity} capacity",
                     )
@@ -251,7 +250,7 @@ fun HomeContent(
                         modifier = cardModifier,
                         title = "Current Projects",
                         value = state.activeProjectsCount.toString(),
-                        accentColor = NikeAccentTeal,
+                        accentColor = MaterialTheme.colorScheme.tertiary,
                         icon = Icons.Default.Work,
                         secondaryValue = "/ ${state.totalCapacity} capacity",
                     )

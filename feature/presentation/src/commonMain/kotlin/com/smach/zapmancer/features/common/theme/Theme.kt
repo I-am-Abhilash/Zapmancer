@@ -7,111 +7,102 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// ─── Nike Design System — Theme ────────────────────────────────────────────────
-// Source: DESIGN.md / Nike-design-analysis
+// ─── Coinbase Design System — Theme ───────────────────────────────────────────
+// Source: CoinBaseDESIGN.md / Coinbase-design-analysis
 //
-// Light: 95% chrome is ink/canvas/soft-cloud — editorial photography-first.
-// Dark:  surfaces invert to warm graphite; CTAs flip to white-on-dark.
+// Light: Pure white canvas, Coinbase Blue primary CTAs, hairline borders.
+// Dark:  Deep near-black background, graphite cards, Coinbase Blue CTAs.
 //
-// Both schemes are 100% driven by Color.kt tokens.
-// All component code uses MaterialTheme.colorScheme.* — no hardcoded colors.
+// All UI uses MaterialTheme.colorScheme.* tokens for absolute centralization.
 
 // ─── Light ────────────────────────────────────────────────────────────────────
-private val NikeLightColorScheme = lightColorScheme(
-    primary = NikeInk, // #111111 — CTAs, active filters
-    onPrimary = NikeCanvas, // #ffffff — text on black surfaces
+private val CoinbaseLightColorScheme = lightColorScheme(
+    primary             = CoinbaseBlue,         // Coinbase Blue (#0052FF)
+    onPrimary           = CoinbaseOnPrimary,    // White (#FFFFFF)
 
-    primaryContainer = NikeInk,
-    onPrimaryContainer = NikeCanvas,
+    primaryContainer    = CoinbaseBlue,
+    onPrimaryContainer  = CoinbaseOnPrimary,
 
-    secondary = NikeSoftCloud, // #f5f5f5 — secondary CTA bg
-    onSecondary = NikeInk,
+    secondary           = CoinbaseSurfaceStrong, // Soft gray fill (#EEF0F3) for secondary CTAs/chips
+    onSecondary         = CoinbaseInk,          // Deep near-black text
 
-    secondaryContainer = NikeSoftCloud,
-    onSecondaryContainer = NikeInk,
+    secondaryContainer  = CoinbaseSurfaceStrong,
+    onSecondaryContainer= CoinbaseInk,
 
-    tertiary = NikeAccentTeal, // editorial accent (stars, teal chips)
-    onTertiary = NikeCanvas,
+    tertiary            = CoinbaseYellow,       // Sparse brand illustration yellow (perfect for stars)
+    onTertiary          = CoinbaseInk,
 
-    tertiaryContainer = NikeAccentPurplePale,
-    onTertiaryContainer = NikeInk,
+    tertiaryContainer   = CoinbaseSurfaceStrong,
+    onTertiaryContainer = CoinbaseInk,
 
-    background = NikeCanvas, // #ffffff
-    onBackground = NikeInk,
+    background          = CoinbaseCanvas,       // Pure White (#FFFFFF)
+    onBackground        = CoinbaseInk,          // Deep near-black (#0A0B0D)
 
-    surface = NikeCanvas,
-    onSurface = NikeInk,
+    surface             = CoinbaseCanvas,
+    onSurface           = CoinbaseInk,
 
-    surfaceVariant = NikeSoftCloud, // #f5f5f5 — card image stage, input bg
-    onSurfaceVariant = NikeMute, // #707072 — subtitles, metadata
+    surfaceVariant      = CoinbaseSurfaceSoft,  // Very light grey (#F7F7F7) for input backgrounds
+    onSurfaceVariant    = CoinbaseBody,         // Cool grey (#5B616E) for running text
 
-    outline = NikeHairline, // #cacaca — 1px dividers
-    outlineVariant = NikeHairlineSoft, // #e5e5e5 — sticky bar inset
+    outline             = CoinbaseHairline,     // 1px hairline border (#DEE1E6)
+    outlineVariant      = CoinbaseHairlineSoft, // Lighter hairline (#EEF0F3)
 
-    inverseSurface = NikeInk,
-    inverseOnSurface = NikeCanvas,
-    inversePrimary = NikeCanvas,
+    inverseSurface      = CoinbaseInk,
+    inverseOnSurface    = CoinbaseCanvas,
+    inversePrimary      = CoinbaseOnPrimary,
 
-    error = NikeSale, // #d30005 — the only red
-    onError = NikeCanvas,
-    errorContainer = Color(0xFFFFDAD6),
-    onErrorContainer = NikeSaleDeep,
+    error               = CoinbaseDown,         // Price down / semantic red (#CF202F)
+    onError             = CoinbaseOnPrimary,
+    errorContainer      = Color(0xFFFFDAD6),
+    onErrorContainer    = CoinbaseDown,
 
-    scrim = NikeInk,
-    surfaceTint = Color.Transparent,
+    scrim               = CoinbaseInk,
+    surfaceTint         = Color.Transparent,
 )
 
 // ─── Dark ─────────────────────────────────────────────────────────────────────
-// Inversion logic:
-//   primary/CTA      → white  (NikeDarkOnBase) so buttons stay high-contrast
-//   background       → #111   (NikeDarkBase)
-//   surface / cards  → #1c1c  (NikeDarkSurface) — one step lighter than bg
-//   surfaceVariant   → #2e2e  (NikeDarkSurfaceTop) — input containers
-//   outline          → #3a3a  (NikeDarkHairline) — visible but subtle
-//   error            → lifted red (#ff4d4d) for WCAG on dark bg
+private val CoinbaseDarkColorScheme = darkColorScheme(
+    primary             = CoinbaseBlue,         // Blue remains the main action color on dark
+    onPrimary           = CoinbaseOnPrimary,
 
-private val NikeDarkColorScheme = darkColorScheme(
-    primary = NikeDarkOnBase, // white — CTA on dark bg
-    onPrimary = NikeDarkBase, // ink — text on white button
+    primaryContainer    = CoinbaseDarkSurface,
+    onPrimaryContainer  = CoinbaseDarkOnSurface,
 
-    primaryContainer = NikeDarkSurface,
-    onPrimaryContainer = NikeDarkOnBase,
+    secondary           = CoinbaseDarkSurfaceTop, // input container, chip bg
+    onSecondary         = CoinbaseDarkOnSurface,
 
-    secondary = NikeDarkSurfaceTop, // dark chip / secondary CTA bg
-    onSecondary = NikeDarkOnBase,
+    secondaryContainer  = CoinbaseDarkSurfaceMid,
+    onSecondaryContainer= CoinbaseDarkOnMuted,
 
-    secondaryContainer = NikeDarkSurfaceHigh,
-    onSecondaryContainer = NikeDarkOnMid,
+    tertiary            = CoinbaseYellow,
+    onTertiary          = CoinbaseDarkBase,
 
-    tertiary = NikeDarkTeal, // lifted teal for dark bg
-    onTertiary = NikeDarkBase,
+    tertiaryContainer   = CoinbaseDarkSurface,
+    onTertiaryContainer = CoinbaseDarkOnSurface,
 
-    tertiaryContainer = Color(0xFF1A2A3A),
-    onTertiaryContainer = NikeDarkOnBase,
+    background          = CoinbaseDarkBase,      // Deep near-black (#0A0B0D)
+    onBackground        = CoinbaseDarkOnSurface, // White (#FFFFFF)
 
-    background = NikeDarkBase, // #111111
-    onBackground = NikeDarkOnBase, // #ffffff
+    surface             = CoinbaseDarkSurface,   // Graphite card surface (#16181C)
+    onSurface           = CoinbaseDarkOnSurface,
 
-    surface = NikeDarkSurface, // #1c1c1c — cards, nav
-    onSurface = NikeDarkOnBase,
+    surfaceVariant      = CoinbaseDarkSurfaceTop, // #272B33
+    onSurfaceVariant    = CoinbaseDarkOnMuted,   // Muted off-white (#A8ACB3)
 
-    surfaceVariant = NikeDarkSurfaceTop, // #2e2e2e — input bg
-    onSurfaceVariant = NikeDarkOnLow, // #9e9e9e — placeholder / meta
+    outline             = CoinbaseDarkHairline,  // Divider/hairlines on dark (#2C2F38)
+    outlineVariant      = CoinbaseDarkHairline,
 
-    outline = NikeDarkHairline, // #3a3a3a — dividers
-    outlineVariant = NikeDarkHairlineSoft, // #2c2c2c — inset borders
+    inverseSurface      = CoinbaseCanvas,
+    inverseOnSurface    = CoinbaseInk,
+    inversePrimary      = CoinbaseBlue,
 
-    inverseSurface = NikeCanvas,
-    inverseOnSurface = NikeInk,
-    inversePrimary = NikeInk,
+    error               = CoinbaseDarkDown,      // Brightened semantic red for dark WCAG contrast (#FF4D58)
+    onError             = CoinbaseDarkBase,
+    errorContainer      = Color(0xFF5C0A0A),
+    onErrorContainer    = Color(0xFFFFB4AB),
 
-    error = NikeDarkSale, // #ff4d4d — WCAG-safe on dark
-    onError = NikeDarkBase,
-    errorContainer = Color(0xFF5C0A0A),
-    onErrorContainer = Color(0xFFFFB4AB),
-
-    scrim = NikeDarkBase,
-    surfaceTint = Color.Transparent,
+    scrim               = CoinbaseDarkBase,
+    surfaceTint         = Color.Transparent,
 )
 
 // ─── AppTheme ─────────────────────────────────────────────────────────────────
@@ -122,9 +113,9 @@ fun AppTheme(
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = if (darkTheme) NikeDarkColorScheme else NikeLightColorScheme,
-        typography = Typography,
-        shapes = Shapes,
-        content = content,
+        colorScheme = if (darkTheme) CoinbaseDarkColorScheme else CoinbaseLightColorScheme,
+        typography  = Typography,
+        shapes      = Shapes,
+        content     = content,
     )
 }

@@ -6,109 +6,101 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// ─── Nike Design System — Typography ──────────────────────────────────────────
-// Spec: DESIGN.md / Nike-design-analysis
+// ─── Coinbase Design System — Typography ──────────────────────────────────────
+// Spec: CoinBaseDESIGN.md / Coinbase-design-analysis
 //
-// Nike proprietary fonts (Nike Futura ND, Helvetica Now) are unavailable in CMP.
-// Substitution (per DESIGN.md "Note on Font Substitutes"):
-//   Campaign display tier → FontFamily.SansSerif at W700 (approximates Futura ND's weight)
-//   UI / body tier        → FontFamily.SansSerif at W400/W500
+// Font Substitutes:
+//   CoinbaseDisplay -> Inter (FontFamily.SansSerif at weight 400, negative tracking)
+//   CoinbaseSans    -> Inter (FontFamily.SansSerif at weight 400/600/700)
+//   CoinbaseMono    -> FontFamily.Monospace (e.g. JetBrains Mono/Geist Mono fallback)
 //
-// Letter-spacing is 0 across all roles per Nike spec (Futura ND and Helvetica Now
-// are optically tight; letter-spacing tightening is done at the font level).
+// Note: Coinbase display sizes use quiet, modest weights (400, never 700+) to
+// signal institutional calm and trust rather than fintech urgency.
 
 val Typography = Typography(
 
-    // ── Campaign display (96sp / W500 / lineHeight ~86sp = 0.9×96) ─────────
-    // Used ONLY for editorial hero lockups. Never for section headers or product titles.
+    // ── display-mega (80px / W400 / lineHeight 1.0 / letterSpacing -2px) ────────
     displayLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
-        fontSize = 96.sp,
-        lineHeight = 86.sp, // 0.9 line-height per spec
-        letterSpacing = 0.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 80.sp,
+        lineHeight = 80.sp,
+        letterSpacing = (-2).sp,
     ),
 
-    // ── display-campaign at tablet size (64sp) ───────────────────────────────
+    // ── display-xl (64px / W400 / lineHeight 1.0 / letterSpacing -1.6px) ────────
     displayMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Normal,
         fontSize = 64.sp,
-        lineHeight = 58.sp, // 0.9
-        letterSpacing = 0.sp,
+        lineHeight = 64.sp,
+        letterSpacing = (-1.6).sp,
     ),
 
-    // ── display-campaign at mobile size (48sp) ───────────────────────────────
+    // ── display-md (44px / W400 / lineHeight 1.09 / letterSpacing -1px) ─────────
     displaySmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
-        fontSize = 48.sp,
-        lineHeight = 43.sp, // 0.9
-        letterSpacing = 0.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 44.sp,
+        lineHeight = 48.sp,
+        letterSpacing = (-1).sp,
     ),
 
-    // ── heading-xl (32sp / W500 / lineHeight 1.2) ───────────────────────────
-    // "FEATURED FOOTWEAR", "LATEST IN CLOTHING", PDP product title block
+    // ── display-sm (36px / W400 / lineHeight 1.11 / letterSpacing -0.5px) ───────
     headlineLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 32.sp,
-        lineHeight = 38.sp, // 1.2 × 32
-        letterSpacing = 0.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 36.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.5).sp,
     ),
 
-    // ── heading-lg (24sp / W500 / lineHeight 1.2) ───────────────────────────
-    // Subsection titles, member-benefit card title, large CTA label, PDP price
+    // ── title-lg (32px / W400 / lineHeight 1.13 / letterSpacing -0.4px) ─────────
     headlineMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 24.sp,
-        lineHeight = 29.sp, // 1.2 × 24
-        letterSpacing = 0.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 32.sp,
+        lineHeight = 36.sp,
+        letterSpacing = (-0.4).sp,
     ),
 
-    // ── heading-md (16sp / W500 / lineHeight 1.75) ──────────────────────────
-    // Card title, FAQ row label, filter group header
+    // ── title-md (18px / W600 / lineHeight 1.33 / letterSpacing 0) ──────────────
     headlineSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 28.sp, // 1.75 × 16
-        letterSpacing = 0.sp,
-    ),
-
-    // ── body-strong (16sp / W500 / lineHeight 1.5) ──────────────────────────
-    // Product card name, filter row label, primary nav link — the UI workhorse
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp, // 1.5 × 16
-        letterSpacing = 0.sp,
-    ),
-
-    // ── button-md (16sp / W500 / lineHeight 1.5) ────────────────────────────
-    // Standard pill CTAs across the system
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── button-sm (14sp / W500 / lineHeight 1.5) ────────────────────────────
-    // Compact pill CTA, badge label, geo-selector button
+    // ── title-sm (16px / W600 / lineHeight 1.25 / letterSpacing 0) ──────────────
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.sp,
+    ),
+
+    // ── button (16px / W600 / lineHeight 1.15 / letterSpacing 0) ────────────────
+    titleMedium = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.sp,
+    ),
+
+    // ── nav-link (14px / W500 / lineHeight 1.4 / letterSpacing 0) ───────────────
     titleSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        lineHeight = 21.sp, // 1.5 × 14
+        lineHeight = 20.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── body-md (16sp / W400 / lineHeight 1.5) ──────────────────────────────
-    // Body copy, search-pill placeholder, product description
+    // ── body-md (16px / W400 / lineHeight 1.5 / letterSpacing 0) ────────────────
     bodyLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
@@ -117,53 +109,48 @@ val Typography = Typography(
         letterSpacing = 0.sp,
     ),
 
-    // ── link-md (16sp / W500 / lineHeight 1.75 / underline) ─────────────────
-    // Underlined inline links — the only underlined text in the system
+    // ── body-strong (16px / W700 / lineHeight 1.5 / letterSpacing 0) ────────────
     bodyMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
-        lineHeight = 28.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── caption-md (14sp / W500 / lineHeight 1.5) ───────────────────────────
-    // Product subtitle, filter count, footer link
+    // ── body-sm (14px / W400 / lineHeight 1.5 / letterSpacing 0) ────────────────
     bodySmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 21.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── button-lg (24sp / W500 / lineHeight 1.2) ────────────────────────────
-    // Pressed-letter campaign CTA inside hero blocks
+    // ── number-display (18px / W500 / lineHeight 1.4 / letterSpacing 0 / Monospace)
     labelLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = FontFamily.Monospace,
         fontWeight = FontWeight.Medium,
-        fontSize = 24.sp,
-        lineHeight = 29.sp,
+        fontSize = 18.sp,
+        lineHeight = 25.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── caption-sm (12sp / W500 / lineHeight 1.5) ───────────────────────────
-    // Filter chip label, badge text, color count
+    // ── caption-strong (12px / W600 / lineHeight 1.5 / letterSpacing 0) ─────────
     labelMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
         lineHeight = 18.sp,
         letterSpacing = 0.sp,
     ),
 
-    // ── utility-xs (9sp / W500 / lineHeight 1.75) ───────────────────────────
-    // Legal copyright / fine-print row — the system's smallest text
+    // ── caption (13px / W400 / lineHeight 1.5 / letterSpacing 0) ────────────────
     labelSmall = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
-        fontSize = 9.sp,
-        lineHeight = 16.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 19.sp,
         letterSpacing = 0.sp,
     ),
 )
