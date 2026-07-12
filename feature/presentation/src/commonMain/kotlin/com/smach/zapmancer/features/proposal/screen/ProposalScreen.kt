@@ -372,7 +372,7 @@ fun BudgetSection(state: ProposalUiState) {
 @Preview
 @Composable
 fun ProposalScreenPreview() {
-    AppTheme {
+    MaterialTheme {
         CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             ProposalScreenContent(
                 state = ProposalUiState(),

@@ -1,11 +1,7 @@
 package com.smach.zapmancer
 
-// import androidx.compose.animation.AnimatedContent
-// import androidx.compose.animation.fadeIn
-// import androidx.compose.animation.fadeOut
-// import androidx.compose.animation.togetherWith
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,14 +23,13 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App() {
     val settingsRepository: SettingsRepository = koinInject()
     val settingsState by settingsRepository.settingsFlow.collectAsState(initial = null)
-    val isDarkMode = settingsState?.isDarkModeEnabled ?: isSystemInDarkTheme()
     val isClientMode = settingsState?.isClientModeEnabled ?: false
 
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.appState.collectAsState()
 
     AppTheme {
-        when (val state = appState) {
+        when (appState) {
             is AppState.Loading -> {
                 Box(
                     modifier = Modifier
@@ -66,43 +61,4 @@ fun App() {
             }
         }
     }
-
-//    AppTheme {
-//        AnimatedContent(
-//            targetState = appState,
-//            transitionSpec = { fadeIn() togetherWith fadeOut() },
-//        ) { state ->
-//            when (state) {
-//                is AppState.Loading -> {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .background(MaterialTheme.colorScheme.background),
-//                        contentAlignment = Alignment.Center,
-//                    ) {
-//                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-//                    }
-//                }
-//
-//                is AppState.Onboarding -> {
-//                    OnboardingScreen(
-//                        onFinished = { mainViewModel.completeOnboarding() },
-//                    )
-//                }
-//
-//                is AppState.Unauthenticated -> {
-//                    AuthGraph(
-//                        onAuthSuccess = {},
-//                    )
-//                }
-//
-//                is AppState.Authenticated -> {
-//                    MainGraph(
-//                        onLogout = { mainViewModel.logout() },
-//                        isClientMode = isClientMode,
-//                    )
-//                }
-//            }
-//        }
-//    }
 }

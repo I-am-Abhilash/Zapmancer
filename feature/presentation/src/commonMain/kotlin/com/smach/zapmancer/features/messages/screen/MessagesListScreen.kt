@@ -70,6 +70,7 @@ fun MessagesListScreen(
             when (effect) {
                 is MessagesListEffect.NavigateToConversation -> onConversationClick(effect.id)
                 is MessagesListEffect.NavigateToProfile -> onProfileClick(effect.id)
+                is MessagesListEffect.ShowToast -> {}
             }
         }
     }

@@ -77,6 +77,7 @@ fun SettingsScreen(
             when (effect) {
                 SettingsEffect.NavigateBack -> onBackClick()
                 SettingsEffect.NavigateToLogin -> onLogoutClick()
+                is SettingsEffect.ShowToast -> {}
             }
         }
     }

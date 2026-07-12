@@ -25,7 +25,7 @@ import com.smach.zapmancer.features.common.theme.Warning
 fun ProjectStatus.color(): Color = when (this) {
     ProjectStatus.ACTIVE -> MaterialTheme.colorScheme.primary
     ProjectStatus.PENDING -> Warning
-    ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
+    ProjectStatus.COMPLETED -> MaterialTheme.colorScheme.outline
 }
 
 @Composable

@@ -4,9 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
-import com.smach.zapmancer.domain.model.NotificationAction
-import com.smach.zapmancer.domain.model.NotificationItem
-import com.smach.zapmancer.domain.model.NotificationType
 import com.smach.zapmancer.domain.usecase.ExecuteNotificationActionUseCase
 import com.smach.zapmancer.domain.usecase.GetNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
@@ -66,26 +63,7 @@ class NotificationViewModel(
                 onSuccess = { data ->
                     updateState {
                         copy(
-                            notifications = data.map { domainItem ->
-                                NotificationItem(
-                                    id = domainItem.id,
-                                    type = domainItem.type.toUiType(),
-                                    title = domainItem.title,
-                                    description = domainItem.description,
-                                    timestamp = domainItem.timestamp,
-                                    section = domainItem.section,
-                                    codeSnippet = domainItem.codeSnippet,
-                                    isItalic = domainItem.isItalic,
-                                    actions = domainItem.actions.map { domainAction ->
-                                        NotificationAction(
-                                            label = domainAction.label,
-                                            isPrimary = domainAction.isPrimary,
-                                            isError = domainAction.isError,
-                                        )
-                                    },
-                                    quickReply = domainItem.quickReply,
-                                )
-                            },
+                            notifications = data,
                             isLoading = false,
                         )
                     }
@@ -141,15 +119,6 @@ class NotificationViewModel(
                     sendEffect(NotificationEffect.ShowToast("Failed to execute action: ${error.toUserMessage()}"))
                 },
             )
-        }
-    }
-
-    private fun com.smach.zapmancer.domain.model.NotificationType.toUiType(): com.smach.zapmancer.domain.model.NotificationType {
-        return when (this) {
-            com.smach.zapmancer.domain.model.NotificationType.INFO -> com.smach.zapmancer.domain.model.NotificationType.INFO
-            com.smach.zapmancer.domain.model.NotificationType.WARNING -> com.smach.zapmancer.domain.model.NotificationType.WARNING
-            com.smach.zapmancer.domain.model.NotificationType.ALERT -> com.smach.zapmancer.domain.model.NotificationType.ALERT
-            com.smach.zapmancer.domain.model.NotificationType.SUCCESS -> com.smach.zapmancer.domain.model.NotificationType.SUCCESS
         }
     }
 }

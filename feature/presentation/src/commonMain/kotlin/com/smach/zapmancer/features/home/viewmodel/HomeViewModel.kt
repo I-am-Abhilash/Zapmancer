@@ -66,8 +66,8 @@ class HomeViewModel(
                 onSuccess = { profile ->
                     val incomplete = profile.name.isBlank() ||
                         profile.role.isBlank() ||
-                        profile.location.isBlank() ||
-                        profile.about.isBlank() ||
+                        profile.location.orEmpty().isBlank() ||
+                        profile.about.orEmpty().isBlank() ||
                         profile.skills.isEmpty()
                     updateState { copy(showCompleteProfileBanner = incomplete) }
                 },

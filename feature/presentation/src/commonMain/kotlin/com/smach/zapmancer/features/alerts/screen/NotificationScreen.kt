@@ -192,16 +192,17 @@ fun NotificationCard(
         NotificationType.ALERT -> Icons.Outlined.Warning
         NotificationType.GENERAL -> Icons.Outlined.Sync
         NotificationType.COLLABORATOR -> Icons.Outlined.PersonAdd
+        NotificationType.UNKNOWN -> Icons.Outlined.Info
     }
     val iconBg = when (item.type) {
         NotificationType.MILESTONE, NotificationType.MESSAGE -> MaterialTheme.colorScheme.primaryContainer
         NotificationType.ALERT -> MaterialTheme.colorScheme.errorContainer
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> MaterialTheme.colorScheme.surfaceVariant
+        NotificationType.GENERAL, NotificationType.COLLABORATOR, NotificationType.UNKNOWN -> MaterialTheme.colorScheme.surfaceVariant
     }
     val iconTint = when (item.type) {
         NotificationType.MILESTONE, NotificationType.MESSAGE -> MaterialTheme.colorScheme.primary
         NotificationType.ALERT -> MaterialTheme.colorScheme.error
-        NotificationType.GENERAL, NotificationType.COLLABORATOR -> MaterialTheme.colorScheme.onSurfaceVariant
+        NotificationType.GENERAL, NotificationType.COLLABORATOR, NotificationType.UNKNOWN -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val opacity = if (item.section == "Yesterday") 0.8f else 1f
 

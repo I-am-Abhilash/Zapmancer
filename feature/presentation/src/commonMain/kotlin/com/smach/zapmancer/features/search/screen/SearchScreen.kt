@@ -672,20 +672,18 @@ private fun SearchResultCard(
                         }
                     }
 
-                    project.footerText?.let { footer ->
-                        Text(
-                            text = footer,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-                    }
+                    Text(
+                        text = project.postedTime,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
                 }
             }
         }
@@ -900,7 +898,7 @@ private fun highlightText(text: String, query: String, highlightColor: Color): A
 @Preview
 @Composable
 fun SearchScreenPreview() {
-    AppTheme {
+    MaterialTheme {
         SearchContent(
             state = SearchUiState(
                 query = "Ktor",
@@ -914,7 +912,7 @@ fun SearchScreenPreview() {
                         tags = listOf("Ktor", "Kotlin", "Backend"),
                         progress = 65,
                         membersCount = 3,
-                        footerText = "Budget: $1,200"
+                        postedTime = "Budget: $1,200"
                     ),
                     Project(
                         id = "2",
@@ -925,7 +923,7 @@ fun SearchScreenPreview() {
                         tags = listOf("Compose", "KMP", "UI"),
                         progress = 12,
                         membersCount = 1,
-                        footerText = "Budget: $450"
+                        postedTime = "Budget: $450"
                     ),
                 ),
             ),

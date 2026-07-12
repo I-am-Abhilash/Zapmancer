@@ -1,16 +1,42 @@
 package com.smach.zapmancer.features.home.screen
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ActivityStatus
+import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
@@ -43,7 +70,11 @@ import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.viewmodel.HomeEffect
 import com.smach.zapmancer.features.home.viewmodel.HomeEvent
 import com.smach.zapmancer.features.home.viewmodel.HomeViewModel
+import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
+import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Clock
+import kotlin.time.Instant.Companion.fromEpochMilliseconds
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -477,7 +508,7 @@ fun ActivityRow(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = activity.category,
+                            text = activity.category.displayName.take(1),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = accentColor,
                         )
@@ -492,7 +523,7 @@ fun ActivityRow(
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            text = activity.category,
+                            text = activity.category.displayName,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -508,7 +539,7 @@ fun ActivityRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = activity.timestamp,
+                    text = formatTimestamp(activity.timestamp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -599,6 +630,7 @@ private fun CompleteProfileBanner(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val now = Clock.System.now().toEpochMilliseconds()
     MaterialTheme {
         HomeContent(
             paddingValues = PaddingValues(0.dp),
@@ -608,37 +640,37 @@ fun HomeScreenPreview() {
                     UserActivity(
                         "1",
                         "Neural Engine Optimizer",
-                        "Infrastructure",
+                        ProjectCategory.DEVELOPMENT,
                         "AI",
                         ActivityStatus.IN_PROGRESS,
-                        "2h ago",
+                        now - 2 * 3600 * 1000L,
                         "$12,400.00",
                     ),
                     UserActivity(
                         "2",
                         "Dashboard Redesign",
-                        "Visual Design",
+                        ProjectCategory.DESIGN,
                         "UX",
                         ActivityStatus.REVIEWING,
-                        "Yesterday",
+                        now - 24 * 3600 * 1000L,
                         "$4,200.00",
                     ),
                     UserActivity(
                         "3",
                         "SQL Latency Patch",
-                        "Backend",
+                        ProjectCategory.DEVELOPMENT,
                         "DB",
                         ActivityStatus.COMPLETED,
-                        "Oct 24",
+                        now - 3 * 24 * 3600 * 1000L,
                         "$8,150.00",
                     ),
                     UserActivity(
                         "4",
                         "Security Audit",
-                        "Compliance",
+                        ProjectCategory.SECURITY,
                         "SY",
                         ActivityStatus.CRITICAL,
-                        "Oct 22",
+                        now - 5 * 24 * 3600 * 1000L,
                         "$15,000.00",
                     ),
                 ),
@@ -647,3 +679,22 @@ fun HomeScreenPreview() {
         )
     }
 }
+
+private fun formatTimestamp(timestamp: Long): String {
+    val now = Clock.System.now().toEpochMilliseconds()
+    val diffMs = now - timestamp
+    if (diffMs < 0) return "Just now"
+    val diffSec = diffMs / 1000
+    if (diffSec < 60) return "Just now"
+    val diffMin = diffSec / 60
+    if (diffMin < 60) return "${diffMin}m ago"
+    val diffHours = diffMin / 60
+    if (diffHours < 24) return "${diffHours}h ago"
+    val diffDays = diffHours / 24
+    if (diffDays < 7) return "${diffDays}d ago"
+    val instant = fromEpochMilliseconds(timestamp)
+    val localDateTime = instant.toLocalDateTime(currentSystemDefault())
+    val monthName = localDateTime.month.name.take(3).lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    return "$monthName ${localDateTime.dayOfMonth}"
+}
+

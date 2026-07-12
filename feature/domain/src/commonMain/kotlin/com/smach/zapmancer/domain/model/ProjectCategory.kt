@@ -1,6 +1,7 @@
 package com.smach.zapmancer.domain.model
 
 enum class ProjectCategory(val displayName: String) {
+    ALL("All"),
     DEVELOPMENT("Development"),
     DESIGN("Design"),
     MARKETING("Marketing"),

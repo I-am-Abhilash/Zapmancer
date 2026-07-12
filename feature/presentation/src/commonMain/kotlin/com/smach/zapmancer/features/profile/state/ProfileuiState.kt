@@ -2,6 +2,7 @@ package com.smach.zapmancer.features.profile.state
 
 import com.smach.zapmancer.domain.model.PortfolioItem
 import com.smach.zapmancer.domain.model.ProfileReview
+import com.smach.zapmancer.domain.model.UserProfile
 
 data class ProfileUiState(
     val name: String = "",
@@ -23,16 +24,16 @@ data class ProfileUiState(
     val isOwnProfile: Boolean = true,
 )
 
-fun com.smach.zapmancer.domain.model.UserProfile.toUiState(isOwnProfile: Boolean): ProfileUiState = ProfileUiState(
+fun UserProfile.toUiState(isOwnProfile: Boolean): ProfileUiState = ProfileUiState(
     name = name,
     role = role,
-    location = location,
-    ranking = ranking,
+    location = location.orEmpty(),
+    ranking = ranking.orEmpty(),
     isTopRated = isTopRated,
     projectsCount = projectsCount,
     rating = rating,
-    experience = experience,
-    about = about,
+    experience = experience.orEmpty(),
+    about = about.orEmpty(),
     skills = skills,
     portfolioItems = portfolioItems,
     reviews = reviews,

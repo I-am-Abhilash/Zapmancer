@@ -549,7 +549,7 @@ fun PortfolioCard(item: PortfolioItem) {
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = item.description,
+                    text = item.description.orEmpty(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
