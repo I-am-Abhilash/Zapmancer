@@ -25,7 +25,10 @@ class AuthService(private val repository: AuthRepository) {
         password: String,
     ): DomainResult<AuthResponse> {
         if (repository.findByEmail(email) != null) {
-            return DomainResult.Error(ErrorCode.CONFLICT, "An account with this email already exists.")
+            return DomainResult.Error(
+                ErrorCode.CONFLICT,
+                "An account with this email already exists."
+            )
         }
         if (repository.usernameExists(username)) {
             return DomainResult.Error(ErrorCode.CONFLICT, "Username is already taken.")
@@ -87,7 +90,10 @@ class AuthService(private val repository: AuthRepository) {
 
     suspend fun refresh(refreshToken: String): DomainResult<AuthResponse> {
         val userId = JwtConfig.verifyRefreshToken(refreshToken)
-            ?: return DomainResult.Error(ErrorCode.UNAUTHORIZED, "Invalid or expired refresh token.")
+            ?: return DomainResult.Error(
+                ErrorCode.UNAUTHORIZED,
+                "Invalid or expired refresh token."
+            )
 
         val user = repository.findById(userId)
             ?: return DomainResult.Error(ErrorCode.UNAUTHORIZED, "User not found.")
@@ -128,7 +134,12 @@ class AuthService(private val repository: AuthRepository) {
     suspend fun verifyOtp(email: String, code: String): DomainResult<CommonResponse> {
         val valid = repository.verifyAndConsumeOtp(email, code)
         return if (valid) {
-            DomainResult.Success(CommonResponse(success = true, message = "OTP verified successfully."))
+            DomainResult.Success(
+                CommonResponse(
+                    success = true,
+                    message = "OTP verified successfully."
+                )
+            )
         } else {
             DomainResult.Error(ErrorCode.BAD_REQUEST, "Invalid or expired OTP code.")
         }

@@ -15,7 +15,9 @@ sealed interface NotificationEvent {
     data class OnReplyTextChanged(val notificationId: String, val text: String) : NotificationEvent
 
     data class SendQuickReply(val notificationId: String) : NotificationEvent
-    data class ExecuteAction(val notificationId: String, val actionLabel: String) : NotificationEvent
+    data class ExecuteAction(val notificationId: String, val actionLabel: String) :
+        NotificationEvent
+
     data object BackClicked : NotificationEvent
 }
 

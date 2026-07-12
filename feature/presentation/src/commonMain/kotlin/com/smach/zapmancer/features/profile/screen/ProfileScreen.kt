@@ -1,7 +1,6 @@
 package com.smach.zapmancer.features.profile.screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MilitaryTech
@@ -125,7 +123,8 @@ fun ProfileContent(
     onProfileClick: (String) -> Unit = {},
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val isCompact =
+        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
     Scaffold(
         topBar = {
@@ -148,7 +147,10 @@ fun ProfileContent(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.TopCenter
+        ) {
             when {
                 state.error != null -> {
                     ErrorState(
@@ -229,7 +231,7 @@ fun OnMoreButton(onClick: () -> Unit, text: String) {
     ) {
         OutlinedButton(
             onClick = onClick,
-            shape = RoundedCornerShape(50),
+            shape = MaterialTheme.shapes.extraLarge,
             border = ButtonDefaults.outlinedButtonBorder(enabled = true)
                 .copy(
                     width = 1.dp,
@@ -259,7 +261,7 @@ fun IdentityHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -375,7 +377,8 @@ fun IdentityHeader(
 
             // Deduplicated CTA button — only label & event differ
             val ctaLabel = if (!state.isOwnProfile) "Hire Me" else "Edit Profile"
-            val ctaEvent = if (!state.isOwnProfile) ProfileEvent.HireMe else ProfileEvent.EditProfileClicked
+            val ctaEvent =
+                if (!state.isOwnProfile) ProfileEvent.HireMe else ProfileEvent.EditProfileClicked
 
             Button(
                 onClick = { onEvent(ctaEvent) },
@@ -386,7 +389,7 @@ fun IdentityHeader(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.surface,
                 ),
-                shape = RoundedCornerShape(999.dp),
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 Text(
                     text = ctaLabel,
@@ -405,7 +408,7 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -425,7 +428,7 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
 fun SkillChip(skill: String) {
     Surface(
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(999.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
     ) {
         Text(
@@ -467,7 +470,7 @@ fun InfoChip(
 ) {
     Surface(
         color = bgColor,
-        shape = RoundedCornerShape(999.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(0.5.dp, textColor.copy(alpha = 0.2f)),
     ) {
         Row(
@@ -529,7 +532,7 @@ fun PortfolioCard(item: PortfolioItem) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column {
@@ -565,7 +568,7 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {

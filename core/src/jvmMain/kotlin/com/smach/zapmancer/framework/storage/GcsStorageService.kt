@@ -28,9 +28,11 @@ class GcsStorageService : StorageService {
         return "https://storage.googleapis.com/$bucketName/$path"
     }
 
-    override suspend fun deleteFile(bucketName: String, path: String): Boolean = storage.delete(BlobId.of(bucketName, path))
+    override suspend fun deleteFile(bucketName: String, path: String): Boolean =
+        storage.delete(BlobId.of(bucketName, path))
 
-    override suspend fun exists(bucketName: String, path: String): Boolean = storage.get(BlobId.of(bucketName, path)) != null
+    override suspend fun exists(bucketName: String, path: String): Boolean =
+        storage.get(BlobId.of(bucketName, path)) != null
 
     override suspend fun getDownloadUrl(
         bucketName: String,

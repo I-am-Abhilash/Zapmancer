@@ -1,11 +1,11 @@
 package com.smach.zapmancer.data.repository
 
+import com.smach.zapmancer.core.common.dto.AuthResponse
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
-import com.smach.zapmancer.core.common.dto.AuthResponse
-import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -25,11 +25,12 @@ class AuthRepositoryImpl(
 
     override fun isOnboardingCompleted(): Flow<Boolean> = sessionManager.getOnboardingCompleted()
 
-    override suspend fun setOnboardingCompleted(completed: Boolean): Result<Unit, DataError.Network> = runCatching { sessionManager.saveOnboardingCompleted(completed) }
-        .fold(
-            onSuccess = { Result.Success(Unit) },
-            onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
-        )
+    override suspend fun setOnboardingCompleted(completed: Boolean): Result<Unit, DataError.Network> =
+        runCatching { sessionManager.saveOnboardingCompleted(completed) }
+            .fold(
+                onSuccess = { Result.Success(Unit) },
+                onFailure = { Result.Error(DataError.Network.UNKNOWN, it) },
+            )
 
     override suspend fun login(email: String, password: String): Result<User, DataError.Network> {
         val result = safeApiCall<AuthResponse> {
@@ -49,6 +50,7 @@ class AuthRepositoryImpl(
                 }
                 Result.Success(domainUser)
             }
+
             is Result.Error -> result
         }
     }
@@ -75,21 +77,24 @@ class AuthRepositoryImpl(
                 }
                 Result.Success(domainUser)
             }
+
             is Result.Error -> result
         }
     }
 
-    override suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
-        client.post("auth/forgot-password") {
-            setBody(ForgotPasswordRequest(email = email))
-        }
-    }.toUnitResult()
+    override suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
+            client.post("auth/forgot-password") {
+                setBody(ForgotPasswordRequest(email = email))
+            }
+        }.toUnitResult()
 
-    override suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
-        client.post("auth/verify-otp") {
-            setBody(VerifyOtpRequest(email = email, code = code))
-        }
-    }.toUnitResult()
+    override suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
+            client.post("auth/verify-otp") {
+                setBody(VerifyOtpRequest(email = email, code = code))
+            }
+        }.toUnitResult()
 
     override suspend fun logout(): Result<Unit, DataError.Network> {
         val networkResult = safeApiCall<CommonResponse> { client.post("auth/logout") }

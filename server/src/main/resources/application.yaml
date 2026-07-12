@@ -22,7 +22,7 @@ jwt:
   localSecret: "$JWT_LOCAL_SECRET:zapmancer-change-this-in-production"
 
 cors:
-  allowedHosts: []
+  allowedHosts: [ ]
 
 gorse:
   baseUrl: "$GORSE_URL:http://localhost:8088"

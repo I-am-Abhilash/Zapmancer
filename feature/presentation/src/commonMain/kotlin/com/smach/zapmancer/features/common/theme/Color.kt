@@ -2,84 +2,64 @@ package com.smach.zapmancer.features.common.theme
 
 import androidx.compose.ui.graphics.Color
 
-//
-// // Brand Colors
-// val Teal500 = Color(0xFF2BA8A2)
-// val Teal700 = Color(0xFF1D736F)
-//
-// val Coral500 = Color(0xFFEF6C4A)
-//
-// val Gold500 = Color(0xFFD4AF37)
-// val GoldContainer = Color(0xFFFFDF00)
-// val OnGoldContainer = Color(0xFF241D00)
-//
-// // Supporting Colors
-// val SkyBlue50 = Color(0xFFEBF5FB)
-// val SkyBlue700 = Color(0xFF2E86C1)
-//
-// val Orange500 = Color(0xFFF9A825)
-// val Grey500 = Color(0xFF9E9E9E)
-// val Slate500 = Color(0xFF6D7278)
-//
-// // Semantic Colors
-// val Success = Color(0xFF4CAF50)
-// val Warning = Color(0xFFFF9800)
-// val Error = Color(0xFFB00020)
-// val Info = Color(0xFF2196F3)
-//
-// // Light Theme Neutrals
-// val BackgroundLight = Color(0xFFEFF8F7)
-// val SurfaceLight = Color(0xFFFFFFFF)
-// val SurfaceVariantLight = Color(0xFFFFF8E7)
-//
-// val OnSurfaceLight = Color(0xFF1A1C1E)
-// val OnSurfaceVariantLight = Color(0xFF44474E)
-//
-// val OutlineLight = Color(0xFF6F7978)
-// val OutlineVariantLight = Color(0xFFBEC9C7)
-//
-// // Dark Theme Neutrals
-// val BackgroundDark = Color(0xFF121414)
-// val SurfaceDark = Color(0xFF1B1D1D)
-// val SurfaceVariantDark = Color(0xFF252929)
-//
-// val OnSurfaceDark = Color(0xFFE7E9E8)
-// val OnSurfaceVariantDark = Color(0xFFBEC9C7)
-//
-// val OutlineDark = Color(0xFF5F6665)
+// ─── Nike Design System — Color Tokens ────────────────────────────────────────
+// Source: DESIGN.md  /  Nike-design-analysis
 
-// Brand
-val ZapGold = Color(0xFFFFD700)
-val BluePrimary = Color(0xFF2563EB)
-val BluePrimaryDark = Color(0xFF60A5FA)
+// Brand core
+val NikeInk = Color(0xFF111111) // primary — CTA, headline, active chip
+val NikeCanvas = Color(0xFFFFFFFF) // on-primary / page background
+val NikeSoftCloud = Color(0xFFF5F5F5) // soft surface — card stage, search pill, secondary CTA
 
-val BlueSecondary = Color(0xFF3B82F6)
-val BlueAccent = Color(0xFF0EA5E9)
+// Text scale
+val NikeCharcoal = Color(0xFF39393B) // body where ink is too heavy
+val NikeAsh = Color(0xFF4B4B4D) // disabled / low-emphasis utility
+val NikeMute = Color(0xFF707072) // subtitles, footer links, secondary meta
+val NikeStone = Color(0xFF9E9EA0) // inverse secondary text / lowest emphasis
+
+// Divider / hairline (the only "elevation" in the system)
+val NikeHairline = Color(0xFFCACACA) // 1px dividers — filter rows, footer, PDP rows
+val NikeHairlineSoft = Color(0xFFE5E5E5) // inset shadow on sticky bars
 
 // Semantic
-val Success = Color(0xFF22C55E)
-val Warning = Color(0xFFF59E0B)
-val Error = Color(0xFFEF4444)
-val Info = Color(0xFF3B82F6)
+val NikeSale = Color(0xFFD30005) // discounted price / error — the only red
+val NikeSaleDeep = Color(0xFF780700) // sale hover / dark-mode sale anchor
+val NikeSuccess = Color(0xFF007D48) // confirmations, in-stock, eligibility ticks
+val NikeSuccessBright = Color(0xFF1EAA52) // inverse success on dark surfaces
+val NikeInfo = Color(0xFF1151FF) // informational link / member callouts
+val NikeInfoDeep = Color(0xFF0034E3) // pressed info accent
 
-// Light Theme
-val BackgroundLight = Color(0xFFF8FAFC)
-val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceVariantLight = Color(0xFFF1F5F9)
+// Category accents — used ONLY for swatch dots / soft tile fills / editorial chips
+val NikeAccentPink = Color(0xFFED1AA0)
+val NikeAccentPinkSoft = Color(0xFFFFB0DD)
+val NikeAccentPurpleSoft = Color(0xFFBEAFFD)
+val NikeAccentPurplePale = Color(0xFFD6D1FF)
+val NikeAccentTeal = Color(0xFF0A7281)
+val NikeAccentPinkDeep = Color(0xFF4C012D)
 
-val OnSurfaceLight = Color(0xFF0F172A)
-val OnSurfaceVariantLight = Color(0xFF475569)
+// ─── Nike Dark Mode Palette ───────────────────────────────────────────────────
+// Dark mode is a direct inversion of the light system:
+//   Canvas (#fff) becomes the primary/CTA (white buttons on dark bg)
+//   Ink (#111) becomes the background surface
+// Warm graphite steps are used instead of pure black to reduce harshness.
 
-val OutlineLight = Color(0xFFCBD5E1)
-val OutlineVariantLight = Color(0xFFE2E8F0)
+// Dark surfaces (background → container, deepest → lightest)
+val NikeDarkBase = Color(0xFF111111) // deepest bg — same as NikeInk
+val NikeDarkSurface = Color(0xFF1C1C1C) // cards, nav — one step up from base
+val NikeDarkSurfaceHigh = Color(0xFF242424) // elevated cards, modals
+val NikeDarkSurfaceTop = Color(0xFF2E2E2E) // input container, chip bg
 
-// Dark Theme
-val BackgroundDark = Color(0xFF0F172A)
-val SurfaceDark = Color(0xFF1E293B)
-val SurfaceVariantDark = Color(0xFF334155)
+// Dark text scale (on dark surfaces)
+val NikeDarkOnBase = Color(0xFFFFFFFF) // primary text — pure white
+val NikeDarkOnMid = Color(0xFFD4D4D4) // secondary text
+val NikeDarkOnLow = Color(0xFF9E9E9E) // tertiary / placeholder
+val NikeDarkOnMute = Color(0xFF6B6B6B) // disabled / decorative
 
-val OnSurfaceDark = Color(0xFFF8FAFC)
-val OnSurfaceVariantDark = Color(0xFFCBD5E1)
+// Dark dividers
+val NikeDarkHairline = Color(0xFF3A3A3A) // 1px row dividers
+val NikeDarkHairlineSoft = Color(0xFF2C2C2C) // inset border on inputs
 
-val OutlineDark = Color(0xFF64748B)
-val OutlineVariantDark = Color(0xFF475569)
+// Dark semantic (same hue, adjusted lightness for WCAG contrast on dark bg)
+val NikeDarkSale = Color(0xFFFF4D4D) // sale / error on dark — brighter red
+val NikeDarkSuccess = Color(0xFF1EAA52) // NikeSuccessBright — readable on dark
+val NikeDarkInfo = Color(0xFF4D7CFF) // info blue lifted for dark bg contrast
+val NikeDarkTeal = Color(0xFF1AAEC0) // accent teal lifted for dark bg

@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CorporateFare
 import androidx.compose.material.icons.outlined.Edit
@@ -30,7 +28,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -50,7 +47,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
@@ -90,7 +86,11 @@ fun SettingsScreen(
                     showBackButton = true,
                     onBackClick = { viewModel.onEvent(SettingsEvent.BackClicked) },
                     actions = {
-                        UserAvatar(imageUrl = null, size = 32.dp, modifier = Modifier.padding(end = 12.dp))
+                        UserAvatar(
+                            imageUrl = null,
+                            size = 32.dp,
+                            modifier = Modifier.padding(end = 12.dp)
+                        )
                     },
                     containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
                     drawBottomBorder = true,
@@ -104,7 +104,13 @@ fun SettingsScreen(
                 uiState = uiState,
                 onToggleTwoFactor = { viewModel.onEvent(SettingsEvent.ToggleTwoFactor(it)) },
                 onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
-                onToggleNotifications = { viewModel.onEvent(SettingsEvent.ToggleEmailNotifications(it)) },
+                onToggleNotifications = {
+                    viewModel.onEvent(
+                        SettingsEvent.ToggleEmailNotifications(
+                            it
+                        )
+                    )
+                },
                 onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
                 onLogout = { viewModel.onEvent(SettingsEvent.Logout) },
             )
@@ -123,7 +129,10 @@ fun SettingsContent(
     onLogout: () -> Unit,
 ) {
     val windowLayout = LocalWindowLayout.current
-    Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        contentAlignment = Alignment.TopCenter
+    ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -134,22 +143,44 @@ fun SettingsContent(
         ) {
             item {
                 Column {
-                    Text("Settings", style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
-                    Text("Manage your account preferences and security protocols.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+                    Text(
+                        "Settings",
+                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        "Manage your account preferences and security protocols.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
 
             item {
                 SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
-                    SettingsItem(title = "Email Address", subtitle = uiState.settings?.email ?: "", actionIcon = Icons.Outlined.Edit)
+                    SettingsItem(
+                        title = "Email Address",
+                        subtitle = uiState.settings?.email ?: "",
+                        actionIcon = Icons.Outlined.Edit
+                    )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsItem(title = "Organization", subtitle = uiState.settings?.organization ?: "", actionIcon = Icons.Outlined.CorporateFare)
+                    SettingsItem(
+                        title = "Organization",
+                        subtitle = uiState.settings?.organization ?: "",
+                        actionIcon = Icons.Outlined.CorporateFare
+                    )
                 }
             }
 
             item {
                 SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
-                    SettingsToggleItem(title = "Two-Factor Authentication", description = "Add an extra layer of security to your account.", checked = uiState.settings?.isTwoFactorEnabled ?: false, onCheckedChange = onToggleTwoFactor)
+                    SettingsToggleItem(
+                        title = "Two-Factor Authentication",
+                        description = "Add an extra layer of security to your account.",
+                        checked = uiState.settings?.isTwoFactorEnabled ?: false,
+                        onCheckedChange = onToggleTwoFactor
+                    )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Change Password",
@@ -157,13 +188,19 @@ fun SettingsContent(
                         actionContent = {
                             Button(
                                 onClick = {},
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                ),
                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(4.dp),
+                                shape = MaterialTheme.shapes.extraSmall,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                                 modifier = Modifier.height(32.dp),
                             ) {
-                                Text("Update", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
+                                Text(
+                                    "Update",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                )
                             }
                         },
                     )
@@ -172,31 +209,62 @@ fun SettingsContent(
 
             item {
                 SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
-                    SettingsToggleItem(title = "Dark Mode", description = "Switch between light and dark interface themes.", checked = uiState.isDarkModeEnabled, onCheckedChange = onToggleDarkMode)
+                    SettingsToggleItem(
+                        title = "Dark Mode",
+                        description = "Switch between light and dark interface themes.",
+                        checked = uiState.isDarkModeEnabled,
+                        onCheckedChange = onToggleDarkMode
+                    )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsToggleItem(title = "Email Notifications", description = "Receive weekly performance reports and alerts.", checked = uiState.settings?.isEmailNotificationsEnabled ?: false, onCheckedChange = onToggleNotifications)
+                    SettingsToggleItem(
+                        title = "Email Notifications",
+                        description = "Receive weekly performance reports and alerts.",
+                        checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
+                        onCheckedChange = onToggleNotifications
+                    )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsToggleItem(title = "Client Mode", description = "Toggle to switch interface focus to hiring and project posting.", checked = uiState.settings?.isClientModeEnabled ?: false, onCheckedChange = onToggleClientMode)
+                    SettingsToggleItem(
+                        title = "Client Mode",
+                        description = "Toggle to switch interface focus to hiring and project posting.",
+                        checked = uiState.settings?.isClientModeEnabled ?: false,
+                        onCheckedChange = onToggleClientMode
+                    )
                 }
             }
 
             item {
                 Surface(
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)),
+                    shape = MaterialTheme.shapes.small,
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Column {
-                            Text("Logout", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-                            Text("Session termination will revoke all active access tokens.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                "Logout",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                            Text(
+                                "Session termination will revoke all active access tokens.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                         Button(
                             onClick = onLogout,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.shadow(4.dp, RoundedCornerShape(12.dp)),
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier,
                         ) {
                             Text("Sign Out", fontWeight = FontWeight.Bold)
                         }
@@ -205,9 +273,22 @@ fun SettingsContent(
             }
 
             item {
-                Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), horizontalAlignment = Alignment.Start) {
-                    Text(uiState.settings?.version ?: "", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), fontWeight = FontWeight.Normal)
-                    Text("© 2024 Zapmancer. All systems operational.", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), modifier = Modifier.padding(top = 4.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        uiState.settings?.version ?: "",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        fontWeight = FontWeight.Normal
+                    )
+                    Text(
+                        "© 2024 Zapmancer. All systems operational.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
         }
@@ -219,13 +300,26 @@ fun SettingsSection(title: String, icon: ImageVector, content: @Composable Colum
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
+        shape = MaterialTheme.shapes.small,
+        modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
     ) {
         Column {
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
             Column(content = content)
@@ -248,13 +342,26 @@ fun SettingsItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         if (actionContent != null) {
             actionContent()
         } else if (actionIcon != null) {
-            Icon(actionIcon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f), modifier = Modifier.size(20.dp))
+            Icon(
+                actionIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
@@ -266,10 +373,22 @@ fun SettingsToggleItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
-            Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         Switch(
             checked = checked,

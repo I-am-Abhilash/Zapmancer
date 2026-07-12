@@ -24,22 +24,26 @@ class SettingsRepository {
             email = userRow[UsersTable.email],
             organization = settingsRow?.get(UserSettingsTable.organization),
             isTwoFactorEnabled = settingsRow?.get(UserSettingsTable.isTwoFactorEnabled) ?: false,
-            isEmailNotificationsEnabled = settingsRow?.get(UserSettingsTable.isEmailNotificationsEnabled) ?: true,
+            isEmailNotificationsEnabled = settingsRow?.get(UserSettingsTable.isEmailNotificationsEnabled)
+                ?: true,
             version = appVersion,
             isClientModeEnabled = settingsRow?.get(UserSettingsTable.isClientModeEnabled) ?: false,
         )
     }
 
-    suspend fun updateToggle(userId: String, field: SettingsField, enabled: Boolean): Boolean = dbQuery {
-        ensureSettingsRow(userId)
-        UserSettingsTable.update({ UserSettingsTable.userId eq userId }) {
-            when (field) {
-                SettingsField.TWO_FA -> it[UserSettingsTable.isTwoFactorEnabled] = enabled
-                SettingsField.EMAIL_NOTIFS -> it[UserSettingsTable.isEmailNotificationsEnabled] = enabled
-                SettingsField.CLIENT_MODE -> it[UserSettingsTable.isClientModeEnabled] = enabled
-            }
-        } > 0
-    }
+    suspend fun updateToggle(userId: String, field: SettingsField, enabled: Boolean): Boolean =
+        dbQuery {
+            ensureSettingsRow(userId)
+            UserSettingsTable.update({ UserSettingsTable.userId eq userId }) {
+                when (field) {
+                    SettingsField.TWO_FA -> it[UserSettingsTable.isTwoFactorEnabled] = enabled
+                    SettingsField.EMAIL_NOTIFS -> it[UserSettingsTable.isEmailNotificationsEnabled] =
+                        enabled
+
+                    SettingsField.CLIENT_MODE -> it[UserSettingsTable.isClientModeEnabled] = enabled
+                }
+            } > 0
+        }
 
     private fun ensureSettingsRow(userId: String) {
         val exists = UserSettingsTable.selectAll()

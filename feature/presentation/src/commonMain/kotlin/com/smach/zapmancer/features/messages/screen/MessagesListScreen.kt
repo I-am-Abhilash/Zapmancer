@@ -43,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
@@ -206,7 +205,12 @@ fun MessagesSearchAndFilter(
             value = searchQuery,
             onValueChange = { onEvent(MessagesListEvent.OnSearchQueryChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search conversations...", style = MaterialTheme.typography.bodyMedium) },
+            placeholder = {
+                Text(
+                    "Search conversations...",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             leadingIcon = {
                 Icon(
                     Icons.Default.Search,
@@ -230,14 +234,17 @@ fun MessagesSearchAndFilter(
                     onClick = { onEvent(MessagesListEvent.OnFilterSelected(filter)) },
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                     contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                    shape = RoundedCornerShape(20.dp),
+                    shape = MaterialTheme.shapes.large,
                     modifier = Modifier.height(32.dp),
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     ) {
-                        Text(filter, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                        Text(
+                            filter,
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
                 }
             }
@@ -347,14 +354,14 @@ private fun ConversationShimmerRow() {
                     modifier = Modifier
                         .width(120.dp)
                         .height(16.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect(),
                 )
                 Box(
                     modifier = Modifier
                         .width(50.dp)
                         .height(12.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect(),
                 )
             }
@@ -363,7 +370,7 @@ private fun ConversationShimmerRow() {
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(MaterialTheme.shapes.extraSmall)
                     .shimmerEffect(),
             )
         }

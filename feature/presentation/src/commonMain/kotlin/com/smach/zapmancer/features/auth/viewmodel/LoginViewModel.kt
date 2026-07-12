@@ -2,13 +2,11 @@ package com.smach.zapmancer.features.auth.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.features.auth.state.LoginUiState
 import kotlinx.coroutines.launch
-
-import com.smach.zapmancer.core.common.utils.foldTyped
 
 sealed interface LoginEvent {
     data class OnEmailChanged(
@@ -87,7 +85,7 @@ class LoginViewModel(
                             error = error.toUserMessage(),
                         )
                     }
-                }
+                },
             )
         }
     }

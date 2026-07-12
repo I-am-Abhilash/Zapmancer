@@ -26,5 +26,6 @@ sealed interface DataError {
  */
 sealed interface Result<out D, out E : DataError> {
     data class Success<out D>(val data: D) : Result<D, Nothing>
-    data class Error<out E : DataError>(val error: E, val throwable: Throwable? = null) : Result<Nothing, E>
+    data class Error<out E : DataError>(val error: E, val throwable: Throwable? = null) :
+        Result<Nothing, E>
 }

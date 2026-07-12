@@ -98,5 +98,5 @@ buildkonfig {
 tasks
     .matching {
         it.name.startsWith("compileTest") &&
-            (it.name.endsWith("IosArm64") || it.name.endsWith("IosSimulatorArm64"))
+                (it.name.endsWith("IosArm64") || it.name.endsWith("IosSimulatorArm64"))
     }.configureEach { enabled = false }

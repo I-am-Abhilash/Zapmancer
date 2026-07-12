@@ -67,7 +67,12 @@ class LoginViewModelTest {
     @Test
     fun `submit sets error message when use-case returns Error`() = runTest(dispatcher) {
         val useCase = mock<LoginUseCase> {
-            everySuspend { invoke("a@b.c", "pw") } returns Result.Error(DataError.Network.UNAUTHORIZED)
+            everySuspend {
+                invoke(
+                    "a@b.c",
+                    "pw"
+                )
+            } returns Result.Error(DataError.Network.UNAUTHORIZED)
         }
         val vm = LoginViewModel(useCase)
 

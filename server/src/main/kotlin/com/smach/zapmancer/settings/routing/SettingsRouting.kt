@@ -22,27 +22,35 @@ fun Route.settingsRouting() {
         route("/settings") {
             /** GET /settings */
             get {
-                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 call.respondResult(service.getSettings(principal.uid))
             }
 
             /** PUT /settings/2fa */
             put("/2fa") {
-                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggle2fa(principal.uid, req.enabled))
             }
 
             /** PUT /settings/email-notifications */
             put("/email-notifications") {
-                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggleEmailNotifications(principal.uid, req.enabled))
             }
 
             /** PUT /settings/client-mode */
             put("/client-mode") {
-                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggleClientMode(principal.uid, req.enabled))
             }

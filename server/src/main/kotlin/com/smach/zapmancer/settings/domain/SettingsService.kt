@@ -17,16 +17,34 @@ class SettingsService(private val repository: SettingsRepository) {
 
     suspend fun toggle2fa(userId: String, enabled: Boolean): DomainResult<CommonResponse> {
         repository.updateToggle(userId, SettingsField.TWO_FA, enabled)
-        return DomainResult.Success(CommonResponse(success = true, message = "2FA updated successfully."))
+        return DomainResult.Success(
+            CommonResponse(
+                success = true,
+                message = "2FA updated successfully."
+            )
+        )
     }
 
-    suspend fun toggleEmailNotifications(userId: String, enabled: Boolean): DomainResult<CommonResponse> {
+    suspend fun toggleEmailNotifications(
+        userId: String,
+        enabled: Boolean
+    ): DomainResult<CommonResponse> {
         repository.updateToggle(userId, SettingsField.EMAIL_NOTIFS, enabled)
-        return DomainResult.Success(CommonResponse(success = true, message = "Weekly updates subscription toggled."))
+        return DomainResult.Success(
+            CommonResponse(
+                success = true,
+                message = "Weekly updates subscription toggled."
+            )
+        )
     }
 
     suspend fun toggleClientMode(userId: String, enabled: Boolean): DomainResult<CommonResponse> {
         repository.updateToggle(userId, SettingsField.CLIENT_MODE, enabled)
-        return DomainResult.Success(CommonResponse(success = true, message = "Workspace layout toggled successfully."))
+        return DomainResult.Success(
+            CommonResponse(
+                success = true,
+                message = "Workspace layout toggled successfully."
+            )
+        )
     }
 }

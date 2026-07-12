@@ -38,14 +38,17 @@ fun Route.usersRouting() {
             /** PUT /users/profile — update own profile */
 
             put("/profile") {
-                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 val request = call.receive<UpdateProfileRequest>()
                 call.respondResult(service.updateProfile(principal.uid, request))
             }
 
             /** GET /users/profile/{userId} — public profile */
             get("/profile/{userId}") {
-                val userId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+                val userId =
+                    call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
                 call.respondResult(service.getPublicProfile(userId))
             }
 

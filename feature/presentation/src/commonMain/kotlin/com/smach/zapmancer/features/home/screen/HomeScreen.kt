@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Payments
@@ -43,7 +42,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
@@ -65,7 +63,8 @@ import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.common.theme.ZapGold
+import com.smach.zapmancer.features.common.theme.NikeAccentTeal
+import com.smach.zapmancer.features.common.theme.pill
 import com.smach.zapmancer.features.home.state.HomeUiState
 import com.smach.zapmancer.features.home.viewmodel.HomeEffect
 import com.smach.zapmancer.features.home.viewmodel.HomeEvent
@@ -75,7 +74,6 @@ import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Clock
 import kotlin.time.Instant.Companion.fromEpochMilliseconds
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,7 +148,6 @@ fun HomeScreen(
             onEvent = viewModel::onEvent,
         )
     }
-
 }
 
 @Composable
@@ -230,7 +227,7 @@ fun HomeContent(
                         modifier = cardModifier,
                         title = "Active Job Posts",
                         value = state.activeJobPostsCount.toString(),
-                        accentColor = ZapGold, // Ensure this color is defined in your theme/colors
+                        accentColor = NikeAccentTeal,
                         icon = Icons.Default.Work,
                         secondaryValue = "/ ${state.totalCapacity} capacity",
                     )
@@ -254,7 +251,7 @@ fun HomeContent(
                         modifier = cardModifier,
                         title = "Current Projects",
                         value = state.activeProjectsCount.toString(),
-                        accentColor = ZapGold,
+                        accentColor = NikeAccentTeal,
                         icon = Icons.Default.Work,
                         secondaryValue = "/ ${state.totalCapacity} capacity",
                     )
@@ -278,7 +275,7 @@ fun HomeContent(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.surface,
                 ),
-                shape = RoundedCornerShape(999.dp),
+                shape = MaterialTheme.shapes.pill,
             ) {
                 Text(
                     text = if (state.isClientMode) "Post a New Project" else "Browse Projects",
@@ -425,13 +422,13 @@ fun StatCard(
                             Row(
                                 modifier = Modifier
                                     .padding(bottom = 12.dp)
-                                    .semantics { contentDescription = "Rating: $value out of 5" }
+                                    .semantics { contentDescription = "Rating: $value out of 5" },
                             ) {
                                 repeat(5) {
                                     Icon(
                                         Icons.Default.Star,
                                         contentDescription = null,
-                                        tint = ZapGold,
+                                        tint = MaterialTheme.colorScheme.tertiary,
                                         modifier = Modifier.size(18.dp),
                                     )
                                 }
@@ -451,7 +448,7 @@ fun ActivityRow(
 ) {
     val accentColor = when (activity.status) {
         ActivityStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primary
-        ActivityStatus.REVIEWING -> ZapGold
+        ActivityStatus.REVIEWING -> MaterialTheme.colorScheme.secondary
         ActivityStatus.COMPLETED -> MaterialTheme.colorScheme.primary
         ActivityStatus.CRITICAL -> MaterialTheme.colorScheme.secondary
     }
@@ -556,12 +553,11 @@ private fun CompleteProfileBanner(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .drawAccentLine(MaterialTheme.colorScheme.primary)
-            .shadow(2.dp, RoundedCornerShape(12.dp)),
+            .drawAccentLine(MaterialTheme.colorScheme.primary),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         border = BorderStroke(
             1.dp,
             MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
@@ -614,7 +610,7 @@ private fun CompleteProfileBanner(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
-                shape = RoundedCornerShape(50),
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.align(Alignment.End),
             ) {
                 Text(
@@ -694,7 +690,7 @@ private fun formatTimestamp(timestamp: Long): String {
     if (diffDays < 7) return "${diffDays}d ago"
     val instant = fromEpochMilliseconds(timestamp)
     val localDateTime = instant.toLocalDateTime(currentSystemDefault())
-    val monthName = localDateTime.month.name.take(3).lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    val monthName = localDateTime.month.name.take(3).lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     return "$monthName ${localDateTime.dayOfMonth}"
 }
-

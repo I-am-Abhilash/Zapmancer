@@ -22,7 +22,8 @@ class LoginUseCaseTest {
 
     @Test
     fun `invoke returns Success when repository succeeds`() = runTest {
-        val user = User(id = "1", email = "user@example.com", accessToken = "abc", refreshToken = "xyz")
+        val user =
+            User(id = "1", email = "user@example.com", accessToken = "abc", refreshToken = "xyz")
         val repository = mock<AuthRepository> {
             everySuspend { login("user@example.com", "pw") } returns Result.Success(user)
         }
@@ -37,7 +38,12 @@ class LoginUseCaseTest {
     @Test
     fun `invoke returns Error when repository returns Error`() = runTest {
         val repository = mock<AuthRepository> {
-            everySuspend { login("user@example.com", "pw") } returns Result.Error(DataError.Network.UNAUTHORIZED)
+            everySuspend {
+                login(
+                    "user@example.com",
+                    "pw"
+                )
+            } returns Result.Error(DataError.Network.UNAUTHORIZED)
         }
         val useCase = LoginUseCase(repository)
 
@@ -56,6 +62,10 @@ class LoginUseCaseTest {
         val useCase = LoginUseCase(repository)
 
         val thrown = runCatching { useCase("user@example.com", "pw") }.exceptionOrNull()
-        assertEquals(boom, thrown, "Use-case must not swallow repository exceptions — callers depend on it.")
+        assertEquals(
+            boom,
+            thrown,
+            "Use-case must not swallow repository exceptions — callers depend on it."
+        )
     }
 }

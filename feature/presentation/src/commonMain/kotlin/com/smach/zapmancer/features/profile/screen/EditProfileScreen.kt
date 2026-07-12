@@ -2,14 +2,12 @@ package com.smach.zapmancer.features.profile.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,16 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
@@ -60,12 +55,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -103,7 +96,8 @@ fun EditProfileScreen(
     }
 
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val isCompact =
+        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
     Scaffold(
         topBar = {
@@ -127,7 +121,7 @@ fun EditProfileScreen(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary,
                             ),
-                            shape = RoundedCornerShape(100.dp),
+                            shape = MaterialTheme.shapes.extraLarge,
                             modifier = Modifier.padding(end = 8.dp),
                         ) {
                             Text("Save", fontWeight = FontWeight.Bold)
@@ -180,8 +174,12 @@ private fun EditProfileContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .drawAccentLine(MaterialTheme.colorScheme.primary),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)),
-                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                        alpha = 0.2f
+                    )
+                ),
+                shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
@@ -204,11 +202,13 @@ private fun EditProfileContent(
         // Card containing form
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(1.dp, RoundedCornerShape(16.dp)),
+                .fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+            shape = MaterialTheme.shapes.large,
+            border = BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+            ),
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -317,12 +317,16 @@ private fun EditProfileContent(
                         minLines = 4,
                         maxLines = 8,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                alpha = 0.3f
+                            ),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                alpha = 0.3f
+                            ),
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         ),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = MaterialTheme.shapes.small,
                     )
                 }
 
@@ -362,12 +366,16 @@ private fun EditProfileContent(
                                 }
                             }),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                    alpha = 0.3f
+                                ),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                    alpha = 0.3f
+                                ),
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                             ),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = MaterialTheme.shapes.small,
                         )
 
                         IconButton(
@@ -379,9 +387,16 @@ private fun EditProfileContent(
                             },
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.shapes.small
+                                ),
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Skill", tint = Color.White)
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "Add Skill",
+                                tint = Color.White
+                            )
                         }
                     }
 
@@ -394,17 +409,25 @@ private fun EditProfileContent(
                             state.skills.forEach { skill ->
                                 Surface(
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    shape = RoundedCornerShape(100.dp),
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    border = BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    ),
                                 ) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                        modifier = Modifier.padding(
+                                            horizontal = 12.dp,
+                                            vertical = 6.dp
+                                        ),
                                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                                     ) {
                                         Text(
                                             text = skill.uppercase(),
-                                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                fontWeight = FontWeight.Bold
+                                            ),
                                             color = MaterialTheme.colorScheme.primary,
                                         )
                                         Icon(
@@ -414,7 +437,13 @@ private fun EditProfileContent(
                                             modifier = Modifier
                                                 .size(14.dp)
                                                 .clip(CircleShape)
-                                                .clickable { onEvent(EditProfileEvent.RemoveSkill(skill)) },
+                                                .clickable {
+                                                    onEvent(
+                                                        EditProfileEvent.RemoveSkill(
+                                                            skill
+                                                        )
+                                                    )
+                                                },
                                         )
                                     }
                                 }
@@ -432,7 +461,7 @@ private fun EditProfileContent(
                 if (state.error != null) {
                     Text(
                         text = state.error,
-                        color = Color.Red,
+                        color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     )
@@ -487,7 +516,7 @@ private fun FormTextField(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
             ),
-            shape = RoundedCornerShape(8.dp),
+            shape = MaterialTheme.shapes.small,
         )
     }
 }

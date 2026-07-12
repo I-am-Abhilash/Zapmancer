@@ -7,100 +7,122 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+// ─── Nike Design System — Theme ────────────────────────────────────────────────
+// Source: DESIGN.md / Nike-design-analysis
 //
-// private val LightColorScheme = lightColorScheme(
-//    primary = Teal700,
-//    onPrimary = Color.White,
+// Light: 95% chrome is ink/canvas/soft-cloud — editorial photography-first.
+// Dark:  surfaces invert to warm graphite; CTAs flip to white-on-dark.
 //
-//    secondary = Coral500,
-//    onSecondary = Color.White,
-//
-//    background = BackgroundLight,
-//    onBackground = OnSurfaceLight,
-//
-//    surface = SurfaceLight,
-//    onSurface = OnSurfaceLight,
-//
-//    surfaceVariant = SurfaceVariantLight,
-//    onSurfaceVariant = OnSurfaceVariantLight,
-//
-//    outline = OutlineLight,
-//
-//    error = Error
-// )
-//
-// private val DarkColorScheme = darkColorScheme(
-//    primary = Teal500,
-//    onPrimary = Color.Black,
-//
-//    secondary = Coral500,
-//    onSecondary = Color.Black,
-//
-//    background = BackgroundDark,
-//    onBackground = OnSurfaceDark,
-//
-//    surface = SurfaceDark,
-//    onSurface = OnSurfaceDark,
-//
-//    surfaceVariant = SurfaceVariantDark,
-//    onSurfaceVariant = OnSurfaceVariantDark,
-//
-//    outline = OutlineDark,
-//
-//    error = Error
-// )
+// Both schemes are 100% driven by Color.kt tokens.
+// All component code uses MaterialTheme.colorScheme.* — no hardcoded colors.
 
-private val LightColorScheme = lightColorScheme(
-    primary = BluePrimary,
-    onPrimary = Color.White,
+// ─── Light ────────────────────────────────────────────────────────────────────
+private val NikeLightColorScheme = lightColorScheme(
+    primary = NikeInk, // #111111 — CTAs, active filters
+    onPrimary = NikeCanvas, // #ffffff — text on black surfaces
 
-    secondary = BlueSecondary,
-    onSecondary = Color.White,
+    primaryContainer = NikeInk,
+    onPrimaryContainer = NikeCanvas,
 
-    background = BackgroundLight,
-    onBackground = OnSurfaceLight,
+    secondary = NikeSoftCloud, // #f5f5f5 — secondary CTA bg
+    onSecondary = NikeInk,
 
-    surface = SurfaceLight,
-    onSurface = OnSurfaceLight,
+    secondaryContainer = NikeSoftCloud,
+    onSecondaryContainer = NikeInk,
 
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
+    tertiary = NikeAccentTeal, // editorial accent (stars, teal chips)
+    onTertiary = NikeCanvas,
 
-    outline = OutlineLight,
+    tertiaryContainer = NikeAccentPurplePale,
+    onTertiaryContainer = NikeInk,
 
-    error = Error,
+    background = NikeCanvas, // #ffffff
+    onBackground = NikeInk,
+
+    surface = NikeCanvas,
+    onSurface = NikeInk,
+
+    surfaceVariant = NikeSoftCloud, // #f5f5f5 — card image stage, input bg
+    onSurfaceVariant = NikeMute, // #707072 — subtitles, metadata
+
+    outline = NikeHairline, // #cacaca — 1px dividers
+    outlineVariant = NikeHairlineSoft, // #e5e5e5 — sticky bar inset
+
+    inverseSurface = NikeInk,
+    inverseOnSurface = NikeCanvas,
+    inversePrimary = NikeCanvas,
+
+    error = NikeSale, // #d30005 — the only red
+    onError = NikeCanvas,
+    errorContainer = Color(0xFFFFDAD6),
+    onErrorContainer = NikeSaleDeep,
+
+    scrim = NikeInk,
+    surfaceTint = Color.Transparent,
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = BluePrimaryDark,
-    onPrimary = Color.Black,
+// ─── Dark ─────────────────────────────────────────────────────────────────────
+// Inversion logic:
+//   primary/CTA      → white  (NikeDarkOnBase) so buttons stay high-contrast
+//   background       → #111   (NikeDarkBase)
+//   surface / cards  → #1c1c  (NikeDarkSurface) — one step lighter than bg
+//   surfaceVariant   → #2e2e  (NikeDarkSurfaceTop) — input containers
+//   outline          → #3a3a  (NikeDarkHairline) — visible but subtle
+//   error            → lifted red (#ff4d4d) for WCAG on dark bg
 
-    secondary = BlueAccent,
-    onSecondary = Color.Black,
+private val NikeDarkColorScheme = darkColorScheme(
+    primary = NikeDarkOnBase, // white — CTA on dark bg
+    onPrimary = NikeDarkBase, // ink — text on white button
 
-    background = BackgroundDark,
-    onBackground = OnSurfaceDark,
+    primaryContainer = NikeDarkSurface,
+    onPrimaryContainer = NikeDarkOnBase,
 
-    surface = SurfaceDark,
-    onSurface = OnSurfaceDark,
+    secondary = NikeDarkSurfaceTop, // dark chip / secondary CTA bg
+    onSecondary = NikeDarkOnBase,
 
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
+    secondaryContainer = NikeDarkSurfaceHigh,
+    onSecondaryContainer = NikeDarkOnMid,
 
-    outline = OutlineDark,
+    tertiary = NikeDarkTeal, // lifted teal for dark bg
+    onTertiary = NikeDarkBase,
 
-    error = Error,
+    tertiaryContainer = Color(0xFF1A2A3A),
+    onTertiaryContainer = NikeDarkOnBase,
+
+    background = NikeDarkBase, // #111111
+    onBackground = NikeDarkOnBase, // #ffffff
+
+    surface = NikeDarkSurface, // #1c1c1c — cards, nav
+    onSurface = NikeDarkOnBase,
+
+    surfaceVariant = NikeDarkSurfaceTop, // #2e2e2e — input bg
+    onSurfaceVariant = NikeDarkOnLow, // #9e9e9e — placeholder / meta
+
+    outline = NikeDarkHairline, // #3a3a3a — dividers
+    outlineVariant = NikeDarkHairlineSoft, // #2c2c2c — inset borders
+
+    inverseSurface = NikeCanvas,
+    inverseOnSurface = NikeInk,
+    inversePrimary = NikeInk,
+
+    error = NikeDarkSale, // #ff4d4d — WCAG-safe on dark
+    onError = NikeDarkBase,
+    errorContainer = Color(0xFF5C0A0A),
+    onErrorContainer = Color(0xFFFFB4AB),
+
+    scrim = NikeDarkBase,
+    surfaceTint = Color.Transparent,
 )
+
+// ─── AppTheme ─────────────────────────────────────────────────────────────────
 
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (darkTheme) NikeDarkColorScheme else NikeLightColorScheme,
         typography = Typography,
         shapes = Shapes,
         content = content,

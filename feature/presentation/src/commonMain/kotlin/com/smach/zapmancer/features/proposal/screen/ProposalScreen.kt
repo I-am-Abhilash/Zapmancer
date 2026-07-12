@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,14 +26,12 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -111,7 +108,11 @@ fun ProposalScreenContent(
                 showBackButton = true,
                 onBackClick = onBackClick,
                 actions = {
-                    UserAvatar(imageUrl = null, size = 32.dp, modifier = Modifier.padding(end = 12.dp))
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 32.dp,
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
                 },
                 containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                 drawBottomBorder = false,
@@ -120,7 +121,10 @@ fun ProposalScreenContent(
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         val windowLayout = LocalWindowLayout.current
-        Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.TopCenter
+        ) {
             ProposalContent(
                 state = state,
                 onEvent = onEvent,
@@ -131,7 +135,11 @@ fun ProposalScreenContent(
 }
 
 @Composable
-fun ProposalContent(state: ProposalUiState, onEvent: (ProposalEvent) -> Unit, modifier: Modifier = Modifier) {
+fun ProposalContent(
+    state: ProposalUiState,
+    onEvent: (ProposalEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -143,9 +151,24 @@ fun ProposalContent(state: ProposalUiState, onEvent: (ProposalEvent) -> Unit, mo
         AnimatedContent(targetState = state.currentStep) { step ->
             when (step) {
                 1 -> DetailsStep(state, onNext = { onEvent(ProposalEvent.StepChanged(2)) })
-                2 -> PitchStep(state, onPitchChange = { onEvent(ProposalEvent.OnPitchChanged(it)) }, onBudgetChange = { onEvent(ProposalEvent.OnBudgetChanged(it)) }, onTimelineChange = { onEvent(ProposalEvent.OnTimelineChanged(it)) }, onNext = { onEvent(ProposalEvent.StepChanged(3)) }, onBack = { onEvent(ProposalEvent.StepChanged(1)) })
-                3 -> ReviewStep(state, onNext = { onEvent(ProposalEvent.StepChanged(4)) }, onBack = { onEvent(ProposalEvent.StepChanged(2)) })
-                4 -> FinalizeStep(state, onBack = { onEvent(ProposalEvent.StepChanged(3)) }, onSubmit = { onEvent(ProposalEvent.Submit) }, onDashboardClick = { onEvent(ProposalEvent.DashboardClicked) })
+                2 -> PitchStep(
+                    state,
+                    onPitchChange = { onEvent(ProposalEvent.OnPitchChanged(it)) },
+                    onBudgetChange = { onEvent(ProposalEvent.OnBudgetChanged(it)) },
+                    onTimelineChange = { onEvent(ProposalEvent.OnTimelineChanged(it)) },
+                    onNext = { onEvent(ProposalEvent.StepChanged(3)) },
+                    onBack = { onEvent(ProposalEvent.StepChanged(1)) })
+
+                3 -> ReviewStep(
+                    state,
+                    onNext = { onEvent(ProposalEvent.StepChanged(4)) },
+                    onBack = { onEvent(ProposalEvent.StepChanged(2)) })
+
+                4 -> FinalizeStep(
+                    state,
+                    onBack = { onEvent(ProposalEvent.StepChanged(3)) },
+                    onSubmit = { onEvent(ProposalEvent.Submit) },
+                    onDashboardClick = { onEvent(ProposalEvent.DashboardClicked) })
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
@@ -156,7 +179,11 @@ fun ProposalContent(state: ProposalUiState, onEvent: (ProposalEvent) -> Unit, mo
 fun StepIndicator(currentStep: Int) {
     val steps = ProposalStep.entries
     Box(modifier = Modifier.fillMaxWidth().height(60.dp), contentAlignment = Alignment.Center) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             steps.forEach { step ->
                 val isCompleted = currentStep > step.step
                 val isCurrent = currentStep == step.step
@@ -172,13 +199,26 @@ fun StepIndicator(currentStep: Int) {
                                     else -> MaterialTheme.colorScheme.onPrimary
                                 },
                             )
-                            .border(2.dp, if (isCompleted || isCurrent) Color.Transparent else MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                            .border(
+                                2.dp,
+                                if (isCompleted || isCurrent) Color.Transparent else MaterialTheme.colorScheme.outlineVariant,
+                                CircleShape
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         if (isCompleted) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
                         } else {
-                            Text(text = step.step.toString(), color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(
+                                text = step.step.toString(),
+                                color = if (isCurrent) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                            )
                         }
                     }
                     Text(
@@ -202,21 +242,56 @@ fun StepIndicator(currentStep: Int) {
 
 @Composable
 fun DetailsStep(state: ProposalUiState, onNext: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = MaterialTheme.shapes.large
+    ) {
         Column(modifier = Modifier.padding(24.dp)) {
-            Text("Verify Your Details", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("These details are automatically applied from your profile to ensure credibility.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                "Verify Your Details",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                "These details are automatically applied from your profile to ensure credibility.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(64.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)).border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape))
+                Box(
+                    modifier = Modifier.size(64.dp).clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)).border(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        CircleShape
+                    )
+                )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(state.freelancerName, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold), color = MaterialTheme.colorScheme.onSurface)
-                    Text(state.freelancerRole, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        state.freelancerName,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        state.freelancerRole,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onNext, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) {
+            Button(
+                onClick = onNext,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                shape = CircleShape
+            ) {
                 Text("Confirm & Continue", fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
@@ -234,52 +309,148 @@ private fun sharedTextFieldColors() = OutlinedTextFieldDefaults.colors(
 )
 
 @Composable
-fun PitchStep(state: ProposalUiState, onPitchChange: (String) -> Unit, onBudgetChange: (String) -> Unit, onTimelineChange: (String) -> Unit, onNext: () -> Unit, onBack: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)) {
+fun PitchStep(
+    state: ProposalUiState,
+    onPitchChange: (String) -> Unit,
+    onBudgetChange: (String) -> Unit,
+    onTimelineChange: (String) -> Unit,
+    onNext: () -> Unit,
+    onBack: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = MaterialTheme.shapes.large
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Your Pitch", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("Clearly articulate how your skills align with the project requirements.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                "Your Pitch",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                "Clearly articulate how your skills align with the project requirements.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f)),
-                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f)
+                ),
+                shape = MaterialTheme.shapes.small,
             ) {
-                Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
                     Column {
-                        Text("PRO TIP", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSecondaryContainer)
-                        Text("Focus on the client's problem, not just your services.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f))
+                        Text(
+                            "PRO TIP",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            "Focus on the client's problem, not just your services.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                        )
                     }
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
-            Text("Pitch Content", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                "Pitch Content",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             OutlinedTextField(
                 value = state.pitchContent,
                 onValueChange = onPitchChange,
                 modifier = Modifier.fillMaxWidth().height(200.dp).padding(top = 8.dp),
-                placeholder = { Text("Write your compelling proposal here...", color = MaterialTheme.colorScheme.outline) },
+                placeholder = {
+                    Text(
+                        "Write your compelling proposal here...",
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                },
                 colors = sharedTextFieldColors(),
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.small,
             )
-            Text("${state.pitchContent.length} / 2000", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End, style = MaterialTheme.typography.labelMedium, color = if (state.pitchContent.length > 2000) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                "${state.pitchContent.length} / 2000",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End,
+                style = MaterialTheme.typography.labelMedium,
+                color = if (state.pitchContent.length > 2000) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(24.dp))
-            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Proposed Budget", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                    OutlinedTextField(value = state.budget, onValueChange = onBudgetChange, modifier = Modifier.fillMaxWidth().padding(top = 8.dp), prefix = { Text("$") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), colors = sharedTextFieldColors(), shape = RoundedCornerShape(8.dp))
+                    Text(
+                        "Proposed Budget",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    OutlinedTextField(
+                        value = state.budget,
+                        onValueChange = onBudgetChange,
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        prefix = { Text("$") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = sharedTextFieldColors(),
+                        shape = MaterialTheme.shapes.small
+                    )
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Timeline (Days)", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                    OutlinedTextField(value = state.timelineDays, onValueChange = onTimelineChange, modifier = Modifier.fillMaxWidth().padding(top = 8.dp), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), colors = sharedTextFieldColors(), shape = RoundedCornerShape(8.dp))
+                    Text(
+                        "Timeline (Days)",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    OutlinedTextField(
+                        value = state.timelineDays,
+                        onValueChange = onTimelineChange,
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = sharedTextFieldColors(),
+                        shape = MaterialTheme.shapes.small
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onBack) { Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold) }
-                Button(onClick = onNext, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape, enabled = state.pitchContent.isNotEmpty() && state.budget.isNotEmpty() && state.timelineDays.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = onBack) {
+                    Text(
+                        "Back",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Button(
+                    onClick = onNext,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = CircleShape,
+                    enabled = state.pitchContent.isNotEmpty() && state.budget.isNotEmpty() && state.timelineDays.isNotEmpty()
+                ) {
                     Text("Continue", fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
@@ -291,27 +462,83 @@ fun PitchStep(state: ProposalUiState, onPitchChange: (String) -> Unit, onBudgetC
 
 @Composable
 fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = MaterialTheme.shapes.large
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Review Proposal", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("Please double-check your content before finalizing.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                "Review Proposal",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                "Please double-check your content before finalizing.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
             Spacer(modifier = Modifier.height(24.dp))
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(64.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)).border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape))
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier.size(64.dp).clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)).border(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        CircleShape
+                    )
+                )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(state.freelancerName, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold), color = MaterialTheme.colorScheme.onSurface)
-                    Text(state.freelancerRole, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        state.freelancerName,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        state.freelancerRole,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
             BudgetSection(state)
-            Surface(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp)) {
-                Text(state.pitchContent, modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    state.pitchContent,
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onBack) { Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold) }
-                Button(onClick = onNext, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = onBack) {
+                    Text(
+                        "Back",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Button(
+                    onClick = onNext,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = CircleShape
+                ) {
                     Text("Ready to Finalize", fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
@@ -322,26 +549,90 @@ fun ReviewStep(state: ProposalUiState, onNext: () -> Unit, onBack: () -> Unit) {
 }
 
 @Composable
-fun FinalizeStep(state: ProposalUiState, onBack: () -> Unit, onSubmit: () -> Unit, onDashboardClick: () -> Unit) {
+fun FinalizeStep(
+    state: ProposalUiState,
+    onBack: () -> Unit,
+    onSubmit: () -> Unit,
+    onDashboardClick: () -> Unit
+) {
     if (state.isSubmitted) {
-        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(80.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(80.dp)
+            )
             Spacer(modifier = Modifier.height(24.dp))
-            Text("Proposal Submitted!", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("Good luck! The client will review your pitch shortly.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 32.dp).padding(top = 8.dp))
+            Text(
+                "Proposal Submitted!",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                "Good luck! The client will review your pitch shortly.",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 32.dp).padding(top = 8.dp)
+            )
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = onDashboardClick, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) { Text("Back to Dashboard", fontWeight = FontWeight.Bold) }
+            Button(
+                onClick = onDashboardClick,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                shape = CircleShape
+            ) { Text("Back to Dashboard", fontWeight = FontWeight.Bold) }
         }
     } else {
-        Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)) {
-            Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Finalize Submission", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                Text("By clicking submit, you agree to our Terms of Service and escrow guidelines.", textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            shape = MaterialTheme.shapes.large
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "Finalize Submission",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    "By clicking submit, you agree to our Terms of Service and escrow guidelines.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
                 Spacer(modifier = Modifier.height(32.dp))
-                Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), modifier = Modifier.size(64.dp))
+                Icon(
+                    Icons.Default.VerifiedUser,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    modifier = Modifier.size(64.dp)
+                )
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(onClick = onSubmit, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), shape = CircleShape) { Text("Submit Proposal", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)) }
-                TextButton(onClick = onBack, modifier = Modifier.padding(top = 8.dp)) { Text("Back to Review", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                Button(
+                    onClick = onSubmit,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        "Submit Proposal",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+                TextButton(
+                    onClick = onBack,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) { Text("Back to Review", color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
     }
@@ -352,18 +643,48 @@ fun BudgetSection(state: ProposalUiState) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        shape = RoundedCornerShape(12.dp)
+        shape = MaterialTheme.shapes.medium,
     ) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
             Column(Modifier.padding(16.dp).weight(1f)) {
-                Text("BUDGET", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), letterSpacing = 1.sp)
-                Text(state.budget, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface)
-                Text(state.projectType, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f))
+                Text(
+                    "BUDGET",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    state.budget,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    state.projectType,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
+                )
             }
             Column(modifier = Modifier.padding(16.dp).weight(1f)) {
-                Text("TIMELINE", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), letterSpacing = 1.sp)
-                Text(state.timelineDays, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                Text("Est. Start: ${state.estStart}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f))
+                Text(
+                    "TIMELINE",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    state.timelineDays,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    "Est. Start: ${state.estStart}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
+                )
             }
         }
     }

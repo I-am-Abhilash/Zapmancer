@@ -124,7 +124,10 @@ class SafeApiCallTest {
             respond(
                 content = body,
                 status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                headers = headersOf(
+                    HttpHeaders.ContentType,
+                    ContentType.Application.Json.toString()
+                ),
             )
         },
     ) {

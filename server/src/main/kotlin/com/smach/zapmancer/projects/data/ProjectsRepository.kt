@@ -188,11 +188,13 @@ class ProjectsRepository {
         .where { ProjectSkillsTable.projectId eq projectId }
         .map { it[ProjectSkillsTable.skill] }
 
-    private fun getDeliverables(projectId: String): List<String> = ProjectDeliverablesTable.selectAll()
-        .where { ProjectDeliverablesTable.projectId eq projectId }
-        .map { it[ProjectDeliverablesTable.deliverable] }
+    private fun getDeliverables(projectId: String): List<String> =
+        ProjectDeliverablesTable.selectAll()
+            .where { ProjectDeliverablesTable.projectId eq projectId }
+            .map { it[ProjectDeliverablesTable.deliverable] }
 
-    private fun isSavedByUser(userId: String, projectId: String): Boolean = SavedProjectsTable.selectAll()
-        .where { (SavedProjectsTable.userId eq userId) and (SavedProjectsTable.projectId eq projectId) }
-        .count() > 0
+    private fun isSavedByUser(userId: String, projectId: String): Boolean =
+        SavedProjectsTable.selectAll()
+            .where { (SavedProjectsTable.userId eq userId) and (SavedProjectsTable.projectId eq projectId) }
+            .count() > 0
 }

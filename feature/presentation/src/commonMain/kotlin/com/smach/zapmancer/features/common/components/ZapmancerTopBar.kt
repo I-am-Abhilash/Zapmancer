@@ -20,6 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// ─── Primary Nav Bar ──────────────────────────────────────────────────────────
+// Fully design-agnostic: every token comes from MaterialTheme.
+//
+//   containerColor → colorScheme.surface  (NikeCanvas in Nike, any other surface in other themes)
+//   title color    → colorScheme.onSurface
+//   icon tint      → colorScheme.onSurface
+//   bottom border  → colorScheme.outline (NikeHairline in Nike)
+//
+// Swapping the 4 theme files will fully restyle this component.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ZapmancerTopBar(
@@ -33,7 +43,10 @@ fun ZapmancerTopBar(
     containerColor: Color = MaterialTheme.colorScheme.surface,
     drawBottomBorder: Boolean = true,
 ) {
-    val drawLineColor = MaterialTheme.colorScheme.outlineVariant
+    // Capture theme tokens outside the drawBehind lambda (no Composable context inside)
+    val borderColor = MaterialTheme.colorScheme.outline
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
     TopAppBar(
         title = {
             if (titleContent != null) {
@@ -41,43 +54,41 @@ fun ZapmancerTopBar(
             } else {
                 Text(
                     text = title,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = contentColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp,
+                    letterSpacing = 0.sp,
                 )
             }
         },
         navigationIcon = {
-            if (showBackButton) {
-                IconButton(onClick = onBackClick) {
+            when {
+                showBackButton -> IconButton(onClick = onBackClick) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = contentColor,
                     )
                 }
-            } else if (showMenuButton) {
-                IconButton(onClick = onMenuClick) {
+
+                showMenuButton -> IconButton(onClick = onMenuClick) {
                     Icon(
                         Icons.Default.Menu,
                         contentDescription = "Menu",
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = contentColor,
                     )
                 }
             }
         },
-        actions = {
-            if (actions != null) {
-                actions()
-            }
-        },
+        actions = { if (actions != null) actions() },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
+            scrolledContainerColor = containerColor,
         ),
         modifier = if (drawBottomBorder) {
             Modifier.drawBehind {
                 drawLine(
-                    color = drawLineColor,
+                    color = borderColor,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
                     strokeWidth = 1.dp.toPx(),

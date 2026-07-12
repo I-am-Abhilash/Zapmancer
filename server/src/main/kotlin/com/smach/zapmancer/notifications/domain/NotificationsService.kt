@@ -7,7 +7,8 @@ import com.smach.zapmancer.notifications.data.NotificationsRepository
 
 class NotificationsService(private val repository: NotificationsRepository) {
 
-    suspend fun getNotifications(userId: String): DomainResult<List<NotificationItem>> = DomainResult.Success(repository.getNotifications(userId))
+    suspend fun getNotifications(userId: String): DomainResult<List<NotificationItem>> =
+        DomainResult.Success(repository.getNotifications(userId))
 
     suspend fun executeAction(
         notificationId: Int,
@@ -16,7 +17,12 @@ class NotificationsService(private val repository: NotificationsRepository) {
     ): DomainResult<CommonResponse> {
         // Action execution logic (e.g., trigger invoice, approve proposal) goes here.
         // For now we acknowledge the action and return success.
-        return DomainResult.Success(CommonResponse(success = true, message = "Action executed successfully."))
+        return DomainResult.Success(
+            CommonResponse(
+                success = true,
+                message = "Action executed successfully."
+            )
+        )
     }
 
     suspend fun sendQuickReply(

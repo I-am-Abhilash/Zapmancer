@@ -3,13 +3,12 @@ package com.smach.zapmancer.features.messages.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.domain.usecase.GetConversationsUseCase
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
-import kotlinx.coroutines.launch
-
-import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.features.messages.state.toUiModel
+import kotlinx.coroutines.launch
 
 sealed interface MessagesListEvent {
     data object Refresh : MessagesListEvent
@@ -43,7 +42,11 @@ class MessagesListViewModel(
                 updateState {
                     copy(
                         searchQuery = event.query,
-                        conversations = filterConversations(allConversations, event.query, selectedFilter)
+                        conversations = filterConversations(
+                            allConversations,
+                            event.query,
+                            selectedFilter
+                        ),
                     )
                 }
             }
@@ -52,7 +55,11 @@ class MessagesListViewModel(
                 updateState {
                     copy(
                         selectedFilter = event.filter,
-                        conversations = filterConversations(allConversations, searchQuery, event.filter)
+                        conversations = filterConversations(
+                            allConversations,
+                            searchQuery,
+                            event.filter
+                        ),
                     )
                 }
             }
@@ -71,17 +78,15 @@ class MessagesListViewModel(
         list: List<ConversationItem>,
         query: String,
         filter: String,
-    ): List<ConversationItem> {
-        return list.filter {
-            val matchesQuery = it.name.contains(query, ignoreCase = true) ||
-                    it.lastMessage.contains(query, ignoreCase = true)
-            val matchesFilter = when (filter) {
-                "Unread" -> it.isUnread
-                "Online" -> it.isOnline
-                else -> true
-            }
-            matchesQuery && matchesFilter
+    ): List<ConversationItem> = list.filter {
+        val matchesQuery = it.name.contains(query, ignoreCase = true) ||
+                it.lastMessage.contains(query, ignoreCase = true)
+        val matchesFilter = when (filter) {
+            "Unread" -> it.isUnread
+            "Online" -> it.isOnline
+            else -> true
         }
+        matchesQuery && matchesFilter
     }
 
     private fun loadConversations() {
@@ -93,7 +98,11 @@ class MessagesListViewModel(
                     allConversations = mappedList
                     updateState {
                         copy(
-                            conversations = filterConversations(mappedList, searchQuery, selectedFilter),
+                            conversations = filterConversations(
+                                mappedList,
+                                searchQuery,
+                                selectedFilter
+                            ),
                             isLoading = false,
                         )
                     }

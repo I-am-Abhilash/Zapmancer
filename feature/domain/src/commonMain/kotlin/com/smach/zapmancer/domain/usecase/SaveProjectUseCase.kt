@@ -7,5 +7,6 @@ import com.smach.zapmancer.domain.repository.ProjectRepository
 class SaveProjectUseCase(
     private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(id: String, isSaved: Boolean): Result<Unit, DataError.Network> = repository.saveProject(id, isSaved)
+    suspend operator fun invoke(id: String, isSaved: Boolean): Result<Unit, DataError.Network> =
+        repository.saveProject(id, isSaved)
 }

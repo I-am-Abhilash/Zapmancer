@@ -2,13 +2,11 @@ package com.smach.zapmancer.features.auth.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.ForgotPasswordUseCase
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import kotlinx.coroutines.launch
-
-import com.smach.zapmancer.core.common.utils.foldTyped
 
 sealed interface ForgotPasswordEvent {
     data class EmailChanged(
@@ -24,7 +22,9 @@ sealed interface ForgotPasswordEffect {
 
 class ForgotPasswordViewModel(
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
-) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordEvent, ForgotPasswordEffect>(ForgotPasswordUiState()) {
+) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordEvent, ForgotPasswordEffect>(
+    ForgotPasswordUiState()
+) {
 
     override fun onEvent(event: ForgotPasswordEvent) {
         when (event) {
@@ -44,7 +44,7 @@ class ForgotPasswordViewModel(
                 },
                 onError = { error ->
                     updateState { copy(isLoading = false, error = error.toUserMessage()) }
-                }
+                },
             )
         }
     }

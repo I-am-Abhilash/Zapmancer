@@ -46,41 +46,47 @@ class ProjectRepositoryImpl(
         }
     }
 
-    override suspend fun getProjectDetail(id: String): Result<ProjectDetail, DataError.Network> = safeApiCall<ProjectDetailDto> {
-        client.get("projects/$id")
-    }.let { result ->
-        when (result) {
-            is Result.Success -> Result.Success(result.data.toDomain())
-            is Result.Error -> result
+    override suspend fun getProjectDetail(id: String): Result<ProjectDetail, DataError.Network> =
+        safeApiCall<ProjectDetailDto> {
+            client.get("projects/$id")
+        }.let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.data.toDomain())
+                is Result.Error -> result
+            }
         }
-    }
 
-    override suspend fun saveProject(id: String, isSaved: Boolean): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+    override suspend fun saveProject(
+        id: String,
+        isSaved: Boolean
+    ): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.post("projects/$id/save") {
             setBody(SaveProjectRequest(isSaved = isSaved))
         }
     }.toUnitResult()
 
-    override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
+    override suspend fun applyForProject(id: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("projects/$id/apply") }.toUnitResult()
 
-    override suspend fun postProject(params: CreateProjectParams): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
-        client.post("projects") {
-            setBody(
-                CreateProjectRequest(
-                    category = params.category,
-                    title = params.title,
-                    location = "Remote",
-                    budgetRange = params.budgetRange,
-                    projectType = "Fixed Price",
-                    projectScope = params.description,
-                    deliverables = params.deliverables,
-                    skills = params.skills,
-                    timeline = params.timeline,
-                    estStart = null,
-                ),
-            )
-        }
-    }.toUnitResult()
+    override suspend fun postProject(params: CreateProjectParams): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
+            client.post("projects") {
+                setBody(
+                    CreateProjectRequest(
+                        category = params.category,
+                        title = params.title,
+                        location = "Remote",
+                        budgetRange = params.budgetRange,
+                        projectType = "Fixed Price",
+                        projectScope = params.description,
+                        deliverables = params.deliverables,
+                        skills = params.skills,
+                        timeline = params.timeline,
+                        estStart = null,
+                    ),
+                )
+            }
+        }.toUnitResult()
 }
 
 private fun ProjectDto.toDomain(): Project = Project(

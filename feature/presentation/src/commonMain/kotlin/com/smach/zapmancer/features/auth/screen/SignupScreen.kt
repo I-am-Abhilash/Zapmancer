@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -111,9 +110,12 @@ private fun SignupContent(
 
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outline
+                ),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -135,7 +137,11 @@ private fun SignupContent(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Next,
                             ),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            }),
                         )
                     }
 
@@ -155,7 +161,11 @@ private fun SignupContent(
                                 keyboardType = KeyboardType.Email,
                                 imeAction = ImeAction.Next,
                             ),
-                            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                            keyboardActions = KeyboardActions(onNext = {
+                                focusManager.moveFocus(
+                                    FocusDirection.Down
+                                )
+                            }),
                         )
                     }
 
@@ -189,13 +199,12 @@ private fun SignupContent(
                         onClick = onSubmit,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
-                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                            .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = RoundedCornerShape(100.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
                         enabled = !state.isLoading,
                     ) {
                         if (state.isLoading) {
@@ -209,7 +218,11 @@ private fun SignupContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text("Create Account", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(
+                                    "Create Account",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,

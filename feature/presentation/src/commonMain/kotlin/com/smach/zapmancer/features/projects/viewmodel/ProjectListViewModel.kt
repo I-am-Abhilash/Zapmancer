@@ -33,7 +33,12 @@ class ProjectListViewModel(
     override fun onEvent(event: ProjectListEvent) {
         when (event) {
             ProjectListEvent.SearchClicked -> sendEffect(ProjectListEffect.NavigateToSearch)
-            is ProjectListEvent.ProjectClicked -> sendEffect(ProjectListEffect.NavigateToProjectDetail(event.projectId))
+            is ProjectListEvent.ProjectClicked -> sendEffect(
+                ProjectListEffect.NavigateToProjectDetail(
+                    event.projectId
+                )
+            )
+
             ProjectListEvent.Refresh -> loadProjects()
             is ProjectListEvent.CategorySelected -> updateState { copy(category = event.category) }
         }

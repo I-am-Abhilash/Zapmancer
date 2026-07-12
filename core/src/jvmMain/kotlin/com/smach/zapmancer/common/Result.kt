@@ -1,12 +1,10 @@
 package com.smach.zapmancer.common
 
-import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.network.ktor.ApiError
-import com.smach.zapmancer.core.common.dto.CommonResponse
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
-import kotlinx.serialization.Serializable
 
 /**
  * DomainResult is a 'Result' pattern used by Services and Repositories.

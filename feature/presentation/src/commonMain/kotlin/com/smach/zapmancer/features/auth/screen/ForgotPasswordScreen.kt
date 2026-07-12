@@ -1,5 +1,6 @@
 package com.smach.zapmancer.features.auth.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -94,9 +94,9 @@ private fun ForgotPasswordContent(
 
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, RoundedCornerShape(8.dp)),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -129,7 +129,7 @@ private fun ForgotPasswordContent(
                     if (state.isSuccess) {
                         Surface(
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = MaterialTheme.shapes.small,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(
@@ -147,13 +147,12 @@ private fun ForgotPasswordContent(
                         onClick = onSubmit,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
-                            .shadow(2.dp, RoundedCornerShape(100.dp)),
+                            .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.surface,
                         ),
-                        shape = RoundedCornerShape(100.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
                         enabled = !state.isLoading && !state.isSuccess,
                     ) {
                         if (state.isLoading) {
@@ -167,7 +166,11 @@ private fun ForgotPasswordContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text("Send Recovery Link", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(
+                                    "Send Recovery Link",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,

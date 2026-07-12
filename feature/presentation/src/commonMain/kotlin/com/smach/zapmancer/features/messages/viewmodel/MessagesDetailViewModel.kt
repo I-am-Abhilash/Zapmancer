@@ -57,7 +57,11 @@ class MessagesDetailViewModel(
 
             MessagesDetailEvent.BackClicked -> sendEffect(MessagesDetailEffect.NavigateBack)
 
-            is MessagesDetailEvent.ProfileClicked -> sendEffect(MessagesDetailEffect.NavigateToProfile(event.contactName))
+            is MessagesDetailEvent.ProfileClicked -> sendEffect(
+                MessagesDetailEffect.NavigateToProfile(
+                    event.contactName
+                )
+            )
         }
     }
 
@@ -78,6 +82,7 @@ class MessagesDetailViewModel(
                             )
                         }
                     }
+
                     is Result.Error -> {
                         updateState {
                             copy(

@@ -2,12 +2,11 @@ package com.smach.zapmancer.data.repository
 
 import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
-import com.smach.zapmancer.core.common.dto.ConversationItem as ConversationItemDto
-import com.smach.zapmancer.core.common.dto.MessageItem as MessageItemDto
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
+import com.smach.zapmancer.data.repository.MessageRepositoryImpl.Companion.POLL_INTERVAL_MS
 import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.domain.model.MessageItem
 import com.smach.zapmancer.domain.model.MessageStatus
@@ -23,6 +22,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
+import com.smach.zapmancer.core.common.dto.ConversationItem as ConversationItemDto
+import com.smach.zapmancer.core.common.dto.MessageItem as MessageItemDto
 
 class MessageRepositoryImpl(
     private val client: HttpClient,
@@ -41,20 +42,21 @@ class MessageRepositoryImpl(
      * is active. Cancellation-aware — when the screen leaves the composition,
      * the upstream's coroutine is cancelled and the polling loop exits cleanly.
      */
-    override fun getMessages(conversationId: String): Flow<Result<List<MessageItem>, DataError.Network>> = flow {
-        while (currentCoroutineContext().isActive) {
-            val result = safeApiCall<List<MessageItemDto>> {
-                client.get("messages/conversations/$conversationId/messages")
-            }.let { res ->
-                when (res) {
-                    is Result.Success -> Result.Success(res.data.map { it.toDomain() })
-                    is Result.Error -> res
+    override fun getMessages(conversationId: String): Flow<Result<List<MessageItem>, DataError.Network>> =
+        flow {
+            while (currentCoroutineContext().isActive) {
+                val result = safeApiCall<List<MessageItemDto>> {
+                    client.get("messages/conversations/$conversationId/messages")
+                }.let { res ->
+                    when (res) {
+                        is Result.Success -> Result.Success(res.data.map { it.toDomain() })
+                        is Result.Error -> res
+                    }
                 }
+                emit(result)
+                delay(POLL_INTERVAL_MS)
             }
-            emit(result)
-            delay(POLL_INTERVAL_MS)
-        }
-    }.flowOn(Dispatchers.Default)
+        }.flowOn(Dispatchers.Default)
 
     override suspend fun sendMessage(
         conversationId: String,
@@ -65,7 +67,8 @@ class MessageRepositoryImpl(
         }
     }.toUnitResult()
 
-    override suspend fun markAsRead(conversationId: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("messages/conversations/$conversationId/read") }.toUnitResult()
+    override suspend fun markAsRead(conversationId: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("messages/conversations/$conversationId/read") }.toUnitResult()
 
     companion object {
         private const val POLL_INTERVAL_MS = 5_000L

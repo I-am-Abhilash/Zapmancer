@@ -25,33 +25,56 @@ fun Route.messagesRouting() {
         route("/messages/conversations") {
             /** GET /messages/conversations */
             get {
-                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 call.respondResult(service.getConversations(principal.uid))
             }
 
             route("/{conversationId}") {
                 /** GET /messages/conversations/{conversationId}/messages */
                 get("/messages") {
-                    val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                    val convId = call.parameters["conversationId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
+                    val convId = call.parameters["conversationId"] ?: return@get call.respond(
+                        HttpStatusCode.BadRequest
+                    )
                     when (val r = service.getMessages(convId, principal.uid)) {
-                        is DomainResult.Success -> call.respond(ApiResponse(success = true, data = r.data))
-                        is DomainResult.Error -> call.respond(r.code.httpStatusCode, ApiResponse<Unit>(false, error = ApiError(r.code.name, r.message ?: "")))
+                        is DomainResult.Success -> call.respond(
+                            ApiResponse(
+                                success = true,
+                                data = r.data
+                            )
+                        )
+
+                        is DomainResult.Error -> call.respond(
+                            r.code.httpStatusCode,
+                            ApiResponse<Unit>(false, error = ApiError(r.code.name, r.message ?: ""))
+                        )
                     }
                 }
 
                 /** POST /messages/conversations/{conversationId}/send */
                 post("/send") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    val convId = call.parameters["conversationId"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
+                    val convId = call.parameters["conversationId"] ?: return@post call.respond(
+                        HttpStatusCode.BadRequest
+                    )
                     val req = call.receive<SendMessageRequest>()
                     call.respondResult(service.sendMessage(convId, principal.uid, req.text))
                 }
 
                 /** POST /messages/conversations/{conversationId}/read */
                 post("/read") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    val convId = call.parameters["conversationId"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
+                    val convId = call.parameters["conversationId"] ?: return@post call.respond(
+                        HttpStatusCode.BadRequest
+                    )
                     call.respondResult(service.markRead(convId, principal.uid))
                 }
             }

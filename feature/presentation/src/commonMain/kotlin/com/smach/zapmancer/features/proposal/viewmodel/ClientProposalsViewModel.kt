@@ -3,11 +3,10 @@ package com.smach.zapmancer.features.proposal.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.GetProjectProposalsUseCase
 import com.smach.zapmancer.features.proposal.state.ClientProposalsUiState
 import kotlinx.coroutines.launch
-
-import com.smach.zapmancer.core.common.utils.toUserMessage
 
 sealed interface ClientProposalsEvent {
     data object Refresh : ClientProposalsEvent

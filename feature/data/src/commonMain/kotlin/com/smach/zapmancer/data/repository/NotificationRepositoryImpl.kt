@@ -1,9 +1,8 @@
 package com.smach.zapmancer.data.repository
 
-import com.smach.zapmancer.core.common.dto.NotificationItem as NotificationItemDto
+import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
 import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
-import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -15,6 +14,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import com.smach.zapmancer.core.common.dto.NotificationItem as NotificationItemDto
 
 class NotificationRepositoryImpl(
     private val client: HttpClient,

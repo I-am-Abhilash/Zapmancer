@@ -13,8 +13,14 @@ class ProposalsService(private val repository: ProposalsRepository) {
         req: SubmitProposalRequest,
     ): DomainResult<CommonResponse> {
         repository.submit(freelancerId, req)
-        return DomainResult.Success(CommonResponse(success = true, message = "Proposal bid submitted."))
+        return DomainResult.Success(
+            CommonResponse(
+                success = true,
+                message = "Proposal bid submitted."
+            )
+        )
     }
 
-    suspend fun getProposalsForProject(projectId: String): DomainResult<List<Proposal>> = DomainResult.Success(repository.getByProject(projectId))
+    suspend fun getProposalsForProject(projectId: String): DomainResult<List<Proposal>> =
+        DomainResult.Success(repository.getByProject(projectId))
 }

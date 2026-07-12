@@ -45,8 +45,8 @@ class MessagesRepository {
                     .singleOrNull()
 
                 val hasUnread = lastMsg != null &&
-                    lastMsg[MessagesTable.senderId] != userId &&
-                    lastMsg[MessagesTable.status] != "READ"
+                        lastMsg[MessagesTable.senderId] != userId &&
+                        lastMsg[MessagesTable.status] != "READ"
 
                 ConversationItem(
                     id = convId,
@@ -67,7 +67,8 @@ class MessagesRepository {
             .orderBy(MessagesTable.createdAt, SortOrder.ASC)
             .map { row ->
                 val senderId = row[MessagesTable.senderId]
-                val sender = UsersTable.selectAll().where { UsersTable.id eq senderId }.singleOrNull()
+                val sender =
+                    UsersTable.selectAll().where { UsersTable.id eq senderId }.singleOrNull()
                 MessageItem(
                     id = row[MessagesTable.id],
                     text = row[MessagesTable.text],
@@ -79,23 +80,24 @@ class MessagesRepository {
             }
     }
 
-    suspend fun sendMessage(conversationId: String, senderId: String, text: String): String = dbQuery {
-        val id = UUID.randomUUID().toString()
-        MessagesTable.insert {
-            it[MessagesTable.id] = id
-            it[MessagesTable.conversationId] = conversationId
-            it[MessagesTable.senderId] = senderId
-            it[MessagesTable.text] = text
-            it[MessagesTable.status] = "SENT"
-            it[MessagesTable.createdAt] = now()
+    suspend fun sendMessage(conversationId: String, senderId: String, text: String): String =
+        dbQuery {
+            val id = UUID.randomUUID().toString()
+            MessagesTable.insert {
+                it[MessagesTable.id] = id
+                it[MessagesTable.conversationId] = conversationId
+                it[MessagesTable.senderId] = senderId
+                it[MessagesTable.text] = text
+                it[MessagesTable.status] = "SENT"
+                it[MessagesTable.createdAt] = now()
+            }
+            id
         }
-        id
-    }
 
     suspend fun markRead(conversationId: String, userId: String): Unit = dbQuery {
         MessagesTable.update({
             (MessagesTable.conversationId eq conversationId) and
-                (MessagesTable.senderId neq userId)
+                    (MessagesTable.senderId neq userId)
         }) {
             it[MessagesTable.status] = "READ"
         }

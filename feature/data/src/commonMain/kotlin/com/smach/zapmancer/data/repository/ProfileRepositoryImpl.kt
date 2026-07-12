@@ -1,8 +1,7 @@
 package com.smach.zapmancer.data.repository
 
-import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
-import com.smach.zapmancer.core.common.dto.UserProfile as UserProfileDto
 import com.smach.zapmancer.core.common.dto.CommonResponse
+import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -15,6 +14,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import com.smach.zapmancer.core.common.dto.UserProfile as UserProfileDto
 
 class ProfileRepositoryImpl(
     private val client: HttpClient,
@@ -30,30 +30,32 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
-        client.post("users/$userId/hire")
-    }.toUnitResult()
+    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> {
+            client.post("users/$userId/hire")
+        }.toUnitResult()
 
-    override suspend fun updateProfile(params: UpdateProfileParams): Result<UserProfile, DataError.Network> = safeApiCall<UserProfileDto> {
-        client.put("users/profile") {
-            setBody(
-                UpdateProfileRequest(
-                    name = params.name,
-                    roleTitle = params.roleTitle,
-                    location = params.location,
-                    about = params.about,
-                    experience = params.experience,
-                    skills = params.skills,
-                    avatarUrl = params.avatarUrl,
+    override suspend fun updateProfile(params: UpdateProfileParams): Result<UserProfile, DataError.Network> =
+        safeApiCall<UserProfileDto> {
+            client.put("users/profile") {
+                setBody(
+                    UpdateProfileRequest(
+                        name = params.name,
+                        roleTitle = params.roleTitle,
+                        location = params.location,
+                        about = params.about,
+                        experience = params.experience,
+                        skills = params.skills,
+                        avatarUrl = params.avatarUrl,
+                    ),
                 )
-            )
+            }
+        }.let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.data.toDomain())
+                is Result.Error -> result
+            }
         }
-    }.let { result ->
-        when (result) {
-            is Result.Success -> Result.Success(result.data.toDomain())
-            is Result.Error -> result
-        }
-    }
 }
 
 private fun UserProfileDto.toDomain(): UserProfile = UserProfile(

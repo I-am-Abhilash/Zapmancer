@@ -22,7 +22,10 @@ fun Route.proposalsRouting() {
         /** POST /proposals */
 
         post("/proposals") {
-            val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized, "Missing or invalid token")
+            val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                HttpStatusCode.Unauthorized,
+                "Missing or invalid token"
+            )
             val req = call.receive<SubmitProposalRequest>()
             call.respondResult(service.submitProposal(principal.uid, req))
         }
@@ -31,7 +34,10 @@ fun Route.proposalsRouting() {
 
         route("/projects/{projectId}") {
             get("/proposals") {
-                val projectId = call.parameters["projectId"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Project ID is missing from the URL")
+                val projectId = call.parameters["projectId"] ?: return@get call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Project ID is missing from the URL"
+                )
                 call.respondResult(service.getProposalsForProject(projectId))
             }
         }

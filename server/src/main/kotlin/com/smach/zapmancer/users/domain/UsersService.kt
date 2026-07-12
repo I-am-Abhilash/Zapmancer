@@ -17,7 +17,10 @@ interface UsersService {
     suspend fun getPublicProfile(userId: String): DomainResult<UserProfile>
 
     /** Update authenticated user's own profile. */
-    suspend fun updateProfile(userId: String, request: UpdateProfileRequest): DomainResult<UserProfile>
+    suspend fun updateProfile(
+        userId: String,
+        request: UpdateProfileRequest
+    ): DomainResult<UserProfile>
 
     /** Dispatch a hire notification to a freelancer. */
     suspend fun hireFreelancer(clientId: String, freelancerId: String): DomainResult<CommonResponse>

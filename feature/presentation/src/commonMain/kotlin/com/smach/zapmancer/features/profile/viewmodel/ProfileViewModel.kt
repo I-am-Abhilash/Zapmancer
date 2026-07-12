@@ -4,14 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
-import com.smach.zapmancer.domain.model.PortfolioItem
-import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
 import com.smach.zapmancer.domain.usecase.HireUserUseCase
 import com.smach.zapmancer.features.profile.state.ProfileUiState
-import kotlinx.coroutines.launch
-
 import com.smach.zapmancer.features.profile.state.toUiState
+import kotlinx.coroutines.launch
 
 sealed interface ProfileEvent {
     data object Refresh : ProfileEvent

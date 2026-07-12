@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,28 +31,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.AccountBalance
-import androidx.compose.material.icons.outlined.Analytics
-import androidx.compose.material.icons.outlined.Assignment
-import androidx.compose.material.icons.outlined.BusinessCenter
-import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Devices
-import androidx.compose.material.icons.outlined.Gavel
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.Security
-import androidx.compose.material.icons.outlined.SupportAgent
-import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -77,8 +62,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -92,15 +75,13 @@ import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.CategoryFilterChip
-import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.ErrorState
+import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
-import com.smach.zapmancer.features.common.components.icon
 import com.smach.zapmancer.features.common.components.accentColor
+import com.smach.zapmancer.features.common.components.icon
 import com.smach.zapmancer.features.common.theme.AppTheme
-import com.smach.zapmancer.features.common.theme.Warning
-import com.smach.zapmancer.features.common.theme.ZapGold
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.state.ProjectUiModel
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEffect
@@ -173,17 +154,23 @@ fun ProjectListScreen(
                     AnimatedVisibility(
                         visible = isSearchBarVisible,
                         enter = expandVertically() + fadeIn(),
-                        exit = shrinkVertically() + fadeOut()
+                        exit = shrinkVertically() + fadeOut(),
                     ) {
                         Column {
                             AutoTypingSearchBarEmptyState(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                                onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) }
+                                onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) },
                             )
                             CategoryFilterBar(
                                 selectedCategory = state.category,
-                                onCategoryChange = { viewModel.onEvent(ProjectListEvent.CategorySelected(it)) },
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                                onCategoryChange = {
+                                    viewModel.onEvent(
+                                        ProjectListEvent.CategorySelected(
+                                            it
+                                        )
+                                    )
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                             )
                         }
                     }
@@ -200,7 +187,6 @@ fun ProjectListScreen(
         }
     }
 }
-
 
 @Composable
 fun ProjectListContent(
@@ -259,9 +245,9 @@ fun ProjectListContent(
                             visible = visible,
                             enter = fadeIn(animationSpec = tween(400)) + slideInVertically(
                                 initialOffsetY = { it / 4 },
-                                animationSpec = tween(400)
+                                animationSpec = tween(400),
                             ),
-                            exit = fadeOut()
+                            exit = fadeOut(),
                         ) {
                             ProjectItemCard(
                                 project = project,
@@ -278,7 +264,6 @@ fun ProjectListContent(
         }
     }
 }
-
 
 @Composable
 fun CategoryFilterBar(
@@ -301,8 +286,6 @@ fun CategoryFilterBar(
         }
     }
 }
-
-
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -399,7 +382,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
+                        .clip(MaterialTheme.shapes.extraSmall),
                     color = accentColor,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                 )
@@ -410,12 +393,12 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     project.tags.forEach { tag ->
                         Surface(
                             color = accentColor.copy(alpha = 0.08f),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = MaterialTheme.shapes.medium,
                             border = BorderStroke(1.dp, accentColor.copy(alpha = 0.15f)),
                         ) {
                             Text(
@@ -482,7 +465,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 10.sp,
-                                    color = labelColors[index % labelColors.size]
+                                    color = labelColors[index % labelColors.size],
                                 )
                             }
                         }
@@ -502,7 +485,7 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 10.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
@@ -547,7 +530,6 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         }
     }
 }
-
 
 @Composable
 fun AutoTypingSearchBarEmptyState(
@@ -601,7 +583,7 @@ fun AutoTypingSearchBarEmptyState(
             .fillMaxWidth()
             .height(56.dp)
             .clickable { onSearchBarClick() },
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Row(
@@ -634,9 +616,6 @@ fun AutoTypingSearchBarEmptyState(
         }
     }
 }
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -686,12 +665,12 @@ fun ProjectListScreenPreview() {
                         )
                         AutoTypingSearchBarEmptyState(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                            onSearchBarClick = {}
+                            onSearchBarClick = {},
                         )
                         CategoryFilterBar(
                             selectedCategory = ProjectCategory.ALL,
                             onCategoryChange = {},
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                         )
                     }
                 },
@@ -700,7 +679,7 @@ fun ProjectListScreenPreview() {
                 ProjectListContent(
                     modifier = Modifier.padding(paddingValues),
                     state = ProjectListUiState(
-                        projects = sampleProjects
+                        projects = sampleProjects,
                     ),
                     onEvent = {},
                 )
@@ -708,4 +687,3 @@ fun ProjectListScreenPreview() {
         }
     }
 }
-

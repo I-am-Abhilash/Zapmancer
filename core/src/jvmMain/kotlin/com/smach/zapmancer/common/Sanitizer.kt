@@ -47,5 +47,6 @@ object Sanitizer {
         .replace(Regex("-+"), "-")
         .trim('-')
 
-    fun generateUniqueSlug(title: String): String = "${slugify(title)}-${randomUUID().toString().take(8)}"
+    fun generateUniqueSlug(title: String): String =
+        "${slugify(title)}-${randomUUID().toString().take(8)}"
 }

@@ -21,6 +21,7 @@ import com.smach.zapmancer.domain.usecase.ExecuteNotificationActionUseCase
 import com.smach.zapmancer.domain.usecase.ExportActivityCsvUseCase
 import com.smach.zapmancer.domain.usecase.ForgotPasswordUseCase
 import com.smach.zapmancer.domain.usecase.GetConversationsUseCase
+import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
 import com.smach.zapmancer.domain.usecase.GetHomeDashboardUseCase
 import com.smach.zapmancer.domain.usecase.GetMessagesUseCase
 import com.smach.zapmancer.domain.usecase.GetNotificationsUseCase
@@ -30,6 +31,7 @@ import com.smach.zapmancer.domain.usecase.GetProjectsUseCase
 import com.smach.zapmancer.domain.usecase.GetSettingsUseCase
 import com.smach.zapmancer.domain.usecase.GetUserProfileUseCase
 import com.smach.zapmancer.domain.usecase.HireUserUseCase
+import com.smach.zapmancer.domain.usecase.IsOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
 import com.smach.zapmancer.domain.usecase.MarkConversationAsReadUseCase
@@ -37,16 +39,14 @@ import com.smach.zapmancer.domain.usecase.PostProjectUseCase
 import com.smach.zapmancer.domain.usecase.SaveProjectUseCase
 import com.smach.zapmancer.domain.usecase.SendMessageUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
+import com.smach.zapmancer.domain.usecase.SetOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
+import com.smach.zapmancer.domain.usecase.UpdateClientModeUseCase
+import com.smach.zapmancer.domain.usecase.UpdateDarkModeUseCase
+import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.UpdateProfileUseCase
 import com.smach.zapmancer.domain.usecase.UpdateTwoFactorUseCase
-import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
-import com.smach.zapmancer.domain.usecase.UpdateClientModeUseCase
-import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
-import com.smach.zapmancer.domain.usecase.UpdateDarkModeUseCase
-import com.smach.zapmancer.domain.usecase.IsOnboardingCompletedUseCase
-import com.smach.zapmancer.domain.usecase.SetOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.VerifyOtpUseCase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf

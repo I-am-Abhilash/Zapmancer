@@ -125,7 +125,10 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
                 HttpStatusCode.BadRequest,
                 ApiResponse<Unit>(
                     false,
-                    error = ApiError("BAD_REQUEST", cause.message ?: "Malformed request body or parameters"),
+                    error = ApiError(
+                        "BAD_REQUEST",
+                        cause.message ?: "Malformed request body or parameters"
+                    ),
                 ),
             )
         }
@@ -156,7 +159,11 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         }
 
         get("/metrics") {
-            call.respondText(appMicrometerRegistry.scrape(), ContentType.Text.Plain, HttpStatusCode.OK)
+            call.respondText(
+                appMicrometerRegistry.scrape(),
+                ContentType.Text.Plain,
+                HttpStatusCode.OK
+            )
         }
     }
 }

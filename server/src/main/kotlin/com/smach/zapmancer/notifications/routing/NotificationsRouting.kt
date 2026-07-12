@@ -23,25 +23,45 @@ fun Route.notificationsRouting() {
         route("/notifications") {
             /** GET /notifications */
             get {
-                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized
+                )
                 call.respondResult(service.getNotifications(principal.uid))
             }
 
             route("/{notificationId}") {
                 /** POST /notifications/{notificationId}/action */
                 post("/action") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    val notifId = call.parameters["notificationId"]?.toIntOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
+                    val notifId = call.parameters["notificationId"]?.toIntOrNull()
+                        ?: return@post call.respond(HttpStatusCode.BadRequest)
                     val req = call.receive<ExecuteActionRequest>()
-                    call.respondResult(service.executeAction(notifId, principal.uid, req.actionLabel))
+                    call.respondResult(
+                        service.executeAction(
+                            notifId,
+                            principal.uid,
+                            req.actionLabel
+                        )
+                    )
                 }
 
                 /** POST /notifications/{notificationId}/reply */
                 post("/reply") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    val notifId = call.parameters["notificationId"]?.toIntOrNull() ?: return@post call.respond(HttpStatusCode.BadRequest)
+                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
+                    val notifId = call.parameters["notificationId"]?.toIntOrNull()
+                        ?: return@post call.respond(HttpStatusCode.BadRequest)
                     val req = call.receive<SendQuickReplyRequest>()
-                    call.respondResult(service.sendQuickReply(notifId, principal.uid, req.replyText))
+                    call.respondResult(
+                        service.sendQuickReply(
+                            notifId,
+                            principal.uid,
+                            req.replyText
+                        )
+                    )
                 }
             }
         }

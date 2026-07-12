@@ -139,18 +139,29 @@ private fun OnboardingCompact(
                         .background(Brush.radialGradient(colors = page.gradientColors)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(page.icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(72.dp))
+                    Icon(
+                        page.icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(72.dp)
+                    )
                 }
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(
                     text = page.title,
-                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center
+                    ),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = page.description,
-                    style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center, lineHeight = 26.sp),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        textAlign = TextAlign.Center,
+                        lineHeight = 26.sp
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -189,7 +200,12 @@ private fun OnboardingMedium(
                         .background(Brush.radialGradient(colors = page.gradientColors)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(page.icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(96.dp))
+                    Icon(
+                        page.icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(96.dp)
+                    )
                 }
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                     Text(
@@ -234,9 +250,19 @@ private fun OnboardingExpanded(
             contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Default.Bolt, contentDescription = null, tint = Color.White, modifier = Modifier.size(120.dp))
+                Icon(
+                    Icons.Default.Bolt,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(120.dp)
+                )
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("Zapmancer", color = Color.White, fontWeight = FontWeight.ExtraBold, fontSize = 40.sp)
+                Text(
+                    "Zapmancer",
+                    color = Color.White,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 40.sp
+                )
                 Text(
                     "Build the future of decentralized apps.",
                     color = Color.White.copy(alpha = 0.85f),
@@ -271,7 +297,12 @@ private fun OnboardingExpanded(
                             .background(Brush.radialGradient(colors = page.gradientColors)),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(page.icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(56.dp))
+                        Icon(
+                            page.icon,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(56.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.height(32.dp))
                     Text(
@@ -299,11 +330,19 @@ private fun OnboardingBrandHeader(centered: Boolean) {
         modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         horizontalArrangement = if (centered) Arrangement.Center else Arrangement.Start,
     ) {
-        Icon(Icons.Default.Bolt, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+        Icon(
+            Icons.Default.Bolt,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(32.dp)
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             "Zapmancer",
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = 1.sp),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 1.sp
+            ),
             color = MaterialTheme.colorScheme.primary,
         )
     }

@@ -3,16 +3,16 @@ package com.smach.zapmancer.features.settings.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
 import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
+import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
 import com.smach.zapmancer.domain.usecase.GetSettingsUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
-import com.smach.zapmancer.domain.usecase.UpdateTwoFactorUseCase
-import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.UpdateClientModeUseCase
-import com.smach.zapmancer.domain.usecase.GetDarkModeUseCase
 import com.smach.zapmancer.domain.usecase.UpdateDarkModeUseCase
+import com.smach.zapmancer.domain.usecase.UpdateEmailNotificationsUseCase
+import com.smach.zapmancer.domain.usecase.UpdateTwoFactorUseCase
 import com.smach.zapmancer.features.settings.state.SettingsUiState
 import kotlinx.coroutines.launch
-import com.smach.zapmancer.core.common.utils.toUserMessage
 
 sealed interface SettingsEvent {
     data class ToggleTwoFactor(val enabled: Boolean) : SettingsEvent
@@ -98,7 +98,15 @@ class SettingsViewModel(
     private fun toggleNotifications(enabled: Boolean) {
         viewModelScope.launch {
             updateEmailNotificationsUseCase(enabled).foldTyped(
-                onSuccess = { updateState { copy(settings = settings?.copy(isEmailNotificationsEnabled = enabled)) } },
+                onSuccess = {
+                    updateState {
+                        copy(
+                            settings = settings?.copy(
+                                isEmailNotificationsEnabled = enabled
+                            )
+                        )
+                    }
+                },
                 onError = { error ->
                     sendEffect(SettingsEffect.ShowToast("Failed to toggle notifications: ${error.toUserMessage()}"))
                 },

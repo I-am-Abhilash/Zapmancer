@@ -1,6 +1,5 @@
 package com.smach.zapmancer.features.search.screen
 
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -70,7 +69,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -87,12 +85,9 @@ import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.common.components.CategoryFilterChip
-import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.EmptyState
+import com.smach.zapmancer.features.common.components.ProjectStatusBadge
 import com.smach.zapmancer.features.common.components.shimmerEffect
-import com.smach.zapmancer.features.common.components.icon
-import com.smach.zapmancer.features.common.components.accentColor
-import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.search.state.SearchSortOption
 import com.smach.zapmancer.features.search.state.SearchUiState
 import com.smach.zapmancer.features.search.viewmodel.SearchEffect
@@ -178,14 +173,17 @@ fun SearchContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
-
             Spacer(modifier = Modifier.width(4.dp))
 
             TextField(
                 value = state.query,
                 onValueChange = { onEvent(SearchEvent.QueryChanged(it)) },
-                placeholder = { Text("Search projects...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                placeholder = {
+                    Text(
+                        "Search projects...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                },
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
@@ -198,7 +196,7 @@ fun SearchContent(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
-                shape = RoundedCornerShape(28.dp),
+                shape = MaterialTheme.shapes.medium,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -478,20 +476,23 @@ private fun SearchInitialView(
                         modifier = Modifier
                             .clickable { onQuerySelected(term) }
                             .semantics { contentDescription = "Trending keyword: $term" },
-                        shape = RoundedCornerShape(16.dp),
+                        shape = MaterialTheme.shapes.large,
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                        border = BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                        ),
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                             Text(
                                 text = term,
@@ -505,8 +506,6 @@ private fun SearchInitialView(
         }
     }
 }
-
-
 
 @Composable
 private fun SearchResultCard(
@@ -525,8 +524,8 @@ private fun SearchResultCard(
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(
             width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
-        )
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -534,7 +533,7 @@ private fun SearchResultCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = highlightText(project.title, query, MaterialTheme.colorScheme.primary),
@@ -543,25 +542,25 @@ private fun SearchResultCard(
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 // Category Tag
                 Box(
                     modifier = Modifier
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = MaterialTheme.shapes.medium,
                         )
-                        .padding(horizontal = 10.dp, vertical = 2.dp)
+                        .padding(horizontal = 10.dp, vertical = 2.dp),
                 ) {
                     Text(
                         text = project.category.displayName,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }
@@ -586,20 +585,24 @@ private fun SearchResultCard(
                             modifier = Modifier
                                 .background(
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = MaterialTheme.shapes.medium,
                                 )
                                 .border(
                                     width = 0.5.dp,
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = MaterialTheme.shapes.medium,
                                 )
                                 .padding(horizontal = 10.dp, vertical = 4.dp),
                         ) {
                             Text(
-                                text = highlightText("#$tag", query, MaterialTheme.colorScheme.primary),
+                                text = highlightText(
+                                    "#$tag",
+                                    query,
+                                    MaterialTheme.colorScheme.primary
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
                             )
                         }
                     }
@@ -612,18 +615,18 @@ private fun SearchResultCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = "Progress",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         text = "$progressValue%",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -632,42 +635,42 @@ private fun SearchResultCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
+                        .clip(MaterialTheme.shapes.extraSmall),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                 )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             // Bottom Metadata row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 ProjectStatusBadge(status = project.status)
 
                 // Other metadata (members, footer text)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     if (project.membersCount > 0) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = "${project.membersCount} members",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                             Text(
                                 text = project.membersCount.toString(),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -680,9 +683,9 @@ private fun SearchResultCard(
                         modifier = Modifier
                             .background(
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                                shape = RoundedCornerShape(4.dp)
+                                shape = MaterialTheme.shapes.extraSmall,
                             )
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }
             }
@@ -702,29 +705,29 @@ private fun SearchSkeletonCard() {
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(
             width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-        )
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f),
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .height(18.dp)
-                    .shimmerEffect(RoundedCornerShape(4.dp)),
+                    .shimmerEffect(MaterialTheme.shapes.extraSmall),
             )
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .height(14.dp)
-                    .shimmerEffect(RoundedCornerShape(4.dp)),
+                    .shimmerEffect(MaterialTheme.shapes.extraSmall),
             )
             Spacer(modifier = Modifier.height(6.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(14.dp)
-                    .shimmerEffect(RoundedCornerShape(4.dp)),
+                    .shimmerEffect(MaterialTheme.shapes.extraSmall),
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -759,7 +762,7 @@ private fun VoiceSearchListeningDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(28.dp),
+            shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp,
         ) {
@@ -794,16 +797,16 @@ private fun VoiceSearchListeningDialog(
                         targetValue = 2.0f,
                         animationSpec = infiniteRepeatable(
                             animation = tween(1500, delayMillis = 400),
-                            repeatMode = RepeatMode.Restart
-                        )
+                            repeatMode = RepeatMode.Restart,
+                        ),
                     )
                     val wave3Alpha by infiniteTransition.animateFloat(
                         initialValue = 0.4f,
                         targetValue = 0.0f,
                         animationSpec = infiniteRepeatable(
                             animation = tween(1500, delayMillis = 400),
-                            repeatMode = RepeatMode.Restart
-                        )
+                            repeatMode = RepeatMode.Restart,
+                        ),
                     )
                     Box(
                         modifier = Modifier
@@ -818,16 +821,16 @@ private fun VoiceSearchListeningDialog(
                         targetValue = 1.6f,
                         animationSpec = infiniteRepeatable(
                             animation = tween(1200, delayMillis = 100),
-                            repeatMode = RepeatMode.Restart
-                        )
+                            repeatMode = RepeatMode.Restart,
+                        ),
                     )
                     val wave2Alpha by infiniteTransition.animateFloat(
                         initialValue = 0.6f,
                         targetValue = 0.0f,
                         animationSpec = infiniteRepeatable(
                             animation = tween(1200, delayMillis = 100),
-                            repeatMode = RepeatMode.Restart
-                        )
+                            repeatMode = RepeatMode.Restart,
+                        ),
                     )
                     Box(
                         modifier = Modifier
@@ -912,7 +915,7 @@ fun SearchScreenPreview() {
                         tags = listOf("Ktor", "Kotlin", "Backend"),
                         progress = 65,
                         membersCount = 3,
-                        postedTime = "Budget: $1,200"
+                        postedTime = "Budget: $1,200",
                     ),
                     Project(
                         id = "2",
@@ -923,7 +926,7 @@ fun SearchScreenPreview() {
                         tags = listOf("Compose", "KMP", "UI"),
                         progress = 12,
                         membersCount = 1,
-                        postedTime = "Budget: $450"
+                        postedTime = "Budget: $450",
                     ),
                 ),
             ),

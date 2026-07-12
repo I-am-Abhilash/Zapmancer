@@ -2,13 +2,11 @@ package com.smach.zapmancer.features.auth.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
-import com.smach.zapmancer.core.common.utils.Result
+import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import kotlinx.coroutines.launch
-
-import com.smach.zapmancer.core.common.utils.foldTyped
 
 sealed interface SignupEvent {
     data class EmailChanged(
@@ -59,7 +57,7 @@ class SignupViewModel(
                 },
                 onError = { error ->
                     updateState { copy(isLoading = false, error = error.toUserMessage()) }
-                }
+                },
             )
         }
     }

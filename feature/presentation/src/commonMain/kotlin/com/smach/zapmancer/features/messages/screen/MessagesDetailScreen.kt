@@ -62,7 +62,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.MessageItem
 import com.smach.zapmancer.domain.model.MessageStatus
 import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
@@ -128,8 +127,13 @@ fun MessageDetailContent(
     val windowLayout = LocalWindowLayout.current
 
     val body = @Composable { padding: PaddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-            Column(modifier = Modifier.fillMaxSize().widthIn(max = windowLayout.contentMaxWidthDp.dp)) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize().widthIn(max = windowLayout.contentMaxWidthDp.dp)
+            ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     contentPadding = PaddingValues(16.dp),
@@ -138,13 +142,24 @@ fun MessageDetailContent(
                 ) {
                     if (state.isContactTyping) {
                         item {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
                                 UserAvatar(imageUrl = state.contactAvatarUrl, size = 32.dp)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Surface(
                                     color = MaterialTheme.colorScheme.surfaceVariant,
-                                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 0.dp, bottomEnd = 16.dp),
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    shape = RoundedCornerShape(
+                                        topStart = 16.dp,
+                                        topEnd = 16.dp,
+                                        bottomStart = 0.dp,
+                                        bottomEnd = 16.dp
+                                    ),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outlineVariant
+                                    ),
                                     shadowElevation = 1.dp,
                                     modifier = Modifier.padding(bottom = 8.dp),
                                 ) {
@@ -156,15 +171,24 @@ fun MessageDetailContent(
                     items(state.messages.reversed()) { message -> MessageBubble(message) }
                     item {
                         if (state.conversationDate.isNotBlank()) {
-                            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Surface(
                                     color = MaterialTheme.colorScheme.surface,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                                    shape = RoundedCornerShape(20.dp),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outlineVariant
+                                    ),
+                                    shape = MaterialTheme.shapes.large,
                                 ) {
                                     Text(
                                         state.conversationDate,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 4.dp
+                                        ),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium,
@@ -185,17 +209,35 @@ fun MessageDetailContent(
                     titleContent = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onEvent(MessagesDetailEvent.ProfileClicked(state.contactName)) },
+                            modifier = Modifier.clickable {
+                                onEvent(
+                                    MessagesDetailEvent.ProfileClicked(
+                                        state.contactName
+                                    )
+                                )
+                            },
                         ) {
                             UserAvatar(imageUrl = state.contactAvatarUrl, size = 40.dp)
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                                Text(state.contactName, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                                Text(
+                                    state.contactName,
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                                 if (state.isOnline) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
+                                        Box(
+                                            modifier = Modifier.size(8.dp).clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary)
+                                        )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Online", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+                                        Text(
+                                            "Online",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Medium
+                                        )
                                     }
                                 }
                             }
@@ -205,13 +247,25 @@ fun MessageDetailContent(
                     onBackClick = { onEvent(MessagesDetailEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = { onVideocamClick() }) {
-                            Icon(Icons.Default.Videocam, contentDescription = "Video call", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(
+                                Icons.Default.Videocam,
+                                contentDescription = "Video call",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                         IconButton(onClick = { onCallClick() }) {
-                            Icon(Icons.Default.Call, contentDescription = "Voice call", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(
+                                Icons.Default.Call,
+                                contentDescription = "Voice call",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                         IconButton(onClick = { onMoreClick() }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -249,7 +303,10 @@ fun MessageBubble(message: MessageItem) {
                     bottomStart = if (message.isFromMe) 16.dp else 0.dp,
                     bottomEnd = if (message.isFromMe) 0.dp else 16.dp,
                 ),
-                border = if (message.isFromMe) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                border = if (message.isFromMe) null else BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant
+                ),
                 shadowElevation = 1.dp,
             ) {
                 Text(
@@ -263,15 +320,25 @@ fun MessageBubble(message: MessageItem) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
             ) {
-                Text(message.timestamp, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    message.timestamp,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
                     val icon = when (message.status) {
                         MessageStatus.READ -> Icons.Default.DoneAll
                         else -> Icons.Default.Done
                     }
-                    val tint = if (message.status == MessageStatus.READ) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    Icon(imageVector = icon, contentDescription = null, tint = tint, modifier = Modifier.size(14.dp))
+                    val tint =
+                        if (message.status == MessageStatus.READ) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = tint,
+                        modifier = Modifier.size(14.dp)
+                    )
                 }
             }
         }
@@ -293,15 +360,27 @@ fun MessageInput(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                        .background(
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.shapes.medium
+                        )
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            MaterialTheme.shapes.medium
+                        )
                         .padding(4.dp),
                 ) {
                     Column {
                         TextField(
                             value = typingText,
                             onValueChange = { onEvent(MessagesDetailEvent.OnTextChanged(it)) },
-                            placeholder = { Text("Write a message...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                            placeholder = {
+                                Text(
+                                    "Write a message...",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
@@ -311,31 +390,48 @@ fun MessageInput(
                             ),
                         )
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                 IconButton(onClick = {}) {
-                                    Icon(Icons.Outlined.AddCircle, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Icon(
+                                        Icons.Outlined.AddCircle,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                                 IconButton(onClick = {}) {
-                                    Icon(Icons.Outlined.SentimentSatisfied, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Icon(
+                                        Icons.Outlined.SentimentSatisfied,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                                 IconButton(onClick = {}) {
-                                    Icon(Icons.Outlined.AttachFile, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Icon(
+                                        Icons.Outlined.AttachFile,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             }
                             Button(
                                 onClick = { onEvent(MessagesDetailEvent.SendMessage) },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(20.dp),
+                                shape = MaterialTheme.shapes.large,
                                 contentPadding = PaddingValues(horizontal = 20.dp),
                                 modifier = Modifier.height(36.dp),
                             ) {
                                 Text("Send", fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Icon(Icons.AutoMirrored.Filled.Send, null, modifier = Modifier.size(16.dp))
+                                Icon(
+                                    Icons.AutoMirrored.Filled.Send,
+                                    null,
+                                    modifier = Modifier.size(16.dp)
+                                )
                             }
                         }
                     }
@@ -384,9 +480,25 @@ fun MessageDetailScreenPreview() {
                     contactName = "Alex Rivera",
                     isOnline = true,
                     messages = listOf(
-                        MessageItem(id = "1", text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?", timestamp = "09:42 AM", isFromMe = false),
-                        MessageItem(id = "2", text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.", timestamp = "09:45 AM", isFromMe = true, status = MessageStatus.READ),
-                        MessageItem(id = "3", text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.", timestamp = "09:46 AM", isFromMe = false),
+                        MessageItem(
+                            id = "1",
+                            text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?",
+                            timestamp = "09:42 AM",
+                            isFromMe = false
+                        ),
+                        MessageItem(
+                            id = "2",
+                            text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.",
+                            timestamp = "09:45 AM",
+                            isFromMe = true,
+                            status = MessageStatus.READ
+                        ),
+                        MessageItem(
+                            id = "3",
+                            text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.",
+                            timestamp = "09:46 AM",
+                            isFromMe = false
+                        ),
                     ),
                     isContactTyping = true,
                 ),
