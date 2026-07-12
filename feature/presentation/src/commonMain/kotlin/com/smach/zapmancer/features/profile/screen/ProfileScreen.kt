@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -56,6 +55,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,13 +67,14 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.domain.model.PortfolioItem
 import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.features.common.components.AppImage
+import com.smach.zapmancer.features.common.components.ErrorState
 import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.VerticalDivider
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEffect
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
 import com.smach.zapmancer.features.profile.viewmodel.ProfileViewModel
-import com.smach.zapmancer.features.projects.screen.VerticalDivider
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -147,66 +149,70 @@ fun ProfileContent(
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
-                contentPadding = PaddingValues(bottom = 32.dp),
-            ) {
-                item { IdentityHeader(state, onEvent) }
-
-                item {
-                    ProfileSectionCard(title = "About") {
-                        Text(
-                            text = state.about,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 22.sp,
-                        )
-                    }
+            when {
+                state.error != null -> {
+                    ErrorState(
+                        description = state.error,
+                        onButtonClick = { onEvent(ProfileEvent.Refresh) },
+                    )
                 }
 
-                item {
-                    ProfileSectionCard(title = "Skills") {
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            state.skills.forEach { skill ->
-                                SkillChip(skill)
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
+                        contentPadding = PaddingValues(bottom = 32.dp),
+                    ) {
+                        item { IdentityHeader(state, onEvent) }
+
+                        item {
+                            ProfileSectionCard(title = "About") {
+                                Text(
+                                    text = state.about,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    lineHeight = 22.sp,
+                                )
                             }
                         }
-                    }
-                }
 
-                item {
-                    SectionTitleRow(title = "Portfolio")
-                }
-                items(state.portfolioItems) { project ->
-                    PortfolioCard(item = project)
-                }
-                item {
-                    OnMoreButton(
-                        text = "See more",
-                        onClick = {
-                            onEvent(ProfileEvent.PortfolioMore)
-                        },
-                    )
-                }
-                item {
-                    SectionTitleRow(title = "Top Reviews")
-                }
-                items(state.reviews) { review ->
-                    ReviewCard(review = review, onProfileClick = onProfileClick)
-                }
-                item {
-                    OnMoreButton(
-                        text = "See more reviews",
-                        onClick = {
-                            onEvent(ProfileEvent.ReviewMore)
-                        },
-                    )
+                        item {
+                            ProfileSectionCard(title = "Skills") {
+                                FlowRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    state.skills.forEach { skill ->
+                                        SkillChip(skill)
+                                    }
+                                }
+                            }
+                        }
+
+                        item {
+                            SectionTitleRow(
+                                title = "Portfolio",
+                                actionText = "See more",
+                                onActionClick = { onEvent(ProfileEvent.PortfolioMore) },
+                            )
+                        }
+                        items(state.portfolioItems) { project ->
+                            PortfolioCard(item = project)
+                        }
+
+                        item {
+                            SectionTitleRow(
+                                title = "Top Reviews",
+                                actionText = "See all",
+                                onActionClick = { onEvent(ProfileEvent.ReviewMore) },
+                            )
+                        }
+                        items(state.reviews) { review ->
+                            ReviewCard(review = review, onProfileClick = onProfileClick)
+                        }
+                    }
                 }
             }
         }
@@ -367,44 +373,26 @@ fun IdentityHeader(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (!state.isOwnProfile) {
-                Button(
-                    onClick = {
-                        onEvent(ProfileEvent.HireMe)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    shape = RoundedCornerShape(999.dp),
-                ) {
-                    Text(
-                        text = "Hire Me",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                    )
-                }
-            } else {
-                Button(
-                    onClick = { onEvent(ProfileEvent.EditProfileClicked) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    shape = RoundedCornerShape(999.dp),
-                ) {
-                    Text(
-                        text = "Edit Profile",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                    )
-                }
+            // Deduplicated CTA button — only label & event differ
+            val ctaLabel = if (!state.isOwnProfile) "Hire Me" else "Edit Profile"
+            val ctaEvent = if (!state.isOwnProfile) ProfileEvent.HireMe else ProfileEvent.EditProfileClicked
+
+            Button(
+                onClick = { onEvent(ctaEvent) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.surface,
+                ),
+                shape = RoundedCornerShape(999.dp),
+            ) {
+                Text(
+                    text = ctaLabel,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
             }
         }
     }
@@ -415,14 +403,10 @@ fun ProfileSectionCard(title: String, content: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp),
-            ),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             Text(
@@ -508,7 +492,11 @@ fun InfoChip(
 }
 
 @Composable
-fun SectionTitleRow(title: String) {
+fun SectionTitleRow(
+    title: String,
+    actionText: String = "",
+    onActionClick: () -> Unit = {},
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -522,15 +510,15 @@ fun SectionTitleRow(title: String) {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
         )
-//        if (actionText.isNotEmpty()) {
-//            Text(
-//                text = actionText,
-//                style = MaterialTheme.typography.labelLarge,
-//                fontWeight = FontWeight.Bold,
-//                color = MaterialTheme.colorScheme.primary,
-//                modifier = Modifier.clickable { }
-//            )
-//        }
+        if (actionText.isNotEmpty()) {
+            Text(
+                text = actionText,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable(onClick = onActionClick),
+            )
+        }
     }
 }
 
@@ -539,16 +527,10 @@ fun PortfolioCard(item: PortfolioItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-//            .shadow(4.dp, RoundedCornerShape(16.dp))
-            .clickable { }
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp),
-            ),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column {
             AppImage(
@@ -581,14 +563,10 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                RoundedCornerShape(16.dp),
-            ),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             val drawLineColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
@@ -621,7 +599,12 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
                     }
                 }
 
-                Row {
+                // Accessible star rating: semantic description on the Row
+                Row(
+                    modifier = Modifier.semantics {
+                        contentDescription = "${review.rating} out of 5 stars"
+                    },
+                ) {
                     repeat(review.rating) {
                         Icon(
                             imageVector = Icons.Default.Star,
@@ -653,24 +636,6 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
             )
         }
     }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun FlowRow(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    maxItemsInEachRow: Int = Int.MAX_VALUE,
-    content: @Composable FlowRowScope.() -> Unit,
-) {
-    FlowRow(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement,
-        maxItemsInEachRow = maxItemsInEachRow,
-        content = content,
-    )
 }
 
 @Preview

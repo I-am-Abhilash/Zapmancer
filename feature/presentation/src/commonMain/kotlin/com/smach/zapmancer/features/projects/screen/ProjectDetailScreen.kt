@@ -59,6 +59,7 @@ import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
 import com.smach.zapmancer.features.common.adaptive.WindowLayout
 import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
+import com.smach.zapmancer.features.common.components.VerticalDivider
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.projects.state.ProjectDetailUiState
 import com.smach.zapmancer.features.projects.viewmodel.ProjectDetailEffect
@@ -426,10 +427,7 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
     }
 }
 
-@Composable
-fun VerticalDivider(color: Color) {
-    Box(modifier = Modifier.width(1.dp).height(40.dp).background(color))
-}
+
 
 @Preview
 @Composable

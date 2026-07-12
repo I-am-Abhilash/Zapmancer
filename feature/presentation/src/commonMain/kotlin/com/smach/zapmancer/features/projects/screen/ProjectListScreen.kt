@@ -2,8 +2,10 @@ package com.smach.zapmancer.features.projects.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -25,18 +27,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.AccountBalance
+import androidx.compose.material.icons.outlined.Analytics
+import androidx.compose.material.icons.outlined.Assignment
+import androidx.compose.material.icons.outlined.BusinessCenter
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Devices
+import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material.icons.outlined.SupportAgent
+import androidx.compose.material.icons.outlined.Translate
+import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -48,12 +62,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -63,6 +79,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,8 +88,13 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
+import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
+import com.smach.zapmancer.features.common.adaptive.WindowLayout
+import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
+import com.smach.zapmancer.features.common.components.CategoryFilterBar
 import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
+import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.common.theme.Warning
 import com.smach.zapmancer.features.projects.state.ProjectListUiState
 import com.smach.zapmancer.features.projects.viewmodel.ProjectListEffect
@@ -90,6 +112,34 @@ fun ProjectListScreen(
     onNavigateToSearch: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
+    val windowLayout = rememberWindowLayout()
+    val listState = rememberLazyListState()
+
+    var isSearchBarVisible by remember { mutableStateOf(true) }
+    var lastScrollIndex by remember { mutableStateOf(0) }
+    var lastScrollOffset by remember { mutableStateOf(0) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+            .collect { (currentIndex, currentOffset) ->
+                if (currentIndex != lastScrollIndex || kotlin.math.abs(currentOffset - lastScrollOffset) > 15) {
+                    val isScrollingDown = when {
+                        currentIndex > lastScrollIndex -> true
+                        currentIndex < lastScrollIndex -> false
+                        else -> currentOffset > lastScrollOffset
+                    }
+
+                    if (isScrollingDown && (currentIndex > 0 || currentOffset > 150)) {
+                        isSearchBarVisible = false
+                    } else if (!isScrollingDown) {
+                        isSearchBarVisible = true
+                    }
+
+                    lastScrollIndex = currentIndex
+                    lastScrollOffset = currentOffset
+                }
+            }
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -97,6 +147,7 @@ fun ProjectListScreen(
                 is ProjectListEffect.NavigateToProjectDetail -> {
                     onNavigateToProjectDetail(effect.projectId)
                 }
+
                 ProjectListEffect.NavigateToSearch -> {
                     onNavigateToSearch()
                 }
@@ -104,32 +155,43 @@ fun ProjectListScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                ZapmancerTopBar(
-                    title = "Zapmancer",
-                    containerColor = MaterialTheme.colorScheme.background,
-                    drawBottomBorder = false,
-                )
-                AutoTypingSearchBarEmptyState(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                    onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) }
-                )
-                CategoryFilterBar(
-                    selectedCategory = state.category,
-                    onCategoryChange = { viewModel.onEvent(ProjectListEvent.CategorySelected(it)) },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-                )
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { paddingValues ->
-        ProjectListContent(
-            modifier = Modifier.padding(paddingValues),
-            state = state,
-            onEvent = viewModel::onEvent,
-        )
+    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
+        Scaffold(
+            topBar = {
+                Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                    ZapmancerTopBar(
+                        title = "Zapmancer",
+                        containerColor = MaterialTheme.colorScheme.background,
+                        drawBottomBorder = false,
+                    )
+                    AnimatedVisibility(
+                        visible = isSearchBarVisible,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Column {
+                            AutoTypingSearchBarEmptyState(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) }
+                            )
+                            CategoryFilterBar(
+                                selectedCategory = state.category,
+                                onCategoryChange = { viewModel.onEvent(ProjectListEvent.CategorySelected(it)) },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+        ) { paddingValues ->
+            ProjectListContent(
+                modifier = Modifier.padding(paddingValues),
+                state = state,
+                onEvent = viewModel::onEvent,
+                listState = listState,
+            )
+        }
     }
 }
 
@@ -139,77 +201,75 @@ fun ProjectListContent(
     modifier: Modifier = Modifier,
     state: ProjectListUiState,
     onEvent: (ProjectListEvent) -> Unit,
+    listState: LazyListState = rememberLazyListState(),
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         if (state.isLoading) {
-            item {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                )
-            }
-        }
-        if (state.error != null) {
-            item {
-                EmptyState(
-                    title = state.error,
-                    description = "No projects found",
-                    buttonText = "Refresh",
-                    onButtonClick = { onEvent(ProjectListEvent.Refresh) },
-                    icon = Icons.Default.Search
-                )
-            }
-        }
-
-        val projects = if (state.category == ProjectCategory.ALL) {
-            state.projects
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+            )
+        } else if (state.error != null) {
+            EmptyState(
+                title = state.error,
+                description = "No projects found",
+                buttonText = "Refresh",
+                onButtonClick = { onEvent(ProjectListEvent.Refresh) },
+                icon = Icons.Default.Search
+            )
         } else {
-            state.projects.filter {
-                it.category == state.category
+            val projects = if (state.category == ProjectCategory.ALL) {
+                state.projects
+            } else {
+                state.projects.filter {
+                    it.category == state.category
+                }
             }
-        }
-//
-//        item {
-//            Spacer(modifier = Modifier.height(8.dp))
-//            PortfolioHeader()
-//        }
 
-        if (projects.isEmpty() && !state.isLoading && state.error == null) {
-            item {
+            if (projects.isEmpty()) {
                 EmptyState(
                     title = "No projects found",
                     description = "There are no projects available in the ${state.category.displayName} category.",
                     icon = Icons.Outlined.Devices,
                 )
-            }
-        }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(projects, key = { it.id }) { project ->
+                        val isPreview = LocalInspectionMode.current
+                        var visible by remember { mutableStateOf(isPreview) }
+                        LaunchedEffect(Unit) {
+                            if (!isPreview) {
+                                visible = true
+                            }
+                        }
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = fadeIn(animationSpec = tween(400)) + slideInVertically(
+                                initialOffsetY = { it / 4 },
+                                animationSpec = tween(400)
+                            ),
+                            exit = fadeOut()
+                        ) {
+                            ProjectItemCard(
+                                project = project,
+                                onClick = { onEvent(ProjectListEvent.ProjectClicked(project.id)) },
+                            )
+                        }
+                    }
 
-        items(projects, key = { it.id }) { project ->
-            var visible by remember { mutableStateOf(false) }
-            LaunchedEffect(Unit) {
-                visible = true
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                }
             }
-            AnimatedVisibility(
-                visible = visible,
-                enter = fadeIn(animationSpec = tween(400)) + slideInVertically(
-                    initialOffsetY = { it / 4 },
-                    animationSpec = tween(400)
-                ),
-                exit = fadeOut()
-            ) {
-                ProjectItemCard(
-                    project = project,
-                    onClick = { onEvent(ProjectListEvent.ProjectClicked(project.id)) },
-                )
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -233,6 +293,15 @@ fun CategoryFilterBar(
                 ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
                 ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
                 ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
+                ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
+                ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
+                ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
+                ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
+                ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
+                ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
+                ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
+                ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
+                ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
             }
             FilterChip(
                 selected = isSelected,
@@ -306,6 +375,15 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         ProjectCategory.DEVELOPMENT -> Icons.Outlined.Devices
         ProjectCategory.MARKETING -> Icons.Outlined.Campaign
         ProjectCategory.ALL -> Icons.Outlined.Devices
+        ProjectCategory.WRITING -> Icons.Outlined.Translate
+        ProjectCategory.MULTIMEDIA -> Icons.Outlined.VideoLibrary
+        ProjectCategory.CONSULTING -> Icons.Outlined.BusinessCenter
+        ProjectCategory.ADMIN -> Icons.Outlined.Assignment
+        ProjectCategory.FINANCE -> Icons.Outlined.AccountBalance
+        ProjectCategory.LEGAL -> Icons.Outlined.Gavel
+        ProjectCategory.ANALYTICS -> Icons.Outlined.Analytics
+        ProjectCategory.SECURITY -> Icons.Outlined.Security
+        ProjectCategory.CUSTOMER_SUPPORT -> Icons.Outlined.SupportAgent
     }
 
     val accentColor = when (project.category) {
@@ -313,6 +391,15 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
         ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
         ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
         ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
+        ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
+        ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
+        ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
+        ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
+        ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
+        ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
+        ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
+        ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
+        ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
     }
 
     Card(
@@ -356,12 +443,6 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp,
                         )
-                        Text(
-                            project.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
                     }
                 }
 
@@ -390,7 +471,16 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                 }
             }
 
-//            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                project.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Text(
                 text = project.description,
                 style = MaterialTheme.typography.bodyMedium,
@@ -468,6 +558,10 @@ fun ProjectItemCard(project: ProjectUiModel, onClick: () -> Unit = {}) {
                             .fillMaxSize()
                             .background(
                                 Brush.radialGradient(
+                                    colors = listOf(
+                                        accentColor.copy(alpha = 0.2f),
+                                        Color.Transparent,
+                                    ),
                                     center = Offset(400f, 200f),
                                     radius = 300f,
                                 ),
@@ -580,10 +674,12 @@ fun AutoTypingSearchBarEmptyState(
         "Explore freelance projects...",
     )
 
-    var displayedText by remember { mutableStateOf("") }
+    val isPreview = LocalInspectionMode.current
+    var displayedText by remember { mutableStateOf(if (isPreview) hints.first() else "") }
     var cursorVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
+        if (isPreview) return@LaunchedEffect
         while (true) {
             cursorVisible = !cursorVisible
             delay(500.milliseconds)
@@ -591,13 +687,14 @@ fun AutoTypingSearchBarEmptyState(
     }
 
     LaunchedEffect(hints) {
+        if (isPreview) return@LaunchedEffect
         var hintIndex = 0
         while (true) {
             val currentHint = hints[hintIndex]
 
             for (i in 0..currentHint.length) {
                 displayedText = currentHint.substring(0, i)
-                delay(2000.milliseconds) // Typing speed (adjust for faster/slower)
+                delay(150.milliseconds) // Typing speed (adjust for faster/slower)
             }
 
             delay(2000.milliseconds)
@@ -674,40 +771,74 @@ fun ProjectStatus.color(): Color = when (this) {
     ProjectStatus.DONE -> MaterialTheme.colorScheme.outline
 }
 
-object ProjectPreviewData {
-
-    val projects = listOf(
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun ProjectListScreenPreview() {
+    val sampleProjects = listOf(
         ProjectUiModel(
             id = "1",
             category = ProjectCategory.DEVELOPMENT,
             status = ProjectStatus.ACTIVE,
             title = "Neural Engine Alpha",
-            description = "High-performance inference engine...",
+            description = "High-performance inference engine for edge devices.",
             progress = 78,
             footerText = "Optimization Progress",
             membersCount = 2,
         ),
-
         ProjectUiModel(
             id = "2",
             category = ProjectCategory.DESIGN,
             status = ProjectStatus.PENDING,
             title = "Lumina Design System",
-            description = "Unified token-based architecture...",
+            description = "Unified token-based architecture for multiplatform apps.",
             showImagePlaceholder = true,
             footerText = "Review: Oct 24",
         ),
+        ProjectUiModel(
+            id = "3",
+            category = ProjectCategory.WRITING,
+            status = ProjectStatus.ACTIVE,
+            title = "Whitepaper & Technical Docs",
+            description = "Drafting comprehensive technical documentation and whitepaper for Zapmancer Protocol.",
+            progress = 45,
+            footerText = "Milestone 2/4",
+            membersCount = 1,
+        ),
     )
-}
 
-@Preview
-@Composable
-fun ProjectListScreenPreview() {
-    MaterialTheme {
-        ProjectListContent(
-            state = ProjectListUiState(),
-            onEvent = {},
-        )
+    AppTheme {
+        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
+            Scaffold(
+                topBar = {
+                    Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                        ZapmancerTopBar(
+                            title = "Zapmancer",
+                            containerColor = MaterialTheme.colorScheme.background,
+                            drawBottomBorder = false,
+                        )
+                        AutoTypingSearchBarEmptyState(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            onSearchBarClick = {}
+                        )
+                        CategoryFilterBar(
+                            selectedCategory = ProjectCategory.ALL,
+                            onCategoryChange = {},
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                        )
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.background,
+            ) { paddingValues ->
+                ProjectListContent(
+                    modifier = Modifier.padding(paddingValues),
+                    state = ProjectListUiState(
+                        projects = sampleProjects
+                    ),
+                    onEvent = {},
+                )
+            }
+        }
     }
 }
 

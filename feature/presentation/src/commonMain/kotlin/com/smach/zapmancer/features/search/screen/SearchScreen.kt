@@ -32,7 +32,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Clear
@@ -85,7 +84,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectCategory
@@ -94,6 +92,7 @@ import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.search.state.SearchSortOption
 import com.smach.zapmancer.features.search.state.SearchUiState
+import com.smach.zapmancer.features.search.viewmodel.SearchEffect
 import com.smach.zapmancer.features.search.viewmodel.SearchEvent
 import com.smach.zapmancer.features.search.viewmodel.SearchViewModel
 
@@ -110,15 +109,15 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is com.smach.zapmancer.features.search.viewmodel.SearchEffect.ShowToast -> {
+                is SearchEffect.ShowToast -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
 
-                is com.smach.zapmancer.features.search.viewmodel.SearchEffect.NavigateToProjectDetail -> {
+                is SearchEffect.NavigateToProjectDetail -> {
                     onProjectClick(effect.projectId)
                 }
 
-                com.smach.zapmancer.features.search.viewmodel.SearchEffect.NavigateBack -> {
+                SearchEffect.NavigateBack -> {
                     onBackClick()
                 }
             }
@@ -175,16 +174,16 @@ fun SearchContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(
-                onClick = { onEvent(SearchEvent.BackClicked) },
-                modifier = Modifier.semantics { contentDescription = "Go Back" },
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                )
-            }
+//            IconButton(
+//                onClick = { onEvent(SearchEvent.BackClicked) },
+//                modifier = Modifier.semantics { contentDescription = "Go Back" },
+//            ) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                    contentDescription = null,
+//                    tint = MaterialTheme.colorScheme.onBackground,
+//                )
+//            }
 
             Spacer(modifier = Modifier.width(4.dp))
 
@@ -195,21 +194,16 @@ fun SearchContent(
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
-                    .semantics { contentDescription = "Search input field" }
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(24.dp)
-                    ),
+                    .semantics { contentDescription = "Search input field" },
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     disabledContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(28.dp),
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -349,18 +343,45 @@ private fun SearchFilterHeader(
             contentPadding = PaddingValues(end = 8.dp),
         ) {
             items(ProjectCategory.entries.toList()) { category ->
+                val isSelected = selectedCategory == category
+                val tintColor = when (category) {
+                    ProjectCategory.ALL -> MaterialTheme.colorScheme.primary
+                    ProjectCategory.DESIGN -> MaterialTheme.colorScheme.tertiary
+                    ProjectCategory.DEVELOPMENT -> MaterialTheme.colorScheme.primary
+                    ProjectCategory.MARKETING -> MaterialTheme.colorScheme.secondary
+                    ProjectCategory.WRITING -> MaterialTheme.colorScheme.secondary
+                    ProjectCategory.MULTIMEDIA -> MaterialTheme.colorScheme.tertiary
+                    ProjectCategory.CONSULTING -> MaterialTheme.colorScheme.primary
+                    ProjectCategory.ADMIN -> MaterialTheme.colorScheme.outline
+                    ProjectCategory.FINANCE -> MaterialTheme.colorScheme.primary
+                    ProjectCategory.LEGAL -> MaterialTheme.colorScheme.tertiary
+                    ProjectCategory.ANALYTICS -> MaterialTheme.colorScheme.secondary
+                    ProjectCategory.SECURITY -> MaterialTheme.colorScheme.primary
+                    ProjectCategory.CUSTOMER_SUPPORT -> MaterialTheme.colorScheme.outline
+                }
                 FilterChip(
-                    selected = selectedCategory == category,
+                    selected = isSelected,
                     onClick = { onCategoryChange(category) },
-                    label = { Text(category.displayName, fontSize = 12.sp) },
+                    label = {
+                        Text(
+                            category.displayName,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                        )
+                    },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                        selectedContainerColor = tintColor.copy(alpha = 0.15f),
+                        selectedLabelColor = tintColor,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
                         labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
-                    shape = RoundedCornerShape(16.dp),
-                    border = null,
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = if (isSelected) tintColor.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant.copy(
+                            alpha = 0.5f
+                        )
+                    ),
+                    shape = RoundedCornerShape(20.dp),
                 )
             }
         }
