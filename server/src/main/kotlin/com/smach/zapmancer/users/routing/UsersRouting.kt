@@ -39,7 +39,7 @@ fun Route.usersRouting() {
 
             put("/profile") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val request = call.receive<UpdateProfileRequest>()
                 call.respondResult(service.updateProfile(principal.uid, request))

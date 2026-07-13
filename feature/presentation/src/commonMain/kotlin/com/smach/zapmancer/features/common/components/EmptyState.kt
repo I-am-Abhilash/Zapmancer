@@ -31,9 +31,9 @@ fun EmptyState(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

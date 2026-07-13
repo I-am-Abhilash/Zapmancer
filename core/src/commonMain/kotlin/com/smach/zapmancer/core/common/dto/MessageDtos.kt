@@ -26,3 +26,40 @@ data class MessageItem(
 
 @Serializable
 data class SendMessageRequest(val text: String)
+
+@Serializable
+sealed interface ChatFrame {
+    @Serializable
+    sealed interface ClientToServer : ChatFrame {
+        @Serializable
+        data class Typing(val conversationId: String, val isTyping: Boolean) : ClientToServer
+    }
+
+    @Serializable
+    sealed interface ServerToClient : ChatFrame {
+        @Serializable
+        data class NewMessage(val conversationId: String, val message: MessageItem) : ServerToClient
+
+        @Serializable
+        data class MessageStatusUpdate(
+            val conversationId: String,
+            val messageId: String,
+            val status: String,
+        ) : ServerToClient
+
+        @Serializable
+        data class TypingUpdate(
+            val conversationId: String,
+            val isTyping: Boolean,
+        ) : ServerToClient
+
+        @Serializable
+        data class PresenceUpdate(
+            val conversationId: String,
+            val isOnline: Boolean,
+        ) : ServerToClient
+
+        @Serializable
+        data class Error(val reason: String) : ServerToClient
+    }
+}

@@ -102,8 +102,8 @@ class SettingsViewModel(
                     updateState {
                         copy(
                             settings = settings?.copy(
-                                isEmailNotificationsEnabled = enabled
-                            )
+                                isEmailNotificationsEnabled = enabled,
+                            ),
                         )
                     }
                 },

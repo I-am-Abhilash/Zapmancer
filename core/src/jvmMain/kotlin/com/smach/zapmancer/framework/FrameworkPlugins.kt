@@ -26,8 +26,11 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.ktor.plugin.Koin
@@ -71,6 +74,13 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         register(RateLimitName("auth")) {
             rateLimiter(limit = 5, refillPeriod = 60.seconds)
         }
+    }
+
+    install(WebSockets) {
+        pingPeriod = 15.seconds
+        timeout = 15.seconds
+        maxFrameSize = Long.MAX_VALUE
+        masking = false
     }
 
     // 3. Content Negotiation - JSON Serialization
@@ -127,7 +137,7 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
                     false,
                     error = ApiError(
                         "BAD_REQUEST",
-                        cause.message ?: "Malformed request body or parameters"
+                        cause.message ?: "Malformed request body or parameters",
                     ),
                 ),
             )
@@ -162,7 +172,7 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
             call.respondText(
                 appMicrometerRegistry.scrape(),
                 ContentType.Text.Plain,
-                HttpStatusCode.OK
+                HttpStatusCode.OK,
             )
         }
     }

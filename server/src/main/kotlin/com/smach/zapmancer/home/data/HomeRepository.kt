@@ -51,28 +51,27 @@ class HomeRepository {
      * Returns the user's most recent applied projects as activity items.
      * In a production system, a dedicated 'activities' table would be used.
      */
-    suspend fun getRecentActivities(userId: String, limit: Int = 5): List<RecentActivity> =
-        dbQuery {
-            (ProjectApplicationsTable innerJoin ProjectsTable)
-                .selectAll()
-                .where { ProjectApplicationsTable.userId eq userId }
-                .orderBy(
-                    ProjectApplicationsTable.appliedAt,
-                    org.jetbrains.exposed.v1.core.SortOrder.DESC
+    suspend fun getRecentActivities(userId: String, limit: Int = 5): List<RecentActivity> = dbQuery {
+        (ProjectApplicationsTable innerJoin ProjectsTable)
+            .selectAll()
+            .where { ProjectApplicationsTable.userId eq userId }
+            .orderBy(
+                ProjectApplicationsTable.appliedAt,
+                org.jetbrains.exposed.v1.core.SortOrder.DESC,
+            )
+            .limit(limit)
+            .map { row ->
+                RecentActivity(
+                    id = row[ProjectsTable.id],
+                    projectName = row[ProjectsTable.title],
+                    category = row[ProjectsTable.category],
+                    categoryTag = row[ProjectsTable.category].take(3).uppercase(),
+                    status = "IN_PROGRESS",
+                    date = "Recently",
+                    value = row[ProjectsTable.budgetRange],
                 )
-                .limit(limit)
-                .map { row ->
-                    RecentActivity(
-                        id = row[ProjectsTable.id],
-                        projectName = row[ProjectsTable.title],
-                        category = row[ProjectsTable.category],
-                        categoryTag = row[ProjectsTable.category].take(3).uppercase(),
-                        status = "IN_PROGRESS",
-                        date = "Recently",
-                        value = row[ProjectsTable.budgetRange],
-                    )
-                }
-        }
+            }
+    }
 
     companion object {
         /** Default project capacity until a per-user setting is implemented. */

@@ -90,11 +90,11 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            OnboardingCompact(pages, pagerState, scope, onFinished)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        OnboardingCompact(pages, pagerState, scope, onFinished)
     }
 }
 
@@ -132,7 +132,7 @@ private fun OnboardingCompact(
                         page.icon,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(72.dp)
+                        modifier = Modifier.size(72.dp),
                     )
                 }
                 Spacer(modifier = Modifier.height(48.dp))
@@ -140,7 +140,7 @@ private fun OnboardingCompact(
                     text = page.title,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -149,7 +149,7 @@ private fun OnboardingCompact(
                     text = page.description,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         textAlign = TextAlign.Center,
-                        lineHeight = 26.sp
+                        lineHeight = 26.sp,
                     ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -193,7 +193,7 @@ private fun OnboardingMedium(
                         page.icon,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(96.dp)
+                        modifier = Modifier.size(96.dp),
                     )
                 }
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
@@ -243,14 +243,14 @@ private fun OnboardingExpanded(
                     Icons.Default.Bolt,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(120.dp)
+                    modifier = Modifier.size(120.dp),
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     "Zapmancer",
                     color = Color.White,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 40.sp
+                    fontSize = 40.sp,
                 )
                 Text(
                     "Build the future of decentralized apps.",
@@ -290,7 +290,7 @@ private fun OnboardingExpanded(
                             page.icon,
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(56.dp)
+                            modifier = Modifier.size(56.dp),
                         )
                     }
                     Spacer(modifier = Modifier.height(32.dp))
@@ -323,14 +323,14 @@ private fun OnboardingBrandHeader(centered: Boolean) {
             Icons.Default.Bolt,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             "Zapmancer",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             ),
             color = MaterialTheme.colorScheme.primary,
         )

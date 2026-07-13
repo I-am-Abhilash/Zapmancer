@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.ProfileRepository
 class GetUserProfileUseCase(
     private val repository: ProfileRepository,
 ) {
-    suspend operator fun invoke(userId: String? = null): Result<UserProfile, DataError.Network> =
-        repository.getProfile(userId)
+    suspend operator fun invoke(userId: String? = null): Result<UserProfile, DataError.Network> = repository.getProfile(userId)
 }

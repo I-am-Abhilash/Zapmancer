@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.bcrypt)
     implementation(libs.koin.ktor)
     implementation(libs.ktor.server.rate.limit)
+    implementation(libs.ktor.server.websockets)
     implementation(libs.kotlinx.datetime)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.postgresql)

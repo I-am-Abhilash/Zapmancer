@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.SettingsRepository
 class UpdateClientModeUseCase(
     private val repository: SettingsRepository,
 ) {
-    suspend operator fun invoke(enabled: Boolean): Result<Unit, DataError.Network> =
-        repository.updateClientMode(enabled)
+    suspend operator fun invoke(enabled: Boolean): Result<Unit, DataError.Network> = repository.updateClientMode(enabled)
 }

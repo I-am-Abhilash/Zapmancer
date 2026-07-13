@@ -89,6 +89,22 @@ fun Application.configureSecurity() {
          */
         jwt("local-jwt") {
             realm = "Zapmancer"
+            authHeader { call ->
+                val authHeaderString = call.request.headers[io.ktor.http.HttpHeaders.Authorization]
+                if (authHeaderString != null) {
+                    try {
+                        val token = authHeaderString.removePrefix("Bearer ").trim()
+                        if (token.isNotEmpty()) {
+                            return@authHeader io.ktor.http.auth.HttpAuthHeader.Single("Bearer", token)
+                        }
+                    } catch (_: Exception) {}
+                }
+                val token = call.request.queryParameters["token"]
+                if (token != null && token.isNotEmpty()) {
+                    return@authHeader io.ktor.http.auth.HttpAuthHeader.Single("Bearer", token)
+                }
+                null
+            }
             verifier(
                 JWT.require(JwtConfig.getAlgorithm())
                     .withIssuer(JwtConfig.ISSUER)

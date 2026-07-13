@@ -137,49 +137,49 @@ fun ProjectListScreen(
         }
     }
 
-        Scaffold(
-            topBar = {
-                Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                    ZapmancerTopBar(
-                        title = "Zapmancer",
-                        containerColor = MaterialTheme.colorScheme.background,
-                        drawBottomBorder = false,
-                    )
-                    AnimatedVisibility(
-                        visible = isSearchBarVisible,
-                        enter = expandVertically() + fadeIn(),
-                        exit = shrinkVertically() + fadeOut(),
-                    ) {
-                        Column {
-                            AutoTypingSearchBarEmptyState(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                                onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) },
-                            )
-                            CategoryFilterBar(
-                                selectedCategory = state.category,
-                                onCategoryChange = {
-                                    viewModel.onEvent(
-                                        ProjectListEvent.CategorySelected(
-                                            it
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                            )
-                        }
+    Scaffold(
+        topBar = {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                ZapmancerTopBar(
+                    title = "Zapmancer",
+                    containerColor = MaterialTheme.colorScheme.background,
+                    drawBottomBorder = false,
+                )
+                AnimatedVisibility(
+                    visible = isSearchBarVisible,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    Column {
+                        AutoTypingSearchBarEmptyState(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            onSearchBarClick = { viewModel.onEvent(ProjectListEvent.SearchClicked) },
+                        )
+                        CategoryFilterBar(
+                            selectedCategory = state.category,
+                            onCategoryChange = {
+                                viewModel.onEvent(
+                                    ProjectListEvent.CategorySelected(
+                                        it,
+                                    ),
+                                )
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                        )
                     }
                 }
-            },
-            containerColor = MaterialTheme.colorScheme.background,
-        ) { paddingValues ->
-            ProjectListContent(
-                modifier = Modifier.padding(paddingValues),
-                state = state,
-                onEvent = viewModel::onEvent,
-                listState = listState,
-            )
-        }
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { paddingValues ->
+        ProjectListContent(
+            modifier = Modifier.padding(paddingValues),
+            state = state,
+            onEvent = viewModel::onEvent,
+            listState = listState,
+        )
     }
+}
 
 @Composable
 fun ProjectListContent(
@@ -647,35 +647,34 @@ fun ProjectListScreenPreview() {
     )
 
     AppTheme {
-            Scaffold(
-                topBar = {
-                    Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                        ZapmancerTopBar(
-                            title = "Zapmancer",
-                            containerColor = MaterialTheme.colorScheme.background,
-                            drawBottomBorder = false,
-                        )
-                        AutoTypingSearchBarEmptyState(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                            onSearchBarClick = {},
-                        )
-                        CategoryFilterBar(
-                            selectedCategory = ProjectCategory.ALL,
-                            onCategoryChange = {},
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                        )
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.background,
-            ) { paddingValues ->
-                ProjectListContent(
-                    modifier = Modifier.padding(paddingValues),
-                    state = ProjectListUiState(
-                        projects = sampleProjects,
-                    ),
-                    onEvent = {},
-                )
-            }
-
+        Scaffold(
+            topBar = {
+                Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                    ZapmancerTopBar(
+                        title = "Zapmancer",
+                        containerColor = MaterialTheme.colorScheme.background,
+                        drawBottomBorder = false,
+                    )
+                    AutoTypingSearchBarEmptyState(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                        onSearchBarClick = {},
+                    )
+                    CategoryFilterBar(
+                        selectedCategory = ProjectCategory.ALL,
+                        onCategoryChange = {},
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+        ) { paddingValues ->
+            ProjectListContent(
+                modifier = Modifier.padding(paddingValues),
+                state = ProjectListUiState(
+                    projects = sampleProjects,
+                ),
+                onEvent = {},
+            )
+        }
     }
 }

@@ -1,53 +1,53 @@
-//package com.smach.zapmancer.features.common.adaptive
+// package com.smach.zapmancer.features.common.adaptive
 //
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.PaddingValues
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.WindowInsets
-//import androidx.compose.foundation.layout.fillMaxHeight
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.layout.width
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.Add
-//import androidx.compose.material.icons.filled.ChatBubble
-//import androidx.compose.material.icons.filled.Home
-//import androidx.compose.material.icons.filled.Notifications
-//import androidx.compose.material.icons.filled.Person
-//import androidx.compose.material.icons.filled.Work
-//import androidx.compose.material3.DrawerValue
-//import androidx.compose.material3.ExperimentalMaterial3Api
-//import androidx.compose.material3.FloatingActionButton
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.ModalDrawerSheet
-//import androidx.compose.material3.ModalNavigationDrawer
-//import androidx.compose.material3.NavigationBar
-//import androidx.compose.material3.NavigationBarItem
-//import androidx.compose.material3.NavigationDrawerItem
-//import androidx.compose.material3.NavigationDrawerItemDefaults
-//import androidx.compose.material3.NavigationRail
-//import androidx.compose.material3.NavigationRailItem
-//import androidx.compose.material3.Scaffold
-//import androidx.compose.material3.Text
-//import androidx.compose.material3.rememberDrawerState
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.CompositionLocalProvider
-//import androidx.compose.runtime.remember
-//import androidx.compose.runtime.rememberCoroutineScope
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.graphics.vector.ImageVector
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.unit.dp
-//import com.smach.zapmancer.features.common.components.DrawerController
-//import com.smach.zapmancer.features.common.components.LocalDrawerController
-//import kotlinx.coroutines.CoroutineScope
-//import kotlinx.coroutines.launch
+// import androidx.compose.foundation.layout.Box
+// import androidx.compose.foundation.layout.Column
+// import androidx.compose.foundation.layout.PaddingValues
+// import androidx.compose.foundation.layout.Row
+// import androidx.compose.foundation.layout.Spacer
+// import androidx.compose.foundation.layout.WindowInsets
+// import androidx.compose.foundation.layout.fillMaxHeight
+// import androidx.compose.foundation.layout.fillMaxSize
+// import androidx.compose.foundation.layout.padding
+// import androidx.compose.foundation.layout.width
+// import androidx.compose.material.icons.Icons
+// import androidx.compose.material.icons.filled.Add
+// import androidx.compose.material.icons.filled.ChatBubble
+// import androidx.compose.material.icons.filled.Home
+// import androidx.compose.material.icons.filled.Notifications
+// import androidx.compose.material.icons.filled.Person
+// import androidx.compose.material.icons.filled.Work
+// import androidx.compose.material3.DrawerValue
+// import androidx.compose.material3.ExperimentalMaterial3Api
+// import androidx.compose.material3.FloatingActionButton
+// import androidx.compose.material3.Icon
+// import androidx.compose.material3.MaterialTheme
+// import androidx.compose.material3.ModalDrawerSheet
+// import androidx.compose.material3.ModalNavigationDrawer
+// import androidx.compose.material3.NavigationBar
+// import androidx.compose.material3.NavigationBarItem
+// import androidx.compose.material3.NavigationDrawerItem
+// import androidx.compose.material3.NavigationDrawerItemDefaults
+// import androidx.compose.material3.NavigationRail
+// import androidx.compose.material3.NavigationRailItem
+// import androidx.compose.material3.Scaffold
+// import androidx.compose.material3.Text
+// import androidx.compose.material3.rememberDrawerState
+// import androidx.compose.runtime.Composable
+// import androidx.compose.runtime.CompositionLocalProvider
+// import androidx.compose.runtime.remember
+// import androidx.compose.runtime.rememberCoroutineScope
+// import androidx.compose.ui.Alignment
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.graphics.vector.ImageVector
+// import androidx.compose.ui.text.font.FontWeight
+// import androidx.compose.ui.unit.dp
+// import com.smach.zapmancer.features.common.components.DrawerController
+// import com.smach.zapmancer.features.common.components.LocalDrawerController
+// import kotlinx.coroutines.CoroutineScope
+// import kotlinx.coroutines.launch
 //
-///**
+// /**
 // * Top-level destinations in the app. The same list is used by the
 // * bottom navigation bar (compact), the navigation rail (medium) and
 // * the navigation drawer (expanded).
@@ -56,19 +56,19 @@
 // * [com.smach.zapmancer.nav.Screen] sealed class. If they don't,
 // * change them here in one place.
 // */
-//enum class NavDestination(
+// enum class NavDestination(
 //    val route: String,
 //    val label: String,
 //    val icon: ImageVector,
-//) {
+// ) {
 //    Home("home", "Home", Icons.Default.Home),
 //    Projects("projects", "Projects", Icons.Default.Work),
 //    Messages("messages", "Messages", Icons.Default.ChatBubble),
 //    Notifications("notifications", "Alerts", Icons.Default.Notifications),
 //    Profile("profile", "Profile", Icons.Default.Person),
-//}
+// }
 //
-///**
+// /**
 // * Adaptive scaffold that swaps the navigation chrome based on the
 // * current [WindowLayout]:
 // *
@@ -88,15 +88,15 @@
 // * `NavigationState`) and an [onNavigate] callback that updates the
 // * active destination.
 // */
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun AdaptiveScaffold(
+// @OptIn(ExperimentalMaterial3Api::class)
+// @Composable
+// fun AdaptiveScaffold(
 //    currentRoute: String,
 //    onNavigate: (NavDestination) -> Unit,
 //    onCreateProjectClick: () -> Unit = {},
 //    title: (@Composable () -> Unit)? = null,
 //    content: @Composable (PaddingValues) -> Unit,
-//) {
+// ) {
 //    val windowLayout = LocalWindowLayout.current
 //    val scope = rememberCoroutineScope()
 //
@@ -125,17 +125,17 @@
 //            content = content,
 //        )
 //    }
-//}
+// }
 //
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun CompactScaffold(
+// @OptIn(ExperimentalMaterial3Api::class)
+// @Composable
+// private fun CompactScaffold(
 //    currentRoute: String,
 //    onNavigate: (NavDestination) -> Unit,
 //    onCreateProjectClick: () -> Unit,
 //    title: (@Composable () -> Unit)?,
 //    content: @Composable (PaddingValues) -> Unit,
-//) {
+// ) {
 //    Scaffold(
 //        topBar = { title?.invoke() },
 //        bottomBar = {
@@ -164,17 +164,17 @@
 //        containerColor = MaterialTheme.colorScheme.background,
 //        contentWindowInsets = WindowInsets(0),
 //    ) { padding -> content(padding) }
-//}
+// }
 //
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun MediumScaffold(
+// @OptIn(ExperimentalMaterial3Api::class)
+// @Composable
+// private fun MediumScaffold(
 //    currentRoute: String,
 //    onNavigate: (NavDestination) -> Unit,
 //    onCreateProjectClick: () -> Unit,
 //    title: (@Composable () -> Unit)?,
 //    content: @Composable (PaddingValues) -> Unit,
-//) {
+// ) {
 //    Row(modifier = Modifier.fillMaxSize()) {
 //        NavigationRail(
 //            modifier = Modifier.fillMaxHeight(),
@@ -208,17 +208,17 @@
 //            contentWindowInsets = WindowInsets(0),
 //        ) { padding -> content(padding) }
 //    }
-//}
+// }
 //
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun ExpandedScaffold(
+// @OptIn(ExperimentalMaterial3Api::class)
+// @Composable
+// private fun ExpandedScaffold(
 //    currentRoute: String,
 //    onNavigate: (NavDestination) -> Unit,
 //    onCreateProjectClick: () -> Unit,
 //    title: (@Composable () -> Unit)?,
 //    content: @Composable (PaddingValues) -> Unit,
-//) {
+// ) {
 //    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
 //
 //    // On expanded, the drawer is always open and doesn't need a
@@ -260,19 +260,19 @@
 //            ) { padding -> content(padding) }
 //        }
 //    }
-//}
+// }
 //
-///**
+// /**
 // * The list of destinations used inside the navigation drawer on
 // * compact and expanded windows. Visually consistent with Material 3
 // * `NavigationDrawerItem`s.
 // */
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun NavigationDrawerBody(
+// @OptIn(ExperimentalMaterial3Api::class)
+// @Composable
+// private fun NavigationDrawerBody(
 //    currentRoute: String,
 //    onNavigate: (NavDestination) -> Unit,
-//) {
+// ) {
 //    ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.surface) {
 //        Column(
 //            modifier = Modifier
@@ -319,4 +319,4 @@
 //            }
 //        }
 //    }
-//}
+// }

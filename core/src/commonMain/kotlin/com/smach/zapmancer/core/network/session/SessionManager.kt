@@ -33,8 +33,7 @@ class SessionManager(
 
     suspend fun getRefreshToken(): String? = storage.getString(KEY_REFRESH_TOKEN).first()
 
-    fun getOnboardingCompleted(): Flow<Boolean> =
-        storage.getString(KEY_ONBOARDING).map { it == "true" }
+    fun getOnboardingCompleted(): Flow<Boolean> = storage.getString(KEY_ONBOARDING).map { it == "true" }
 
     suspend fun saveOnboardingCompleted(completed: Boolean) {
         storage.saveString(KEY_ONBOARDING, completed.toString())

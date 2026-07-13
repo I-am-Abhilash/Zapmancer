@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.SettingsRepository
 class UpdateTwoFactorUseCase(
     private val repository: SettingsRepository,
 ) {
-    suspend operator fun invoke(enabled: Boolean): Result<Unit, DataError.Network> =
-        repository.updateTwoFactor(enabled)
+    suspend operator fun invoke(enabled: Boolean): Result<Unit, DataError.Network> = repository.updateTwoFactor(enabled)
 }

@@ -23,15 +23,14 @@ class HomeRepositoryImpl(
     private val client: HttpClient,
 ) : HomeRepository {
 
-    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> =
-        safeApiCall<HomeDashboardDto> {
-            client.get("home/dashboard")
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.toDomain())
-                is Result.Error -> result
-            }
+    override suspend fun getDashboardData(): Result<HomeDashboard, DataError.Network> = safeApiCall<HomeDashboardDto> {
+        client.get("home/dashboard")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
         }
+    }
 
     override suspend fun exportActivitiesToCsv(
         activities: List<UserActivity>,

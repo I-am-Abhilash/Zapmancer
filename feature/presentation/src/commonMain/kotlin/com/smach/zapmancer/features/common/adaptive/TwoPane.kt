@@ -1,22 +1,22 @@
-//package com.smach.zapmancer.features.common.adaptive
+// package com.smach.zapmancer.features.common.adaptive
 //
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.fillMaxHeight
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.layout.width
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.unit.dp
+// import androidx.compose.foundation.layout.Box
+// import androidx.compose.foundation.layout.Row
+// import androidx.compose.foundation.layout.fillMaxHeight
+// import androidx.compose.foundation.layout.fillMaxSize
+// import androidx.compose.foundation.layout.padding
+// import androidx.compose.foundation.layout.width
+// import androidx.compose.runtime.Composable
+// import androidx.compose.ui.Modifier
+// import androidx.compose.ui.unit.dp
 //
-//@Composable
-//fun TwoPane(
+// @Composable
+// fun TwoPane(
 //    windowLayout: WindowLayout,
 //    primary: @Composable () -> Unit,
 //    secondary: @Composable () -> Unit,
 //    modifier: Modifier = Modifier,
-//) {
+// ) {
 //    if (windowLayout.isCompact) {
 //        Box(modifier = modifier.fillMaxSize()) { primary() }
 //        return
@@ -43,4 +43,4 @@
 //                .padding(start = 8.dp),
 //        ) { secondary() }
 //    }
-//}
+// }

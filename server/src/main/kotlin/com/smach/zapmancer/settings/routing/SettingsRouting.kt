@@ -23,7 +23,7 @@ fun Route.settingsRouting() {
             /** GET /settings */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 call.respondResult(service.getSettings(principal.uid))
             }
@@ -31,7 +31,7 @@ fun Route.settingsRouting() {
             /** PUT /settings/2fa */
             put("/2fa") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggle2fa(principal.uid, req.enabled))
@@ -40,7 +40,7 @@ fun Route.settingsRouting() {
             /** PUT /settings/email-notifications */
             put("/email-notifications") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggleEmailNotifications(principal.uid, req.enabled))
@@ -49,7 +49,7 @@ fun Route.settingsRouting() {
             /** PUT /settings/client-mode */
             put("/client-mode") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
                 call.respondResult(service.toggleClientMode(principal.uid, req.enabled))

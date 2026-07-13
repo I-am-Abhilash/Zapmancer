@@ -149,7 +149,7 @@ fun ProfileContent(
     ) { padding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.TopCenter,
         ) {
             when {
                 state.error != null -> {

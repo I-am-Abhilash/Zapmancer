@@ -30,32 +30,30 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("users/$userId/hire")
-        }.toUnitResult()
+    override suspend fun hireUser(userId: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("users/$userId/hire")
+    }.toUnitResult()
 
-    override suspend fun updateProfile(params: UpdateProfileParams): Result<UserProfile, DataError.Network> =
-        safeApiCall<UserProfileDto> {
-            client.put("users/profile") {
-                setBody(
-                    UpdateProfileRequest(
-                        name = params.name,
-                        roleTitle = params.roleTitle,
-                        location = params.location,
-                        about = params.about,
-                        experience = params.experience,
-                        skills = params.skills,
-                        avatarUrl = params.avatarUrl,
-                    ),
-                )
-            }
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.toDomain())
-                is Result.Error -> result
-            }
+    override suspend fun updateProfile(params: UpdateProfileParams): Result<UserProfile, DataError.Network> = safeApiCall<UserProfileDto> {
+        client.put("users/profile") {
+            setBody(
+                UpdateProfileRequest(
+                    name = params.name,
+                    roleTitle = params.roleTitle,
+                    location = params.location,
+                    about = params.about,
+                    experience = params.experience,
+                    skills = params.skills,
+                    avatarUrl = params.avatarUrl,
+                ),
+            )
         }
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
+        }
+    }
 }
 
 private fun UserProfileDto.toDomain(): UserProfile = UserProfile(
@@ -75,21 +73,19 @@ private fun UserProfileDto.toDomain(): UserProfile = UserProfile(
     avatarUrl = avatarUrl,
 )
 
-private fun com.smach.zapmancer.core.common.dto.PortfolioItem.toDomain(): com.smach.zapmancer.domain.model.PortfolioItem =
-    com.smach.zapmancer.domain.model.PortfolioItem(
-        id = id,
-        title = title,
-        description = description,
-        imageUrl = imageUrl,
-    )
+private fun com.smach.zapmancer.core.common.dto.PortfolioItem.toDomain(): com.smach.zapmancer.domain.model.PortfolioItem = com.smach.zapmancer.domain.model.PortfolioItem(
+    id = id,
+    title = title,
+    description = description,
+    imageUrl = imageUrl,
+)
 
-private fun com.smach.zapmancer.core.common.dto.Review.toDomain(): com.smach.zapmancer.domain.model.ProfileReview =
-    com.smach.zapmancer.domain.model.ProfileReview(
-        authorId = authorId,
-        id = id.toString(),
-        authorName = authorName,
-        authorRole = authorRole,
-        content = content,
-        rating = rating,
-        authorAvatarUrl = authorAvatarUrl,
-    )
+private fun com.smach.zapmancer.core.common.dto.Review.toDomain(): com.smach.zapmancer.domain.model.ProfileReview = com.smach.zapmancer.domain.model.ProfileReview(
+    authorId = authorId,
+    id = id.toString(),
+    authorName = authorName,
+    authorRole = authorRole,
+    content = content,
+    rating = rating,
+    authorAvatarUrl = authorAvatarUrl,
+)

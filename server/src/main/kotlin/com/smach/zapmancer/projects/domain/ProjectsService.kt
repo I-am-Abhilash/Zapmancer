@@ -41,7 +41,7 @@ class ProjectsService(
     suspend fun saveProject(
         userId: String,
         projectId: String,
-        save: Boolean
+        save: Boolean,
     ): DomainResult<CommonResponse> {
         repository.toggleSave(userId, projectId, save)
         val msg = if (save) "Project saved successfully." else "Project removed from saved."
@@ -56,22 +56,22 @@ class ProjectsService(
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "Application submitted successfully."
-            )
+                message = "Application submitted successfully.",
+            ),
         )
     }
 
     suspend fun createProject(
         clientId: String,
-        request: CreateProjectRequest
+        request: CreateProjectRequest,
     ): DomainResult<CommonResponse> {
         val projectId = repository.create(clientId, request)
         gorseClient.insertItem(projectId)
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "Project created successfully."
-            )
+                message = "Project created successfully.",
+            ),
         )
     }
 }

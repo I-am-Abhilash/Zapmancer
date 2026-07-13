@@ -181,7 +181,7 @@ fun SearchContent(
                 placeholder = {
                     Text(
                         "Search projects...",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     )
                 },
                 modifier = Modifier
@@ -480,7 +480,7 @@ private fun SearchInitialView(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
                         border = BorderStroke(
                             1.dp,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                         ),
                     ) {
                         Row(
@@ -598,7 +598,7 @@ private fun SearchResultCard(
                                 text = highlightText(
                                     "#$tag",
                                     query,
-                                    MaterialTheme.colorScheme.primary
+                                    MaterialTheme.colorScheme.primary,
                                 ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,

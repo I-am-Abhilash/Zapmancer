@@ -9,6 +9,5 @@ import kotlinx.coroutines.flow.Flow
 class GetMessagesUseCase(
     private val repository: MessageRepository,
 ) {
-    operator fun invoke(conversationId: String): Flow<Result<List<MessageItem>, DataError.Network>> =
-        repository.getMessages(conversationId)
+    operator fun invoke(conversationId: String): Flow<Result<List<MessageItem>, DataError.Network>> = repository.getMessages(conversationId)
 }

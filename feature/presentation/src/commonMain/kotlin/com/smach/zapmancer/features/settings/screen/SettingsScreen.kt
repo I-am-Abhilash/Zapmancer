@@ -82,7 +82,7 @@ fun SettingsScreen(
                     UserAvatar(
                         imageUrl = null,
                         size = 32.dp,
-                        modifier = Modifier.padding(end = 12.dp)
+                        modifier = Modifier.padding(end = 12.dp),
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
@@ -100,8 +100,8 @@ fun SettingsScreen(
             onToggleNotifications = {
                 viewModel.onEvent(
                     SettingsEvent.ToggleEmailNotifications(
-                        it
-                    )
+                        it,
+                    ),
                 )
             },
             onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
@@ -109,7 +109,6 @@ fun SettingsScreen(
         )
     }
 }
-
 
 @Composable
 fun SettingsContent(
@@ -123,7 +122,7 @@ fun SettingsContent(
 ) {
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
     ) {
         LazyColumn(
             modifier = Modifier
@@ -137,13 +136,13 @@ fun SettingsContent(
                     Text(
                         "Settings",
                         style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "Manage your account preferences and security protocols.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -153,13 +152,13 @@ fun SettingsContent(
                     SettingsItem(
                         title = "Email Address",
                         subtitle = uiState.settings?.email ?: "",
-                        actionIcon = Icons.Outlined.Edit
+                        actionIcon = Icons.Outlined.Edit,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
                         title = "Organization",
                         subtitle = uiState.settings?.organization ?: "",
-                        actionIcon = Icons.Outlined.CorporateFare
+                        actionIcon = Icons.Outlined.CorporateFare,
                     )
                 }
             }
@@ -170,7 +169,7 @@ fun SettingsContent(
                         title = "Two-Factor Authentication",
                         description = "Add an extra layer of security to your account.",
                         checked = uiState.settings?.isTwoFactorEnabled ?: false,
-                        onCheckedChange = onToggleTwoFactor
+                        onCheckedChange = onToggleTwoFactor,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsItem(
@@ -181,7 +180,7 @@ fun SettingsContent(
                                 onClick = {},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.primary
+                                    contentColor = MaterialTheme.colorScheme.primary,
                                 ),
                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                                 shape = MaterialTheme.shapes.extraSmall,
@@ -190,7 +189,7 @@ fun SettingsContent(
                             ) {
                                 Text(
                                     "Update",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 )
                             }
                         },
@@ -204,21 +203,21 @@ fun SettingsContent(
                         title = "Dark Mode",
                         description = "Switch between light and dark interface themes.",
                         checked = uiState.isDarkModeEnabled,
-                        onCheckedChange = onToggleDarkMode
+                        onCheckedChange = onToggleDarkMode,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Email Notifications",
                         description = "Receive weekly performance reports and alerts.",
                         checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
-                        onCheckedChange = onToggleNotifications
+                        onCheckedChange = onToggleNotifications,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                     SettingsToggleItem(
                         title = "Client Mode",
                         description = "Toggle to switch interface focus to hiring and project posting.",
                         checked = uiState.settings?.isClientModeEnabled ?: false,
-                        onCheckedChange = onToggleClientMode
+                        onCheckedChange = onToggleClientMode,
                     )
                 }
             }
@@ -229,26 +228,26 @@ fun SettingsContent(
                     shape = MaterialTheme.shapes.small,
                     border = BorderStroke(
                         1.dp,
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column {
                             Text(
                                 "Logout",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
                             )
                             Text(
                                 "Session termination will revoke all active access tokens.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         Button(
@@ -266,19 +265,19 @@ fun SettingsContent(
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
                         uiState.settings?.version ?: "",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
                     )
                     Text(
                         "© 2024 Zapmancer. All systems operational.",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -298,18 +297,18 @@ fun SettingsSection(title: String, icon: ImageVector, content: @Composable Colum
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
                 Text(
                     title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
@@ -336,12 +335,12 @@ fun SettingsItem(
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 subtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (actionContent != null) {
@@ -351,7 +350,7 @@ fun SettingsItem(
                 actionIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -367,18 +366,18 @@ fun SettingsToggleItem(
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 description,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Switch(
@@ -398,14 +397,14 @@ fun SettingsToggleItem(
 @Preview
 fun SettingsPreview() {
     AppTheme {
-            SettingsContent(
-                paddingValues = PaddingValues(0.dp),
-                uiState = SettingsUiState(),
-                onToggleTwoFactor = {},
-                onToggleDarkMode = {},
-                onToggleNotifications = {},
-                onToggleClientMode = {},
-                onLogout = {},
-            )
-        }
+        SettingsContent(
+            paddingValues = PaddingValues(0.dp),
+            uiState = SettingsUiState(),
+            onToggleTwoFactor = {},
+            onToggleDarkMode = {},
+            onToggleNotifications = {},
+            onToggleClientMode = {},
+            onLogout = {},
+        )
     }
+}

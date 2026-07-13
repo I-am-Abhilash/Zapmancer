@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.SettingsRepository
 class GetSettingsUseCase(
     private val repository: SettingsRepository,
 ) {
-    suspend operator fun invoke(): Result<SettingsData, DataError.Network> =
-        repository.getSettings()
+    suspend operator fun invoke(): Result<SettingsData, DataError.Network> = repository.getSettings()
 }

@@ -35,10 +35,14 @@ import com.smach.zapmancer.domain.usecase.IsOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.LoginUseCase
 import com.smach.zapmancer.domain.usecase.LogoutUseCase
 import com.smach.zapmancer.domain.usecase.MarkConversationAsReadUseCase
+import com.smach.zapmancer.domain.usecase.ObservePresenceUpdatesUseCase
+import com.smach.zapmancer.domain.usecase.ObservePresenceUseCase
+import com.smach.zapmancer.domain.usecase.ObserveTypingUseCase
 import com.smach.zapmancer.domain.usecase.PostProjectUseCase
 import com.smach.zapmancer.domain.usecase.SaveProjectUseCase
 import com.smach.zapmancer.domain.usecase.SendMessageUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
+import com.smach.zapmancer.domain.usecase.SendTypingStatusUseCase
 import com.smach.zapmancer.domain.usecase.SetOnboardingCompletedUseCase
 import com.smach.zapmancer.domain.usecase.SignUpUseCase
 import com.smach.zapmancer.domain.usecase.SubmitProposalUseCase
@@ -89,6 +93,10 @@ val dataModule = module {
     factoryOf(::GetMessagesUseCase)
     factoryOf(::SendMessageUseCase)
     factoryOf(::MarkConversationAsReadUseCase)
+    factoryOf(::ObservePresenceUseCase)
+    factoryOf(::ObservePresenceUpdatesUseCase)
+    factoryOf(::ObserveTypingUseCase)
+    factoryOf(::SendTypingStatusUseCase)
 
     singleOf(::NotificationRepositoryImpl) { bind<NotificationRepository>() }
     factoryOf(::GetNotificationsUseCase)

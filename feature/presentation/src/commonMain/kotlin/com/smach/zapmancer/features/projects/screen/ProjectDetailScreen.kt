@@ -83,13 +83,13 @@ fun ProjectDetailScreen(
         }
     }
 
-        ProjectDetailContent(
-            state = state,
-            onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
-            onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
-            onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
-        )
-    }
+    ProjectDetailContent(
+        state = state,
+        onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
+        onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
+        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
+    )
+}
 
 @Composable
 fun ProjectDetailContent(
@@ -99,7 +99,6 @@ fun ProjectDetailContent(
     onApplyClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
-
     val content = @Composable { padding: PaddingValues ->
         Box(
             modifier = Modifier
@@ -176,7 +175,7 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                     Icons.Default.Code,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(18.dp),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -209,14 +208,14 @@ fun ProjectHeaderSection(state: ProjectDetailUiState) {
                             Icons.Default.Verified,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(14.dp),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             "Payment Verified",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -232,13 +231,13 @@ fun InfoItem(icon: ImageVector, text: String) {
             icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(14.dp),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -256,18 +255,18 @@ fun BudgetSection(state: ProjectDetailUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
             Text(
                 state.budgetRange,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 state.projectType,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
@@ -277,18 +276,18 @@ fun BudgetSection(state: ProjectDetailUiState) {
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
             Text(
                 state.timeline,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 "Est. Start: ${state.estStart}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
             )
         }
     }
@@ -306,14 +305,14 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
                 "Project Scope",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 state.projectScope,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 24.sp
+                lineHeight = 24.sp,
             )
             Spacer(modifier = Modifier.height(24.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -322,25 +321,25 @@ fun ProjectScopeSection(state: ProjectDetailUiState) {
                 "Key Deliverables",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             state.deliverables.forEach { deliverable ->
                 Row(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Icon(
                         Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         deliverable,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -361,7 +360,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                 "Required Skills",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(12.dp))
             FlowRow(
@@ -374,7 +373,7 @@ fun RequiredSkillsSection(state: ProjectDetailUiState) {
                         shape = MaterialTheme.shapes.extraLarge,
                         border = BorderStroke(
                             1.dp,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                         ),
                     ) {
                         Text(
@@ -415,7 +414,7 @@ fun ApplySaveButtonSection(
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ),
             shape = MaterialTheme.shapes.extraLarge,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
@@ -424,7 +423,7 @@ fun ApplySaveButtonSection(
             Text(
                 if (isSaved) "Unsave Project" else "Save Project",
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             )
         }
     }
@@ -447,21 +446,21 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                     "Client Summary",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (state.isClientActive) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             modifier = Modifier.size(8.dp),
                             color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
+                            shape = CircleShape,
                         ) {}
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             "Active Now",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -476,7 +475,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         .border(
                             1.dp,
                             MaterialTheme.colorScheme.outlineVariant,
-                            MaterialTheme.shapes.small
+                            MaterialTheme.shapes.small,
                         ),
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -485,12 +484,12 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         state.clientName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "${state.clientIndustry} · ${state.clientLocation}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -501,7 +500,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                     .border(
                         1.dp,
                         MaterialTheme.colorScheme.outlineVariant,
-                        MaterialTheme.shapes.small
+                        MaterialTheme.shapes.small,
                     )
                     .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -511,13 +510,13 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         "PROJECTS",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         state.clientProjectsCount.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -526,21 +525,21 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                         "RATING",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             state.clientRating.toString(),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             Icons.Default.Star,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 }
@@ -550,7 +549,7 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
                 "VERIFICATION",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(8.dp))
             VerificationItem("Payment Method Verified", state.isPaymentVerified)
@@ -564,21 +563,25 @@ fun ClientSummarySection(state: ProjectDetailUiState) {
 fun VerificationItem(text: String, isVerified: Boolean = false) {
     Row(
         modifier = Modifier.padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             Icons.Default.Check,
             contentDescription = null,
-            tint = if (isVerified) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                alpha = 0.4f
-            ),
+            tint = if (isVerified) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                    alpha = 0.4f,
+                )
+            },
             modifier = Modifier.size(16.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -587,12 +590,12 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
 @Composable
 fun ProjectDetailScreenPreview() {
     MaterialTheme {
-            ProjectDetailContent(
-                state = ProjectDetailUiState(),
-                onBackClick = {},
-                onSaveClick = {},
-                onApplyClick = {},
-                showTopBar = true,
-            )
-        }
+        ProjectDetailContent(
+            state = ProjectDetailUiState(),
+            onBackClick = {},
+            onSaveClick = {},
+            onApplyClick = {},
+            showTopBar = true,
+        )
     }
+}

@@ -12,16 +12,15 @@ class GetHomeDashboardUseCase(
         private const val MAX_RECENT_ACTIVITIES = 5
     }
 
-    suspend operator fun invoke(): Result<HomeDashboard, DataError.Network> =
-        when (val result = repository.getDashboardData()) {
-            is Result.Success -> {
-                // Business Rule: Home screen only needs the most recent activities.
-                val optimized = result.data.copy(
-                    recentActivities = result.data.recentActivities.take(MAX_RECENT_ACTIVITIES),
-                )
-                Result.Success(optimized)
-            }
-
-            is Result.Error -> result
+    suspend operator fun invoke(): Result<HomeDashboard, DataError.Network> = when (val result = repository.getDashboardData()) {
+        is Result.Success -> {
+            // Business Rule: Home screen only needs the most recent activities.
+            val optimized = result.data.copy(
+                recentActivities = result.data.recentActivities.take(MAX_RECENT_ACTIVITIES),
+            )
+            Result.Success(optimized)
         }
+
+        is Result.Error -> result
+    }
 }

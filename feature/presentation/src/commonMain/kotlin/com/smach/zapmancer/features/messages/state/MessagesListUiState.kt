@@ -10,5 +10,4 @@ data class MessagesListUiState(
     val error: String? = null,
 )
 
-fun com.smach.zapmancer.domain.model.ConversationItem.toUiModel(): com.smach.zapmancer.domain.model.ConversationItem =
-    this
+fun com.smach.zapmancer.domain.model.ConversationItem.toUiModel(): com.smach.zapmancer.domain.model.ConversationItem = this

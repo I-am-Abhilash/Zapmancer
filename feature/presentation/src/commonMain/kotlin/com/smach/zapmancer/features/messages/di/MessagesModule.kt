@@ -18,6 +18,9 @@ val messagesModule = module {
             getMessagesUseCase = get(),
             sendMessageUseCase = get(),
             markConversationAsReadUseCase = get(),
+            observePresenceUseCase = get(),
+            observeTypingUseCase = get(),
+            sendTypingStatusUseCase = get(),
         )
     }
 }

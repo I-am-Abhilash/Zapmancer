@@ -83,7 +83,6 @@ fun LoginScreen(
         }
     }
 
-
     LoginContent(
         state = state,
         onEmailChanged = { viewModel.onEvent(LoginEvent.OnEmailChanged(it)) },
@@ -94,7 +93,6 @@ fun LoginScreen(
         onNavigateToSignup = { viewModel.onEvent(LoginEvent.OnRegisterHereClicked) },
     )
 }
-
 
 @Composable
 private fun LoginContent(
@@ -292,5 +290,4 @@ private fun LoginContentPreview() {
             onNavigateToSignup = {},
         )
     }
-
 }

@@ -162,7 +162,7 @@ private fun ForgotPasswordContent(
                                 Text(
                                     "Send Recovery Link",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    fontSize = 16.sp,
                                 )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,

@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 class VerifyOtpUseCase(
     private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(email: String, code: String): Result<Unit, DataError.Network> =
-        repository.verifyOtp(email, code)
+    suspend operator fun invoke(email: String, code: String): Result<Unit, DataError.Network> = repository.verifyOtp(email, code)
 }

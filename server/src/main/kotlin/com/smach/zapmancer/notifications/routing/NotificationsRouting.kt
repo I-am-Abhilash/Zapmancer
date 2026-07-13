@@ -24,7 +24,7 @@ fun Route.notificationsRouting() {
             /** GET /notifications */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 call.respondResult(service.getNotifications(principal.uid))
             }
@@ -33,7 +33,7 @@ fun Route.notificationsRouting() {
                 /** POST /notifications/{notificationId}/action */
                 post("/action") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                        HttpStatusCode.Unauthorized
+                        HttpStatusCode.Unauthorized,
                     )
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(HttpStatusCode.BadRequest)
@@ -42,15 +42,15 @@ fun Route.notificationsRouting() {
                         service.executeAction(
                             notifId,
                             principal.uid,
-                            req.actionLabel
-                        )
+                            req.actionLabel,
+                        ),
                     )
                 }
 
                 /** POST /notifications/{notificationId}/reply */
                 post("/reply") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                        HttpStatusCode.Unauthorized
+                        HttpStatusCode.Unauthorized,
                     )
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(HttpStatusCode.BadRequest)
@@ -59,8 +59,8 @@ fun Route.notificationsRouting() {
                         service.sendQuickReply(
                             notifId,
                             principal.uid,
-                            req.replyText
-                        )
+                            req.replyText,
+                        ),
                     )
                 }
             }

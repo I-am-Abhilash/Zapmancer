@@ -126,7 +126,7 @@ class SafeApiCallTest {
                 status = HttpStatusCode.OK,
                 headers = headersOf(
                     HttpHeaders.ContentType,
-                    ContentType.Application.Json.toString()
+                    ContentType.Application.Json.toString(),
                 ),
             )
         },

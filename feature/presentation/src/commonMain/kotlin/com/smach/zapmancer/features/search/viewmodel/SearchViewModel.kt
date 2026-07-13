@@ -55,7 +55,7 @@ class SearchViewModel(
                 recentSearches = listOf(
                     "Smart Contract",
                     "KMP Application",
-                    "Compose Multiplatform"
+                    "Compose Multiplatform",
                 ),
             )
         }
@@ -171,12 +171,12 @@ class SearchViewModel(
 
             val filtered = allFetchedProjects.filter { project ->
                 val matchesQuery = query.isEmpty() ||
-                        project.title.contains(query, ignoreCase = true) ||
-                        project.description.contains(query, ignoreCase = true) ||
-                        project.tags.any { it.contains(query, ignoreCase = true) }
+                    project.title.contains(query, ignoreCase = true) ||
+                    project.description.contains(query, ignoreCase = true) ||
+                    project.tags.any { it.contains(query, ignoreCase = true) }
 
                 val matchesCategory = uiState.value.categoryFilter == ProjectCategory.ALL ||
-                        project.category == uiState.value.categoryFilter
+                    project.category == uiState.value.categoryFilter
 
                 matchesQuery && matchesCategory
             }

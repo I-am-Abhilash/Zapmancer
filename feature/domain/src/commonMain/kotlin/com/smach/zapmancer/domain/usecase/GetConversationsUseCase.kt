@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.MessageRepository
 class GetConversationsUseCase(
     private val repository: MessageRepository,
 ) {
-    suspend operator fun invoke(): Result<List<ConversationItem>, DataError.Network> =
-        repository.getConversations()
+    suspend operator fun invoke(): Result<List<ConversationItem>, DataError.Network> = repository.getConversations()
 }

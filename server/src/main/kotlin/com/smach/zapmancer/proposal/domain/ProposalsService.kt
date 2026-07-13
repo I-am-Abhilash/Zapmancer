@@ -16,8 +16,8 @@ class ProposalsService(private val repository: ProposalsRepository) {
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "Proposal bid submitted."
-            )
+                message = "Proposal bid submitted.",
+            ),
         )
     }
 

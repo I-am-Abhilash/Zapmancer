@@ -54,7 +54,7 @@ fun ClientProposalsScreen(
     projectId: String,
     viewModel: ClientProposalsViewModel = koinViewModel(parameters = {
         org.koin.core.parameter.parametersOf(
-            projectId
+            projectId,
         )
     }),
     onBackClick: () -> Unit = {},
@@ -73,26 +73,25 @@ fun ClientProposalsScreen(
         }
     }
 
-        Scaffold(
-            topBar = {
-                ZapmancerTopBar(
-                    title = "Zapmancer",
-                    showBackButton = true,
-                    onBackClick = { viewModel.onEvent(ClientProposalsEvent.BackClicked) },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    drawBottomBorder = true,
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.background,
-            contentWindowInsets = WindowInsets(0),
-        ) { padding ->
-            ClientProposalsBody(
-                paddingValues = padding,
-                state = state,
-                onEvent = viewModel::onEvent,
+    Scaffold(
+        topBar = {
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = { viewModel.onEvent(ClientProposalsEvent.BackClicked) },
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true,
             )
-        }
-
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
+    ) { padding ->
+        ClientProposalsBody(
+            paddingValues = padding,
+            state = state,
+            onEvent = viewModel::onEvent,
+        )
+    }
 }
 
 @Composable
@@ -103,7 +102,7 @@ fun ClientProposalsBody(
 ) {
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
     ) {
         LazyColumn(
             modifier = Modifier
@@ -118,13 +117,13 @@ fun ClientProposalsBody(
                         "Project Proposals",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "Review pitches and bids received from qualified freelancers.",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 }
             }
@@ -132,18 +131,18 @@ fun ClientProposalsBody(
                 item {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(48.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) { Text("Loading proposals...", style = MaterialTheme.typography.bodyMedium) }
                 }
             } else if (state.proposals.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(48.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             "No proposals received yet.",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }
@@ -179,17 +178,17 @@ fun ProposalCard(
             modifier = cardModifier,
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Row(
                         modifier = Modifier.weight(1f).clickable { onFreelancerClick() },
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         val avatarUrl = if (proposal.freelancerName.contains("Julian")) {
                             "https://lh3.googleusercontent.com/aida-public/AB6AXuBrBrKqoM8axW5MPKsBTP5b-rY47j3sPFMPKxLb9MC-OiKc2nVehBkyjSvjrG61iLhnECENazpIX7ZGYdSvJhKpIGWBgn-fNWKLOFOAoJvAOS7uUgeFV7IEUSxjbQHtWEbwQGrVnBP5GX0LOssfjYZWHQOHZeoQNPaT0aZZAB44DcV0MaETyz8F_dFWst5O4bhj6tODWrstc0H0BKuGeulwq4Nbqlg5_5SCdjeZWbq0lUi7AAm8ZezuoaO1rWJpKniR5CNjmrAo9eo"
@@ -200,7 +199,7 @@ fun ProposalCard(
                             imageUrl = avatarUrl,
                             size = 48.dp,
                             borderWidth = 1.5.dp,
-                            borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
@@ -208,13 +207,13 @@ fun ProposalCard(
                                 text = proposal.freelancerName,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 text = proposal.freelancerRole,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
                             )
                         }
                     }
@@ -223,12 +222,12 @@ fun ProposalCard(
                             text = "$${proposal.budget}",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             text = "${proposal.timelineDays} days",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -236,7 +235,7 @@ fun ProposalCard(
                 Surface(
                     color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = "\"${proposal.pitchContent}\"",
@@ -244,7 +243,7 @@ fun ProposalCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontStyle = FontStyle.Italic,
                         modifier = Modifier.padding(12.dp),
-                        lineHeight = 20.sp
+                        lineHeight = 20.sp,
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -252,28 +251,28 @@ fun ProposalCard(
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Button(
                         onClick = onAccept,
                         modifier = Modifier.weight(1f).height(40.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        shape = MaterialTheme.shapes.small
+                        shape = MaterialTheme.shapes.small,
                     ) { Text("Accept Bid", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
                     Button(
                         onClick = onMessage,
                         modifier = Modifier.weight(1f).height(40.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                            contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                        shape = MaterialTheme.shapes.small
+                        shape = MaterialTheme.shapes.small,
                     ) {
                         Icon(
                             Icons.Outlined.ChatBubbleOutline,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(6.dp))
                         Text("Message", fontWeight = FontWeight.Bold, fontSize = 13.sp)
@@ -287,9 +286,9 @@ fun ProposalCard(
 @Preview
 @Composable
 fun ClientProposalScreenPreview() {
-        ClientProposalsBody(
-            paddingValues = PaddingValues(0.dp),
-            state = ClientProposalsUiState(),
-            onEvent = {},
-        )
-    }
+    ClientProposalsBody(
+        paddingValues = PaddingValues(0.dp),
+        state = ClientProposalsUiState(),
+        onEvent = {},
+    )
+}

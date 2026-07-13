@@ -31,19 +31,19 @@ class SettingsRepository {
         )
     }
 
-    suspend fun updateToggle(userId: String, field: SettingsField, enabled: Boolean): Boolean =
-        dbQuery {
-            ensureSettingsRow(userId)
-            UserSettingsTable.update({ UserSettingsTable.userId eq userId }) {
-                when (field) {
-                    SettingsField.TWO_FA -> it[UserSettingsTable.isTwoFactorEnabled] = enabled
-                    SettingsField.EMAIL_NOTIFS -> it[UserSettingsTable.isEmailNotificationsEnabled] =
-                        enabled
+    suspend fun updateToggle(userId: String, field: SettingsField, enabled: Boolean): Boolean = dbQuery {
+        ensureSettingsRow(userId)
+        UserSettingsTable.update({ UserSettingsTable.userId eq userId }) {
+            when (field) {
+                SettingsField.TWO_FA -> it[UserSettingsTable.isTwoFactorEnabled] = enabled
 
-                    SettingsField.CLIENT_MODE -> it[UserSettingsTable.isClientModeEnabled] = enabled
-                }
-            } > 0
-        }
+                SettingsField.EMAIL_NOTIFS -> it[UserSettingsTable.isEmailNotificationsEnabled] =
+                    enabled
+
+                SettingsField.CLIENT_MODE -> it[UserSettingsTable.isClientModeEnabled] = enabled
+            }
+        } > 0
+    }
 
     private fun ensureSettingsRow(userId: String) {
         val exists = UserSettingsTable.selectAll()

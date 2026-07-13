@@ -98,14 +98,13 @@ fun MessageDetailScreen(
         }
     }
 
-        MessageDetailContent(
-            state = state,
-            onEvent = viewModel::onEvent,
-            onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
-            onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
-            onMoreClick = { showSnackbar("More actions are not supported in this beta") },
-        )
-
+    MessageDetailContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onCallClick = { showSnackbar("Voice calling is not supported in this beta") },
+        onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
+        onMoreClick = { showSnackbar("More actions are not supported in this beta") },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,14 +117,13 @@ fun MessageDetailContent(
     onMoreClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
-
     val body = @Composable { padding: PaddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.TopCenter,
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -137,7 +135,7 @@ fun MessageDetailContent(
                         item {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Start
+                                horizontalArrangement = Arrangement.Start,
                             ) {
                                 UserAvatar(imageUrl = state.contactAvatarUrl, size = 32.dp)
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -147,11 +145,11 @@ fun MessageDetailContent(
                                         topStart = 16.dp,
                                         topEnd = 16.dp,
                                         bottomStart = 0.dp,
-                                        bottomEnd = 16.dp
+                                        bottomEnd = 16.dp,
                                     ),
                                     border = BorderStroke(
                                         1.dp,
-                                        MaterialTheme.colorScheme.outlineVariant
+                                        MaterialTheme.colorScheme.outlineVariant,
                                     ),
                                     shadowElevation = 1.dp,
                                     modifier = Modifier.padding(bottom = 8.dp),
@@ -166,13 +164,13 @@ fun MessageDetailContent(
                         if (state.conversationDate.isNotBlank()) {
                             Box(
                                 modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Surface(
                                     color = MaterialTheme.colorScheme.surface,
                                     border = BorderStroke(
                                         1.dp,
-                                        MaterialTheme.colorScheme.outlineVariant
+                                        MaterialTheme.colorScheme.outlineVariant,
                                     ),
                                     shape = MaterialTheme.shapes.large,
                                 ) {
@@ -180,7 +178,7 @@ fun MessageDetailContent(
                                         state.conversationDate,
                                         modifier = Modifier.padding(
                                             horizontal = 16.dp,
-                                            vertical = 4.dp
+                                            vertical = 4.dp,
                                         ),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -205,8 +203,8 @@ fun MessageDetailContent(
                             modifier = Modifier.clickable {
                                 onEvent(
                                     MessagesDetailEvent.ProfileClicked(
-                                        state.contactName
-                                    )
+                                        state.contactName,
+                                    ),
                                 )
                             },
                         ) {
@@ -216,20 +214,20 @@ fun MessageDetailContent(
                                 Text(
                                     state.contactName,
                                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 if (state.isOnline) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Box(
                                             modifier = Modifier.size(8.dp).clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primary)
+                                                .background(MaterialTheme.colorScheme.primary),
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
                                         Text(
                                             "Online",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.Medium
+                                            fontWeight = FontWeight.Medium,
                                         )
                                     }
                                 }
@@ -243,21 +241,21 @@ fun MessageDetailContent(
                             Icon(
                                 Icons.Default.Videocam,
                                 contentDescription = "Video call",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         IconButton(onClick = { onCallClick() }) {
                             Icon(
                                 Icons.Default.Call,
                                 contentDescription = "Voice call",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         IconButton(onClick = { onMoreClick() }) {
                             Icon(
                                 Icons.Default.MoreVert,
                                 contentDescription = "More options",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     },
@@ -296,10 +294,14 @@ fun MessageBubble(message: MessageItem) {
                     bottomStart = if (message.isFromMe) 16.dp else 0.dp,
                     bottomEnd = if (message.isFromMe) 0.dp else 16.dp,
                 ),
-                border = if (message.isFromMe) null else BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.outlineVariant
-                ),
+                border = if (message.isFromMe) {
+                    null
+                } else {
+                    BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                    )
+                },
                 shadowElevation = 1.dp,
             ) {
                 Text(
@@ -316,7 +318,7 @@ fun MessageBubble(message: MessageItem) {
                 Text(
                     message.timestamp,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (message.isFromMe) {
                     Spacer(modifier = Modifier.width(4.dp))
@@ -330,7 +332,7 @@ fun MessageBubble(message: MessageItem) {
                         imageVector = icon,
                         contentDescription = null,
                         tint = tint,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(14.dp),
                     )
                 }
             }
@@ -355,12 +357,12 @@ fun MessageInput(
                         .fillMaxWidth()
                         .background(
                             MaterialTheme.colorScheme.background,
-                            MaterialTheme.shapes.medium
+                            MaterialTheme.shapes.medium,
                         )
                         .border(
                             1.dp,
                             MaterialTheme.colorScheme.outlineVariant,
-                            MaterialTheme.shapes.medium
+                            MaterialTheme.shapes.medium,
                         )
                         .padding(4.dp),
                 ) {
@@ -371,7 +373,7 @@ fun MessageInput(
                             placeholder = {
                                 Text(
                                     "Write a message...",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -393,21 +395,21 @@ fun MessageInput(
                                     Icon(
                                         Icons.Outlined.AddCircle,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.SentimentSatisfied,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                                 IconButton(onClick = {}) {
                                     Icon(
                                         Icons.Outlined.AttachFile,
                                         null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
                             }
@@ -423,7 +425,7 @@ fun MessageInput(
                                 Icon(
                                     Icons.AutoMirrored.Filled.Send,
                                     null,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
                             }
                         }
@@ -467,38 +469,37 @@ fun TypingIndicator() {
 @Composable
 fun MessageDetailScreenPreview() {
     AppTheme {
-            MessageDetailContent(
-                state = MessagesDetailUiState(
-                    contactName = "Alex Rivera",
-                    isOnline = true,
-                    messages = listOf(
-                        MessageItem(
-                            id = "1",
-                            text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?",
-                            timestamp = "09:42 AM",
-                            isFromMe = false
-                        ),
-                        MessageItem(
-                            id = "2",
-                            text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.",
-                            timestamp = "09:45 AM",
-                            isFromMe = true,
-                            status = MessageStatus.READ
-                        ),
-                        MessageItem(
-                            id = "3",
-                            text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.",
-                            timestamp = "09:46 AM",
-                            isFromMe = false
-                        ),
+        MessageDetailContent(
+            state = MessagesDetailUiState(
+                contactName = "Alex Rivera",
+                isOnline = true,
+                messages = listOf(
+                    MessageItem(
+                        id = "1",
+                        text = "The deployment pipeline is successfully configured for the staging environment. Can you check the logs to verify everything is running smoothly?",
+                        timestamp = "09:42 AM",
+                        isFromMe = false,
                     ),
-                    isContactTyping = true,
+                    MessageItem(
+                        id = "2",
+                        text = "I'm on it. Just logging into the dashboard now. The CPU spikes we saw yesterday shouldn't be an issue with the new load balancer config.",
+                        timestamp = "09:45 AM",
+                        isFromMe = true,
+                        status = MessageStatus.READ,
+                    ),
+                    MessageItem(
+                        id = "3",
+                        text = "Agreed. Let me know if you see any anomalies in the memory footprint. I'll be around for the next hour.",
+                        timestamp = "09:46 AM",
+                        isFromMe = false,
+                    ),
                 ),
-                onEvent = {},
-                onCallClick = {},
-                onVideocamClick = {},
-                onMoreClick = {},
-            )
-        }
-
+                isContactTyping = true,
+            ),
+            onEvent = {},
+            onCallClick = {},
+            onVideocamClick = {},
+            onMoreClick = {},
+        )
+    }
 }

@@ -59,7 +59,7 @@ fun Application.module() {
 
     configureSecurity()
 
-     routing {
+    routing {
         authRouting()
         usersRouting()
         homeRouting()

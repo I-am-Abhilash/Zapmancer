@@ -15,6 +15,5 @@ class GetProjectsUseCase(
         sortBy: String? = null,
         page: Int? = null,
         pageSize: Int? = null,
-    ): Result<List<Project>, DataError.Network> =
-        repository.getProjects(query, category, sortBy, page, pageSize)
+    ): Result<List<Project>, DataError.Network> = repository.getProjects(query, category, sortBy, page, pageSize)
 }

@@ -24,7 +24,7 @@ fun Route.projectsRouting() {
             /** GET /projects — project board */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val query = call.request.queryParameters["query"]
                 val category = call.request.queryParameters["category"]
@@ -46,7 +46,7 @@ fun Route.projectsRouting() {
             /** GET /projects/{id} */
             get("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
                 call.respondResult(service.getProjectById(id, principal.uid))
@@ -55,7 +55,7 @@ fun Route.projectsRouting() {
             /** POST /projects/{id}/save */
             post("/{id}/save") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val id =
                     call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
@@ -66,7 +66,7 @@ fun Route.projectsRouting() {
             /** POST /projects/{id}/apply */
             post("/{id}/apply") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val id =
                     call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
@@ -76,7 +76,7 @@ fun Route.projectsRouting() {
             /** POST /projects — create new project (client mode) */
             post {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                    HttpStatusCode.Unauthorized
+                    HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<CreateProjectRequest>()
                 call.respondResult(service.createProject(principal.uid, req))

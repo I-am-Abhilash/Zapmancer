@@ -27,7 +27,7 @@ class AuthService(private val repository: AuthRepository) {
         if (repository.findByEmail(email) != null) {
             return DomainResult.Error(
                 ErrorCode.CONFLICT,
-                "An account with this email already exists."
+                "An account with this email already exists.",
             )
         }
         if (repository.usernameExists(username)) {
@@ -92,7 +92,7 @@ class AuthService(private val repository: AuthRepository) {
         val userId = JwtConfig.verifyRefreshToken(refreshToken)
             ?: return DomainResult.Error(
                 ErrorCode.UNAUTHORIZED,
-                "Invalid or expired refresh token."
+                "Invalid or expired refresh token.",
             )
 
         val user = repository.findById(userId)
@@ -137,8 +137,8 @@ class AuthService(private val repository: AuthRepository) {
             DomainResult.Success(
                 CommonResponse(
                     success = true,
-                    message = "OTP verified successfully."
-                )
+                    message = "OTP verified successfully.",
+                ),
             )
         } else {
             DomainResult.Error(ErrorCode.BAD_REQUEST, "Invalid or expired OTP code.")

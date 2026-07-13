@@ -202,7 +202,7 @@ fun MessagesSearchAndFilter(
             placeholder = {
                 Text(
                     "Search conversations...",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             },
             leadingIcon = {
@@ -237,7 +237,7 @@ fun MessagesSearchAndFilter(
                     ) {
                         Text(
                             filter,
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         )
                     }
                 }

@@ -20,15 +20,14 @@ class NotificationRepositoryImpl(
     private val client: HttpClient,
 ) : NotificationRepository {
 
-    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> =
-        safeApiCall<List<NotificationItemDto>> {
-            client.get("notifications")
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.map { it.toDomain() })
-                is Result.Error -> result
-            }
+    override suspend fun getNotifications(): Result<List<NotificationItem>, DataError.Network> = safeApiCall<List<NotificationItemDto>> {
+        client.get("notifications")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> result
         }
+    }
 
     override suspend fun executeAction(
         notificationId: String,
@@ -67,9 +66,8 @@ private fun NotificationItemDto.toDomain(): NotificationItem = NotificationItem(
     isRead = false,
 )
 
-private fun com.smach.zapmancer.core.common.dto.NotificationAction.toDomain(): com.smach.zapmancer.domain.model.NotificationAction =
-    com.smach.zapmancer.domain.model.NotificationAction(
-        label = label,
-        isPrimary = isPrimary,
-        isError = isError,
-    )
+private fun com.smach.zapmancer.core.common.dto.NotificationAction.toDomain(): com.smach.zapmancer.domain.model.NotificationAction = com.smach.zapmancer.domain.model.NotificationAction(
+    label = label,
+    isPrimary = isPrimary,
+    isError = isError,
+)

@@ -23,7 +23,7 @@ sealed interface ForgotPasswordEffect {
 class ForgotPasswordViewModel(
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
 ) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordEvent, ForgotPasswordEffect>(
-    ForgotPasswordUiState()
+    ForgotPasswordUiState(),
 ) {
 
     override fun onEvent(event: ForgotPasswordEvent) {

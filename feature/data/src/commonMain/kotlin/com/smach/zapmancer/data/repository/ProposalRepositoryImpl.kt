@@ -18,32 +18,30 @@ class ProposalRepositoryImpl(
     private val client: HttpClient,
 ) : ProposalRepository {
 
-    override suspend fun submitProposal(proposal: Proposal): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> {
-            client.post("proposals") {
-                setBody(
-                    SubmitProposalRequest(
-                        projectId = proposal.projectId.ifBlank { "1" },
-                        freelancerName = proposal.freelancerName,
-                        freelancerRole = proposal.freelancerRole,
-                        pitchContent = proposal.pitchContent,
-                        budget = proposal.budget,
-                        timelineDays = proposal.timelineDays,
-                        projectType = proposal.projectType,
-                    ),
-                )
-            }
-        }.toUnitResult()
-
-    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> =
-        safeApiCall<List<ProposalDto>> {
-            client.get("projects/$projectId/proposals")
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.map { it.toDomain() })
-                is Result.Error -> result
-            }
+    override suspend fun submitProposal(proposal: Proposal): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("proposals") {
+            setBody(
+                SubmitProposalRequest(
+                    projectId = proposal.projectId.ifBlank { "1" },
+                    freelancerName = proposal.freelancerName,
+                    freelancerRole = proposal.freelancerRole,
+                    pitchContent = proposal.pitchContent,
+                    budget = proposal.budget,
+                    timelineDays = proposal.timelineDays,
+                    projectType = proposal.projectType,
+                ),
+            )
         }
+    }.toUnitResult()
+
+    override suspend fun getProposalsForProject(projectId: String): Result<List<Proposal>, DataError.Network> = safeApiCall<List<ProposalDto>> {
+        client.get("projects/$projectId/proposals")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> result
+        }
+    }
 }
 
 private fun ProposalDto.toDomain(): Proposal = Proposal(

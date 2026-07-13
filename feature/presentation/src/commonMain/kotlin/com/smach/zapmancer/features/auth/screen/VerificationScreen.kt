@@ -61,7 +61,7 @@ fun VerificationScreen(
 ) {
     val viewModel = koinViewModel<VerificationViewModel>(
         key = "verification_$email",
-        parameters = { parametersOf(email) }
+        parameters = { parametersOf(email) },
     )
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,15 +72,14 @@ fun VerificationScreen(
         }
     }
 
-        VerificationContent(
-            email = email,
-            state = state,
-            onCodeChanged = { viewModel.onEvent(VerificationEvent.CodeChanged(it)) },
-            onSubmit = { viewModel.onEvent(VerificationEvent.Submit) },
-            onBack = onBack,
-        )
-    }
-
+    VerificationContent(
+        email = email,
+        state = state,
+        onCodeChanged = { viewModel.onEvent(VerificationEvent.CodeChanged(it)) },
+        onSubmit = { viewModel.onEvent(VerificationEvent.Submit) },
+        onBack = onBack,
+    )
+}
 
 @Composable
 private fun VerificationContent(
@@ -155,7 +154,7 @@ private fun VerificationContent(
                                 Text(
                                     "Verify & Continue",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    fontSize = 16.sp,
                                 )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
@@ -255,13 +254,12 @@ fun OtpInputField(
 @Composable
 private fun VerificationContentPreview() {
     MaterialTheme {
-            VerificationContent(
-                email = "test@example.com",
-                state = VerificationUiState(),
-                onCodeChanged = {},
-                onSubmit = {},
-                onBack = {},
-            )
-        }
+        VerificationContent(
+            email = "test@example.com",
+            state = VerificationUiState(),
+            onCodeChanged = {},
+            onSubmit = {},
+            onBack = {},
+        )
     }
-
+}

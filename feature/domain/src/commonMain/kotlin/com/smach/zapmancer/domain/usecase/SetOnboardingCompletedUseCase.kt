@@ -7,6 +7,5 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 class SetOnboardingCompletedUseCase(
     private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(completed: Boolean): Result<Unit, DataError.Network> =
-        repository.setOnboardingCompleted(completed)
+    suspend operator fun invoke(completed: Boolean): Result<Unit, DataError.Network> = repository.setOnboardingCompleted(completed)
 }

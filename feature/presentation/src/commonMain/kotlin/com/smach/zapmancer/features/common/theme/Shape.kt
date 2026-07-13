@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 
 val Shapes = Shapes(
     extraSmall = RoundedCornerShape(4.dp),
-    small      = RoundedCornerShape(8.dp),
-    medium     = RoundedCornerShape(12.dp),
-    large      = RoundedCornerShape(16.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(12.dp),
+    large = RoundedCornerShape(16.dp),
     extraLarge = RoundedCornerShape(100.dp),
 )
 
@@ -41,20 +41,25 @@ val Shapes = Shapes(
 
 /** Pill — all CTA buttons, filter chips. Maps to shapes.extraLarge. */
 val androidx.compose.material3.Shapes.pill
-    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLarge
+    @Composable @ReadOnlyComposable
+    get() = MaterialTheme.shapes.extraLarge
 
 /** Input — text fields, search bars. Maps to shapes.medium. */
 val androidx.compose.material3.Shapes.input
-    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.medium
+    @Composable @ReadOnlyComposable
+    get() = MaterialTheme.shapes.medium
 
 /** Avatar — avatar containers, icon wells. Maps to shapes.extraLarge. */
 val androidx.compose.material3.Shapes.avatar
-    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLarge
+    @Composable @ReadOnlyComposable
+    get() = MaterialTheme.shapes.extraLarge
 
 /** Card — card content tiles. Maps to shapes.large. */
 val androidx.compose.material3.Shapes.card
-    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.large
+    @Composable @ReadOnlyComposable
+    get() = MaterialTheme.shapes.large
 
 /** Button — standard CTA pill. Maps to shapes.extraLarge. */
 val androidx.compose.material3.Shapes.button
-    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLarge
+    @Composable @ReadOnlyComposable
+    get() = MaterialTheme.shapes.extraLarge

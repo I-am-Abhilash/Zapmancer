@@ -56,7 +56,6 @@ import com.smach.zapmancer.features.common.theme.pill
 fun AuthAdaptiveLayout(
     formContent: @Composable () -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()

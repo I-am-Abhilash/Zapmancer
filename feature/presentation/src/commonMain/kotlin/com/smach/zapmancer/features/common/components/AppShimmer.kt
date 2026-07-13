@@ -22,10 +22,10 @@ fun Modifier.shimmerEffect(shape: Shape? = null): Modifier = composed {
             initialValue = 0f,
             targetValue = 1000f,
             animationSpec =
-                infiniteRepeatable(
-                    animation = tween(1000),
-                    repeatMode = RepeatMode.Restart,
-                ),
+            infiniteRepeatable(
+                animation = tween(1000),
+                repeatMode = RepeatMode.Restart,
+            ),
         )
 
     val shimmerColors =
@@ -56,7 +56,7 @@ fun AppShimmer(
 ) {
     Box(
         modifier =
-            modifier
-                .shimmerEffect(shape),
+        modifier
+            .shimmerEffect(shape),
     )
 }

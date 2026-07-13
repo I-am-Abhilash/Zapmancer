@@ -176,8 +176,8 @@ private fun EditProfileContent(
                     .drawAccentLine(MaterialTheme.colorScheme.primary),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                        alpha = 0.2f
-                    )
+                        alpha = 0.2f,
+                    ),
                 ),
                 shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
@@ -207,7 +207,7 @@ private fun EditProfileContent(
             shape = MaterialTheme.shapes.large,
             border = BorderStroke(
                 1.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
             ),
         ) {
             Column(
@@ -318,10 +318,10 @@ private fun EditProfileContent(
                         maxLines = 8,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                alpha = 0.3f
+                                alpha = 0.3f,
                             ),
                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                alpha = 0.3f
+                                alpha = 0.3f,
                             ),
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
@@ -367,10 +367,10 @@ private fun EditProfileContent(
                             }),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                    alpha = 0.3f
+                                    alpha = 0.3f,
                                 ),
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                    alpha = 0.3f
+                                    alpha = 0.3f,
                                 ),
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
@@ -389,13 +389,13 @@ private fun EditProfileContent(
                                 .size(48.dp)
                                 .background(
                                     MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.shapes.small
+                                    MaterialTheme.shapes.small,
                                 ),
                         ) {
                             Icon(
                                 Icons.Default.Add,
                                 contentDescription = "Add Skill",
-                                tint = Color.White
+                                tint = Color.White,
                             )
                         }
                     }
@@ -412,21 +412,21 @@ private fun EditProfileContent(
                                     shape = MaterialTheme.shapes.extraLarge,
                                     border = BorderStroke(
                                         1.dp,
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                                     ),
                                 ) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(
                                             horizontal = 12.dp,
-                                            vertical = 6.dp
+                                            vertical = 6.dp,
                                         ),
                                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                                     ) {
                                         Text(
                                             text = skill.uppercase(),
                                             style = MaterialTheme.typography.labelMedium.copy(
-                                                fontWeight = FontWeight.Bold
+                                                fontWeight = FontWeight.Bold,
                                             ),
                                             color = MaterialTheme.colorScheme.primary,
                                         )
@@ -440,8 +440,8 @@ private fun EditProfileContent(
                                                 .clickable {
                                                     onEvent(
                                                         EditProfileEvent.RemoveSkill(
-                                                            skill
-                                                        )
+                                                            skill,
+                                                        ),
                                                     )
                                                 },
                                         )

@@ -31,7 +31,7 @@ class UsersServiceImpl(
         val updated = repository.findProfile(userId)
             ?: return DomainResult.Error(
                 ErrorCode.INTERNAL_SERVER_ERROR,
-                "Failed to load updated profile."
+                "Failed to load updated profile.",
             )
         return DomainResult.Success(updated)
     }

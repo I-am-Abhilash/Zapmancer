@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.NotificationRepository
 class GetNotificationsUseCase(
     private val repository: NotificationRepository,
 ) {
-    suspend operator fun invoke(): Result<List<NotificationItem>, DataError.Network> =
-        repository.getNotifications()
+    suspend operator fun invoke(): Result<List<NotificationItem>, DataError.Network> = repository.getNotifications()
 }

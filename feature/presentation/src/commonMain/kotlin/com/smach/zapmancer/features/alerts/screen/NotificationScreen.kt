@@ -93,7 +93,6 @@ fun NotificationScreen(
     )
 }
 
-
 @Composable
 fun NotificationContent(
     state: NotificationUiState,
@@ -162,7 +161,6 @@ fun NotificationContent(
                 }
             }
         }
-
     }
 }
 
@@ -234,8 +232,8 @@ fun NotificationCard(
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(
-                alpha = opacity
-            )
+                alpha = opacity,
+            ),
         ),
         shape = MaterialTheme.shapes.medium,
     ) {
@@ -252,7 +250,7 @@ fun NotificationCard(
                     icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -331,7 +329,7 @@ fun NotificationCard(
                             placeholder = {
                                 Text(
                                     "Quick reply...",
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
                                 )
                             },
                             modifier = Modifier.weight(1f),
@@ -348,7 +346,7 @@ fun NotificationCard(
                             modifier = Modifier.size(36.dp)
                                 .background(
                                     MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.shapes.small
+                                    MaterialTheme.shapes.small,
                                 ),
                         ) {
                             Icon(
@@ -390,7 +388,7 @@ fun NotificationPreview() {
                 section = "Today",
                 actions = listOf(
                     NotificationAction("View Logs", isPrimary = true),
-                    NotificationAction("Dismiss")
+                    NotificationAction("Dismiss"),
                 ),
             ),
             NotificationItem(
@@ -437,5 +435,4 @@ fun NotificationPreview() {
         state = sampleState,
         onEvent = {},
     )
-
 }

@@ -25,24 +25,23 @@ class AuthRepository {
     private fun now() = System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
     /** Find a user by email (optionally include soft-deleted accounts). */
-    suspend fun findByEmail(email: String, includeDeleted: Boolean = false): AuthUserRecord? =
-        dbQuery {
-            val query = if (includeDeleted) {
-                UsersTable.selectAll().where { UsersTable.email eq email }
-            } else {
-                UsersTable.selectAll()
-                    .where { (UsersTable.email eq email) and UsersTable.deletedAt.isNull() }
-            }
-            query.map { row ->
-                AuthUserRecord(
-                    id = row[UsersTable.id],
-                    username = row[UsersTable.username],
-                    email = row[UsersTable.email],
-                    passwordHash = row[UsersTable.passwordHash],
-                    isDeleted = row[UsersTable.deletedAt] != null,
-                )
-            }.singleOrNull()
+    suspend fun findByEmail(email: String, includeDeleted: Boolean = false): AuthUserRecord? = dbQuery {
+        val query = if (includeDeleted) {
+            UsersTable.selectAll().where { UsersTable.email eq email }
+        } else {
+            UsersTable.selectAll()
+                .where { (UsersTable.email eq email) and UsersTable.deletedAt.isNull() }
         }
+        query.map { row ->
+            AuthUserRecord(
+                id = row[UsersTable.id],
+                username = row[UsersTable.username],
+                email = row[UsersTable.email],
+                passwordHash = row[UsersTable.passwordHash],
+                isDeleted = row[UsersTable.deletedAt] != null,
+            )
+        }.singleOrNull()
+    }
 
     /** Find a user by ID. */
     suspend fun findById(id: String): AuthUserRecord? = dbQuery {
@@ -113,8 +112,8 @@ class AuthRepository {
         val currentTime = now()
         val session = OtpSessionsTable.selectAll().where {
             (OtpSessionsTable.email eq email) and
-                    (OtpSessionsTable.code eq code) and
-                    (OtpSessionsTable.isUsed eq false)
+                (OtpSessionsTable.code eq code) and
+                (OtpSessionsTable.isUsed eq false)
         }.map { row ->
             Pair(row[OtpSessionsTable.id], row[OtpSessionsTable.expiresAt])
         }.firstOrNull() ?: return@dbQuery false

@@ -46,8 +46,8 @@ class MessageRepository {
                     .singleOrNull()
 
                 val hasUnread = lastMsg != null &&
-                        lastMsg[MessagesTable.senderId] != userId &&
-                        lastMsg[MessagesTable.status] != "READ"
+                    lastMsg[MessagesTable.senderId] != userId &&
+                    lastMsg[MessagesTable.status] != "READ"
 
                 ConversationItem(
                     id = convId,
@@ -60,7 +60,7 @@ class MessageRepository {
                     isOnline = false, // Real presence requires WebSocket; return false for now
                 )
             }
-        }
+    }
 
     suspend fun getMessages(conversationId: String, userId: String): List<MessageItem> = dbQuery {
         MessagesTable
@@ -82,26 +82,51 @@ class MessageRepository {
             }
     }
 
-    suspend fun sendMessage(conversationId: String, senderId: String, text: String): String =
-        dbQuery {
-            val id = UUID.randomUUID().toString()
-            MessagesTable.insert {
-                it[MessagesTable.id] = id
-                it[MessagesTable.conversationId] = conversationId
-                it[MessagesTable.senderId] = senderId
-                it[MessagesTable.text] = text
-                it[MessagesTable.status] = "SENT"
-                it[MessagesTable.createdAt] = now()
-            }
-            id
+    suspend fun sendMessage(conversationId: String, senderId: String, text: String): String = dbQuery {
+        val id = UUID.randomUUID().toString()
+        MessagesTable.insert {
+            it[MessagesTable.id] = id
+            it[MessagesTable.conversationId] = conversationId
+            it[MessagesTable.senderId] = senderId
+            it[MessagesTable.text] = text
+            it[MessagesTable.status] = "SENT"
+            it[MessagesTable.createdAt] = now()
         }
+        id
+    }
 
     suspend fun markRead(conversationId: String, userId: String): Unit = dbQuery {
         MessagesTable.update({
             (MessagesTable.conversationId eq conversationId) and
-                    (MessagesTable.senderId neq userId)
+                (MessagesTable.senderId neq userId)
         }) {
             it[MessagesTable.status] = "READ"
         }
+    }
+
+    suspend fun getConversationParticipants(conversationId: String): Pair<String, String>? = dbQuery {
+        ConversationsTable.selectAll()
+            .where { ConversationsTable.id eq conversationId }
+            .map { row ->
+                Pair(row[ConversationsTable.user1Id], row[ConversationsTable.user2Id])
+            }
+            .singleOrNull()
+    }
+
+    suspend fun getMessage(messageId: String, userId: String): MessageItem? = dbQuery {
+        MessagesTable.selectAll()
+            .where { MessagesTable.id eq messageId }
+            .map { row ->
+                val senderId = row[MessagesTable.senderId]
+                val sender = UsersTable.selectAll().where { UsersTable.id eq senderId }.singleOrNull()
+                MessageItem(
+                    id = row[MessagesTable.id],
+                    text = row[MessagesTable.text],
+                    timestamp = row[MessagesTable.createdAt].toString().take(16).replace("T", " "),
+                    isFromMe = senderId == userId,
+                    status = row[MessagesTable.status],
+                    avatarUrl = if (senderId == userId) null else sender?.get(UsersTable.avatarUrl),
+                )
+            }.singleOrNull()
     }
 }

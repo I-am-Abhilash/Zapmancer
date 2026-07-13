@@ -20,21 +20,21 @@ class SettingsService(private val repository: SettingsRepository) {
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "2FA updated successfully."
-            )
+                message = "2FA updated successfully.",
+            ),
         )
     }
 
     suspend fun toggleEmailNotifications(
         userId: String,
-        enabled: Boolean
+        enabled: Boolean,
     ): DomainResult<CommonResponse> {
         repository.updateToggle(userId, SettingsField.EMAIL_NOTIFS, enabled)
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "Weekly updates subscription toggled."
-            )
+                message = "Weekly updates subscription toggled.",
+            ),
         )
     }
 
@@ -43,8 +43,8 @@ class SettingsService(private val repository: SettingsRepository) {
         return DomainResult.Success(
             CommonResponse(
                 success = true,
-                message = "Workspace layout toggled successfully."
-            )
+                message = "Workspace layout toggled successfully.",
+            ),
         )
     }
 }

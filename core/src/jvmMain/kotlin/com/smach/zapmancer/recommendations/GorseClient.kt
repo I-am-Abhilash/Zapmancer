@@ -99,6 +99,5 @@ class GorseClient(private val baseUrl: String = "http://localhost:8088") {
     suspend fun insertItem(itemId: String) = insertItem(itemId, emptyList(), "")
 
     /** Alias for sendFeedback to match Zapmancer naming. */
-    suspend fun insertFeedback(type: String, userId: String, itemId: String) =
-        sendFeedback(type, userId, itemId)
+    suspend fun insertFeedback(type: String, userId: String, itemId: String) = sendFeedback(type, userId, itemId)
 }

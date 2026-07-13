@@ -48,7 +48,8 @@ subprojects {
                     "disabled_rules" to "filename",
                     "ktlint_standard_function-naming" to "disabled",
                     "ktlint_standard_filename" to "disabled",
-                    "ktlint_standard_kdoc" to "disabled"
+                    "ktlint_standard_kdoc" to "disabled",
+                    "ktlint_standard_no-empty-file" to "disabled"
                 )
             )
         }

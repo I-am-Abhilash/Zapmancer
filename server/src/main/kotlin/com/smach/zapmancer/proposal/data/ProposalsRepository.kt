@@ -16,7 +16,7 @@ class ProposalsRepository {
     private fun now() = System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
     suspend fun submit(freelancerId: String, req: SubmitProposalRequest): Int = dbQuery {
-        ProposalsTable.insert {
+        ProposalsTable.insert {1
             it[ProposalsTable.projectId] = req.projectId
             it[ProposalsTable.freelancerId] = freelancerId
             it[ProposalsTable.freelancerName] = req.freelancerName

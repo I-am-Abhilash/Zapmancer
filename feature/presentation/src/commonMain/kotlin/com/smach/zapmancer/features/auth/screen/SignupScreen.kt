@@ -65,15 +65,14 @@ fun SignupScreen(
         }
     }
 
-        SignupContent(
-            state = state,
-            onEmailChanged = { viewModel.onEvent(SignupEvent.EmailChanged(it)) },
-            onPasswordChanged = { viewModel.onEvent(SignupEvent.PasswordChanged(it)) },
-            onSubmit = { viewModel.onEvent(SignupEvent.Submit) },
-            onNavigateToLogin = onNavigateToLogin,
-            onUsernameChanged = { viewModel.onEvent(SignupEvent.UsernameChanged(it)) },
-        )
-
+    SignupContent(
+        state = state,
+        onEmailChanged = { viewModel.onEvent(SignupEvent.EmailChanged(it)) },
+        onPasswordChanged = { viewModel.onEvent(SignupEvent.PasswordChanged(it)) },
+        onSubmit = { viewModel.onEvent(SignupEvent.Submit) },
+        onNavigateToLogin = onNavigateToLogin,
+        onUsernameChanged = { viewModel.onEvent(SignupEvent.UsernameChanged(it)) },
+    )
 }
 
 @Composable
@@ -106,7 +105,7 @@ private fun SignupContent(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    MaterialTheme.colorScheme.outline
+                    MaterialTheme.colorScheme.outline,
                 ),
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
@@ -133,7 +132,7 @@ private fun SignupContent(
                             ),
                             keyboardActions = KeyboardActions(onNext = {
                                 focusManager.moveFocus(
-                                    FocusDirection.Down
+                                    FocusDirection.Down,
                                 )
                             }),
                         )
@@ -157,7 +156,7 @@ private fun SignupContent(
                             ),
                             keyboardActions = KeyboardActions(onNext = {
                                 focusManager.moveFocus(
-                                    FocusDirection.Down
+                                    FocusDirection.Down,
                                 )
                             }),
                         )
@@ -215,7 +214,7 @@ private fun SignupContent(
                                 Text(
                                     "Create Account",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    fontSize = 16.sp,
                                 )
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowForward,
@@ -261,14 +260,13 @@ private fun SignupContent(
 @Composable
 private fun SignupContentPreview() {
     MaterialTheme {
-            SignupContent(
-                state = SignupUiState(),
-                onEmailChanged = {},
-                onPasswordChanged = {},
-                onSubmit = {},
-                onNavigateToLogin = {},
-                onUsernameChanged = {},
-            )
-        }
-
+        SignupContent(
+            state = SignupUiState(),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSubmit = {},
+            onNavigateToLogin = {},
+            onUsernameChanged = {},
+        )
+    }
 }

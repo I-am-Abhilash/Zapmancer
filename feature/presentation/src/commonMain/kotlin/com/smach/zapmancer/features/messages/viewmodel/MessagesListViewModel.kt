@@ -6,6 +6,7 @@ import com.smach.zapmancer.core.common.utils.foldTyped
 import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.model.ConversationItem
 import com.smach.zapmancer.domain.usecase.GetConversationsUseCase
+import com.smach.zapmancer.domain.usecase.ObservePresenceUpdatesUseCase
 import com.smach.zapmancer.features.messages.state.MessagesListUiState
 import com.smach.zapmancer.features.messages.state.toUiModel
 import kotlinx.coroutines.launch
@@ -26,12 +27,14 @@ sealed interface MessagesListEffect {
 
 class MessagesListViewModel(
     private val getConversationsUseCase: GetConversationsUseCase,
+    private val observePresenceUpdatesUseCase: ObservePresenceUpdatesUseCase,
 ) : BaseViewModel<MessagesListUiState, MessagesListEvent, MessagesListEffect>(MessagesListUiState()) {
 
     private var allConversations: List<ConversationItem> = emptyList()
 
     init {
         loadConversations()
+        observePresenceUpdates()
     }
 
     override fun onEvent(event: MessagesListEvent) {
@@ -45,7 +48,7 @@ class MessagesListViewModel(
                         conversations = filterConversations(
                             allConversations,
                             event.query,
-                            selectedFilter
+                            selectedFilter,
                         ),
                     )
                 }
@@ -58,7 +61,7 @@ class MessagesListViewModel(
                         conversations = filterConversations(
                             allConversations,
                             searchQuery,
-                            event.filter
+                            event.filter,
                         ),
                     )
                 }
@@ -80,7 +83,7 @@ class MessagesListViewModel(
         filter: String,
     ): List<ConversationItem> = list.filter {
         val matchesQuery = it.name.contains(query, ignoreCase = true) ||
-                it.lastMessage.contains(query, ignoreCase = true)
+            it.lastMessage.contains(query, ignoreCase = true)
         val matchesFilter = when (filter) {
             "Unread" -> it.isUnread
             "Online" -> it.isOnline
@@ -101,7 +104,7 @@ class MessagesListViewModel(
                             conversations = filterConversations(
                                 mappedList,
                                 searchQuery,
-                                selectedFilter
+                                selectedFilter,
                             ),
                             isLoading = false,
                         )
@@ -112,6 +115,25 @@ class MessagesListViewModel(
                     sendEffect(MessagesListEffect.ShowToast("Failed to load conversations: ${error.toUserMessage()}"))
                 },
             )
+        }
+    }
+
+    private fun observePresenceUpdates() {
+        viewModelScope.launch {
+            observePresenceUpdatesUseCase().collect { (conversationId, isOnline) ->
+                allConversations = allConversations.map {
+                    if (it.id == conversationId) it.copy(isOnline = isOnline) else it
+                }
+                updateState {
+                    copy(
+                        conversations = filterConversations(
+                            allConversations,
+                            searchQuery,
+                            selectedFilter,
+                        ),
+                    )
+                }
+            }
         }
     }
 }

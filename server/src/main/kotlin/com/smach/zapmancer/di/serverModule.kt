@@ -5,6 +5,7 @@ import com.smach.zapmancer.auth.domain.AuthService
 import com.smach.zapmancer.home.data.HomeRepository
 import com.smach.zapmancer.home.domain.HomeService
 import com.smach.zapmancer.messages.data.MessageRepository
+import com.smach.zapmancer.messages.domain.ConnectionManager
 import com.smach.zapmancer.messages.domain.MessageService
 import com.smach.zapmancer.notifications.data.NotificationsRepository
 import com.smach.zapmancer.notifications.domain.NotificationsService
@@ -26,24 +27,21 @@ val authModule = module {
     singleOf(::AuthService)
 }
 
-
 val homeModule = module {
     singleOf(::HomeRepository)
     singleOf(::HomeService)
 }
 
-
 val messagesModule = module {
-    singleOf (::MessageRepository)
-    singleOf (::MessageService)
+    singleOf(::MessageRepository)
+    singleOf(::ConnectionManager)
+    singleOf(::MessageService)
 }
-
 
 val notificationsModule = module {
     singleOf(::NotificationsRepository)
     singleOf(::NotificationsService)
 }
-
 
 val projectsModule = module {
     singleOf(::ProjectsRepository)
@@ -55,14 +53,12 @@ val proposalsModule = module {
     singleOf(::ProposalsService)
 }
 
-
 val settingsModule = module {
     singleOf(::SettingsRepository)
     singleOf(::SettingsService)
 }
 
-
 val usersModule = module {
     singleOf(::UsersRepository)
-    singleOf(::UsersServiceImpl) {bind<UsersService>()}
+    singleOf(::UsersServiceImpl) { bind<UsersService>() }
 }

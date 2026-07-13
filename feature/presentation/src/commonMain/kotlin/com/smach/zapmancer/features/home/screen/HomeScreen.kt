@@ -110,7 +110,6 @@ fun HomeContent(
     state: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
 ) {
-
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -313,9 +312,7 @@ fun HomeContent(
                 }
             }
         }
-
     }
-
 }
 
 @Composable

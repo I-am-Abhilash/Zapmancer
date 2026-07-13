@@ -71,12 +71,11 @@ fun PostProjectScreen(
         }
     }
 
-        PostProjectContent(
-            state = state,
-            onEvent = viewModel::onEvent,
-            onBackClick = { viewModel.onEvent(PostProjectEvent.BackClicked) },
-        )
-
+    PostProjectContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onBackClick = { viewModel.onEvent(PostProjectEvent.BackClicked) },
+    )
 }
 
 @Composable
@@ -124,14 +123,14 @@ fun PostProjectContent(
                         Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier.size(80.dp),
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         "Project Posted!",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         "Your project has been successfully listed. Freelancers can now view details and submit proposals.",
@@ -161,13 +160,13 @@ fun PostProjectContent(
                             Text(
                                 "Post a Project",
                                 style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 "Create a listing to find talented freelancers for your needs.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp)
+                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
                     }
@@ -182,14 +181,14 @@ fun PostProjectContent(
                             modifier = Modifier.fillMaxWidth().height(56.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = Color.White
+                                contentColor = Color.White,
                             ),
                             shape = MaterialTheme.shapes.extraLarge,
                             enabled = !state.isSubmitting && state.title.isNotEmpty() && state.description.isNotEmpty(),
                         ) {
                             Text(
                                 if (state.isSubmitting) "Posting..." else "Post Project",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             )
                         }
                     }
@@ -209,17 +208,17 @@ private fun JobDetailsCard(state: PostProjectUiState, onEvent: (PostProjectEvent
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 "Job Details",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Column {
                 Text(
                     "Project Title",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 )
                 OutlinedTextField(
                     value = state.title,
@@ -233,7 +232,7 @@ private fun JobDetailsCard(state: PostProjectUiState, onEvent: (PostProjectEvent
             Column {
                 Text(
                     "Description / Scope",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 )
                 OutlinedTextField(
                     value = state.description,
@@ -246,12 +245,12 @@ private fun JobDetailsCard(state: PostProjectUiState, onEvent: (PostProjectEvent
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "Budget Range",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     )
                     OutlinedTextField(
                         value = state.budgetRange,
@@ -265,7 +264,7 @@ private fun JobDetailsCard(state: PostProjectUiState, onEvent: (PostProjectEvent
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "Timeline",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     )
                     OutlinedTextField(
                         value = state.timeline,
@@ -293,7 +292,7 @@ private fun DeliverablesCard(state: PostProjectUiState, onEvent: (PostProjectEve
             Text(
                 "Deliverables",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -326,7 +325,7 @@ private fun DeliverablesCard(state: PostProjectUiState, onEvent: (PostProjectEve
                             .fillMaxWidth()
                             .background(
                                 MaterialTheme.colorScheme.background,
-                                MaterialTheme.shapes.small
+                                MaterialTheme.shapes.small,
                             )
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -336,7 +335,7 @@ private fun DeliverablesCard(state: PostProjectUiState, onEvent: (PostProjectEve
                             text = deliverable,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         IconButton(
                             onClick = { onEvent(PostProjectEvent.RemoveDeliverable(index)) },
@@ -369,7 +368,7 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
             Text(
                 "Required Skills",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -406,7 +405,7 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
                         shape = MaterialTheme.shapes.extraLarge,
                         border = BorderStroke(
                             1.dp,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                         ),
                     ) {
                         Row(
@@ -418,7 +417,7 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
                                 text = skill.uppercase(),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
                             )
                             IconButton(
                                 onClick = { onEvent(PostProjectEvent.RemoveSkill(index)) },
@@ -443,11 +442,10 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
 @Composable
 fun PostProjectScreenPreview() {
     AppTheme {
-            PostProjectContent(
-                state = PostProjectUiState(),
-                onEvent = {},
-                onBackClick = {},
-            )
-        }
-
+        PostProjectContent(
+            state = PostProjectUiState(),
+            onEvent = {},
+            onBackClick = {},
+        )
+    }
 }

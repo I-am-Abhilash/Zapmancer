@@ -19,7 +19,7 @@ interface UsersService {
     /** Update authenticated user's own profile. */
     suspend fun updateProfile(
         userId: String,
-        request: UpdateProfileRequest
+        request: UpdateProfileRequest,
     ): DomainResult<UserProfile>
 
     /** Dispatch a hire notification to a freelancer. */

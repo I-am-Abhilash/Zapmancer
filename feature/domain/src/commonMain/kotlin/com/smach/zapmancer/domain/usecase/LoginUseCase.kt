@@ -8,6 +8,5 @@ import com.smach.zapmancer.domain.repository.AuthRepository
 class LoginUseCase(
     private val repository: AuthRepository,
 ) {
-    suspend operator fun invoke(email: String, password: String): Result<User, DataError.Network> =
-        repository.login(email, password)
+    suspend operator fun invoke(email: String, password: String): Result<User, DataError.Network> = repository.login(email, password)
 }

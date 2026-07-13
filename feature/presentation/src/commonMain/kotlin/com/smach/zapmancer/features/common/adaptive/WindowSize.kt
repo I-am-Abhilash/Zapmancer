@@ -1,9 +1,9 @@
-//package com.smach.zapmancer.features.common.adaptive
+// package com.smach.zapmancer.features.common.adaptive
 //
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.staticCompositionLocalOf
+// import androidx.compose.runtime.Composable
+// import androidx.compose.runtime.staticCompositionLocalOf
 //
-///**
+// /**
 // * Three-step window layout class used across the app.
 // *
 // *  - [Compact]: phones in portrait (<600dp). Use bottom navigation,
@@ -14,7 +14,7 @@
 // *  - [Expanded]: large tablets, desktop, web (>840dp). Use permanent
 // *    navigation drawer, multi-column layouts, max content width.
 // */
-//enum class WindowLayout {
+// enum class WindowLayout {
 //    Compact,
 //    Medium,
 //    Expanded,
@@ -38,10 +38,10 @@
 //            Medium -> 32
 //            Expanded -> 48
 //        }
-//}
+// }
 //
-//@Composable
-//fun rememberWindowLayout(): WindowLayout {
+// @Composable
+// fun rememberWindowLayout(): WindowLayout {
 //    val info = androidx.compose.material3.adaptive.currentWindowAdaptiveInfo()
 //    return when (info.windowSizeClass.windowWidthSizeClass) {
 //        androidx.window.core.layout.WindowWidthSizeClass.COMPACT -> WindowLayout.Compact
@@ -49,6 +49,6 @@
 //        androidx.window.core.layout.WindowWidthSizeClass.EXPANDED -> WindowLayout.Expanded
 //        else -> WindowLayout.Compact
 //    }
-//}
+// }
 //
-//val LocalWindowLayout = staticCompositionLocalOf { WindowLayout.Compact }
+// val LocalWindowLayout = staticCompositionLocalOf { WindowLayout.Compact }
