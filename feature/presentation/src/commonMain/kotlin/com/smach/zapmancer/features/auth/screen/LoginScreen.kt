@@ -30,7 +30,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,9 +51,6 @@ import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.features.auth.viewmodel.LoginSideEffect
 import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthDivider
 import com.smach.zapmancer.features.common.components.AuthHeader
@@ -87,20 +83,18 @@ fun LoginScreen(
         }
     }
 
-    val windowLayout = rememberWindowLayout()
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        LoginContent(
-            state = state,
-            onEmailChanged = { viewModel.onEvent(LoginEvent.OnEmailChanged(it)) },
-            onPasswordChanged = { viewModel.onEvent(LoginEvent.OnPasswordChanged(it)) },
-            onSubmit = { viewModel.onEvent(LoginEvent.Submit) },
-            onTogglePassword = { viewModel.onEvent(LoginEvent.OnTogglePasswordVisibility) },
-            onNavigateToForgot = { viewModel.onEvent(LoginEvent.OnForgotPasswordClicked) },
-            onNavigateToSignup = { viewModel.onEvent(LoginEvent.OnRegisterHereClicked) },
-        )
-    }
+    LoginContent(
+        state = state,
+        onEmailChanged = { viewModel.onEvent(LoginEvent.OnEmailChanged(it)) },
+        onPasswordChanged = { viewModel.onEvent(LoginEvent.OnPasswordChanged(it)) },
+        onSubmit = { viewModel.onEvent(LoginEvent.Submit) },
+        onTogglePassword = { viewModel.onEvent(LoginEvent.OnTogglePasswordVisibility) },
+        onNavigateToForgot = { viewModel.onEvent(LoginEvent.OnForgotPasswordClicked) },
+        onNavigateToSignup = { viewModel.onEvent(LoginEvent.OnRegisterHereClicked) },
+    )
 }
+
 
 @Composable
 private fun LoginContent(
@@ -288,16 +282,15 @@ private fun LoginContent(
 @Composable
 private fun LoginContentPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-            LoginContent(
-                state = LoginUiState(),
-                onEmailChanged = {},
-                onPasswordChanged = {},
-                onSubmit = {},
-                onTogglePassword = {},
-                onNavigateToForgot = {},
-                onNavigateToSignup = {},
-            )
-        }
+        LoginContent(
+            state = LoginUiState(),
+            onEmailChanged = {},
+            onPasswordChanged = {},
+            onSubmit = {},
+            onTogglePassword = {},
+            onNavigateToForgot = {},
+            onNavigateToSignup = {},
+        )
     }
+
 }

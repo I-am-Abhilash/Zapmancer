@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -42,7 +41,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,11 +66,7 @@ import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEffect
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEvent
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.EmptyState
-import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -83,8 +77,6 @@ fun NotificationScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val drawerController = LocalDrawerController.current
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -95,86 +87,82 @@ fun NotificationScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        Scaffold(
-            topBar = {
-                ZapmancerTopBar(
-                    title = "Zapmancer",
-                    showBackButton = windowLayout.isCompact,
-                    onBackClick = { viewModel.onEvent(NotificationEvent.BackClicked) },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    drawBottomBorder = true,
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.background,
-            contentWindowInsets = WindowInsets(0),
-        ) { padding ->
-            NotificationContent(
-                paddingValues = padding,
-                state = uiState,
-                onEvent = viewModel::onEvent,
-            )
-        }
-    }
+    NotificationContent(
+        state = uiState,
+        onEvent = viewModel::onEvent,
+    )
 }
+
 
 @Composable
 fun NotificationContent(
-    paddingValues: PaddingValues,
     state: NotificationUiState,
     onEvent: (NotificationEvent) -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
-    Box(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        if (state.notifications.isEmpty() && !state.isLoading && state.error == null) {
-            EmptyState(
-                title = "All caught up!",
-                description = "You have no unread notifications or tasks requiring action.",
-                icon = Icons.Outlined.Notifications,
-                buttonText = "Refresh",
-                onButtonClick = { onEvent(NotificationEvent.Refresh) },
+    Scaffold(
+        topBar = {
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = false,
+                onBackClick = { onEvent(NotificationEvent.BackClicked) },
+                containerColor = MaterialTheme.colorScheme.surface,
+                drawBottomBorder = true,
             )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                    .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
-            ) {
-                val grouped = state.notifications.groupBy { it.section }
-                grouped.forEach { (section, items) ->
-                    item { RibbonHeader(section) }
-                    items(items) { item ->
-                        NotificationCard(
-                            item = item,
-                            replyText = state.replyDrafts[item.id] ?: "",
-                            onReplyTextChanged = { text ->
-                                onEvent(
-                                    NotificationEvent.OnReplyTextChanged(
-                                        item.id,
-                                        text,
-                                    ),
-                                )
-                            },
-                            onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
-                            onActionClicked = { actionLabel ->
-                                onEvent(
-                                    NotificationEvent.ExecuteAction(
-                                        item.id,
-                                        actionLabel,
-                                    ),
-                                )
-                            },
-                        )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
+    ) { padding ->
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            if (state.notifications.isEmpty() && !state.isLoading && state.error == null) {
+                EmptyState(
+                    title = "All caught up!",
+                    description = "You have no unread notifications or tasks requiring action.",
+                    icon = Icons.Outlined.Notifications,
+                    buttonText = "Refresh",
+                    onButtonClick = { onEvent(NotificationEvent.Refresh) },
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp),
+                ) {
+                    val grouped = state.notifications.groupBy { it.section }
+                    grouped.forEach { (section, items) ->
+                        item { RibbonHeader(section) }
+                        items(items) { item ->
+                            NotificationCard(
+                                item = item,
+                                replyText = state.replyDrafts[item.id] ?: "",
+                                onReplyTextChanged = { text ->
+                                    onEvent(
+                                        NotificationEvent.OnReplyTextChanged(
+                                            item.id,
+                                            text,
+                                        ),
+                                    )
+                                },
+                                onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
+                                onActionClicked = { actionLabel ->
+                                    onEvent(
+                                        NotificationEvent.ExecuteAction(
+                                            item.id,
+                                            actionLabel,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
             }
         }
+
     }
 }
 
@@ -445,11 +433,9 @@ fun NotificationPreview() {
             ),
         ),
     )
-    CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-        NotificationContent(
-            paddingValues = PaddingValues(0.dp),
-            state = sampleState,
-            onEvent = {},
-        )
-    }
+    NotificationContent(
+        state = sampleState,
+        onEvent = {},
+    )
+
 }

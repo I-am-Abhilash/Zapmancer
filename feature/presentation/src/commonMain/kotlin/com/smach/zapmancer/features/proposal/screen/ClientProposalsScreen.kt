@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -31,7 +30,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,10 +41,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
-import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.proposal.state.ClientProposalsUiState
@@ -68,8 +62,6 @@ fun ClientProposalsScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val drawerController = LocalDrawerController.current
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -81,12 +73,11 @@ fun ClientProposalsScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         Scaffold(
             topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
-                    showBackButton = windowLayout.isCompact,
+                    showBackButton = true,
                     onBackClick = { viewModel.onEvent(ClientProposalsEvent.BackClicked) },
                     containerColor = MaterialTheme.colorScheme.surface,
                     drawBottomBorder = true,
@@ -101,7 +92,7 @@ fun ClientProposalsScreen(
                 onEvent = viewModel::onEvent,
             )
         }
-    }
+
 }
 
 @Composable
@@ -110,7 +101,6 @@ fun ClientProposalsBody(
     state: ClientProposalsUiState,
     onEvent: (ClientProposalsEvent) -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter
@@ -118,8 +108,7 @@ fun ClientProposalsBody(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                .padding(horizontal = 12.dp),
             contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
@@ -183,9 +172,8 @@ fun ProposalCard(
     onAccept: () -> Unit,
     onMessage: () -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
     val cardModifier =
-        if (windowLayout.isExpanded) Modifier.fillMaxWidth(0.85f) else Modifier.fillMaxWidth()
+        Modifier.fillMaxWidth()
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Card(
             modifier = cardModifier,
@@ -299,11 +287,9 @@ fun ProposalCard(
 @Preview
 @Composable
 fun ClientProposalScreenPreview() {
-    CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
         ClientProposalsBody(
             paddingValues = PaddingValues(0.dp),
             state = ClientProposalsUiState(),
             onEvent = {},
         )
     }
-}

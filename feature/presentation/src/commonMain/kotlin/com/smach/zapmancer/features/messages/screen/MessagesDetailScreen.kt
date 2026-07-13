@@ -50,7 +50,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,9 +63,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.smach.zapmancer.domain.model.MessageItem
 import com.smach.zapmancer.domain.model.MessageStatus
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.AppTheme
@@ -92,7 +88,6 @@ fun MessageDetailScreen(
     onProfileClick: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -103,7 +98,6 @@ fun MessageDetailScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         MessageDetailContent(
             state = state,
             onEvent = viewModel::onEvent,
@@ -111,7 +105,7 @@ fun MessageDetailScreen(
             onVideocamClick = { showSnackbar("Video calling is not supported in this beta") },
             onMoreClick = { showSnackbar("More actions are not supported in this beta") },
         )
-    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +118,6 @@ fun MessageDetailContent(
     onMoreClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
-    val windowLayout = LocalWindowLayout.current
 
     val body = @Composable { padding: PaddingValues ->
         Box(
@@ -132,7 +125,7 @@ fun MessageDetailContent(
             contentAlignment = Alignment.TopCenter
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().widthIn(max = windowLayout.contentMaxWidthDp.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -243,7 +236,7 @@ fun MessageDetailContent(
                             }
                         }
                     },
-                    showBackButton = windowLayout.isCompact,
+                    showBackButton = true,
                     onBackClick = { onEvent(MessagesDetailEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = { onVideocamClick() }) {
@@ -474,7 +467,6 @@ fun TypingIndicator() {
 @Composable
 fun MessageDetailScreenPreview() {
     AppTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             MessageDetailContent(
                 state = MessagesDetailUiState(
                     contactName = "Alex Rivera",
@@ -508,5 +500,5 @@ fun MessageDetailScreenPreview() {
                 onMoreClick = {},
             )
         }
-    }
+
 }

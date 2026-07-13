@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -35,7 +34,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,9 +45,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.AppTheme
@@ -66,7 +61,6 @@ fun SettingsScreen(
     onLogoutClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -78,45 +72,44 @@ fun SettingsScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        Scaffold(
-            topBar = {
-                ZapmancerTopBar(
-                    title = "Zapmancer",
-                    showBackButton = true,
-                    onBackClick = { viewModel.onEvent(SettingsEvent.BackClicked) },
-                    actions = {
-                        UserAvatar(
-                            imageUrl = null,
-                            size = 32.dp,
-                            modifier = Modifier.padding(end = 12.dp)
-                        )
-                    },
-                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
-                    drawBottomBorder = true,
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.background,
-            contentWindowInsets = WindowInsets(0),
-        ) { padding ->
-            SettingsContent(
-                paddingValues = padding,
-                uiState = uiState,
-                onToggleTwoFactor = { viewModel.onEvent(SettingsEvent.ToggleTwoFactor(it)) },
-                onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
-                onToggleNotifications = {
-                    viewModel.onEvent(
-                        SettingsEvent.ToggleEmailNotifications(
-                            it
-                        )
+    Scaffold(
+        topBar = {
+            ZapmancerTopBar(
+                title = "Zapmancer",
+                showBackButton = true,
+                onBackClick = { viewModel.onEvent(SettingsEvent.BackClicked) },
+                actions = {
+                    UserAvatar(
+                        imageUrl = null,
+                        size = 32.dp,
+                        modifier = Modifier.padding(end = 12.dp)
                     )
                 },
-                onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
-                onLogout = { viewModel.onEvent(SettingsEvent.Logout) },
+                containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                drawBottomBorder = true,
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
+    ) { padding ->
+        SettingsContent(
+            paddingValues = padding,
+            uiState = uiState,
+            onToggleTwoFactor = { viewModel.onEvent(SettingsEvent.ToggleTwoFactor(it)) },
+            onToggleDarkMode = { viewModel.onEvent(SettingsEvent.ToggleDarkMode(it)) },
+            onToggleNotifications = {
+                viewModel.onEvent(
+                    SettingsEvent.ToggleEmailNotifications(
+                        it
+                    )
+                )
+            },
+            onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
+            onLogout = { viewModel.onEvent(SettingsEvent.Logout) },
+        )
     }
 }
+
 
 @Composable
 fun SettingsContent(
@@ -128,7 +121,6 @@ fun SettingsContent(
     onToggleClientMode: (Boolean) -> Unit,
     onLogout: () -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter
@@ -136,8 +128,7 @@ fun SettingsContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                .padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
         ) {
@@ -407,7 +398,6 @@ fun SettingsToggleItem(
 @Preview
 fun SettingsPreview() {
     AppTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             SettingsContent(
                 paddingValues = PaddingValues(0.dp),
                 uiState = SettingsUiState(),
@@ -419,4 +409,3 @@ fun SettingsPreview() {
             )
         }
     }
-}

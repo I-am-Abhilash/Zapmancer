@@ -4,9 +4,9 @@ import com.smach.zapmancer.common.CommonResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.core.common.dto.ConversationItem
 import com.smach.zapmancer.core.common.dto.MessageItem
-import com.smach.zapmancer.messages.data.MessagesRepository
+import com.smach.zapmancer.messages.data.MessageRepository
 
-class MessagesService(private val repository: MessagesRepository) {
+class MessageService(private val repository: MessageRepository) {
 
     suspend fun getConversations(userId: String): DomainResult<List<ConversationItem>> =
         DomainResult.Success(repository.getConversations(userId))

@@ -31,7 +31,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,9 +48,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.VerificationUiState
 import com.smach.zapmancer.features.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
@@ -60,10 +56,14 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun VerificationScreen(
     email: String,
-    viewModel: VerificationViewModel = koinViewModel { parametersOf(email) },
     onBack: () -> Unit,
     onVerificationSuccess: () -> Unit,
 ) {
+    val viewModel = koinViewModel<VerificationViewModel>(
+        key = "verification_$email",
+        parameters = { parametersOf(email) }
+    )
+
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.isSuccess) {
@@ -72,8 +72,6 @@ fun VerificationScreen(
         }
     }
 
-    val windowLayout = rememberWindowLayout()
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         VerificationContent(
             email = email,
             state = state,
@@ -82,7 +80,7 @@ fun VerificationScreen(
             onBack = onBack,
         )
     }
-}
+
 
 @Composable
 private fun VerificationContent(
@@ -257,7 +255,6 @@ fun OtpInputField(
 @Composable
 private fun VerificationContentPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             VerificationContent(
                 email = "test@example.com",
                 state = VerificationUiState(),
@@ -267,4 +264,4 @@ private fun VerificationContentPreview() {
             )
         }
     }
-}
+

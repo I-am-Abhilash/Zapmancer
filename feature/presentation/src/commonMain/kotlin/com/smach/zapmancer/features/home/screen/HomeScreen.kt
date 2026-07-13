@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -55,12 +54,8 @@ import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AppShimmer
 import com.smach.zapmancer.features.common.components.EmptyState
-import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.pill
@@ -85,8 +80,6 @@ fun HomeScreen(
     onSearchClick: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
-    val drawerController = LocalDrawerController.current
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -106,6 +99,18 @@ fun HomeScreen(
         }
     }
 
+    HomeContent(
+        state = state,
+        onEvent = viewModel::onEvent,
+    )
+}
+
+@Composable
+fun HomeContent(
+    state: HomeUiState,
+    onEvent: (HomeEvent) -> Unit,
+) {
+
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -121,11 +126,9 @@ fun HomeScreen(
                         )
                     }
                 },
-                showMenuButton = windowLayout.isCompact,
-                onMenuClick = { drawerController.open() },
                 actions = {
                     UserAvatar(
-                        onClick = { viewModel.onEvent(HomeEvent.ProfileClicked) },
+                        onClick = { onEvent(HomeEvent.ProfileClicked) },
                         imageUrl = null,
                         size = 32.dp,
                         shape = MaterialTheme.shapes.extraLarge,
@@ -141,189 +144,178 @@ fun HomeScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
     ) { padding ->
-        HomeContent(
-            paddingValues = padding,
-            state = state,
-            onEvent = viewModel::onEvent,
-        )
-    }
-}
-
-@Composable
-fun HomeContent(
-    paddingValues: PaddingValues,
-    state: HomeUiState,
-    onEvent: (HomeEvent) -> Unit,
-) {
-    if (state.isLoading) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                AppShimmer(modifier = Modifier.width(120.dp).height(16.dp))
-                Spacer(modifier = Modifier.height(8.dp))
-                AppShimmer(modifier = Modifier.fillMaxWidth(0.6f).height(32.dp))
-            }
+        if (state.isLoading) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                repeat(3) {
-                    AppShimmer(modifier = Modifier.fillMaxWidth().height(160.dp))
-                }
-            }
-        }
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Welcome back, ${state.userName}".uppercase(),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Text(
-                    text = "Start your Journey.",
-                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-
-            if (state.showCompleteProfileBanner) {
-                CompleteProfileBanner(onCompleteProfileClick = { onEvent(HomeEvent.CompleteProfileClicked) })
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                val cardModifier = Modifier.fillMaxWidth().height(160.dp)
-
-                if (state.isClientMode) {
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "Total Spent",
-                        value = state.totalSpent,
-                        accentColor = MaterialTheme.colorScheme.primary,
-                        icon = Icons.Default.Payments,
-                        growth = state.spentGrowth.ifEmpty { null },
-                    )
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "Active Job Posts",
-                        value = state.activeJobPostsCount.toString(),
-                        accentColor = MaterialTheme.colorScheme.tertiary,
-                        icon = Icons.Default.Work,
-                        secondaryValue = "/ ${state.totalCapacity} capacity",
-                    )
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "Proposals Received",
-                        value = state.proposalsReceivedCount.toString(),
-                        accentColor = MaterialTheme.colorScheme.secondary,
-                        icon = Icons.Default.Star,
-                    )
-                } else {
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "Total Earnings",
-                        value = state.totalEarnings,
-                        accentColor = MaterialTheme.colorScheme.primary,
-                        icon = Icons.Default.Payments,
-                        growth = state.earningsGrowth,
-                    )
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "Current Projects",
-                        value = state.activeProjectsCount.toString(),
-                        accentColor = MaterialTheme.colorScheme.tertiary,
-                        icon = Icons.Default.Work,
-                        secondaryValue = "/ ${state.totalCapacity} capacity",
-                    )
-                    StatCard(
-                        modifier = cardModifier,
-                        title = "System Rating",
-                        value = state.systemRating.toString(),
-                        accentColor = MaterialTheme.colorScheme.secondary,
-                        icon = Icons.Default.Star,
-                        isRating = true,
-                    )
-                }
-            }
-
-            Button(
-                onClick = { onEvent(HomeEvent.CreateProjectClicked) },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.surface,
-                ),
-                shape = MaterialTheme.shapes.pill,
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                Text(
-                    text = if (state.isClientMode) "Post a New Project" else "Browse Projects",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                )
-            }
-
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    AppShimmer(modifier = Modifier.width(120.dp).height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AppShimmer(modifier = Modifier.fillMaxWidth(0.6f).height(32.dp))
+                }
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
+                    repeat(3) {
+                        AppShimmer(modifier = Modifier.fillMaxWidth().height(160.dp))
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Recent Activity",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        text = "Welcome back, ${state.userName}".uppercase(),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.primary,
                     )
-                    IconButton(onClick = { onEvent(HomeEvent.ExportCsv) }) {
-                        Icon(
-                            Icons.Default.Print,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                    Text(
+                        text = "Start your Journey.",
+                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+
+                if (state.showCompleteProfileBanner) {
+                    CompleteProfileBanner(onCompleteProfileClick = { onEvent(HomeEvent.CompleteProfileClicked) })
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    val cardModifier = Modifier.fillMaxWidth().height(160.dp)
+
+                    if (state.isClientMode) {
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "Total Spent",
+                            value = state.totalSpent,
+                            accentColor = MaterialTheme.colorScheme.primary,
+                            icon = Icons.Default.Payments,
+                            growth = state.spentGrowth.ifEmpty { null },
+                        )
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "Active Job Posts",
+                            value = state.activeJobPostsCount.toString(),
+                            accentColor = MaterialTheme.colorScheme.tertiary,
+                            icon = Icons.Default.Work,
+                            secondaryValue = "/ ${state.totalCapacity} capacity",
+                        )
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "Proposals Received",
+                            value = state.proposalsReceivedCount.toString(),
+                            accentColor = MaterialTheme.colorScheme.secondary,
+                            icon = Icons.Default.Star,
+                        )
+                    } else {
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "Total Earnings",
+                            value = state.totalEarnings,
+                            accentColor = MaterialTheme.colorScheme.primary,
+                            icon = Icons.Default.Payments,
+                            growth = state.earningsGrowth,
+                        )
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "Current Projects",
+                            value = state.activeProjectsCount.toString(),
+                            accentColor = MaterialTheme.colorScheme.tertiary,
+                            icon = Icons.Default.Work,
+                            secondaryValue = "/ ${state.totalCapacity} capacity",
+                        )
+                        StatCard(
+                            modifier = cardModifier,
+                            title = "System Rating",
+                            value = state.systemRating.toString(),
+                            accentColor = MaterialTheme.colorScheme.secondary,
+                            icon = Icons.Default.Star,
+                            isRating = true,
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { onEvent(HomeEvent.CreateProjectClicked) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    shape = MaterialTheme.shapes.pill,
+                ) {
+                    Text(
+                        text = if (state.isClientMode) "Post a New Project" else "Browse Projects",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    )
+                }
 
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (state.recentActivities.isEmpty()) {
-                        EmptyState(
-                            title = "All caught up!",
-                            description = "You have no activity yet start a project or post one.",
-                            icon = Icons.Outlined.Search,
-                            buttonText = "Refresh",
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Recent Activity",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
                         )
-                    } else {
-                        state.recentActivities.forEach { activity ->
-                            ActivityRow(
-                                activity = activity,
-                                modifier = Modifier.fillMaxWidth(),
+                        IconButton(onClick = { onEvent(HomeEvent.ExportCsv) }) {
+                            Icon(
+                                Icons.Default.Print,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
                             )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        if (state.recentActivities.isEmpty()) {
+                            EmptyState(
+                                title = "All caught up!",
+                                description = "You have no activity yet start a project or post one.",
+                                icon = Icons.Outlined.Search,
+                                buttonText = "Refresh",
+                            )
+                        } else {
+                            state.recentActivities.forEach { activity ->
+                                ActivityRow(
+                                    activity = activity,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
     }
+
 }
 
 @Composable
@@ -337,11 +329,7 @@ fun StatCard(
     secondaryValue: String? = null,
     isRating: Boolean = false,
 ) {
-    val windowLayout = LocalWindowLayout.current
-    val cardHeight = when (windowLayout) {
-        WindowLayout.Compact -> 160.dp
-        else -> 200.dp
-    }
+    val cardHeight = 160.dp
     Card(
         modifier = modifier.height(cardHeight),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -628,7 +616,6 @@ fun HomeScreenPreview() {
     val now = Clock.System.now().toEpochMilliseconds()
     MaterialTheme {
         HomeContent(
-            paddingValues = PaddingValues(0.dp),
             state = HomeUiState(
                 userName = "Alex",
                 recentActivities = listOf(

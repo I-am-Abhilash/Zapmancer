@@ -40,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,9 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.proposal.state.ProposalStep
@@ -74,7 +70,6 @@ fun ProposalScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -86,14 +81,13 @@ fun ProposalScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         ProposalScreenContent(
             state = state,
             onEvent = viewModel::onEvent,
             onBackClick = { viewModel.onEvent(ProposalEvent.BackClicked) },
         )
     }
-}
+
 
 @Composable
 fun ProposalScreenContent(
@@ -120,7 +114,6 @@ fun ProposalScreenContent(
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        val windowLayout = LocalWindowLayout.current
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.TopCenter
@@ -128,7 +121,7 @@ fun ProposalScreenContent(
             ProposalContent(
                 state = state,
                 onEvent = onEvent,
-                modifier = Modifier.widthIn(max = windowLayout.contentMaxWidthDp.dp).fillMaxSize(),
+                modifier = Modifier.widthIn(max = 12.dp).fillMaxSize(),
             )
         }
     }
@@ -694,11 +687,10 @@ fun BudgetSection(state: ProposalUiState) {
 @Composable
 fun ProposalScreenPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             ProposalScreenContent(
                 state = ProposalUiState(),
                 onEvent = {},
             )
         }
     }
-}
+

@@ -53,9 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.VerticalDivider
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
@@ -76,7 +73,6 @@ fun ProjectDetailScreen(
         koinViewModel(parameters = { parametersOf(projectId) })
 
     val state by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -87,7 +83,6 @@ fun ProjectDetailScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         ProjectDetailContent(
             state = state,
             onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
@@ -95,7 +90,6 @@ fun ProjectDetailScreen(
             onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
         )
     }
-}
 
 @Composable
 fun ProjectDetailContent(
@@ -105,7 +99,6 @@ fun ProjectDetailContent(
     onApplyClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
-    val windowLayout = LocalWindowLayout.current
 
     val content = @Composable { padding: PaddingValues ->
         Box(
@@ -117,8 +110,7 @@ fun ProjectDetailContent(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                    .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                    .padding(horizontal = 12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -144,7 +136,7 @@ fun ProjectDetailContent(
             topBar = {
                 ZapmancerTopBar(
                     title = "Zapmancer",
-                    showBackButton = windowLayout.isCompact,
+                    showBackButton = true,
                     onBackClick = onBackClick,
                     actions = {
                         IconButton(onClick = {}) {
@@ -405,9 +397,8 @@ fun ApplySaveButtonSection(
     onApplyClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
     val rowModifier =
-        if (windowLayout.isExpanded) Modifier.fillMaxWidth(0.6f) else Modifier.fillMaxWidth()
+        Modifier.fillMaxWidth()
     Row(modifier = rowModifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Button(
             onClick = onApplyClick,
@@ -596,7 +587,6 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
 @Composable
 fun ProjectDetailScreenPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             ProjectDetailContent(
                 state = ProjectDetailUiState(),
                 onBackClick = {},
@@ -606,4 +596,3 @@ fun ProjectDetailScreenPreview() {
             )
         }
     }
-}

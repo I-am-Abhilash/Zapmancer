@@ -5,7 +5,7 @@ import com.smach.zapmancer.common.ApiResponse
 import com.smach.zapmancer.common.DomainResult
 import com.smach.zapmancer.common.respondResult
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
-import com.smach.zapmancer.messages.domain.MessagesService
+import com.smach.zapmancer.messages.domain.MessageService
 import com.smach.zapmancer.security.UserPrincipal
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
@@ -18,8 +18,8 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
-fun Route.messagesRouting() {
-    val service by inject<MessagesService>()
+fun Route.messageRouting() {
+    val service by inject<MessageService>()
 
     authenticate("local-jwt") {
         route("/messages/conversations") {

@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,9 +43,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordViewModel
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
@@ -58,15 +54,12 @@ fun ForgotPasswordScreen(
     onBackToLogin: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val windowLayout = rememberWindowLayout()
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
-        ForgotPasswordContent(
-            state = state,
-            onEmailChange = { viewModel.onEvent(ForgotPasswordEvent.EmailChanged(it)) },
-            onSubmit = { viewModel.onEvent(ForgotPasswordEvent.Submit) },
-            onBackToLogin = onBackToLogin,
-        )
-    }
+    ForgotPasswordContent(
+        state = state,
+        onEmailChange = { viewModel.onEvent(ForgotPasswordEvent.EmailChanged(it)) },
+        onSubmit = { viewModel.onEvent(ForgotPasswordEvent.Submit) },
+        onBackToLogin = onBackToLogin,
+    )
 }
 
 @Composable
@@ -197,13 +190,11 @@ private fun ForgotPasswordContent(
 @Composable
 private fun ForgotPasswordPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
-            ForgotPasswordContent(
-                state = ForgotPasswordUiState(),
-                onEmailChange = {},
-                onSubmit = {},
-                onBackToLogin = {},
-            )
-        }
+        ForgotPasswordContent(
+            state = ForgotPasswordUiState(),
+            onEmailChange = {},
+            onSubmit = {},
+            onBackToLogin = {},
+        )
     }
 }

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -37,7 +36,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,9 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.projects.state.PostProjectUiState
@@ -66,7 +61,6 @@ fun PostProjectScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -77,13 +71,12 @@ fun PostProjectScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         PostProjectContent(
             state = state,
             onEvent = viewModel::onEvent,
             onBackClick = { viewModel.onEvent(PostProjectEvent.BackClicked) },
         )
-    }
+
 }
 
 @Composable
@@ -101,7 +94,6 @@ fun PostProjectContent(
     onEvent: (PostProjectEvent) -> Unit,
     onBackClick: () -> Unit,
 ) {
-    val windowLayout = LocalWindowLayout.current
     Scaffold(
         topBar = {
             ZapmancerTopBar(
@@ -124,7 +116,6 @@ fun PostProjectContent(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .widthIn(max = windowLayout.contentMaxWidthDp.dp)
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -161,8 +152,7 @@ fun PostProjectContent(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .widthIn(max = windowLayout.contentMaxWidthDp.dp)
-                        .padding(horizontal = windowLayout.screenHorizontalPaddingDp.dp),
+                        .padding(horizontal = 12.dp),
                     contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
@@ -453,12 +443,11 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
 @Composable
 fun PostProjectScreenPreview() {
     AppTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             PostProjectContent(
                 state = PostProjectUiState(),
                 onEvent = {},
                 onBackClick = {},
             )
         }
-    }
+
 }

@@ -47,7 +47,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -71,9 +70,6 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
 import com.smach.zapmancer.features.alerts.screen.drawAccentLine
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.CategoryFilterChip
 import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.ErrorState
@@ -99,7 +95,6 @@ fun ProjectListScreen(
     onNavigateToSearch: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val windowLayout = rememberWindowLayout()
     val listState = rememberLazyListState()
 
     var isSearchBarVisible by remember { mutableStateOf(true) }
@@ -142,7 +137,6 @@ fun ProjectListScreen(
         }
     }
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         Scaffold(
             topBar = {
                 Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
@@ -186,7 +180,6 @@ fun ProjectListScreen(
             )
         }
     }
-}
 
 @Composable
 fun ProjectListContent(
@@ -654,7 +647,6 @@ fun ProjectListScreenPreview() {
     )
 
     AppTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             Scaffold(
                 topBar = {
                     Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
@@ -684,6 +676,6 @@ fun ProjectListScreenPreview() {
                     onEvent = {},
                 )
             }
-        }
+
     }
 }

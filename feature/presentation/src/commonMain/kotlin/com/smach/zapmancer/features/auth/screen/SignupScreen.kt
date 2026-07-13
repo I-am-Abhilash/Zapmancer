@@ -27,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,9 +46,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
@@ -69,8 +65,6 @@ fun SignupScreen(
         }
     }
 
-    val windowLayout = rememberWindowLayout()
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         SignupContent(
             state = state,
             onEmailChanged = { viewModel.onEvent(SignupEvent.EmailChanged(it)) },
@@ -79,7 +73,7 @@ fun SignupScreen(
             onNavigateToLogin = onNavigateToLogin,
             onUsernameChanged = { viewModel.onEvent(SignupEvent.UsernameChanged(it)) },
         )
-    }
+
 }
 
 @Composable
@@ -267,7 +261,6 @@ private fun SignupContent(
 @Composable
 private fun SignupContentPreview() {
     MaterialTheme {
-        CompositionLocalProvider(LocalWindowLayout provides WindowLayout.Compact) {
             SignupContent(
                 state = SignupUiState(),
                 onEmailChanged = {},
@@ -277,5 +270,5 @@ private fun SignupContentPreview() {
                 onUsernameChanged = {},
             )
         }
-    }
+
 }

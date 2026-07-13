@@ -30,7 +30,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.features.common.adaptive.LocalWindowLayout
-import com.smach.zapmancer.features.common.adaptive.WindowLayout
-import com.smach.zapmancer.features.common.adaptive.rememberWindowLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -93,19 +89,12 @@ fun OnboardingScreen(
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
-    val windowLayout = rememberWindowLayout()
 
-    CompositionLocalProvider(LocalWindowLayout provides windowLayout) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-            when (windowLayout) {
-                WindowLayout.Compact -> OnboardingCompact(pages, pagerState, scope, onFinished)
-                WindowLayout.Medium -> OnboardingMedium(pages, pagerState, scope, onFinished)
-                WindowLayout.Expanded -> OnboardingExpanded(pages, pagerState, scope, onFinished)
-            }
-        }
+            OnboardingCompact(pages, pagerState, scope, onFinished)
     }
 }
 

@@ -44,7 +44,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.smach.zapmancer.domain.model.ConversationItem
-import com.smach.zapmancer.features.common.components.LocalDrawerController
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.components.shimmerEffect
@@ -62,7 +61,6 @@ fun MessagesListScreen(
     onProfileClick: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
-    val drawerController = LocalDrawerController.current
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -77,7 +75,6 @@ fun MessagesListScreen(
     MessagesListContent(
         state = state,
         onEvent = viewModel::onEvent,
-        onMenuClick = { drawerController.open() },
     )
 }
 
@@ -86,7 +83,6 @@ fun MessagesListScreen(
 fun MessagesListContent(
     state: MessagesListUiState,
     onEvent: (MessagesListEvent) -> Unit,
-    onMenuClick: () -> Unit = {},
     showTopBar: Boolean = true,
 ) {
     val content = @Composable { padding: PaddingValues ->
@@ -162,8 +158,6 @@ fun MessagesListContent(
                             )
                         }
                     },
-                    showMenuButton = true,
-                    onMenuClick = onMenuClick,
                     actions = {
                         UserAvatar(
                             onClick = { onEvent(MessagesListEvent.ProfileClicked("me")) },

@@ -19,13 +19,14 @@ import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 import kotlin.time.Clock.System
 
-class MessagesRepository {
+class MessageRepository {
 
     private fun now() = System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     private fun nowFormatted() = now().toString().take(16).replace("T", " ")
 
     suspend fun getConversations(userId: String): List<ConversationItem> = dbQuery {
-        ConversationsTable.selectAll()
+        ConversationsTable
+            .selectAll()
             .where { (ConversationsTable.user1Id eq userId) or (ConversationsTable.user2Id eq userId) }
             .map { row ->
                 val convId = row[ConversationsTable.id]
@@ -59,10 +60,11 @@ class MessagesRepository {
                     isOnline = false, // Real presence requires WebSocket; return false for now
                 )
             }
-    }
+        }
 
     suspend fun getMessages(conversationId: String, userId: String): List<MessageItem> = dbQuery {
-        MessagesTable.selectAll()
+        MessagesTable
+            .selectAll()
             .where { MessagesTable.conversationId eq conversationId }
             .orderBy(MessagesTable.createdAt, SortOrder.ASC)
             .map { row ->
