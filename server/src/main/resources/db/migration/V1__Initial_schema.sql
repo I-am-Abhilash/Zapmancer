@@ -191,3 +191,10 @@ CREATE INDEX idx_messages_conversation ON messages(conversation_id, created_at A
 CREATE INDEX idx_notifications_user ON notifications(user_id, created_at DESC);
 CREATE INDEX idx_otp_email ON otp_sessions(email);
 CREATE INDEX idx_reviews_subject ON reviews(subject_id);
+
+-- Search Indexes (FTS & Trigram)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX idx_projects_title_trgm ON projects USING gin (title gin_trgm_ops);
+CREATE INDEX idx_projects_scope_trgm ON projects USING gin (project_scope gin_trgm_ops);
+CREATE INDEX idx_projects_title_fts ON projects USING gin (to_tsvector('english', title));
+CREATE INDEX idx_projects_scope_fts ON projects USING gin (to_tsvector('english', project_scope));

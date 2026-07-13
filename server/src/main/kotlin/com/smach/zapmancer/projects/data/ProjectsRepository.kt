@@ -13,10 +13,13 @@ import com.smach.zapmancer.database.UserProfilesTable
 import com.smach.zapmancer.database.UsersTable
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.v1.core.Expression
+import org.jetbrains.exposed.v1.core.Op
+import org.jetbrains.exposed.v1.core.QueryBuilder
 import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.VarCharColumnType
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.like
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -44,18 +47,33 @@ class ProjectsRepository {
 
         if (!query.isNullOrBlank()) {
             expr = expr.where {
-                (ProjectsTable.title like "%$query%") or (ProjectsTable.projectScope like "%$query%")
+                FtsMatch(ProjectsTable.title, query) or
+                    FtsMatch(ProjectsTable.projectScope, query) or
+                    TrigramMatch(ProjectsTable.title, query) or
+                    TrigramMatch(ProjectsTable.projectScope, query)
             }
         }
 
         if (sortBy != null) {
             when (sortBy.uppercase()) {
                 "NEWEST" -> expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+
                 "BUDGET" -> expr = expr.orderBy(ProjectsTable.budgetRange, SortOrder.DESC)
-                else -> expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+
+                else -> {
+                    if (!query.isNullOrBlank()) {
+                        expr = expr.orderBy(SearchRelevance(ProjectsTable.title, ProjectsTable.projectScope, query), SortOrder.DESC)
+                    } else {
+                        expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+                    }
+                }
             }
         } else {
-            expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+            if (!query.isNullOrBlank()) {
+                expr = expr.orderBy(SearchRelevance(ProjectsTable.title, ProjectsTable.projectScope, query), SortOrder.DESC)
+            } else {
+                expr = expr.orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+            }
         }
 
         if (page != null && limit != null) {
@@ -195,4 +213,45 @@ class ProjectsRepository {
     private fun isSavedByUser(userId: String, projectId: String): Boolean = SavedProjectsTable.selectAll()
         .where { (SavedProjectsTable.userId eq userId) and (SavedProjectsTable.projectId eq projectId) }
         .count() > 0
+}
+
+class FtsMatch(private val column: Expression<*>, private val query: String) : Op<Boolean>() {
+    override fun toQueryBuilder(queryBuilder: QueryBuilder) = queryBuilder {
+        append("to_tsvector('english', coalesce(")
+        append(column)
+        append(", '')) @@ plainto_tsquery('english', ")
+        registerArgument(VarCharColumnType(255), query)
+        append(")")
+    }
+}
+
+class TrigramMatch(private val column: Expression<*>, private val query: String) : Op<Boolean>() {
+    override fun toQueryBuilder(queryBuilder: QueryBuilder) = queryBuilder {
+        append("coalesce(")
+        append(column)
+        append(", '') % ")
+        registerArgument(VarCharColumnType(255), query)
+    }
+}
+
+class SearchRelevance(
+    private val titleColumn: Expression<*>,
+    private val scopeColumn: Expression<*>,
+    private val query: String,
+) : Expression<Double>() {
+    override fun toQueryBuilder(queryBuilder: QueryBuilder) = queryBuilder {
+        append("ts_rank(to_tsvector('english', coalesce(")
+        append(titleColumn)
+        append(", '')), plainto_tsquery('english', ")
+        registerArgument(VarCharColumnType(255), query)
+        append(")) + ts_rank(to_tsvector('english', coalesce(")
+        append(scopeColumn)
+        append(", '')), plainto_tsquery('english', ")
+        registerArgument(VarCharColumnType(255), query)
+        append(")) * 0.5 + similarity(coalesce(")
+        append(titleColumn)
+        append(", ''), ")
+        registerArgument(VarCharColumnType(255), query)
+        append(") * 2.0")
+    }
 }

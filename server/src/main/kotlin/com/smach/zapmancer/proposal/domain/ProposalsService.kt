@@ -21,6 +21,5 @@ class ProposalsService(private val repository: ProposalsRepository) {
         )
     }
 
-    suspend fun getProposalsForProject(projectId: String): DomainResult<List<Proposal>> =
-        DomainResult.Success(repository.getByProject(projectId))
+    suspend fun getProposalsForProject(projectId: String): DomainResult<List<Proposal>> = DomainResult.Success(repository.getByProject(projectId))
 }
