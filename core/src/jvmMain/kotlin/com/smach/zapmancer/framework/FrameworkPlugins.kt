@@ -36,6 +36,7 @@ import org.koin.core.module.Module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level.INFO
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
@@ -60,16 +61,14 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
     }
 
     install(CallLogging) {
-        level = org.slf4j.event.Level.INFO
+        level = INFO
         callIdMdc("requestId")
     }
 
-    // Micrometer metrics
     install(MicrometerMetrics) {
         registry = appMicrometerRegistry
     }
 
-    // 2. Rate Limiting
     install(RateLimit) {
         register(RateLimitName("auth")) {
             rateLimiter(limit = 5, refillPeriod = 60.seconds)
@@ -83,7 +82,6 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         masking = false
     }
 
-    // 3. Content Negotiation - JSON Serialization
     install(ContentNegotiation) {
         json(
             Json {
@@ -94,7 +92,6 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         )
     }
 
-    // 3. CORS - Cross-Origin Resource Sharing
     val allowedHosts =
         environment.config.propertyOrNull("cors.allowedHosts")?.getList() ?: emptyList()
     install(CORS) {
@@ -113,11 +110,9 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         allowMethod(HttpMethod.Delete)
     }
 
-    // 4. Request Validation
     install(RequestValidation) {
     }
 
-    // 5. Status Pages - Global Error Handling
     install(StatusPages) {
         exception<RequestValidationException> { call, cause ->
             call.respond(
@@ -159,8 +154,6 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         }
     }
 
-    // 6. Swagger UI - API Documentation
-    // Available at /swagger
     routing {
         swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
 

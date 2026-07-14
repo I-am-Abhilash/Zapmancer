@@ -18,8 +18,6 @@ object UsersTable : Table("users") {
     val email = varchar("email", 100).uniqueIndex()
     val passwordHash = varchar("password_hash", 255).nullable()
     val avatarUrl = varchar("avatar_url", 255).nullable()
-
-    /** "FREELANCER" or "CLIENT" */
     val role = varchar("role", 20).default("FREELANCER")
     val deletedAt = datetime("deleted_at").nullable()
     val createdAt = datetime("created_at")
