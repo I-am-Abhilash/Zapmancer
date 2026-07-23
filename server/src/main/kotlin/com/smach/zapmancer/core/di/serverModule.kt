@@ -1,0 +1,64 @@
+package com.smach.zapmancer.core.di
+
+import com.smach.zapmancer.auth.repository.AuthRepository
+import com.smach.zapmancer.auth.service.AuthService
+import com.smach.zapmancer.home.repository.HomeRepository
+import com.smach.zapmancer.home.service.HomeService
+import com.smach.zapmancer.messages.repository.MessageRepository
+import com.smach.zapmancer.messages.service.ConnectionManager
+import com.smach.zapmancer.messages.service.MessageService
+import com.smach.zapmancer.notifications.repository.NotificationsRepository
+import com.smach.zapmancer.notifications.service.NotificationsService
+import com.smach.zapmancer.projects.repository.ProjectsRepository
+import com.smach.zapmancer.projects.service.ProjectsService
+import com.smach.zapmancer.proposal.repository.ProposalsRepository
+import com.smach.zapmancer.proposal.service.ProposalsService
+import com.smach.zapmancer.settings.repository.SettingsRepository
+import com.smach.zapmancer.settings.service.SettingsService
+import com.smach.zapmancer.users.repository.UsersRepository
+import com.smach.zapmancer.users.service.UsersService
+import com.smach.zapmancer.users.service.UsersServiceImpl
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
+
+val authModule = module {
+    singleOf(::AuthRepository)
+    singleOf(::AuthService)
+}
+
+val homeModule = module {
+    singleOf(::HomeRepository)
+    singleOf(::HomeService)
+}
+
+val messagesModule = module {
+    singleOf(::MessageRepository)
+    singleOf(::ConnectionManager)
+    singleOf(::MessageService)
+}
+
+val notificationsModule = module {
+    singleOf(::NotificationsRepository)
+    singleOf(::NotificationsService)
+}
+
+val projectsModule = module {
+    singleOf(::ProjectsRepository)
+    singleOf(::ProjectsService)
+}
+
+val proposalsModule = module {
+    singleOf(::ProposalsRepository)
+    singleOf(::ProposalsService)
+}
+
+val settingsModule = module {
+    singleOf(::SettingsRepository)
+    singleOf(::SettingsService)
+}
+
+val usersModule = module {
+    singleOf(::UsersRepository)
+    singleOf(::UsersServiceImpl) { bind<UsersService>() }
+}

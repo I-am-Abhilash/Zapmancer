@@ -1,10 +1,10 @@
 package com.smach.zapmancer.notifications.routing
 
-import com.smach.zapmancer.common.respondResult
+import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
 import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
-import com.smach.zapmancer.notifications.domain.NotificationsService
-import com.smach.zapmancer.security.UserPrincipal
+import com.smach.zapmancer.notifications.service.NotificationsService
+import com.smach.zapmancer.core.security.UserPrincipal
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal

@@ -1,9 +1,9 @@
 package com.smach.zapmancer.auth.routing
 
-import com.smach.zapmancer.auth.domain.AuthService
-import com.smach.zapmancer.common.CommonResponse
-import com.smach.zapmancer.common.DomainResult
-import com.smach.zapmancer.common.respondResult
+import com.smach.zapmancer.auth.service.AuthService
+import com.smach.zapmancer.core.common.CommonResponse
+import com.smach.zapmancer.core.common.DomainResult
+import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.RefreshTokenRequest

@@ -1,9 +1,9 @@
 package com.smach.zapmancer.settings.routing
 
-import com.smach.zapmancer.common.respondResult
+import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.ToggleRequest
-import com.smach.zapmancer.security.UserPrincipal
-import com.smach.zapmancer.settings.domain.SettingsService
+import com.smach.zapmancer.core.security.UserPrincipal
+import com.smach.zapmancer.settings.service.SettingsService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal

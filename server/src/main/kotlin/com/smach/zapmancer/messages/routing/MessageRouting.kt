@@ -1,14 +1,14 @@
 package com.smach.zapmancer.messages.routing
 
-import com.smach.zapmancer.common.ApiError
-import com.smach.zapmancer.common.ApiResponse
-import com.smach.zapmancer.common.DomainResult
-import com.smach.zapmancer.common.respondResult
+import com.smach.zapmancer.core.common.ApiError
+import com.smach.zapmancer.core.common.ApiResponse
+import com.smach.zapmancer.core.common.DomainResult
+import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
-import com.smach.zapmancer.messages.domain.ConnectionManager
-import com.smach.zapmancer.messages.domain.MessageService
-import com.smach.zapmancer.security.UserPrincipal
+import com.smach.zapmancer.messages.service.ConnectionManager
+import com.smach.zapmancer.messages.service.MessageService
+import com.smach.zapmancer.core.security.UserPrincipal
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
@@ -24,7 +24,6 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 
