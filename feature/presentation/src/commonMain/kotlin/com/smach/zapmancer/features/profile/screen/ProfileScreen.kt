@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,13 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MilitaryTech
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Button
@@ -34,10 +31,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -58,17 +53,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import com.smach.zapmancer.domain.model.PortfolioItem
 import com.smach.zapmancer.domain.model.ProfileReview
 import com.smach.zapmancer.features.common.components.AppImage
-import com.smach.zapmancer.features.common.components.ErrorState
 import com.smach.zapmancer.features.common.components.UserAvatar
 import com.smach.zapmancer.features.common.components.VerticalDivider
-import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.profile.state.ProfileUiState
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEffect
 import com.smach.zapmancer.features.profile.viewmodel.ProfileEvent
@@ -87,6 +80,7 @@ fun ProfileScreen(
 ) {
     val viewModel: ProfileViewModel = koinViewModel(parameters = { parametersOf(userId) })
     val state by viewModel.uiState.collectAsState()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(ProfileEvent.Refresh)
@@ -112,6 +106,7 @@ fun ProfileScreen(
         state = state,
         onEvent = { viewModel.onEvent(it) },
         onProfileClick = onProfileClick,
+        windowSizeClass = windowSizeClass,
     )
 }
 
@@ -121,100 +116,122 @@ fun ProfileContent(
     state: ProfileUiState,
     onEvent: (ProfileEvent) -> Unit,
     onProfileClick: (String) -> Unit = {},
+    windowSizeClass: WindowSizeClass,
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact =
-        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
-    Scaffold(
-        topBar = {
-            ZapmancerTopBar(
-                title = "Zapmancer",
-                showBackButton = true,
-                onBackClick = { onEvent(ProfileEvent.BackClicked) },
-                actions = {
-                    IconButton(onClick = { onEvent(ProfileEvent.SearchClicked) }) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.surface,
-                drawBottomBorder = true,
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.TopCenter,
+    val isWideScreen = windowSizeClass.isWidthAtLeastBreakpoint(
+        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+    )
+
+    if (!isWideScreen) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            when {
-                state.error != null -> {
-                    ErrorState(
-                        description = state.error,
-                        onButtonClick = { onEvent(ProfileEvent.Refresh) },
+            IdentityHeader(state, onEvent)
+
+            ProfileSectionCard(title = "About") {
+                Text(
+                    text = state.about,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 22.sp,
+                )
+            }
+
+            ProfileSectionCard(title = "Skills") {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    state.skills.forEach { skill ->
+                        SkillChip(skill)
+                    }
+                }
+            }
+
+            SectionTitleRow(
+                title = "Portfolio",
+                actionText = "See more",
+                onActionClick = { onEvent(ProfileEvent.PortfolioMore) },
+            )
+            state.portfolioItems.forEach { project ->
+                PortfolioCard(item = project)
+            }
+
+
+            SectionTitleRow(
+                title = "Top Reviews",
+                actionText = "See all",
+                onActionClick = { onEvent(ProfileEvent.ReviewMore) },
+            )
+            state.reviews.forEach {  review ->
+                ReviewCard(review = review, onProfileClick = onProfileClick)
+            }
+        }
+    }
+    else {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                IdentityHeader(state, onEvent)
+                ProfileSectionCard(title = "About") {
+                    Text(
+                        text = state.about,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 22.sp,
                     )
                 }
-
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .then(if (!isCompact) Modifier.widthIn(max = 800.dp) else Modifier),
-                        contentPadding = PaddingValues(bottom = 32.dp),
+                ProfileSectionCard(title = "Skills") {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        item { IdentityHeader(state, onEvent) }
-
-                        item {
-                            ProfileSectionCard(title = "About") {
-                                Text(
-                                    text = state.about,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    lineHeight = 22.sp,
-                                )
-                            }
-                        }
-
-                        item {
-                            ProfileSectionCard(title = "Skills") {
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-                                    state.skills.forEach { skill ->
-                                        SkillChip(skill)
-                                    }
-                                }
-                            }
-                        }
-
-                        item {
-                            SectionTitleRow(
-                                title = "Portfolio",
-                                actionText = "See more",
-                                onActionClick = { onEvent(ProfileEvent.PortfolioMore) },
-                            )
-                        }
-                        items(state.portfolioItems) { project ->
-                            PortfolioCard(item = project)
-                        }
-
-                        item {
-                            SectionTitleRow(
-                                title = "Top Reviews",
-                                actionText = "See all",
-                                onActionClick = { onEvent(ProfileEvent.ReviewMore) },
-                            )
-                        }
-                        items(state.reviews) { review ->
-                            ReviewCard(review = review, onProfileClick = onProfileClick)
+                        state.skills.forEach { skill ->
+                            SkillChip(skill)
                         }
                     }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(2f)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                SectionTitleRow(
+                    title = "Portfolio",
+                    actionText = "See more",
+                    onActionClick = { onEvent(ProfileEvent.PortfolioMore) },
+                )
+                state.portfolioItems.forEach { project ->
+                    PortfolioCard(item = project)
+                }
+
+
+                SectionTitleRow(
+                    title = "Top Reviews",
+                    actionText = "See all",
+                    onActionClick = { onEvent(ProfileEvent.ReviewMore) },
+                )
+                state.reviews.forEach {  review ->
+                    ReviewCard(review = review, onProfileClick = onProfileClick)
                 }
             }
         }
@@ -641,14 +658,16 @@ fun ReviewCard(review: ProfileReview, onProfileClick: (String) -> Unit = {}) {
     }
 }
 
-@Preview
+@PreviewScreenSizes
 @Composable
 fun ProfileScreenPreview() {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     MaterialTheme {
         ProfileContent(
             state = ProfileUiState(),
             onEvent = {},
             onProfileClick = {},
+            windowSizeClass = windowSizeClass,
         )
     }
 }

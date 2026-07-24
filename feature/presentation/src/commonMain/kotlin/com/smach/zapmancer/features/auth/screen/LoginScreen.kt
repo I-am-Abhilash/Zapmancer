@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -43,7 +42,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +50,7 @@ import com.smach.zapmancer.features.auth.state.LoginUiState
 import com.smach.zapmancer.features.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.features.auth.viewmodel.LoginSideEffect
 import com.smach.zapmancer.features.auth.viewmodel.LoginViewModel
-import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.AuthDivider
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.SocialAuthButton
@@ -107,19 +106,17 @@ private fun LoginContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    AuthAdaptiveLayout {
+
+    AdaptiveCenterContainer {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 520.dp)
-                .verticalScroll(scrollState),
+            modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp),
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             AuthHeader(
-                title = "Welcome Back",
-                subtitle = "Sign in to your dashboard",
-            )
+            title = "Welcome Back",
+            subtitle = "Sign in to your dashboard",
+        )
 
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -276,7 +273,7 @@ private fun LoginContent(
     }
 }
 
-@Preview(showBackground = true)
+@PreviewScreenSizes
 @Composable
 private fun LoginContentPreview() {
     MaterialTheme {

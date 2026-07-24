@@ -64,7 +64,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
@@ -611,7 +611,7 @@ fun AutoTypingSearchBarEmptyState(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@PreviewScreenSizes
 @Composable
 fun ProjectListScreenPreview() {
     val sampleProjects = listOf(

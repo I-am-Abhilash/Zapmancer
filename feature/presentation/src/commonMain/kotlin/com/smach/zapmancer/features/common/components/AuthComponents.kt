@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,106 +50,106 @@ import com.smach.zapmancer.features.common.theme.pill
 //   Text field        → surfaceVariant container, primary focus border (shapes.input)
 //   Social button     → outline variant border, surface fill (shapes.pill)
 //   Divider           → outline color
-
-@Composable
-fun AuthAdaptiveLayout(
-    formContent: @Composable () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-    ) {
-        AuthBrandHeader()
-        Spacer(modifier = Modifier.height(24.dp))
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            formContent()
-        }
-    }
-
-//    when (windowLayout) {
-//        WindowLayout.Compact -> {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(MaterialTheme.colorScheme.background)
-//                    .padding(16.dp),
-//            ) {
-//                AuthBrandHeader()
-//                Spacer(modifier = Modifier.height(24.dp))
-//                Box(
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentAlignment = Alignment.TopCenter,
-//                ) {
-//                    formContent()
-//                }
-//            }
-//        }
 //
-//        WindowLayout.Medium -> {
-//            Row(modifier = Modifier.fillMaxSize()) {
-//                // Left panel: primary fill (NikeInk in Nike theme)
-//                Box(
-//                    modifier = Modifier
-//                        .weight(0.45f)
-//                        .fillMaxHeight()
-//                        .background(MaterialTheme.colorScheme.primary),
-//                    contentAlignment = Alignment.Center,
-//                ) {
-//                    AuthBrandPanel(iconSize = 96.dp, titleSize = 40.sp)
-//                }
-//                Box(
-//                    modifier = Modifier
-//                        .weight(0.55f)
-//                        .fillMaxHeight()
-//                        .background(MaterialTheme.colorScheme.background),
-//                    contentAlignment = Alignment.Center,
-//                ) {
-//                    Box(
-//                        modifier = Modifier
-//                            .widthIn(max = 480.dp)
-//                            .padding(32.dp),
-//                    ) {
-//                        formContent()
-//                    }
-//                }
-//            }
-//        }
-//
-//        WindowLayout.Expanded -> {
-//            Row(modifier = Modifier.fillMaxSize()) {
-//                Box(
-//                    modifier = Modifier
-//                        .weight(0.55f)
-//                        .fillMaxHeight()
-//                        .background(MaterialTheme.colorScheme.primary),
-//                    contentAlignment = Alignment.Center,
-//                ) {
-//                    AuthBrandPanel(iconSize = 140.dp, titleSize = 56.sp)
-//                }
-//                Box(
-//                    modifier = Modifier
-//                        .weight(0.45f)
-//                        .fillMaxHeight()
-//                        .background(MaterialTheme.colorScheme.background),
-//                    contentAlignment = Alignment.Center,
-//                ) {
-//                    Box(
-//                        modifier = Modifier
-//                            .widthIn(max = 520.dp)
-//                            .padding(48.dp),
-//                    ) {
-//                        formContent()
-//                    }
-//                }
-//            }
+//@Composable
+//fun AuthAdaptiveLayout(
+//    formContent: @Composable () -> Unit,
+//) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(MaterialTheme.colorScheme.background)
+//            .padding(16.dp),
+//    ) {
+//        AuthBrandHeader()
+//        Spacer(modifier = Modifier.height(24.dp))
+//        Box(
+//            modifier = Modifier.fillMaxSize(),
+//            contentAlignment = Alignment.TopCenter,
+//        ) {
+//            formContent()
 //        }
 //    }
-}
+//
+////    when (windowLayout) {
+////        WindowLayout.Compact -> {
+////            Column(
+////                modifier = Modifier
+////                    .fillMaxSize()
+////                    .background(MaterialTheme.colorScheme.background)
+////                    .padding(16.dp),
+////            ) {
+////                AuthBrandHeader()
+////                Spacer(modifier = Modifier.height(24.dp))
+////                Box(
+////                    modifier = Modifier.fillMaxSize(),
+////                    contentAlignment = Alignment.TopCenter,
+////                ) {
+////                    formContent()
+////                }
+////            }
+////        }
+////
+////        WindowLayout.Medium -> {
+////            Row(modifier = Modifier.fillMaxSize()) {
+////                // Left panel: primary fill (NikeInk in Nike theme)
+////                Box(
+////                    modifier = Modifier
+////                        .weight(0.45f)
+////                        .fillMaxHeight()
+////                        .background(MaterialTheme.colorScheme.primary),
+////                    contentAlignment = Alignment.Center,
+////                ) {
+////                    AuthBrandPanel(iconSize = 96.dp, titleSize = 40.sp)
+////                }
+////                Box(
+////                    modifier = Modifier
+////                        .weight(0.55f)
+////                        .fillMaxHeight()
+////                        .background(MaterialTheme.colorScheme.background),
+////                    contentAlignment = Alignment.Center,
+////                ) {
+////                    Box(
+////                        modifier = Modifier
+////                            .widthIn(max = 480.dp)
+////                            .padding(32.dp),
+////                    ) {
+////                        formContent()
+////                    }
+////                }
+////            }
+////        }
+////
+////        WindowLayout.Expanded -> {
+////            Row(modifier = Modifier.fillMaxSize()) {
+////                Box(
+////                    modifier = Modifier
+////                        .weight(0.55f)
+////                        .fillMaxHeight()
+////                        .background(MaterialTheme.colorScheme.primary),
+////                    contentAlignment = Alignment.Center,
+////                ) {
+////                    AuthBrandPanel(iconSize = 140.dp, titleSize = 56.sp)
+////                }
+////                Box(
+////                    modifier = Modifier
+////                        .weight(0.45f)
+////                        .fillMaxHeight()
+////                        .background(MaterialTheme.colorScheme.background),
+////                    contentAlignment = Alignment.Center,
+////                ) {
+////                    Box(
+////                        modifier = Modifier
+////                            .widthIn(max = 520.dp)
+////                            .padding(48.dp),
+////                    ) {
+////                        formContent()
+////                    }
+////                }
+////            }
+////        }
+////    }
+//}
 
 // Compact header: brand mark on background canvas
 @Composable

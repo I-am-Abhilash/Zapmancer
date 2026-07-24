@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,16 +35,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.features.auth.viewmodel.ForgotPasswordViewModel
-import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
+import com.smach.zapmancer.features.common.theme.input
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -71,15 +71,13 @@ private fun ForgotPasswordContent(
 ) {
     val scrollState = rememberScrollState()
 
-    AuthAdaptiveLayout {
+    AdaptiveCenterContainer {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 480.dp)
-                .verticalScroll(scrollState),
+            modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp),
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
+
             AuthHeader(
                 title = "Forgot Password",
                 subtitle = "Enter your email to receive a recovery link",
@@ -145,7 +143,7 @@ private fun ForgotPasswordContent(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.surface,
                         ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.input,
                         enabled = !state.isLoading && !state.isSuccess,
                     ) {
                         if (state.isLoading) {
@@ -182,11 +180,13 @@ private fun ForgotPasswordContent(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onBackToLogin() },
             )
+
         }
+
     }
 }
 
-@Preview(showBackground = true)
+@PreviewScreenSizes
 @Composable
 private fun ForgotPasswordPreview() {
     MaterialTheme {

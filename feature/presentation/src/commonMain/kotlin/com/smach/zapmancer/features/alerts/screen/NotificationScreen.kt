@@ -66,6 +66,7 @@ import com.smach.zapmancer.features.alerts.state.NotificationUiState
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEffect
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationEvent
 import com.smach.zapmancer.features.alerts.viewmodel.NotificationViewModel
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.EmptyState
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import org.koin.compose.viewmodel.koinViewModel
@@ -93,12 +94,15 @@ fun NotificationScreen(
     )
 }
 
+
+
 @Composable
 fun NotificationContent(
     state: NotificationUiState,
     onEvent: (NotificationEvent) -> Unit,
 ) {
     Scaffold(
+
         topBar = {
             ZapmancerTopBar(
                 title = "Zapmancer",
@@ -111,9 +115,9 @@ fun NotificationContent(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
     ) { padding ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentAlignment = Alignment.TopCenter,
+        AdaptiveCenterContainer (
+            maxWidth = 840.dp,
+            alignment = Alignment.TopCenter
         ) {
             if (state.notifications.isEmpty() && !state.isLoading && state.error == null) {
                 EmptyState(
@@ -143,7 +147,7 @@ fun NotificationContent(
                                         NotificationEvent.OnReplyTextChanged(
                                             item.id,
                                             text,
-                                        ),
+                                        )
                                     )
                                 },
                                 onSendReply = { onEvent(NotificationEvent.SendQuickReply(item.id)) },
@@ -152,7 +156,7 @@ fun NotificationContent(
                                         NotificationEvent.ExecuteAction(
                                             item.id,
                                             actionLabel,
-                                        ),
+                                        )
                                     )
                                 },
                             )
@@ -163,7 +167,6 @@ fun NotificationContent(
         }
     }
 }
-
 @Composable
 fun RibbonHeader(text: String) {
     Box(modifier = Modifier.padding(start = 4.dp)) {

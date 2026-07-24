@@ -44,8 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.ZapmancerTopBar
 import com.smach.zapmancer.features.common.theme.AppTheme
 import com.smach.zapmancer.features.projects.state.PostProjectUiState
@@ -74,7 +75,6 @@ fun PostProjectScreen(
     PostProjectContent(
         state = state,
         onEvent = viewModel::onEvent,
-        onBackClick = { viewModel.onEvent(PostProjectEvent.BackClicked) },
     )
 }
 
@@ -91,105 +91,111 @@ private fun sharedTextFieldColors() = OutlinedTextFieldDefaults.colors(
 fun PostProjectContent(
     state: PostProjectUiState,
     onEvent: (PostProjectEvent) -> Unit,
-    onBackClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             ZapmancerTopBar(
                 title = "Zapmancer",
                 showBackButton = true,
-                onBackClick = onBackClick,
+                onBackClick = { onEvent(PostProjectEvent.BackClicked) },
                 containerColor = MaterialTheme.colorScheme.surface,
                 drawBottomBorder = true,
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.TopCenter,
+
+
+        AdaptiveCenterContainer(
+            maxWidth = 840.dp,
+            alignment = Alignment.TopCenter
         ) {
-            if (state.isSubmitted) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(80.dp),
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        "Project Posted!",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        "Your project has been successfully listed. Freelancers can now view details and submit proposals.",
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Button(
-                        onClick = onBackClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        shape = CircleShape,
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                if (state.isSubmitted) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        Text("Return to Dashboard", fontWeight = FontWeight.Bold)
-                    }
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 12.dp),
-                    contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                ) {
-                    item {
-                        Column {
-                            Text(
-                                "Post a Project",
-                                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                "Create a listing to find talented freelancers for your needs.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp),
-                            )
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(80.dp),
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            "Project Posted!",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            "Your project has been successfully listed. Freelancers can now view details and submit proposals.",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Button(
+                            onClick = { onEvent(PostProjectEvent.BackClicked) },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            shape = CircleShape,
+                        ) {
+                            Text("Return to Dashboard", fontWeight = FontWeight.Bold)
                         }
                     }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
+                        contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        item {
+                            Column {
+                                Text(
+                                    "Post a Project",
+                                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                Text(
+                                    "Create a listing to find talented freelancers for your needs.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 4.dp),
+                                )
+                            }
+                        }
 
-                    item { JobDetailsCard(state, onEvent) }
-                    item { DeliverablesCard(state, onEvent) }
-                    item { SkillsCard(state, onEvent) }
+                        item { JobDetailsCard(state, onEvent) }
+                        item { DeliverablesCard(state, onEvent) }
+                        item { SkillsCard(state, onEvent) }
 
-                    item {
-                        Button(
-                            onClick = { onEvent(PostProjectEvent.Submit) },
-                            modifier = Modifier.fillMaxWidth().height(56.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = Color.White,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            enabled = !state.isSubmitting && state.title.isNotEmpty() && state.description.isNotEmpty(),
-                        ) {
-                            Text(
-                                if (state.isSubmitting) "Posting..." else "Post Project",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            )
+                        item {
+                            Button(
+                                onClick = { onEvent(PostProjectEvent.Submit) },
+                                modifier = Modifier.fillMaxWidth().height(56.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = Color.White,
+                                ),
+                                shape = MaterialTheme.shapes.extraLarge,
+                                enabled = !state.isSubmitting && state.title.isNotEmpty() && state.description.isNotEmpty(),
+                            ) {
+                                Text(
+                                    if (state.isSubmitting) "Posting..." else "Post Project",
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                )
+                            }
                         }
                     }
                 }
@@ -438,14 +444,13 @@ private fun SkillsCard(state: PostProjectUiState, onEvent: (PostProjectEvent) ->
     }
 }
 
-@Preview
+@PreviewScreenSizes
 @Composable
 fun PostProjectScreenPreview() {
     AppTheme {
         PostProjectContent(
             state = PostProjectUiState(),
             onEvent = {},
-            onBackClick = {},
         )
     }
 }

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -41,7 +40,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.features.common.components.UserAvatar
@@ -85,18 +83,14 @@ fun ProjectDetailScreen(
 
     ProjectDetailContent(
         state = state,
-        onBackClick = { viewModel.onEvent(ProjectDetailEvent.BackClicked) },
-        onSaveClick = { viewModel.onEvent(ProjectDetailEvent.ToggleSave) },
-        onApplyClick = { viewModel.onEvent(ProjectDetailEvent.Apply) },
+        onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
 fun ProjectDetailContent(
     state: ProjectDetailUiState,
-    onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
-    onApplyClick: () -> Unit,
+    onEvent: (ProjectDetailEvent) -> Unit,
     showTopBar: Boolean = true,
 ) {
     val content = @Composable { padding: PaddingValues ->
@@ -120,8 +114,8 @@ fun ProjectDetailContent(
                 item {
                     ApplySaveButtonSection(
                         isSaved = state.isSaved,
-                        onApplyClick = onApplyClick,
-                        onSaveClick = onSaveClick,
+                        onApplyClick = { onEvent(ProjectDetailEvent.ToggleSave) },
+                        onSaveClick = { onEvent(ProjectDetailEvent.Apply) },
                     )
                 }
                 item { ClientSummarySection(state) }
@@ -136,7 +130,7 @@ fun ProjectDetailContent(
                 ZapmancerTopBar(
                     title = "Zapmancer",
                     showBackButton = true,
-                    onBackClick = onBackClick,
+                    onBackClick = { onEvent(ProjectDetailEvent.BackClicked) },
                     actions = {
                         IconButton(onClick = {}) {
                             Icon(
@@ -586,16 +580,14 @@ fun VerificationItem(text: String, isVerified: Boolean = false) {
     }
 }
 
-@Preview
+@PreviewScreenSizes
 @Composable
 fun ProjectDetailScreenPreview() {
     MaterialTheme {
         ProjectDetailContent(
             state = ProjectDetailUiState(),
-            onBackClick = {},
-            onSaveClick = {},
-            onApplyClick = {},
             showTopBar = true,
+            onEvent = {},
         )
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -48,7 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.VerificationUiState
 import com.smach.zapmancer.features.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.features.auth.viewmodel.VerificationViewModel
-import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.AuthHeader
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -92,12 +91,9 @@ private fun VerificationContent(
     val scrollState = rememberScrollState()
     val codeLength = 6
 
-    AuthAdaptiveLayout {
+    AdaptiveCenterContainer {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 520.dp)
-                .verticalScroll(scrollState),
+            modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {

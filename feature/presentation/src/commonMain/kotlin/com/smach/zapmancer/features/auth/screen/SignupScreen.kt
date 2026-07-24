@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -46,7 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.features.auth.state.SignupUiState
 import com.smach.zapmancer.features.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.features.auth.viewmodel.SignupViewModel
-import com.smach.zapmancer.features.common.components.AuthAdaptiveLayout
+import com.smach.zapmancer.features.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.features.common.components.AuthHeader
 import com.smach.zapmancer.features.common.components.ZapTextField
 import org.koin.compose.viewmodel.koinViewModel
@@ -87,12 +86,9 @@ private fun SignupContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    AuthAdaptiveLayout {
+    AdaptiveCenterContainer {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 520.dp)
-                .verticalScroll(scrollState),
+            modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
