@@ -17,8 +17,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.HomeDashboard as HomeDashboardDto
 
+@Single(binds = [HomeRepository::class])
 class HomeRepositoryImpl(
     private val client: HttpClient,
 ) : HomeRepository {

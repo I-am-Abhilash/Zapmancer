@@ -56,7 +56,6 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.hikaricp)
-
 }
 
 configurations.all {

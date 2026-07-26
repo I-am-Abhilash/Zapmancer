@@ -12,12 +12,14 @@ benManes = "0.54.0"
 buildkonfig = "0.22.0"
 coil3 = "3.5.0"
 composeMultiplatform = "1.11.1"
-datastore = "1.2.1"
+datastore = "1.3.0-alpha09"
 decompose = "3.5.0"
 detekt = "1.23.8"
 jetbrainsAdaptive = "1.2.0"
+jetbrainsAdaptiveNav = "1.9.0"
 junit = "4.13.2"
 koin = "4.2.2"
+koinCompiler = "1.0.2"
 kotlin = "2.4.0"
 kotlinx-coroutines = "1.11.0"
 kotlinx-coroutines-test = "1.11.0"
@@ -62,6 +64,7 @@ commonmark = "0.29.0"
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "jetbrainsAdaptive" }
 adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "jetbrainsAdaptive" }
 adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "jetbrainsAdaptive" }
+adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "jetbrainsAdaptiveNav" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 #androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 #androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -84,6 +87,12 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
+
+
+datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+
+
 # kotlinx
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
@@ -177,6 +186,8 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 room = { id = "androidx.room", version.ref = "room" }
+koin = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompiler" }
+
 
 # Server plugins
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -14,8 +14,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.NotificationItem as NotificationItemDto
 
+@Single(binds = [NotificationRepository::class])
 class NotificationRepositoryImpl(
     private val client: HttpClient,
 ) : NotificationRepository {

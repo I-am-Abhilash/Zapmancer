@@ -5,7 +5,9 @@ import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.repository.ProjectRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetProjectsUseCase(
     private val repository: ProjectRepository,
 ) {

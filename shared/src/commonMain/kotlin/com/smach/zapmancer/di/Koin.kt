@@ -1,36 +1,21 @@
 package com.smach.zapmancer.di
 
-import com.smach.zapmancer.MainViewModel
-import com.smach.zapmancer.core.common.di.coreModule
-import com.smach.zapmancer.data.di.dataModule
-import com.smach.zapmancer.features.common.di.presentationModule
-import org.koin.core.KoinApplication
-import org.koin.core.context.startKoin
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Configuration
+import org.koin.core.annotation.KoinApplication
+import org.koin.core.annotation.Module
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.module
+import org.koin.plugin.module.dsl.startKoin
 
-/**
- * Initializes Koin dependency injection container for the application.
- *
- * Note: [appModule] already includes [coreModule], [dataModule], and [presentationModule]
- * via `includes(...)`, so passing them again at the top-level would double-register bindings.
- */
-fun initKoin(appDeclaration: KoinAppDeclaration = {}): KoinApplication = startKoin {
-    modules(appModule())
+
+@KoinApplication
+object ZapmancerApp
+
+fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin<ZapmancerApp> {
     appDeclaration()
 }
 
-/**
- * Creates the main application module. Sub-modules are included here (not at the
- * top-level) so each is registered exactly once.
- */
-fun appModule(): Module = module {
-    viewModelOf(::MainViewModel)
-    includes(
-        coreModule,
-        dataModule,
-        presentationModule,
-    )
-}
+@Module
+@Configuration
+@ComponentScan("com.smach.zapmancer")
+class AppModule

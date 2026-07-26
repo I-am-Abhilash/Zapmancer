@@ -4,7 +4,9 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.UserActivity
 import com.smach.zapmancer.domain.repository.HomeRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class ExportActivityCsvUseCase(
     private val repository: HomeRepository,
 ) {

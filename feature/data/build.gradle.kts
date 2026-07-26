@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.koin)
 }
 
 kotlin {
@@ -20,10 +21,11 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
-//
-//    js {
-//        browser()
-//    }
+
+    js {
+        browser()
+    }
+
 
     sourceSets {
         commonMain.dependencies {
@@ -31,6 +33,7 @@ kotlin {
             implementation(projects.feature.domain)
             implementation(libs.ktor.client.core)
             implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.serialization.json)
         }

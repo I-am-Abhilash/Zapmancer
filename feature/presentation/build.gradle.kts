@@ -4,12 +4,13 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.koin)
 }
 
 kotlin {
 
     android {
-        namespace = "com.smach.zapmancer.features"
+        namespace = "com.smach.zapmancer.presentation"
         compileSdk =
             libs.versions.android.compileSdk
                 .get()
@@ -33,6 +34,11 @@ kotlin {
 //        }
 //    }
 
+    js {
+        browser()
+    }
+
+
     sourceSets {
         commonMain.dependencies {
             implementation(projects.feature.domain)
@@ -51,6 +57,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.annotations)
             implementation(libs.navigation3.ui)
             implementation(libs.lifecycle.viewmodel.navigation3)
             implementation(libs.adaptive.layout)

@@ -5,7 +5,9 @@ import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.MessageItem
 import com.smach.zapmancer.domain.repository.MessageRepository
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetMessagesUseCase(
     private val repository: MessageRepository,
 ) {

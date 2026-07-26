@@ -3,7 +3,7 @@ ktor:
     port: "$PORT:9090"
   application:
     modules:
-      - com.smach.zapmancer.app.ApplicationKt.module
+      - com.smach.zapmancer.ApplicationKt.module
 
 storage:
   provider: "$STORAGE_PROVIDER:gcs"

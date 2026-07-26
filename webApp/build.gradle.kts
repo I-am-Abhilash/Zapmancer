@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
@@ -5,9 +7,12 @@ plugins {
 }
 
 kotlin {
-    js(IR) {
+    js {
         browser {
             commonWebpackConfig {
+                devServer = (devServer?: KotlinWebpackConfig.DevServer()).apply {
+                    port = 3000
+                }
                 outputFileName = "webApp.js"
             }
         }
@@ -24,10 +29,6 @@ kotlin {
         }
 
         jsMain.dependencies {
-            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.3.2"))
-            implementation(npm("sql.js", "1.8.0"))
-
-            implementation(libs.sqldelight.webworker)
             implementation(projects.core)
 
         }

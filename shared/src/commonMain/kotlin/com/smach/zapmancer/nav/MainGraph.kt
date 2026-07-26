@@ -27,24 +27,24 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.smach.zapmancer.features.alerts.screen.NotificationScreen
-import com.smach.zapmancer.features.common.components.AppDrawerScaffold
-import com.smach.zapmancer.features.common.components.LocalDrawerController
-import com.smach.zapmancer.features.home.screen.HomeScreen
-import com.smach.zapmancer.features.messages.screen.MessageDetailScreen
-import com.smach.zapmancer.features.messages.screen.MessagesListScreen
-import com.smach.zapmancer.features.messages.viewmodel.MessagesListViewModel
-import com.smach.zapmancer.features.profile.screen.EditProfileScreen
-import com.smach.zapmancer.features.profile.screen.ProfileScreen
-import com.smach.zapmancer.features.projects.screen.PostProjectScreen
-import com.smach.zapmancer.features.projects.screen.ProjectDetailScreen
-import com.smach.zapmancer.features.projects.screen.ProjectListScreen
-import com.smach.zapmancer.features.projects.viewmodel.ProjectListViewModel
-import com.smach.zapmancer.features.proposal.screen.ClientProposalsScreen
-import com.smach.zapmancer.features.proposal.screen.ProposalScreen
-import com.smach.zapmancer.features.search.screen.SearchScreen
-import com.smach.zapmancer.features.search.viewmodel.SearchViewModel
-import com.smach.zapmancer.features.settings.screen.SettingsScreen
+import com.smach.zapmancer.presentation.alerts.screen.NotificationScreen
+import com.smach.zapmancer.presentation.common.components.AppDrawerScaffold
+import com.smach.zapmancer.presentation.common.components.LocalDrawerController
+import com.smach.zapmancer.presentation.home.screen.HomeScreen
+import com.smach.zapmancer.presentation.messages.screen.MessageDetailScreen
+import com.smach.zapmancer.presentation.messages.screen.MessagesListScreen
+import com.smach.zapmancer.presentation.messages.viewmodel.MessagesListViewModel
+import com.smach.zapmancer.presentation.profile.screen.EditProfileScreen
+import com.smach.zapmancer.presentation.profile.screen.ProfileScreen
+import com.smach.zapmancer.presentation.projects.screen.PostProjectScreen
+import com.smach.zapmancer.presentation.projects.screen.ProjectDetailScreen
+import com.smach.zapmancer.presentation.projects.screen.ProjectListScreen
+import com.smach.zapmancer.presentation.projects.viewmodel.ProjectListViewModel
+import com.smach.zapmancer.presentation.proposal.screen.ClientProposalsScreen
+import com.smach.zapmancer.presentation.proposal.screen.ProposalScreen
+import com.smach.zapmancer.presentation.search.screen.SearchScreen
+import com.smach.zapmancer.presentation.search.viewmodel.SearchViewModel
+import com.smach.zapmancer.presentation.settings.screen.SettingsScreen
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -80,53 +80,19 @@ fun MainGraph(
         onNavigateToProposal = { navigator.navigate(Screen.Proposal) },
     ) {
         val drawerController = LocalDrawerController.current
-        Row(modifier = modifier) {
-            if (!isCompact) {
-                NavigationRail(
-                    modifier = Modifier.fillMaxHeight(),
-                    header = {
-                        IconButton(onClick = { drawerController.open() }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                ) {
-                    bottomNavigationRoutes.forEach { destination ->
-                        NavigationRailItem(
-                            selected = destination == state.topLevelRoute,
-                            onClick = { navigator.navigate(destination) },
-                            icon = {
-                                Icon(
-                                    imageVector = destination.icon,
-                                    contentDescription = destination.title,
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = destination.title,
-                                    style = MaterialTheme.typography.labelSmall,
-                                )
-                            },
-                        )
-                    }
-                }
-            }
-
+        MainAppShell(
+            currentScreen = navigator.currentScreen,
+            onNavigate = { destination -> navigator.navigate(destination) },
+            onBackClick = { navigator.goBack() },
+            onOpenDrawer = { drawerController.open() },
+            modifier = modifier,
+        ) { shellPadding ->
             Scaffold(
-                modifier = Modifier.weight(1f),
                 snackbarHost = { SnackbarHost(snackbarHostState) },
-                bottomBar = {
-                    if (isCompact && navigator.currentScreen.isTopLevel) {
-                        BottomNavigationBar(
-                            mainNavigator = navigator,
-                            navigationState = state,
-                        )
-                    }
-                },
-            ) { innerPadding ->
+                containerColor = MaterialTheme.colorScheme.background,
+            ) { scaffoldPadding ->
                 NavDisplay(
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = Modifier.padding(shellPadding).padding(scaffoldPadding),
                     entries = state.toEntries(appEntryProvider(navigator, showSnackbar, onLogout)),
                     onBack = { navigator.goBack() },
                 )

@@ -1,4 +1,4 @@
-// package com.smach.zapmancer.features.auth.viewmodel
+// package com.smach.zapmancer.presentation.auth.viewmodel
 //
 // import app.cash.turbine.test
 // import com.smach.zapmancer.core.common.utils.DataError

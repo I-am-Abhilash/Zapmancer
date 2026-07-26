@@ -4,7 +4,9 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.User
 import com.smach.zapmancer.domain.repository.AuthRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class SignUpUseCase(
     private val repository: AuthRepository,
 ) {

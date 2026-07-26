@@ -5,10 +5,10 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.smach.zapmancer.features.auth.screen.ForgotPasswordScreen
-import com.smach.zapmancer.features.auth.screen.LoginScreen
-import com.smach.zapmancer.features.auth.screen.SignupScreen
-import com.smach.zapmancer.features.auth.screen.VerificationScreen
+import com.smach.zapmancer.presentation.auth.screen.ForgotPasswordScreen
+import com.smach.zapmancer.presentation.auth.screen.LoginScreen
+import com.smach.zapmancer.presentation.auth.screen.SignupScreen
+import com.smach.zapmancer.presentation.auth.screen.VerificationScreen
 
 /**
  * AuthGraph handles the unauthenticated navigation stack:

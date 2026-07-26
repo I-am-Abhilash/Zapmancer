@@ -12,8 +12,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.Proposal as ProposalDto
 
+@Single(binds = [ProposalRepository::class])
 class ProposalRepositoryImpl(
     private val client: HttpClient,
 ) : ProposalRepository {

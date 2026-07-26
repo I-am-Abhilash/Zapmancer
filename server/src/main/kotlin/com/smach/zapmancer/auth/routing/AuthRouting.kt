@@ -3,19 +3,25 @@ package com.smach.zapmancer.auth.routing
 import com.smach.zapmancer.auth.service.AuthService
 import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.DomainResult
-import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.RefreshTokenRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
+import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiError
+import com.smach.zapmancer.core.network.ktor.ApiResponse
+import io.ktor.http.Cookie
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 
 /**
@@ -32,29 +38,111 @@ fun Route.authRouting() {
 
     rateLimit(RateLimitName("auth")) {
         route("/auth") {
+            // Android / iOS
             post("/login") {
                 val req = call.receive<LoginRequest>()
-                call.respondResult(service.login(req.email, req.password))
+
+                call.respondResult(
+                    service.login(
+                        email = req.email,
+                        password = req.password,
+                    ),
+                )
+            }
+
+            // Web
+            post("/web/login") {
+                val req = call.receive<LoginRequest>()
+
+                when (
+                    val result = service.login(
+                        email = req.email,
+                        password = req.password,
+                    )
+                ) {
+                    is DomainResult.Success -> {
+                        val tokens = result.data
+
+                        // Refresh token is stored in browser
+                        // and cannot be accessed by JavaScript
+                        call.response.cookies.append(
+                            Cookie(
+                                name = "refresh_token",
+                                value = tokens.refreshToken,
+                                path = "/auth",
+                                secure = true,
+                                httpOnly = true,
+                                extensions = mapOf(
+                                    "SameSite" to "Lax",
+                                ),
+                            ),
+                        )
+
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = ApiResponse(
+                                success = true,
+                                data = WebLoginResponse(
+                                    accessToken = tokens.accessToken,
+                                ),
+                            ),
+                        )
+                    }
+
+                    is DomainResult.Error -> {
+                        call.respond(
+                            status = result.code.httpStatusCode,
+                            message = ApiResponse<WebLoginResponse>(
+                                success = false,
+                                error = ApiError(
+                                    code = result.code.name,
+                                    message = result.message
+                                        ?: "An unexpected error occurred",
+                                ),
+                            ),
+                        )
+                    }
+                }
             }
 
             post("/register") {
                 val req = call.receive<SignUpRequest>()
-                call.respondResult(service.register(req.username, req.email, req.password))
+
+                call.respondResult(
+                    service.register(
+                        req.username,
+                        req.email,
+                        req.password,
+                    ),
+                )
             }
 
             post("/forgot-password") {
                 val req = call.receive<ForgotPasswordRequest>()
-                call.respondResult(service.forgotPassword(req.email))
+
+                call.respondResult(
+                    service.forgotPassword(req.email),
+                )
             }
 
             post("/verify-otp") {
                 val req = call.receive<VerifyOtpRequest>()
-                call.respondResult(service.verifyOtp(req.email, req.code))
+
+                call.respondResult(
+                    service.verifyOtp(
+                        req.email,
+                        req.code,
+                    ),
+                )
             }
 
+            // Mobile refresh
             post("/refresh") {
                 val req = call.receive<RefreshTokenRequest>()
-                call.respondResult(service.refresh(req.refreshToken))
+
+                call.respondResult(
+                    service.refresh(req.refreshToken),
+                )
             }
         }
     }
@@ -73,3 +161,8 @@ fun Route.authRouting() {
         }
     }
 }
+
+@Serializable
+data class WebLoginResponse(
+    val accessToken: String,
+)

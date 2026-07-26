@@ -1,10 +1,12 @@
 package com.smach.zapmancer.core.network.session
 
-import com.smach.zapmancer.core.common.utils.DataStoreStorage
+import com.smach.zapmancer.core.datastore.DataStoreStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 
+@Single
 class SessionManager(
     private val storage: DataStoreStorage,
 ) {

@@ -5,7 +5,9 @@ import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.UpdateProfileParams
 import com.smach.zapmancer.domain.model.UserProfile
 import com.smach.zapmancer.domain.repository.ProfileRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class UpdateProfileUseCase(
     private val repository: ProfileRepository,
 ) {

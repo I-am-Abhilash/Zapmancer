@@ -1,22 +1,20 @@
 package com.smach.zapmancer.core.common.di
 
-import com.smach.zapmancer.core.common.utils.DataStoreStorage
-import com.smach.zapmancer.core.common.utils.createDatabaseDriver
-import com.smach.zapmancer.core.database.AppDatabase
-import com.smach.zapmancer.core.monitoring.AnalyticsService
-import com.smach.zapmancer.core.monitoring.NapierAnalyticsService
-import com.smach.zapmancer.core.network.ktor.provideHttpClient
-import com.smach.zapmancer.core.network.session.SessionManager
-import org.koin.dsl.module
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import com.smach.zapmancer.core.datastore.createDataStore
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Configuration
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-val coreModule =
-    module {
-        single { createDatabaseDriver() }
-        single { AppDatabase(get()) }
-        single { DataStoreStorage(get()) }
 
-        single<AnalyticsService> { NapierAnalyticsService() }
-
-        single { SessionManager(get()) }
-        single { provideHttpClient(get()) }
+@Module
+@Configuration
+@ComponentScan("com.smach.zapmancer.core")
+class CoreModule {
+    @Single
+    fun provideDataStore(): DataStore<Preferences> {
+        return createDataStore()
     }
+}

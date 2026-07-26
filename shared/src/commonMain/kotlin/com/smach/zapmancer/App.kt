@@ -11,8 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.smach.zapmancer.domain.repository.SettingsRepository
-import com.smach.zapmancer.features.auth.screen.OnboardingScreen
-import com.smach.zapmancer.features.common.theme.AppTheme
+import com.smach.zapmancer.presentation.auth.screen.OnboardingScreen
+import com.smach.zapmancer.presentation.common.theme.AppTheme
 import com.smach.zapmancer.nav.AuthGraph
 import com.smach.zapmancer.nav.MainGraph
 import org.koin.compose.koinInject

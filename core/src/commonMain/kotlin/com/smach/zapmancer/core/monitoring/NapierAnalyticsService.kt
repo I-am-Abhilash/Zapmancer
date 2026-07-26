@@ -1,7 +1,9 @@
 package com.smach.zapmancer.core.monitoring
 
 import io.github.aakira.napier.Napier
+import org.koin.core.annotation.Single
 
+@Single
 class NapierAnalyticsService : AnalyticsService {
     override fun logEvent(
         name: String,

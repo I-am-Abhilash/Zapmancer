@@ -17,7 +17,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Single
 
+@Single(binds = [AuthRepository::class])
 class AuthRepositoryImpl(
     private val client: HttpClient,
     private val sessionManager: SessionManager,

@@ -6,8 +6,8 @@ import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.Project
 import com.smach.zapmancer.core.common.dto.ProjectDetail
-import com.smach.zapmancer.projects.repository.ProjectsRepository
 import com.smach.zapmancer.core.recommendations.GorseClient
+import com.smach.zapmancer.projects.repository.ProjectsRepository
 
 class ProjectsService(
     private val repository: ProjectsRepository,

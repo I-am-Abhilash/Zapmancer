@@ -14,8 +14,10 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.UserProfile as UserProfileDto
 
+@Single(binds = [ProfileRepository::class])
 class ProfileRepositoryImpl(
     private val client: HttpClient,
 ) : ProfileRepository {

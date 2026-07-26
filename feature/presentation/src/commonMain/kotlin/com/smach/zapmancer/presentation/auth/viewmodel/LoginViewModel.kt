@@ -1,0 +1,95 @@
+package com.smach.zapmancer.presentation.auth.viewmodel
+
+import androidx.lifecycle.viewModelScope
+import com.smach.zapmancer.core.common.base.BaseViewModel
+import com.smach.zapmancer.core.common.utils.foldTyped
+import com.smach.zapmancer.core.common.utils.toUserMessage
+import com.smach.zapmancer.domain.usecase.LoginUseCase
+import com.smach.zapmancer.presentation.auth.state.LoginUiState
+import kotlinx.coroutines.launch
+import org.koin.core.annotation.KoinViewModel
+import org.koin.core.annotation.Single
+
+sealed interface LoginEvent {
+    data class OnEmailChanged(
+        val email: String,
+    ) : LoginEvent
+
+    data class OnPasswordChanged(
+        val password: String,
+    ) : LoginEvent
+
+    data class OnRememberMeChanged(
+        val isChecked: Boolean,
+    ) : LoginEvent
+
+    data object OnForgotPasswordClicked : LoginEvent
+
+    data object OnTogglePasswordVisibility : LoginEvent
+
+    data object OnRegisterHereClicked : LoginEvent
+
+    data object Submit : LoginEvent
+}
+
+sealed interface LoginSideEffect {
+    data class NavigateToOtp(
+        val email: String,
+    ) : LoginSideEffect
+
+    data object NavigateToForgotPassword : LoginSideEffect
+    data object NavigateToSignup : LoginSideEffect
+    data object NavigateToHome : LoginSideEffect
+}
+
+@KoinViewModel
+class LoginViewModel(
+    private val loginUseCase: LoginUseCase,
+) : BaseViewModel<LoginUiState, LoginEvent, LoginSideEffect>(LoginUiState()) {
+
+    override fun onEvent(event: LoginEvent) {
+        when (event) {
+            is LoginEvent.OnEmailChanged -> updateState { copy(email = event.email) }
+
+            is LoginEvent.OnPasswordChanged -> updateState { copy(password = event.password) }
+
+            is LoginEvent.OnRememberMeChanged -> {
+                updateState { copy(isRememberMe = event.isChecked) }
+            }
+
+            LoginEvent.OnTogglePasswordVisibility -> updateState { copy(togglePassword = !togglePassword) }
+
+            LoginEvent.Submit -> submit()
+
+            LoginEvent.OnForgotPasswordClicked -> {
+                sendEffect(LoginSideEffect.NavigateToForgotPassword)
+            }
+
+            LoginEvent.OnRegisterHereClicked -> {
+                sendEffect(LoginSideEffect.NavigateToSignup)
+            }
+        }
+    }
+
+    private fun submit() {
+        val currentState = uiState.value
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, error = null) }
+
+            loginUseCase(currentState.email, currentState.password).foldTyped(
+                onSuccess = {
+                    updateState { copy(isLoading = false, isSuccess = true) }
+                    sendEffect(LoginSideEffect.NavigateToHome)
+                },
+                onError = { error ->
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            error = error.toUserMessage(),
+                        )
+                    }
+                },
+            )
+        }
+    }
+}

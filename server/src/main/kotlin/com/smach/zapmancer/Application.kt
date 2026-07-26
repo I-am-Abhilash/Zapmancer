@@ -13,13 +13,13 @@ import com.smach.zapmancer.core.di.settingsModule
 import com.smach.zapmancer.core.di.usersModule
 import com.smach.zapmancer.core.framework.configureFramework
 import com.smach.zapmancer.core.framework.di.storageModule
+import com.smach.zapmancer.core.recommendations.createGorseModule
+import com.smach.zapmancer.core.security.configureSecurity
 import com.smach.zapmancer.home.routing.homeRouting
 import com.smach.zapmancer.messages.routing.messageRouting
 import com.smach.zapmancer.notifications.routing.notificationsRouting
 import com.smach.zapmancer.projects.routing.projectsRouting
 import com.smach.zapmancer.proposal.routing.proposalsRouting
-import com.smach.zapmancer.core.recommendations.createGorseModule
-import com.smach.zapmancer.core.security.configureSecurity
 import com.smach.zapmancer.settings.routing.settingsRouting
 import com.smach.zapmancer.users.routing.usersRouting
 import io.ktor.server.application.Application

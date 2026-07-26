@@ -4,7 +4,9 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.Proposal
 import com.smach.zapmancer.domain.repository.ProposalRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class SubmitProposalUseCase(
     private val repository: ProposalRepository,
 ) {

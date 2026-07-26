@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.KoinViewModel
 
 /** Authentication + onboarding routing states */
 sealed interface AppState {
@@ -20,6 +21,7 @@ sealed interface AppState {
 }
 
 /** Central ViewModel that drives root UI routing */
+@KoinViewModel
 class MainViewModel(
     private val authRepository: AuthRepository,
     private val sessionManager: SessionManager,

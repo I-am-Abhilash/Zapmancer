@@ -4,7 +4,9 @@ import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.model.ProjectDetail
 import com.smach.zapmancer.domain.repository.ProjectRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetProjectDetailUseCase(
     private val repository: ProjectRepository,
 ) {

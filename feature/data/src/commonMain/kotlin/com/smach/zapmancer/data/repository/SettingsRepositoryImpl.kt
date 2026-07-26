@@ -3,7 +3,7 @@ package com.smach.zapmancer.data.repository
 import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.ToggleRequest
 import com.smach.zapmancer.core.common.utils.DataError
-import com.smach.zapmancer.core.common.utils.DataStoreStorage
+import com.smach.zapmancer.core.datastore.DataStoreStorage
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
 import com.smach.zapmancer.core.network.ktor.safeApiCall
@@ -17,8 +17,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.SettingsData as SettingsDataDto
 
+@Single(binds = [SettingsRepository::class])
 class SettingsRepositoryImpl(
     private val client: HttpClient,
     private val storage: DataStoreStorage,

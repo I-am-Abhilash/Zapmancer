@@ -1,7 +1,7 @@
 package com.smach.zapmancer.users.routing
 
-import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
+import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.users.service.UsersService
 import io.ktor.http.HttpStatusCode

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.koin)
 }
 
 kotlin {
@@ -18,6 +19,10 @@ kotlin {
             libs.versions.android.minSdk
                 .get()
                 .toInt()
+    }
+
+    js {
+        browser()
     }
 
     jvm()
@@ -57,7 +62,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.napier)
             implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
             implementation(libs.sqldelight.coroutines.extensions)
+            implementation(libs.datastore.preferences.core)
             implementation(libs.okio)
             implementation(libs.coil.compose)
             implementation(libs.ktor.client.core)
@@ -87,8 +94,6 @@ kotlin {
             implementation(libs.sqldelight.native.driver)
         }
         jvmMain.dependencies {
-
-
         }
 
         val webSourceDir = "src/webMain/kotlin"

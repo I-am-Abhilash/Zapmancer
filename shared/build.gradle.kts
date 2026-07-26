@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.koin)
+}
+
+koinCompiler {
+    compileSafety = true
+    strictSafety = true
 }
 
 kotlin {
@@ -32,6 +38,11 @@ kotlin {
         }
     }
 
+    js {
+        browser()
+    }
+
+
 //    js {
 //        browser {
 //            testTask {
@@ -51,11 +62,14 @@ kotlin {
 
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
             implementation(libs.material.icons.extended)
             implementation(libs.navigation3.ui)
             implementation(libs.adaptive.layout)
             implementation(libs.adaptive)
             implementation(libs.adaptive.navigation)
+            implementation(libs.adaptive.navigation.suite)
             implementation(libs.savedstateCompose)
 
             implementation(libs.runtime)

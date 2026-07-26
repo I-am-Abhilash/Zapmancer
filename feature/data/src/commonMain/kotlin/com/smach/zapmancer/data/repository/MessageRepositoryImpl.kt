@@ -35,10 +35,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Single
 import kotlin.time.Duration.Companion.milliseconds
 import com.smach.zapmancer.core.common.dto.ConversationItem as ConversationItemDto
 import com.smach.zapmancer.core.common.dto.MessageItem as MessageItemDto
-
+@Single(binds = [MessageRepository::class])
 class MessageRepositoryImpl(
     private val client: HttpClient,
     private val sessionManager: SessionManager,
