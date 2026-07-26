@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
@@ -32,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,6 +55,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowSizeClass
+import com.smach.zapmancer.presentation.common.adaptive.isExpandedWidth
 import com.smach.zapmancer.presentation.common.components.UserAvatar
 import com.smach.zapmancer.presentation.common.components.VerticalDivider
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar
@@ -71,6 +77,7 @@ fun ProjectDetailScreen(
         koinViewModel(parameters = { parametersOf(projectId) })
 
     val state by viewModel.uiState.collectAsState()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -84,6 +91,7 @@ fun ProjectDetailScreen(
     ProjectDetailContent(
         state = state,
         onEvent = viewModel::onEvent,
+        windowSizeClass = windowSizeClass,
     )
 }
 
@@ -92,34 +100,79 @@ fun ProjectDetailContent(
     state: ProjectDetailUiState,
     onEvent: (ProjectDetailEvent) -> Unit,
     showTopBar: Boolean = true,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     val content = @Composable { padding: PaddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            LazyColumn(
+        if (windowSizeClass.isExpandedWidth) {
+            // LARGE / EXPANDED SCREENS (≥840dp): 2-Column Split View
+            // Left 2/3rd space: Header, Scope & Deliverables, Skills/Tags
+            // Right 1/3rd space: Budget & Timeline, Apply/Save CTAs, Client Summary
+            Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 12.dp),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                    .padding(padding)
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                item { ProjectHeaderSection(state) }
-                item { BudgetSection(state) }
-                item { ProjectScopeSection(state) }
-                item { RequiredSkillsSection(state) }
-                item {
+                // Left Column (2/3rd = weight(2f))
+                Column(
+                    modifier = Modifier
+                        .weight(2f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    ProjectHeaderSection(state)
+                    ProjectScopeSection(state)
+                    RequiredSkillsSection(state)
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+
+                // Right Column (1/3rd = weight(1f))
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    BudgetSection(state)
                     ApplySaveButtonSection(
                         isSaved = state.isSaved,
-                        onApplyClick = { onEvent(ProjectDetailEvent.ToggleSave) },
-                        onSaveClick = { onEvent(ProjectDetailEvent.Apply) },
+                        onApplyClick = { onEvent(ProjectDetailEvent.Apply) },
+                        onSaveClick = { onEvent(ProjectDetailEvent.ToggleSave) },
                     )
+                    ClientSummarySection(state)
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
-                item { ClientSummarySection(state) }
-                item { Spacer(modifier = Modifier.height(48.dp)) }
+            }
+        } else {
+            // COMPACT & MEDIUM SCREENS (<840dp): Single-Column Layout As-Is
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    item { ProjectHeaderSection(state) }
+                    item { BudgetSection(state) }
+                    item { ProjectScopeSection(state) }
+                    item { RequiredSkillsSection(state) }
+                    item {
+                        ApplySaveButtonSection(
+                            isSaved = state.isSaved,
+                            onApplyClick = { onEvent(ProjectDetailEvent.Apply) },
+                            onSaveClick = { onEvent(ProjectDetailEvent.ToggleSave) },
+                        )
+                    }
+                    item { ClientSummarySection(state) }
+                    item { Spacer(modifier = Modifier.height(48.dp)) }
+                }
             }
         }
     }

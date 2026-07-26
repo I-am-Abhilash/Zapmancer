@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
+import com.smach.zapmancer.presentation.common.adaptive.isExpandedWidth
 
 /**
  * MainAppShell is the master adaptive wrapper component.
@@ -54,8 +54,7 @@ fun MainAppShell(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isExpanded =
-        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+    val isExpanded = adaptiveInfo.windowSizeClass.isExpandedWidth
 
     val layoutType =
         if (isExpanded) {

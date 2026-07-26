@@ -1,6 +1,10 @@
 package com.smach.zapmancer.nav
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -21,10 +25,15 @@ fun AuthGraph(
     val state = rememberNavigationState(Screen.Login, setOf(Screen.Login))
     val navigator = MainNavigator(state)
 
-    NavDisplay(
-        entries = state.toEntries(authEntryProvider(navigator, onAuthSuccess)),
-        onBack = { navigator.goBack() },
-    )
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        NavDisplay(
+            entries = state.toEntries(authEntryProvider(navigator, onAuthSuccess)),
+            onBack = { navigator.goBack() },
+        )
+    }
 }
 
 @Composable

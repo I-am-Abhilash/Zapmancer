@@ -61,8 +61,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.presentation.alerts.screen.drawAccentLine
+import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
 import com.smach.zapmancer.presentation.common.components.UserAvatar
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar
 import com.smach.zapmancer.presentation.profile.state.EditProfileUiState
@@ -74,30 +74,33 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-    isNewUser: Boolean,
-    onBackClick: () -> Unit,
-    showSnackbar: (String) -> Unit,
     viewModel: EditProfileViewModel = koinViewModel(),
+    onBackClick: () -> Unit,
+    isNewUser: Boolean = false,
+    showSnackbar: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is EditProfileEffect.ShowToast -> {
-                    showSnackbar(effect.message)
+                EditProfileEffect.NavigateToProfile -> {
+                    onBackClick()
                 }
 
                 EditProfileEffect.NavigateBack -> {
                     onBackClick()
                 }
+
+                is EditProfileEffect.ShowToast -> {
+                    showSnackbar(effect.message)
+                }
             }
         }
     }
 
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact =
-        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isCompact = windowSizeClass.isCompactWidth
 
     Scaffold(
         topBar = {

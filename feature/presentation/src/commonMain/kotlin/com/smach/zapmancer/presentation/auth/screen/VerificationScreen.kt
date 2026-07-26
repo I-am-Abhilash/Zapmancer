@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -47,8 +46,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.presentation.auth.state.VerificationUiState
 import com.smach.zapmancer.presentation.auth.viewmodel.VerificationEvent
 import com.smach.zapmancer.presentation.auth.viewmodel.VerificationViewModel
-import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
+import com.smach.zapmancer.presentation.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.presentation.common.components.AuthHeader
+import com.smach.zapmancer.presentation.common.theme.card
+import com.smach.zapmancer.presentation.common.theme.pill
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -91,7 +92,7 @@ private fun VerificationContent(
     val scrollState = rememberScrollState()
     val codeLength = 6
 
-    AdaptiveCenterContainer {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,8 +106,8 @@ private fun VerificationContent(
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
+                shape = MaterialTheme.shapes.card,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.card),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -121,7 +122,11 @@ private fun VerificationContent(
                     )
 
                     if (state.error != null) {
-                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                        )
                     }
 
                     Button(
@@ -131,15 +136,15 @@ private fun VerificationContent(
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.pill,
                         enabled = !state.isLoading && state.code.length == codeLength,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 strokeWidth = 2.dp,
                             )
                         } else {

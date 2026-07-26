@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +43,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
+import com.smach.zapmancer.presentation.common.adaptive.isExpandedWidth
+import com.smach.zapmancer.presentation.common.adaptive.isMediumWidth
+import com.smach.zapmancer.presentation.common.theme.pill
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -89,12 +94,18 @@ fun OnboardingScreen(
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        OnboardingCompact(pages, pagerState, scope, onFinished)
+        when {
+            windowSizeClass.isCompactWidth -> OnboardingCompact(pages, pagerState, scope, onFinished)
+            windowSizeClass.isMediumWidth -> OnboardingMedium(pages, pagerState, scope, onFinished)
+            windowSizeClass.isExpandedWidth -> OnboardingExpanded(pages, pagerState, scope, onFinished)
+            else -> OnboardingCompact(pages, pagerState, scope, onFinished)
+        }
     }
 }
 
@@ -131,7 +142,7 @@ private fun OnboardingCompact(
                     Icon(
                         page.icon,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(72.dp),
                     )
                 }
@@ -192,7 +203,7 @@ private fun OnboardingMedium(
                     Icon(
                         page.icon,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(96.dp),
                     )
                 }
@@ -242,19 +253,19 @@ private fun OnboardingExpanded(
                 Icon(
                     Icons.Default.Bolt,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(120.dp),
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     "Zapmancer",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 40.sp,
                 )
                 Text(
                     "Build the future of decentralized apps.",
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 32.dp),
                     style = MaterialTheme.typography.titleMedium,
@@ -289,7 +300,7 @@ private fun OnboardingExpanded(
                         Icon(
                             page.icon,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(56.dp),
                         )
                     }
@@ -399,7 +410,7 @@ private fun OnboardingBottomBar(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.pill,
                 modifier = Modifier.height(48.dp).width(if (isLastPage) 160.dp else 120.dp),
             ) {
                 Row(

@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
@@ -29,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowSizeClass
+import com.smach.zapmancer.presentation.common.adaptive.isWideScreen
 import com.smach.zapmancer.presentation.common.components.UserAvatar
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar
 import com.smach.zapmancer.presentation.proposal.state.ClientProposalsUiState
@@ -62,6 +68,7 @@ fun ClientProposalsScreen(
     showSnackbar: (String) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -90,6 +97,7 @@ fun ClientProposalsScreen(
             paddingValues = padding,
             state = state,
             onEvent = viewModel::onEvent,
+            windowSizeClass = windowSizeClass,
         )
     }
 }
@@ -99,65 +107,90 @@ fun ClientProposalsBody(
     paddingValues: PaddingValues,
     state: ClientProposalsUiState,
     onEvent: (ClientProposalsEvent) -> Unit,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter,
     ) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+                .padding(horizontal = if (windowSizeClass.isWideScreen) 24.dp else 12.dp),
         ) {
-            item {
-                Column {
-                    Text(
-                        "Project Proposals",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        "Review pitches and bids received from qualified freelancers.",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp),
-                    )
-                }
+            Spacer(modifier = Modifier.height(24.dp))
+            Column {
+                Text(
+                    "Project Proposals",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    "Review pitches and bids received from qualified freelancers.",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
             }
+            Spacer(modifier = Modifier.height(20.dp))
+
             if (state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(48.dp),
-                        contentAlignment = Alignment.Center,
-                    ) { Text("Loading proposals...", style = MaterialTheme.typography.bodyMedium) }
-                }
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(48.dp),
+                    contentAlignment = Alignment.Center,
+                ) { Text("Loading proposals...", style = MaterialTheme.typography.bodyMedium) }
             } else if (state.proposals.isEmpty()) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(48.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            "No proposals received yet.",
-                            style = MaterialTheme.typography.bodyMedium,
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(48.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "No proposals received yet.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            } else if (windowSizeClass.isWideScreen) {
+                // Wide Screen Grid (2 columns)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 48.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(state.proposals) { proposal ->
+                        ProposalCard(
+                            proposal = proposal,
+                            onFreelancerClick = {
+                                val id =
+                                    if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
+                                onEvent(ClientProposalsEvent.FreelancerClicked(id))
+                            },
+                            onAccept = { onEvent(ClientProposalsEvent.AcceptBid(proposal.freelancerName)) },
+                            onMessage = { onEvent(ClientProposalsEvent.MessageFreelancer(proposal.freelancerName)) },
                         )
                     }
                 }
             } else {
-                items(state.proposals) { proposal ->
-                    ProposalCard(
-                        proposal = proposal,
-                        onFreelancerClick = {
-                            val id =
-                                if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
-                            onEvent(ClientProposalsEvent.FreelancerClicked(id))
-                        },
-                        onAccept = { onEvent(ClientProposalsEvent.AcceptBid(proposal.freelancerName)) },
-                        onMessage = { onEvent(ClientProposalsEvent.MessageFreelancer(proposal.freelancerName)) },
-                    )
+                // Compact Screen List (1 column)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 48.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(state.proposals) { proposal ->
+                        ProposalCard(
+                            proposal = proposal,
+                            onFreelancerClick = {
+                                val id =
+                                    if (proposal.freelancerName.contains("Julian")) "julian_vancore" else "sarah_connor"
+                                onEvent(ClientProposalsEvent.FreelancerClicked(id))
+                            },
+                            onAccept = { onEvent(ClientProposalsEvent.AcceptBid(proposal.freelancerName)) },
+                            onMessage = { onEvent(ClientProposalsEvent.MessageFreelancer(proposal.freelancerName)) },
+                        )
+                    }
                 }
             }
         }
@@ -171,112 +204,108 @@ fun ProposalCard(
     onAccept: () -> Unit,
     onMessage: () -> Unit,
 ) {
-    val cardModifier =
-        Modifier.fillMaxWidth()
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-        Card(
-            modifier = cardModifier,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            shape = MaterialTheme.shapes.large,
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = MaterialTheme.shapes.large,
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.weight(1f).clickable { onFreelancerClick() },
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Row(
-                        modifier = Modifier.weight(1f).clickable { onFreelancerClick() },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val avatarUrl = if (proposal.freelancerName.contains("Julian")) {
-                            "https://lh3.googleusercontent.com/aida-public/AB6AXuBrBrKqoM8axW5MPKsBTP5b-rY47j3sPFMPKxLb9MC-OiKc2nVehBkyjSvjrG61iLhnECENazpIX7ZGYdSvJhKpIGWBgn-fNWKLOFOAoJvAOS7uUgeFV7IEUSxjbQHtWEbwQGrVnBP5GX0LOssfjYZWHQOHZeoQNPaT0aZZAB44DcV0MaETyz8F_dFWst5O4bhj6tODWrstc0H0BKuGeulwq4Nbqlg5_5SCdjeZWbq0lUi7AAm8ZezuoaO1rWJpKniR5CNjmrAo9eo"
-                        } else {
-                            "https://lh3.googleusercontent.com/aida-public/AB6AXuAX8tbMna09O86Wf5o2nHWHxsqjy7PARWhxZXBCVEWOe7KfAJ9eTK1JqA5LH7wh8NgBt2Dh6YT7t34Ay3Wm__NSI__FFShGQSbJT4vkBQFPnYTgUToF5QZpYgZESL4TgKbxoPgnYfjj4GMYJzn4J3FI3CapiStdQ4GlZKecwDNJTuDGIfCHXG_De4Gzw8Fr-oziYeoZIy01oCMOTAKtIivyNuH68QFqBjeLpkJAea8JDdWbxSePLlbr5U5_jhrpqzToIO5g-Oz5yfs"
-                        }
-                        UserAvatar(
-                            imageUrl = avatarUrl,
-                            size = 48.dp,
-                            borderWidth = 1.5.dp,
-                            borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = proposal.freelancerName,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = proposal.freelancerRole,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
+                    val avatarUrl = if (proposal.freelancerName.contains("Julian")) {
+                        "https://lh3.googleusercontent.com/aida-public/AB6AXuBrBrKqoM8axW5MPKsBTP5b-rY47j3sPFMPKxLb9MC-OiKc2nVehBkyjSvjrG61iLhnECENazpIX7ZGYdSvJhKpIGWBgn-fNWKLOFOAoJvAOS7uUgeFV7IEUSxjbQHtWEbwQGrVnBP5GX0LOssfjYZWHQOHZeoQNPaT0aZZAB44DcV0MaETyz8F_dFWst5O4bhj6tODWrstc0H0BKuGeulwq4Nbqlg5_5SCdjeZWbq0lUi7AAm8ZezuoaO1rWJpKniR5CNjmrAo9eo"
+                    } else {
+                        "https://lh3.googleusercontent.com/aida-public/AB6AXuAX8tbMna09O86Wf5o2nHWHxsqjy7PARWhxZXBCVEWOe7KfAJ9eTK1JqA5LH7wh8NgBt2Dh6YT7t34Ay3Wm__NSI__FFShGQSbJT4vkBQFPnYTgUToF5QZpYgZESL4TgKbxoPgnYfjj4GMYJzn4J3FI3CapiStdQ4GlZKecwDNJTuDGIfCHXG_De4Gzw8Fr-oziYeoZIy01oCMOTAKtIivyNuH68QFqBjeLpkJAea8JDdWbxSePLlbr5U5_jhrpqzToIO5g-Oz5yfs"
                     }
-                    Column(horizontalAlignment = Alignment.End) {
+                    UserAvatar(
+                        imageUrl = avatarUrl,
+                        size = 48.dp,
+                        borderWidth = 1.5.dp,
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
                         Text(
-                            text = "$${proposal.budget}",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold,
+                            text = proposal.freelancerName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
-                            text = "${proposal.timelineDays} days",
+                            text = proposal.freelancerRole,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold,
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
+                Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "\"${proposal.pitchContent}\"",
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = "$${proposal.budget}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        text = "${proposal.timelineDays} days",
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontStyle = FontStyle.Italic,
-                        modifier = Modifier.padding(12.dp),
-                        lineHeight = 20.sp,
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.background,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "\"${proposal.pitchContent}\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontStyle = FontStyle.Italic,
+                    modifier = Modifier.padding(12.dp),
+                    lineHeight = 20.sp,
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    onClick = onAccept,
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = MaterialTheme.shapes.small,
+                ) { Text("Accept Bid", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                Button(
+                    onClick = onMessage,
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                    shape = MaterialTheme.shapes.small,
                 ) {
-                    Button(
-                        onClick = onAccept,
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        shape = MaterialTheme.shapes.small,
-                    ) { Text("Accept Bid", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
-                    Button(
-                        onClick = onMessage,
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                        shape = MaterialTheme.shapes.small,
-                    ) {
-                        Icon(
-                            Icons.Outlined.ChatBubbleOutline,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text("Message", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                    }
+                    Icon(
+                        Icons.Outlined.ChatBubbleOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text("Message", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }
             }
         }

@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -45,9 +44,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.presentation.auth.state.SignupUiState
 import com.smach.zapmancer.presentation.auth.viewmodel.SignupEvent
 import com.smach.zapmancer.presentation.auth.viewmodel.SignupViewModel
-import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
+import com.smach.zapmancer.presentation.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.presentation.common.components.AuthHeader
 import com.smach.zapmancer.presentation.common.components.ZapTextField
+import com.smach.zapmancer.presentation.common.theme.card
+import com.smach.zapmancer.presentation.common.theme.pill
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -86,7 +87,7 @@ private fun SignupContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    AdaptiveCenterContainer {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,8 +104,8 @@ private fun SignupContent(
                     1.dp,
                     MaterialTheme.colorScheme.outline,
                 ),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
+                shape = MaterialTheme.shapes.card,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.card),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -181,7 +182,11 @@ private fun SignupContent(
                     }
 
                     if (state.error != null) {
-                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                        )
                     }
 
                     Button(
@@ -193,13 +198,13 @@ private fun SignupContent(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.pill,
                         enabled = !state.isLoading,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 strokeWidth = 2.dp,
                             )
                         } else {

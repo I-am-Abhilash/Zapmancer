@@ -38,7 +38,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -51,11 +50,13 @@ import com.smach.zapmancer.presentation.auth.state.LoginUiState
 import com.smach.zapmancer.presentation.auth.viewmodel.LoginEvent
 import com.smach.zapmancer.presentation.auth.viewmodel.LoginSideEffect
 import com.smach.zapmancer.presentation.auth.viewmodel.LoginViewModel
-import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
+import com.smach.zapmancer.presentation.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.presentation.common.components.AuthDivider
 import com.smach.zapmancer.presentation.common.components.AuthHeader
 import com.smach.zapmancer.presentation.common.components.SocialAuthButton
 import com.smach.zapmancer.presentation.common.components.ZapTextField
+import com.smach.zapmancer.presentation.common.theme.card
+import com.smach.zapmancer.presentation.common.theme.pill
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -107,7 +108,7 @@ private fun LoginContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    AdaptiveCenterContainer {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,8 +125,8 @@ private fun LoginContent(
                     1.dp,
                     MaterialTheme.colorScheme.outline,
                 ),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
+                shape = MaterialTheme.shapes.card,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.card),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -141,7 +142,7 @@ private fun LoginContent(
                         ZapTextField(
                             value = state.email,
                             onValueChange = onEmailChanged,
-                            placeholder = "name@campany.com",
+                            placeholder = "name@company.com",
                             leadingIcon = Icons.Default.Mail,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
@@ -189,7 +190,11 @@ private fun LoginContent(
                     }
 
                     if (state.error != null) {
-                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                        )
                     }
 
                     Button(
@@ -199,15 +204,15 @@ private fun LoginContent(
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.pill,
                         enabled = !state.isLoading,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 strokeWidth = 2.dp,
                             )
                         } else {

@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,10 +41,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smach.zapmancer.presentation.auth.state.ForgotPasswordUiState
 import com.smach.zapmancer.presentation.auth.viewmodel.ForgotPasswordEvent
 import com.smach.zapmancer.presentation.auth.viewmodel.ForgotPasswordViewModel
-import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
+import com.smach.zapmancer.presentation.common.components.AuthAdaptiveLayout
 import com.smach.zapmancer.presentation.common.components.AuthHeader
 import com.smach.zapmancer.presentation.common.components.ZapTextField
-import com.smach.zapmancer.presentation.common.theme.input
+import com.smach.zapmancer.presentation.common.theme.card
+import com.smach.zapmancer.presentation.common.theme.pill
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -71,7 +71,7 @@ private fun ForgotPasswordContent(
 ) {
     val scrollState = rememberScrollState()
 
-    AdaptiveCenterContainer {
+    AuthAdaptiveLayout {
         Column(
             modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,8 +85,8 @@ private fun ForgotPasswordContent(
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.small),
+                shape = MaterialTheme.shapes.card,
+                modifier = Modifier.fillMaxWidth().shadow(1.dp, MaterialTheme.shapes.card),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -113,7 +113,11 @@ private fun ForgotPasswordContent(
                     }
 
                     if (state.error != null) {
-                        Text(state.error, color = Color.Red, fontSize = 12.sp)
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                        )
                     }
 
                     if (state.isSuccess) {
@@ -140,15 +144,15 @@ private fun ForgotPasswordContent(
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
-                        shape = MaterialTheme.shapes.input,
+                        shape = MaterialTheme.shapes.pill,
                         enabled = !state.isLoading && !state.isSuccess,
                     ) {
                         if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 strokeWidth = 2.dp,
                             )
                         } else {

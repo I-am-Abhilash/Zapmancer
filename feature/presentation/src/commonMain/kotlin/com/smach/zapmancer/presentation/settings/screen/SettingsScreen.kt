@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CorporateFare
@@ -33,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +49,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
+import com.smach.zapmancer.presentation.common.adaptive.isWideScreen
 import com.smach.zapmancer.presentation.common.components.UserAvatar
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar
 import com.smach.zapmancer.presentation.common.theme.AppTheme
@@ -61,6 +67,7 @@ fun SettingsScreen(
     onLogoutClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -106,6 +113,7 @@ fun SettingsScreen(
             },
             onToggleClientMode = { viewModel.onEvent(SettingsEvent.ToggleClientMode(it)) },
             onLogout = { viewModel.onEvent(SettingsEvent.Logout) },
+            windowSizeClass = windowSizeClass,
         )
     }
 }
@@ -119,166 +127,333 @@ fun SettingsContent(
     onToggleNotifications: (Boolean) -> Unit,
     onToggleClientMode: (Boolean) -> Unit,
     onLogout: () -> Unit,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.TopCenter,
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
-        ) {
-            item {
-                Column {
-                    Text(
-                        "Settings",
-                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        "Manage your account preferences and security protocols.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp),
-                    )
-                }
-            }
+        if (windowSizeClass.isWideScreen) {
+            // WIDE SCREEN VIEW (≥600dp): 2-Column Split Settings
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                // Left Column: Header, Account & Logout
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    Column {
+                        Text(
+                            "Settings",
+                            style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            "Manage your account preferences and security protocols.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
 
-            item {
-                SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
-                    SettingsItem(
-                        title = "Email Address",
-                        subtitle = uiState.settings?.email ?: "",
-                        actionIcon = Icons.Outlined.Edit,
-                    )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsItem(
-                        title = "Organization",
-                        subtitle = uiState.settings?.organization ?: "",
-                        actionIcon = Icons.Outlined.CorporateFare,
-                    )
-                }
-            }
+                    SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
+                        SettingsItem(
+                            title = "Email Address",
+                            subtitle = uiState.settings?.email ?: "",
+                            actionIcon = Icons.Outlined.Edit,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsItem(
+                            title = "Organization",
+                            subtitle = uiState.settings?.organization ?: "",
+                            actionIcon = Icons.Outlined.CorporateFare,
+                        )
+                    }
 
-            item {
-                SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
-                    SettingsToggleItem(
-                        title = "Two-Factor Authentication",
-                        description = "Add an extra layer of security to your account.",
-                        checked = uiState.settings?.isTwoFactorEnabled ?: false,
-                        onCheckedChange = onToggleTwoFactor,
-                    )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsItem(
-                        title = "Change Password",
-                        subtitle = "Last changed 4 months ago",
-                        actionContent = {
-                            Button(
-                                onClick = {},
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.primary,
-                                ),
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                shape = MaterialTheme.shapes.extraSmall,
-                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                                modifier = Modifier.height(32.dp),
-                            ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
+                        shape = MaterialTheme.shapes.small,
+                        border = BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    "Update",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    "Logout",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                )
+                                Text(
+                                    "Session termination will revoke all active access tokens.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                        },
-                    )
-                }
-            }
+                            Spacer(modifier = Modifier.size(16.dp))
+                            Button(
+                                onClick = onLogout,
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                shape = MaterialTheme.shapes.medium,
+                            ) {
+                                Text("Sign Out", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
 
-            item {
-                SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
-                    SettingsToggleItem(
-                        title = "Dark Mode",
-                        description = "Switch between light and dark interface themes.",
-                        checked = uiState.isDarkModeEnabled,
-                        onCheckedChange = onToggleDarkMode,
-                    )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsToggleItem(
-                        title = "Email Notifications",
-                        description = "Receive weekly performance reports and alerts.",
-                        checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
-                        onCheckedChange = onToggleNotifications,
-                    )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    SettingsToggleItem(
-                        title = "Client Mode",
-                        description = "Toggle to switch interface focus to hiring and project posting.",
-                        checked = uiState.settings?.isClientModeEnabled ?: false,
-                        onCheckedChange = onToggleClientMode,
-                    )
-                }
-            }
-
-            item {
-                Surface(
-                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
-                    shape = MaterialTheme.shapes.small,
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalAlignment = Alignment.Start,
                     ) {
-                        Column {
-                            Text(
-                                "Logout",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                            Text(
-                                "Session termination will revoke all active access tokens.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        Button(
-                            onClick = onLogout,
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                            shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier,
-                        ) {
-                            Text("Sign Out", fontWeight = FontWeight.Bold)
-                        }
+                        Text(
+                            uiState.settings?.version ?: "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.Normal,
+                        )
+                        Text(
+                            "© 2024 Zapmancer. All systems operational.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                }
+
+                // Right Column: Security & Preferences
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
+                        SettingsToggleItem(
+                            title = "Two-Factor Authentication",
+                            description = "Add an extra layer of security to your account.",
+                            checked = uiState.settings?.isTwoFactorEnabled ?: false,
+                            onCheckedChange = onToggleTwoFactor,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsItem(
+                            title = "Change Password",
+                            subtitle = "Last changed 4 months ago",
+                            actionContent = {
+                                Button(
+                                    onClick = {},
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text(
+                                        "Update",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    )
+                                }
+                            },
+                        )
+                    }
+
+                    SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
+                        SettingsToggleItem(
+                            title = "Dark Mode",
+                            description = "Switch between light and dark interface themes.",
+                            checked = uiState.isDarkModeEnabled,
+                            onCheckedChange = onToggleDarkMode,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsToggleItem(
+                            title = "Email Notifications",
+                            description = "Receive weekly performance reports and alerts.",
+                            checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
+                            onCheckedChange = onToggleNotifications,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsToggleItem(
+                            title = "Client Mode",
+                            description = "Toggle to switch interface focus to hiring and project posting.",
+                            checked = uiState.settings?.isClientModeEnabled ?: false,
+                            onCheckedChange = onToggleClientMode,
+                        )
                     }
                 }
             }
+        } else {
+            // COMPACT VIEW (<600dp): Single-Column Stacked List
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(top = 24.dp, bottom = 48.dp),
+            ) {
+                item {
+                    Column {
+                        Text(
+                            "Settings",
+                            style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            "Manage your account preferences and security protocols.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                }
 
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    Text(
-                        uiState.settings?.version ?: "",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Normal,
-                    )
-                    Text(
-                        "© 2024 Zapmancer. All systems operational.",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp),
-                    )
+                item {
+                    SettingsSection(title = "Account", icon = Icons.Outlined.AccountCircle) {
+                        SettingsItem(
+                            title = "Email Address",
+                            subtitle = uiState.settings?.email ?: "",
+                            actionIcon = Icons.Outlined.Edit,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsItem(
+                            title = "Organization",
+                            subtitle = uiState.settings?.organization ?: "",
+                            actionIcon = Icons.Outlined.CorporateFare,
+                        )
+                    }
+                }
+
+                item {
+                    SettingsSection(title = "Security", icon = Icons.Outlined.Security) {
+                        SettingsToggleItem(
+                            title = "Two-Factor Authentication",
+                            description = "Add an extra layer of security to your account.",
+                            checked = uiState.settings?.isTwoFactorEnabled ?: false,
+                            onCheckedChange = onToggleTwoFactor,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsItem(
+                            title = "Change Password",
+                            subtitle = "Last changed 4 months ago",
+                            actionContent = {
+                                Button(
+                                    onClick = {},
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text(
+                                        "Update",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                }
+
+                item {
+                    SettingsSection(title = "Preferences", icon = Icons.Outlined.Tune) {
+                        SettingsToggleItem(
+                            title = "Dark Mode",
+                            description = "Switch between light and dark interface themes.",
+                            checked = uiState.isDarkModeEnabled,
+                            onCheckedChange = onToggleDarkMode,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsToggleItem(
+                            title = "Email Notifications",
+                            description = "Receive weekly performance reports and alerts.",
+                            checked = uiState.settings?.isEmailNotificationsEnabled ?: false,
+                            onCheckedChange = onToggleNotifications,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                        SettingsToggleItem(
+                            title = "Client Mode",
+                            description = "Toggle to switch interface focus to hiring and project posting.",
+                            checked = uiState.settings?.isClientModeEnabled ?: false,
+                            onCheckedChange = onToggleClientMode,
+                        )
+                    }
+                }
+
+                item {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f),
+                        shape = MaterialTheme.shapes.small,
+                        border = BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column {
+                                Text(
+                                    "Logout",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                )
+                                Text(
+                                    "Session termination will revoke all active access tokens.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Button(
+                                onClick = onLogout,
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                shape = MaterialTheme.shapes.medium,
+                                modifier = Modifier,
+                            ) {
+                                Text("Sign Out", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        Text(
+                            uiState.settings?.version ?: "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.Normal,
+                        )
+                        Text(
+                            "© 2024 Zapmancer. All systems operational.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
                 }
             }
         }

@@ -28,6 +28,7 @@ sealed interface EditProfileEvent {
 sealed interface EditProfileEffect {
     data class ShowToast(val message: String) : EditProfileEffect
     data object NavigateBack : EditProfileEffect
+    data object NavigateToProfile : EditProfileEffect
 }
 
 @KoinViewModel

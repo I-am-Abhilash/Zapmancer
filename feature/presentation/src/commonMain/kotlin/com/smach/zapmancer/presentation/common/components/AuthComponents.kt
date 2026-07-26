@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,7 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,152 +40,70 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
+import com.smach.zapmancer.presentation.common.adaptive.isWideScreen
 import com.smach.zapmancer.presentation.common.theme.input
 import com.smach.zapmancer.presentation.common.theme.pill
 
-// ─── Auth Layout ──────────────────────────────────────────────────────────────
-// Fully design-agnostic: all colors come from MaterialTheme.colorScheme,
-// all shapes from MaterialTheme.shapes semantic aliases.
-//
-//   Left brand panel  → colorScheme.primary fill, onPrimary text
-//   Form panel        → colorScheme.background / surface
-//   Icon well         → colorScheme.primary fill, onPrimary icon (shapes.extraSmall = square)
-//   Text field        → surfaceVariant container, primary focus border (shapes.input)
-//   Social button     → outline variant border, surface fill (shapes.pill)
-//   Divider           → outline color
-//
-// @Composable
-// fun AuthAdaptiveLayout(
-//    formContent: @Composable () -> Unit,
-// ) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(MaterialTheme.colorScheme.background)
-//            .padding(16.dp),
-//    ) {
-//        AuthBrandHeader()
-//        Spacer(modifier = Modifier.height(24.dp))
-//        Box(
-//            modifier = Modifier.fillMaxSize(),
-//            contentAlignment = Alignment.TopCenter,
-//        ) {
-//            formContent()
-//        }
-//    }
-//
-// //    when (windowLayout) {
-// //        WindowLayout.Compact -> {
-// //            Column(
-// //                modifier = Modifier
-// //                    .fillMaxSize()
-// //                    .background(MaterialTheme.colorScheme.background)
-// //                    .padding(16.dp),
-// //            ) {
-// //                AuthBrandHeader()
-// //                Spacer(modifier = Modifier.height(24.dp))
-// //                Box(
-// //                    modifier = Modifier.fillMaxSize(),
-// //                    contentAlignment = Alignment.TopCenter,
-// //                ) {
-// //                    formContent()
-// //                }
-// //            }
-// //        }
-// //
-// //        WindowLayout.Medium -> {
-// //            Row(modifier = Modifier.fillMaxSize()) {
-// //                // Left panel: primary fill (NikeInk in Nike theme)
-// //                Box(
-// //                    modifier = Modifier
-// //                        .weight(0.45f)
-// //                        .fillMaxHeight()
-// //                        .background(MaterialTheme.colorScheme.primary),
-// //                    contentAlignment = Alignment.Center,
-// //                ) {
-// //                    AuthBrandPanel(iconSize = 96.dp, titleSize = 40.sp)
-// //                }
-// //                Box(
-// //                    modifier = Modifier
-// //                        .weight(0.55f)
-// //                        .fillMaxHeight()
-// //                        .background(MaterialTheme.colorScheme.background),
-// //                    contentAlignment = Alignment.Center,
-// //                ) {
-// //                    Box(
-// //                        modifier = Modifier
-// //                            .widthIn(max = 480.dp)
-// //                            .padding(32.dp),
-// //                    ) {
-// //                        formContent()
-// //                    }
-// //                }
-// //            }
-// //        }
-// //
-// //        WindowLayout.Expanded -> {
-// //            Row(modifier = Modifier.fillMaxSize()) {
-// //                Box(
-// //                    modifier = Modifier
-// //                        .weight(0.55f)
-// //                        .fillMaxHeight()
-// //                        .background(MaterialTheme.colorScheme.primary),
-// //                    contentAlignment = Alignment.Center,
-// //                ) {
-// //                    AuthBrandPanel(iconSize = 140.dp, titleSize = 56.sp)
-// //                }
-// //                Box(
-// //                    modifier = Modifier
-// //                        .weight(0.45f)
-// //                        .fillMaxHeight()
-// //                        .background(MaterialTheme.colorScheme.background),
-// //                    contentAlignment = Alignment.Center,
-// //                ) {
-// //                    Box(
-// //                        modifier = Modifier
-// //                            .widthIn(max = 520.dp)
-// //                            .padding(48.dp),
-// //                    ) {
-// //                        formContent()
-// //                    }
-// //                }
-// //            }
-// //        }
-// //    }
-// }
-
-// Compact header: brand mark on background canvas
+// ─── Auth Adaptive Layout ──────────────────────────────────────────────────────
 @Composable
-private fun AuthBrandHeader() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+fun AuthAdaptiveLayout(
+    formContent: @Composable () -> Unit,
+) {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isWide = windowSizeClass.isWideScreen
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
     ) {
-        Icon(
-            Icons.Default.Bolt,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(28.dp),
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            "Zapmancer",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            letterSpacing = 0.sp,
-        )
+        if (!isWide) {
+            AdaptiveCenterContainer {
+                formContent()
+            }
+        } else {
+            Row(modifier = Modifier.fillMaxSize()) {
+                // Left panel: primary hero canvas
+                Box(
+                    modifier = Modifier
+                        .weight(0.45f)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AuthBrandPanel(iconSize = 110.dp, titleSize = 48.sp)
+                }
+
+                // Right panel: form content on background surface
+                Box(
+                    modifier = Modifier
+                        .weight(0.55f)
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .widthIn(max = 500.dp)
+                            .padding(32.dp),
+                    ) {
+                        formContent()
+                    }
+                }
+            }
+        }
     }
 }
 
 // Wide-screen brand panel: onPrimary text on primary background
 @Composable
 private fun AuthBrandPanel(
-    iconSize: androidx.compose.ui.unit.Dp,
-    titleSize: androidx.compose.ui.unit.TextUnit,
+    iconSize: Dp,
+    titleSize: TextUnit,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
@@ -201,7 +124,7 @@ private fun AuthBrandPanel(
         Text(
             "Build the future of decentralized apps.",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 32.dp),
         )
@@ -209,8 +132,6 @@ private fun AuthBrandPanel(
 }
 
 // ─── Auth Header ──────────────────────────────────────────────────────────────
-// Icon well uses extraSmall (0dp = square in Nike, rounded in other themes)
-
 @Composable
 fun AuthHeader(
     title: String,
@@ -257,9 +178,6 @@ fun AuthHeader(
 }
 
 // ─── Text Field ───────────────────────────────────────────────────────────────
-// Shape: shapes.input (medium slot = 24dp in Nike, swappable via Shape.kt)
-// Colors: surfaceVariant container, primary focus border, outline unfocused border
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ZapTextField(
@@ -319,7 +237,7 @@ fun ZapTextField(
                 unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 errorBorderColor = MaterialTheme.colorScheme.error,
             ),
-            shape = MaterialTheme.shapes.input, // medium = 24dp in Nike
+            shape = MaterialTheme.shapes.input,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             isError = error != null,
@@ -337,9 +255,6 @@ fun ZapTextField(
 }
 
 // ─── Social Auth Button ───────────────────────────────────────────────────────
-// Shape: shapes.pill (extraLarge = 9999dp in Nike, swappable)
-// Colors: surface fill, outline border, onSurface text
-
 @Composable
 fun SocialAuthButton(
     onClick: () -> Unit,
@@ -384,7 +299,6 @@ fun SocialAuthButton(
 }
 
 // ─── Auth Divider ─────────────────────────────────────────────────────────────
-
 @Composable
 fun AuthDivider(modifier: Modifier = Modifier) {
     Row(

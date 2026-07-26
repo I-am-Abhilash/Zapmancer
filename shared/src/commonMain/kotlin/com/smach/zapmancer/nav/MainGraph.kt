@@ -1,24 +1,13 @@
 package com.smach.zapmancer.nav
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,14 +15,13 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.smach.zapmancer.presentation.alerts.screen.NotificationScreen
+import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
 import com.smach.zapmancer.presentation.common.components.AppDrawerScaffold
 import com.smach.zapmancer.presentation.common.components.LocalDrawerController
 import com.smach.zapmancer.presentation.home.screen.HomeScreen
 import com.smach.zapmancer.presentation.messages.screen.MessageDetailScreen
-import com.smach.zapmancer.presentation.messages.screen.MessagesListScreen
-import com.smach.zapmancer.presentation.messages.viewmodel.MessagesListViewModel
+import com.smach.zapmancer.presentation.messages.screen.MessagesAdaptiveScreen
 import com.smach.zapmancer.presentation.profile.screen.EditProfileScreen
 import com.smach.zapmancer.presentation.profile.screen.ProfileScreen
 import com.smach.zapmancer.presentation.projects.screen.PostProjectScreen
@@ -62,9 +50,8 @@ fun MainGraph(
     val navigator = MainNavigator(state)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompact =
-        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isCompact = windowSizeClass.isCompactWidth
 
     val showSnackbar: (String) -> Unit = { message ->
         scope.launch {
@@ -188,21 +175,14 @@ private fun appEntryProvider(
     }
 
     entry<Screen.MessagesList> {
-        val viewModel: MessagesListViewModel = koinViewModel()
-        val state by viewModel.uiState.collectAsState()
-        MessagesListScreen(
-            viewModel = viewModel,
+        MessagesAdaptiveScreen(
             onConversationClick = { conversationId ->
-                val conversation = state.conversations.find { it.id == conversationId }
-                val contactName = conversation?.name.orEmpty()
-                val contactAvatarUrl = conversation?.avatarUrl.orEmpty()
-                val isOnline = conversation?.isOnline ?: false
                 navigator.navigate(
                     Screen.MessagesDetail(
                         conversationId = conversationId,
-                        contactName = contactName,
-                        contactAvatarUrl = contactAvatarUrl,
-                        isOnline = isOnline,
+                        contactName = "",
+                        contactAvatarUrl = "",
+                        isOnline = false,
                     ),
                 )
             },

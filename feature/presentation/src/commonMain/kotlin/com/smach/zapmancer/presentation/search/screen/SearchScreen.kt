@@ -26,6 +26,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -56,6 +59,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -81,9 +85,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.window.core.layout.WindowSizeClass
 import com.smach.zapmancer.domain.model.Project
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
+import com.smach.zapmancer.presentation.common.adaptive.isWideScreen
 import com.smach.zapmancer.presentation.common.components.CategoryFilterChip
 import com.smach.zapmancer.presentation.common.components.EmptyState
 import com.smach.zapmancer.presentation.common.components.ProjectStatusBadge
@@ -104,6 +110,7 @@ fun SearchScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -131,6 +138,7 @@ fun SearchScreen(
             modifier = Modifier.padding(paddingValues),
             state = state,
             onEvent = viewModel::onEvent,
+            windowSizeClass = windowSizeClass,
         )
     }
 }
@@ -141,6 +149,7 @@ fun SearchContent(
     modifier: Modifier = Modifier,
     state: SearchUiState,
     onEvent: (SearchEvent) -> Unit,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
@@ -279,7 +288,27 @@ fun SearchContent(
                         description = "Try refining your search keyword or selecting a different category filter.",
                         icon = Icons.Outlined.Devices,
                     )
+                } else if (windowSizeClass.isWideScreen) {
+                    // Wide Screen Grid Results (2 columns)
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(state.searchResults, key = { it.id }) { project ->
+                            SearchResultCard(
+                                project = project,
+                                query = state.query,
+                                onClick = {
+                                    onEvent(SearchEvent.ProjectClicked(project.id))
+                                },
+                            )
+                        }
+                    }
                 } else {
+                    // Compact Screen List Results (1 column)
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
@@ -547,7 +576,6 @@ private fun SearchResultCard(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Category Tag
                 Box(
                     modifier = Modifier
                         .background(
@@ -609,7 +637,6 @@ private fun SearchResultCard(
                 }
             }
 
-            // Progress bar if progress is available
             project.progress?.let { progressValue ->
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
@@ -643,7 +670,6 @@ private fun SearchResultCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Bottom Metadata row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -651,7 +677,6 @@ private fun SearchResultCard(
             ) {
                 ProjectStatusBadge(status = project.status)
 
-                // Other metadata (members, footer text)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -791,7 +816,6 @@ private fun VoiceSearchListeningDialog(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.size(160.dp),
                 ) {
-                    // Pulsing Outer Wave 3
                     val wave3Scale by infiniteTransition.animateFloat(
                         initialValue = 1.0f,
                         targetValue = 2.0f,
@@ -815,7 +839,6 @@ private fun VoiceSearchListeningDialog(
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = wave3Alpha)),
                     )
 
-                    // Pulsing Wave 2
                     val wave2Scale by infiniteTransition.animateFloat(
                         initialValue = 1.0f,
                         targetValue = 1.6f,
@@ -839,7 +862,6 @@ private fun VoiceSearchListeningDialog(
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = wave2Alpha)),
                     )
 
-                    // Base Pulsing Wave 1
                     Box(
                         modifier = Modifier
                             .size(72.dp * pulseScale)
@@ -916,17 +938,6 @@ fun SearchScreenPreview() {
                         progress = 65,
                         membersCount = 3,
                         postedTime = "Budget: $1,200",
-                    ),
-                    Project(
-                        id = "2",
-                        category = ProjectCategory.DEVELOPMENT,
-                        status = ProjectStatus.ACTIVE,
-                        title = "Compose Multiplatform Search Screen",
-                        description = "Implement an optimized search screen with preview support, search filtering and pagination.",
-                        tags = listOf("Compose", "KMP", "UI"),
-                        progress = 12,
-                        membersCount = 1,
-                        postedTime = "Budget: $450",
                     ),
                 ),
             ),
