@@ -1,0 +1,1 @@
+create the adaptive versions of  all screens and adjust the theme and colors do not hardcode the colors so it can work on the dark mode alse
