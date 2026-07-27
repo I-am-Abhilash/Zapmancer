@@ -4,6 +4,7 @@ import com.smach.zapmancer.auth.repository.AuthRepository
 import com.smach.zapmancer.auth.service.AuthService
 import com.smach.zapmancer.home.repository.HomeRepository
 import com.smach.zapmancer.home.service.HomeService
+import com.smach.zapmancer.landingpage.service.LandingPageService
 import com.smach.zapmancer.messages.repository.MessageRepository
 import com.smach.zapmancer.messages.service.ConnectionManager
 import com.smach.zapmancer.messages.service.MessageService
@@ -61,4 +62,8 @@ val settingsModule = module {
 val usersModule = module {
     singleOf(::UsersRepository)
     singleOf(::UsersServiceImpl) { bind<UsersService>() }
+}
+
+val landingPageModule = module {
+    singleOf(::LandingPageService)
 }

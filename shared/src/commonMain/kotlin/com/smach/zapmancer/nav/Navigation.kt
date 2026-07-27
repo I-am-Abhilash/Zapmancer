@@ -105,6 +105,9 @@ sealed class Screen(
 
     @Serializable
     data object Search : Screen("Search")
+
+    @Serializable
+    data object LandingPage : Screen("LandingPage")
 }
 
 /**
@@ -258,6 +261,7 @@ val navConfig =
                     subclass(Screen.ClientProposals::class, Screen.ClientProposals.serializer())
                     subclass(Screen.Detail::class, Screen.Detail.serializer())
                     subclass(Screen.Search::class, Screen.Search.serializer())
+                    subclass(Screen.LandingPage::class, Screen.LandingPage.serializer())
                 }
             }
     }

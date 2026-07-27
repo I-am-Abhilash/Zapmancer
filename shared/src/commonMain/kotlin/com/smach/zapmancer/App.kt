@@ -10,11 +10,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.smach.zapmancer.core.common.utils.isWebPlatform
 import com.smach.zapmancer.domain.repository.SettingsRepository
-import com.smach.zapmancer.presentation.auth.screen.OnboardingScreen
-import com.smach.zapmancer.presentation.common.theme.AppTheme
 import com.smach.zapmancer.nav.AuthGraph
 import com.smach.zapmancer.nav.MainGraph
+import com.smach.zapmancer.presentation.auth.screen.OnboardingScreen
+import com.smach.zapmancer.presentation.common.theme.AppTheme
+import com.smach.zapmancer.presentation.landingpage.screen.LandingPageScreen
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -41,15 +43,33 @@ fun App() {
             }
 
             is AppState.Onboarding -> {
-                OnboardingScreen(
-                    onFinished = { mainViewModel.completeOnboarding() },
-                )
+                if (isWebPlatform) {
+                    LandingPageScreen(
+                        onNavigateToSearch = { mainViewModel.completeOnboarding() },
+                        onNavigateToProjects = { mainViewModel.completeOnboarding() },
+                        onNavigateToLogin = { mainViewModel.completeOnboarding() },
+                        onNavigateToSignUp = { mainViewModel.completeOnboarding() },
+                    )
+                } else {
+                    OnboardingScreen(
+                        onFinished = { mainViewModel.completeOnboarding() },
+                    )
+                }
             }
 
             is AppState.Unauthenticated -> {
-                AuthGraph(
-                    onAuthSuccess = {},
-                )
+                if (isWebPlatform) {
+                    LandingPageScreen(
+                        onNavigateToSearch = {},
+                        onNavigateToProjects = {},
+                        onNavigateToLogin = {},
+                        onNavigateToSignUp = {},
+                    )
+                } else {
+                    AuthGraph(
+                        onAuthSuccess = {},
+                    )
+                }
             }
 
             is AppState.Authenticated -> {

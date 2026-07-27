@@ -20,6 +20,7 @@ import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
 import com.smach.zapmancer.presentation.common.components.AppDrawerScaffold
 import com.smach.zapmancer.presentation.common.components.LocalDrawerController
 import com.smach.zapmancer.presentation.home.screen.HomeScreen
+import com.smach.zapmancer.presentation.landingpage.screen.LandingPageScreen
 import com.smach.zapmancer.presentation.messages.screen.MessageDetailScreen
 import com.smach.zapmancer.presentation.messages.screen.MessagesAdaptiveScreen
 import com.smach.zapmancer.presentation.profile.screen.EditProfileScreen
@@ -218,6 +219,16 @@ private fun appEntryProvider(
             onProjectClick = { id ->
                 navigator.navigate(Screen.ProjectDetail(id))
             },
+        )
+    }
+
+    entry<Screen.LandingPage> {
+        LandingPageScreen(
+            onNavigateToSearch = { navigator.navigate(Screen.Search) },
+            onNavigateToProjects = { navigator.navigate(Screen.ProjectList) },
+            onNavigateToLogin = { navigator.navigate(Screen.Login) },
+            onNavigateToSignUp = { navigator.navigate(Screen.Signup) },
+            showSnackbar = showSnackbar,
         )
     }
 }

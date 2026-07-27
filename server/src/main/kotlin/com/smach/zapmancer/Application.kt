@@ -15,7 +15,9 @@ import com.smach.zapmancer.core.framework.configureFramework
 import com.smach.zapmancer.core.framework.di.storageModule
 import com.smach.zapmancer.core.recommendations.createGorseModule
 import com.smach.zapmancer.core.security.configureSecurity
+import com.smach.zapmancer.core.di.landingPageModule
 import com.smach.zapmancer.home.routing.homeRouting
+import com.smach.zapmancer.landingpage.routing.landingPageRouting
 import com.smach.zapmancer.messages.routing.messageRouting
 import com.smach.zapmancer.notifications.routing.notificationsRouting
 import com.smach.zapmancer.projects.routing.projectsRouting
@@ -54,6 +56,7 @@ fun Application.module() {
             messagesModule,
             notificationsModule,
             settingsModule,
+            landingPageModule,
         ),
     )
 
@@ -68,5 +71,6 @@ fun Application.module() {
         messageRouting()
         notificationsRouting()
         settingsRouting()
+        landingPageRouting()
     }
 }
