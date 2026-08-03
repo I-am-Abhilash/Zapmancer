@@ -1,7 +1,7 @@
 plugins {
-    id("ktor-server-convention")
-    id("database-convention")
     alias(libs.plugins.ktor)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.koin)
     alias(libs.plugins.kotlinSerialization)
 }
 

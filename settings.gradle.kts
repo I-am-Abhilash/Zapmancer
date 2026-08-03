@@ -2,7 +2,6 @@ rootProject.name = "Zapmancer"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -30,15 +29,9 @@ dependencyResolutionManagement {
     }
 }
 
-// Client Multiplatform Modules
-include(":webApp")
-include(":androidApp")
-include(":shared")
+include(":app:androidApp")
+include(":app:sharedLogic")
+include(":app:sharedUI")
 include(":core")
-include(":feature:data")
-include(":feature:domain")
-include(":feature:presentation")
-
-// Server Ktor Module
 include(":server")
-//project(":server").projectDir = file("server")
+

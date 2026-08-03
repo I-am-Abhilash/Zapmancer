@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bebas+Neue&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+ * ScriptSide Design Tokens — Single Source of Truth
+ * Canonical token list: app/webApp/tailwind.config.ts
+ *   - DESIGN.md (docs/DESIGN.md) is the product source of truth.
+ *   - This file (:root block) mirrors the config so legacy var(--color-*)
+ *     references in feature CSS keep working.
+ *   - npm run lint:tokens diffs these two and fails on drift.
+ *   - Dark palette is a ScriptSide extension (DESIGN.md does not define one).
+ * ========================================================================= */
+
+:root {
+  /* ---- Fonts (DESIGN.md fallback: Inter + Bebas Neue; Newsreader kept for legacy serif tier) ---- */
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: '"Bebas Neue"', 'Inter', sans-serif;
+  --font-serif:   'Newsreader', Georgia, serif;
+
+  /* ---- Canvas / surface (DESIGN.md) ---- */
+  --color-canvas:        #ffffff;
+  --color-soft-cloud:    #f5f5f5;
+  --color-surface-hover: #eaeaea;       /* ScriptSide extension (hover bridge) */
+  --color-hairline:      #cacacb;
+  --color-hairline-soft: #e5e5e5;
+
+  /* ---- Text scale (DESIGN.md) ---- */
+  --color-ink:      #111111;
+  --color-charcoal: #39393b;
+  --color-ash:      #4b4b4d;
+  --color-mute:     #707072;
+  --color-stone:    #9e9ea0;
+
+  /* ---- Semantic (DESIGN.md) ---- */
+  --color-sale:           #d30005;
+  --color-sale-deep:      #780700;      /* NEW */
+  --color-success:        #007d48;
+  --color-success-bright: #1eaa52;      /* NEW (inverse on dark surfaces) */
+  --color-info:           #1151ff;
+  --color-info-deep:      #0034e3;      /* NEW */
+
+  /* ---- Category accents (DESIGN.md — NEW) ---- */
+  --color-accent-pink:        #ed1aa0;
+  --color-accent-pink-soft:   #ffb0dd;
+  --color-accent-pink-deep:   #4c012d;
+  --color-accent-purple-soft: #beaffd;
+  --color-accent-purple-pale: #d6d1ff;
+  --color-accent-teal:        #0a7281;
+
+  /* ---- Legacy alias (Phase 4 — orphan fix) ---- */
+  --color-cloud: var(--color-soft-cloud);
+
+  /* ---- Radii (DESIGN.md: sm 18 / md 24 / lg 30) ---- */
+  --radius-sm:   18px;   /* was 8px */
+  --radius-md:   24px;   /* was 16px */
+  --radius-lg:   30px;
+  --radius-full: 9999px;
+
+  --max-width: 100%;
+}
+
+/* ScriptSide dark palette — DESIGN.md has no dark block; preserved as
+   a documented ScriptSide extension. Accents + sale-deep/info-deep/
+   success-bright remain light values for v1 (no dark override). */
+[data-theme="dark"] {
+  --color-canvas:        #0d0d0e;
+  --color-soft-cloud:    #171719;
+  --color-surface-hover: #222226;
+  --color-hairline:      #38383a;
+  --color-hairline-soft: #242426;
+
+  --color-ink:      #f5f5f7;
+  --color-charcoal: #d1d1d6;
+  --color-ash:      #aeae8b;
+  --color-mute:     #8e8e93;
+  --color-stone:    #636366;
+
+  --color-sale:    #ff453a;
+  --color-success: #30d158;
+  --color-info:    #0a84ff;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.65;
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Full-Width Container */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Typography Helpers */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.editorial-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+}
+
+.section-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.section-tag {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-mute);
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+/* Core Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-ink);
+  color: var(--color-canvas);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.95rem 2.25rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-soft-cloud);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.95rem 2.25rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-hairline-soft);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-surface-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Header & Footer Layout Base */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--color-canvas);
+  border-bottom: 1px solid var(--color-hairline-soft);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.5rem;
+  /*padding: 0.75rem 0;*/
+}
+
+.header-logo {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 1.65rem;
+  letter-spacing: -0.05em;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.header-nav a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.header-nav a:hover {
+  color: var(--color-ink);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.75rem;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  color: var(--color-mute);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--color-ink);
+  background-color: var(--color-surface-hover);
+}
+
+
+
+.btn-signin {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.btn-signin:hover {
+  color: var(--color-ink);
+}
+
+.site-footer {
+  background-color: var(--color-canvas);
+  border-top: 1px solid var(--color-hairline-soft);
+  padding: 5rem 0;
+  font-size: 0.95rem;
+  color: var(--color-mute);
+  transition: background-color 0.25s ease;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  margin-bottom: 4rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.footer-col-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+  margin-bottom: 1.25rem;
+}
+
+.footer-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.footer-list a {
+  color: var(--color-mute);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-list a:hover {
+  color: var(--color-ink);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--color-hairline-soft);
+}
+
+@media (min-width: 640px) {
+  .footer-bottom {
+    flex-direction: row;
+  }
+}
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.footer-socials a {
+  color: var(--color-mute);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-socials a:hover {
+  color: var(--color-ink);
+}
