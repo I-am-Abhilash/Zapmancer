@@ -24,19 +24,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   const getTitle = () => {
     switch (mode) {
-      case 'login': return 'Welcome Back';
+      case 'login': return 'Welcome to Zapmancer';
       case 'signup': return 'Create Your Account';
-      case 'forgot': return 'Reset Password';
-      case 'verify': return 'Verify Your Email';
+      case 'forgot': return 'Reset Your Password';
+      case 'verify': return 'Security Verification';
     }
   };
 
   const getSubtitle = () => {
     switch (mode) {
-      case 'login': return 'Log in to continue your reading & writing journey';
-      case 'signup': return 'Join our community of passionate technical writers & readers';
-      case 'forgot': return 'Enter your email address to receive a recovery link';
-      case 'verify': return `Enter the 6-digit security code sent to ${userEmail || 'your email'}`;
+      case 'login': return 'Log in to manage your freelance contracts, proposals, and projects';
+      case 'signup': return 'Join the open-source KMP freelance marketplace with transparent escrow';
+      case 'forgot': return 'Enter your registered email to receive a password reset link';
+      case 'verify': return `Enter the 6-digit verification code sent to ${userEmail || 'your email'}`;
     }
   };
 
