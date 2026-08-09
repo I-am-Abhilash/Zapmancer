@@ -1,0 +1,1292 @@
+openapi: 3.0.3
+info:
+  title: Zapmancer Server API
+  description: |
+    Comprehensive REST API documentation for Zapmancer backend services.
+    All endpoints return a uniform envelope structure: `ApiResponse<T>` with `success`, `data`, and `error`.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+
+paths:
+  /health:
+    get:
+      summary: Server Health Check
+      description: Returns plain text status indicating server availability.
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+  /metrics:
+    get:
+      summary: Prometheus Metrics
+      description: Returns Prometheus formatted micrometer metrics.
+      responses:
+        '200':
+          description: Metrics output
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /auth/login:
+    post:
+      summary: User Login (Mobile / API)
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /auth/web/login:
+    post:
+      summary: User Login (Web Application)
+      tags: [Authentication]
+      description: Authenticates user and sets HttpOnly `refresh_token` cookie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful web login
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refresh_token=abc123...; Path=/auth; Secure; HttpOnly; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebLoginApiResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /auth/register:
+    post:
+      summary: User Registration
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+        '409':
+          $ref: '#/components/responses/409Conflict'
+
+  /auth/forgot-password:
+    post:
+      summary: Request Password Reset OTP
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: OTP dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /auth/verify-otp:
+    post:
+      summary: Verify Password Reset OTP
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+      responses:
+        '200':
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+
+  /auth/refresh:
+    post:
+      summary: Refresh Access Token
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthApiResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /auth/logout:
+    post:
+      summary: Logout User
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /home/dashboard:
+    get:
+      summary: Fetch Home Dashboard
+      tags: [Home]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Home dashboard metrics and context
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/HomeDashboard'
+                  error:
+                    nullable: true
+
+  /home/activities/export:
+    post:
+      summary: Export Recent Activities to CSV
+      tags: [Home]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                activities:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RecentActivity'
+      responses:
+        '200':
+          description: CSV file path
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      filePath:
+                        type: string
+                        example: exports/activities_1700000000.csv
+
+  /users/profile:
+    get:
+      summary: Get Own Profile
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileApiResponse'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+    put:
+      summary: Update Own Profile
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileApiResponse'
+
+  /users/profile/{userId}:
+    get:
+      summary: Get Public Profile by ID
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileApiResponse'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /users/{userId}/hire:
+    post:
+      summary: Send Hire Offer Notification
+      tags: [Users]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Offer sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /projects:
+    get:
+      summary: Browse Projects
+      tags: [Projects]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of matching projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+    post:
+      summary: Create New Project
+      tags: [Projects]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '200':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /projects/{id}:
+    get:
+      summary: Get Project Detail
+      tags: [Projects]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detailed project view
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProjectDetail'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /projects/{id}/save:
+    post:
+      summary: Toggle Save Project
+      tags: [Projects]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isSaved:
+                  type: boolean
+      responses:
+        '200':
+          description: Toggle state saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /projects/{id}/apply:
+    post:
+      summary: Apply to Project
+      tags: [Projects]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Application recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /proposals:
+    post:
+      summary: Submit Proposal Bid
+      tags: [Proposals]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitProposalRequest'
+      responses:
+        '200':
+          description: Proposal submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /projects/{projectId}/proposals:
+    get:
+      summary: Get Proposals for Project (Client View)
+      tags: [Proposals]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of proposals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Proposal'
+
+  /messages/conversations:
+    get:
+      summary: Get User Conversations
+      tags: [Messages]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConversationItem'
+
+  /messages/conversations/{conversationId}/messages:
+    get:
+      summary: Get Conversation Messages
+      tags: [Messages]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message thread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MessageItem'
+
+  /messages/conversations/{conversationId}/send:
+    post:
+      summary: Send Message
+      tags: [Messages]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        '200':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /messages/conversations/{conversationId}/read:
+    post:
+      summary: Mark Conversation as Read
+      tags: [Messages]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation marked read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /settings:
+    get:
+      summary: Get Account Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Account settings data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/SettingsData'
+
+  /settings/2fa:
+    put:
+      summary: Toggle Two-Factor Authentication
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleRequest'
+      responses:
+        '200':
+          description: 2FA state updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /settings/email-notifications:
+    put:
+      summary: Toggle Email Notifications
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleRequest'
+      responses:
+        '200':
+          description: Email notification state updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /settings/client-mode:
+    put:
+      summary: Toggle Client Mode
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleRequest'
+      responses:
+        '200':
+          description: Client mode updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /notifications:
+    get:
+      summary: Get User Notifications
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificationItem'
+
+  /notifications/{notificationId}/action:
+    post:
+      summary: Execute Notification Action
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                actionLabel:
+                  type: string
+      responses:
+        '200':
+          description: Action executed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /notifications/{notificationId}/reply:
+    post:
+      summary: Send Notification Quick Reply
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                replyText:
+                  type: string
+      responses:
+        '200':
+          description: Quick reply sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonApiResponse'
+
+  /landing-page/data:
+    get:
+      summary: Fetch Public Landing Page Content
+      tags: [Landing Page]
+      responses:
+        '200':
+          description: Full landing page payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/LandingPageDto'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    400BadRequest:
+      description: Bad Request / Validation Failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+    401Unauthorized:
+      description: Unauthorized Access Token or Credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+    404NotFound:
+      description: Resource Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+    409Conflict:
+      description: Resource Conflict / Already Exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+
+  schemas:
+    ApiError:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: NOT_FOUND
+        message:
+          type: string
+          example: User not found
+
+    ApiErrorResponse:
+      type: object
+      required: [success, error]
+      properties:
+        success:
+          type: boolean
+          example: false
+        data:
+          nullable: true
+          example: null
+        error:
+          $ref: '#/components/schemas/ApiError'
+
+    CommonResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Operation completed successfully.
+
+    CommonApiResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/CommonResponse'
+        error:
+          nullable: true
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: secretPass123
+
+    SignUpRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          format: password
+          example: secretPass123
+
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    VerifyOtpRequest:
+      type: object
+      required: [email, code]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          example: "123456"
+
+    RefreshTokenRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [id, email, accessToken, refreshToken]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        isNewUser:
+          type: boolean
+
+    AuthApiResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/AuthResponse'
+        error:
+          nullable: true
+
+    WebLoginResponse:
+      type: object
+      required: [accessToken]
+      properties:
+        accessToken:
+          type: string
+
+    WebLoginApiResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/WebLoginResponse'
+        error:
+          nullable: true
+
+    HomeDashboard:
+      type: object
+      properties:
+        userName:
+          type: string
+        totalEarnings:
+          type: string
+        earningsGrowth:
+          type: string
+        activeProjectsCount:
+          type: integer
+        totalCapacity:
+          type: integer
+        systemRating:
+          type: number
+        recentActivities:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecentActivity'
+        isClientMode:
+          type: boolean
+
+    RecentActivity:
+      type: object
+      properties:
+        id:
+          type: string
+        projectName:
+          type: string
+        category:
+          type: string
+        categoryTag:
+          type: string
+        status:
+          type: string
+        date:
+          type: string
+        value:
+          type: string
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        handle:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+        hourlyRate:
+          type: string
+        rating:
+          type: number
+        reviewsCount:
+          type: integer
+        isAvailableForHire:
+          type: boolean
+        skills:
+          type: array
+          items:
+            type: string
+
+    UserProfileApiResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/UserProfile'
+        error:
+          nullable: true
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        bio:
+          type: string
+        hourlyRate:
+          type: string
+        location:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+        clientName:
+          type: string
+        budget:
+          type: string
+        postedTime:
+          type: string
+        proposalsCount:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        isSaved:
+          type: boolean
+
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+        clientName:
+          type: string
+        clientRating:
+          type: number
+        clientSpent:
+          type: string
+        budget:
+          type: string
+        postedTime:
+          type: string
+        proposalsCount:
+          type: integer
+        description:
+          type: string
+        requirements:
+          type: array
+          items:
+            type: string
+        deliverables:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        isSaved:
+          type: boolean
+        hasApplied:
+          type: boolean
+
+    CreateProjectRequest:
+      type: object
+      required: [title, category, budget, description]
+      properties:
+        title:
+          type: string
+        category:
+          type: string
+        budget:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    SubmitProposalRequest:
+      type: object
+      required: [projectId, bidAmount, coverLetter, estimatedDays]
+      properties:
+        projectId:
+          type: string
+        bidAmount:
+          type: string
+        coverLetter:
+          type: string
+        estimatedDays:
+          type: integer
+
+    Proposal:
+      type: object
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        freelancerId:
+          type: string
+        freelancerName:
+          type: string
+        freelancerTitle:
+          type: string
+        bidAmount:
+          type: string
+        coverLetter:
+          type: string
+        submittedDate:
+          type: string
+        status:
+          type: string
+
+    ConversationItem:
+      type: object
+      properties:
+        id:
+          type: string
+        otherParticipantId:
+          type: string
+        otherParticipantName:
+          type: string
+        otherParticipantAvatar:
+          type: string
+        lastMessage:
+          type: string
+        lastMessageTimestamp:
+          type: string
+        unreadCount:
+          type: integer
+        isOnline:
+          type: boolean
+
+    MessageItem:
+      type: object
+      properties:
+        id:
+          type: string
+        conversationId:
+          type: string
+        senderId:
+          type: string
+        senderName:
+          type: string
+        text:
+          type: string
+        timestamp:
+          type: string
+        isRead:
+          type: boolean
+
+    SettingsData:
+      type: object
+      properties:
+        twoFactorEnabled:
+          type: boolean
+        emailNotificationsEnabled:
+          type: boolean
+        clientModeEnabled:
+          type: boolean
+
+    ToggleRequest:
+      type: object
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+
+    NotificationItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+        type:
+          type: string
+        actionLabel:
+          type: string
+        isRead:
+          type: boolean
+
+    LandingPageDto:
+      type: object
+      properties:
+        hero:
+          type: object
+        twoPaths:
+          type: object
+        products:
+          type: array
+          items:
+            type: object
+        solutions:
+          type: array
+          items:
+            type: object
+        howItWorksSteps:
+          type: array
+          items:
+            type: object
+        marketplaceCategories:
+          type: array
+          items:
+            type: object
+        featuredTalent:
+          type: array
+          items:
+            type: object
+        featuredProjects:
+          type: array
+          items:
+            type: object
+        trustItems:
+          type: array
+          items:
+            type: object
+        successStories:
+          type: array
+          items:
+            type: object
+        resourceCards:
+          type: array
+          items:
+            type: object
