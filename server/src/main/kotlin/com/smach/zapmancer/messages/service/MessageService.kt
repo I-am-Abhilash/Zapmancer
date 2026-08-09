@@ -6,7 +6,9 @@ import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.ConversationItem
 import com.smach.zapmancer.core.common.dto.MessageItem
 import com.smach.zapmancer.messages.repository.MessageRepository
+import org.koin.core.annotation.Single
 
+@Single
 class MessageService(
     private val repository: MessageRepository,
     private val connectionManager: ConnectionManager,

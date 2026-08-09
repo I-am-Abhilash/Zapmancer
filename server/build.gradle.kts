@@ -20,9 +20,12 @@ tasks.shadowJar {
 }
 
 dependencies {
+    implementation(files("libs/ktor-server-scalar-jvm-3.6.0-SNAPSHOT.jar"))
+
     implementation(project(":core"))
     implementation(libs.bcrypt)
     implementation(libs.koin.ktor)
+    implementation(libs.koin.annotations)
     implementation(libs.ktor.server.rate.limit)
     implementation(libs.ktor.server.websockets)
     implementation(libs.kotlinx.datetime)
@@ -45,6 +48,7 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.call.id)
     implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.ktor.server.netty)
     implementation(libs.micrometer.registry.prometheus)
     implementation(libs.jsoup)
     implementation(libs.commonmark)

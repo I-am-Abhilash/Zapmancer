@@ -6,7 +6,9 @@ import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.SettingsData
 import com.smach.zapmancer.settings.repository.SettingsField
 import com.smach.zapmancer.settings.repository.SettingsRepository
+import org.koin.core.annotation.Single
 
+@Single
 class SettingsService(private val repository: SettingsRepository) {
 
     suspend fun getSettings(userId: String): DomainResult<SettingsData> {

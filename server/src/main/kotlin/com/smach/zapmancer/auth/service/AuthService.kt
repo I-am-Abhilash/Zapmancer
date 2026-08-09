@@ -7,12 +7,15 @@ import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.AuthResponse
 import com.smach.zapmancer.core.security.JwtConfig
+import org.koin.core.annotation.Single
+import org.koin.core.annotation.Singleton
 import java.util.UUID
 
 /**
  * AuthService handles all authentication business logic.
  * It depends only on its own [AuthRepository] — no cross-feature service dependency.
  */
+@Single
 class AuthService(private val repository: AuthRepository) {
 
     // ------------------------------------------------------------------

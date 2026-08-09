@@ -4,10 +4,12 @@ import com.smach.zapmancer.core.common.dto.ChatFrame
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.websocket.send
 import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
+@Single
 class ConnectionManager {
     private val logger = LoggerFactory.getLogger(ConnectionManager::class.java)
 

@@ -20,6 +20,7 @@ import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.requestvalidation.RequestValidation
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
+import io.ktor.server.plugins.scalar.scalarUI
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respond
@@ -156,6 +157,11 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
 
     routing {
         swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
+
+        scalarUI(path = "scalar", swaggerFile = "openapi/documentation.yaml") {
+            theme = "purple"
+            layout = "modern"
+        }
 
         get("/health") {
             call.respondText("OK", ContentType.Text.Plain, HttpStatusCode.OK)

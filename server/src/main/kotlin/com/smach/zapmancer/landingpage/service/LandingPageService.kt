@@ -14,7 +14,9 @@ import com.smach.zapmancer.core.common.dto.TrustSafetyItemDto
 import com.smach.zapmancer.core.common.dto.TwoPathsDataDto
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
+import org.koin.core.annotation.Single
 
+@Single
 class LandingPageService {
      fun getLandingPageData(): Result<LandingPageDto, DataError.Network> {
         val dto = LandingPageDto(

@@ -4,7 +4,10 @@ import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.NotificationItem
 import com.smach.zapmancer.notifications.repository.NotificationsRepository
+import org.koin.core.annotation.Single
 
+
+@Single
 class NotificationsService(private val repository: NotificationsRepository) {
 
     suspend fun getNotifications(userId: String): DomainResult<List<NotificationItem>> = DomainResult.Success(repository.getNotifications(userId))

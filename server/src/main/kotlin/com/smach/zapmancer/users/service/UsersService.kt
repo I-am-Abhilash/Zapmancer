@@ -4,11 +4,13 @@ import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
 import com.smach.zapmancer.core.common.dto.UserProfile
+import org.koin.core.annotation.Single
 
 /**
  * Public contract for Profile-related operations.
  * Focused on public profile display and hire flow (not auth).
  */
+@Single
 interface UsersService {
     /** Retrieve own profile (authenticated user). */
     suspend fun getOwnProfile(userId: String): DomainResult<UserProfile>

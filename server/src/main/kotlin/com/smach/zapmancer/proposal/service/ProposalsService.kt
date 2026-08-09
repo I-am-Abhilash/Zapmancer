@@ -5,7 +5,10 @@ import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
 import com.smach.zapmancer.proposal.repository.ProposalsRepository
+import org.koin.core.annotation.Single
+import org.koin.core.annotation.Singleton
 
+@Single
 class ProposalsService(private val repository: ProposalsRepository) {
 
     suspend fun submitProposal(

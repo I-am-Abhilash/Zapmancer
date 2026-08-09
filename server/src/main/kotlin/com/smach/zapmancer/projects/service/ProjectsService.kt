@@ -8,7 +8,10 @@ import com.smach.zapmancer.core.common.dto.Project
 import com.smach.zapmancer.core.common.dto.ProjectDetail
 import com.smach.zapmancer.core.recommendations.GorseClient
 import com.smach.zapmancer.projects.repository.ProjectsRepository
+import org.koin.core.annotation.Single
 
+
+@Single
 class ProjectsService(
     private val repository: ProjectsRepository,
     private val gorseClient: GorseClient,

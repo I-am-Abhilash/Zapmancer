@@ -6,7 +6,9 @@ import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
 import com.smach.zapmancer.core.common.dto.UserProfile
 import com.smach.zapmancer.users.repository.UsersRepository
+import org.koin.core.annotation.Single
 
+@Single(binds = [UsersService::class])
 class UsersServiceImpl(
     private val repository: UsersRepository,
 ) : UsersService {

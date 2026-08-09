@@ -6,8 +6,10 @@ import com.smach.zapmancer.core.common.dto.ExportActivitiesResponse
 import com.smach.zapmancer.core.common.dto.HomeDashboard
 import com.smach.zapmancer.core.common.dto.RecentActivity
 import com.smach.zapmancer.home.repository.HomeRepository
+import org.koin.core.annotation.Single
 import java.io.File
 
+@Single
 class HomeService(private val repository: HomeRepository) {
 
     suspend fun getDashboard(userId: String): DomainResult<HomeDashboard> {
