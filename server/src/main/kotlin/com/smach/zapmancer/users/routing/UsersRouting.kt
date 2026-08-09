@@ -1,7 +1,7 @@
 package com.smach.zapmancer.users.routing
 
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.users.service.UsersService
 import io.ktor.http.HttpStatusCode
@@ -32,7 +32,8 @@ fun Route.usersRouting() {
             get("/profile") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                call.respondResult(service.getOwnProfile(principal.uid))
+                val result = service.getOwnProfile(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** PUT /users/profile — update own profile */
@@ -42,14 +43,16 @@ fun Route.usersRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val request = call.receive<UpdateProfileRequest>()
-                call.respondResult(service.updateProfile(principal.uid, request))
+                val result = service.updateProfile(principal.uid, request)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** GET /users/profile/{userId} — public profile */
             get("/profile/{userId}") {
                 val userId =
                     call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.getPublicProfile(userId))
+                val result = service.getPublicProfile(userId)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** POST /users/{userId}/hire */
@@ -58,8 +61,10 @@ fun Route.usersRouting() {
                     ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val freelancerId = call.parameters["userId"]
                     ?: return@post call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.hireFreelancer(principal.uid, freelancerId))
+                val result = service.hireFreelancer(principal.uid, freelancerId)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
+

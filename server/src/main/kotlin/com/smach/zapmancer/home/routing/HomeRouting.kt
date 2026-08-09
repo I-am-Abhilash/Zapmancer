@@ -1,7 +1,7 @@
 package com.smach.zapmancer.home.routing
 
 import com.smach.zapmancer.core.common.dto.ExportActivitiesRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.home.service.HomeService
 import io.ktor.http.HttpStatusCode
@@ -24,14 +24,17 @@ fun Route.homeRouting() {
             get("/dashboard") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                call.respondResult(service.getDashboard(principal.uid))
+                val result = service.getDashboard(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** POST /home/activities/export */
             post("/activities/export") {
                 val request = call.receive<ExportActivitiesRequest>()
-                call.respondResult(service.exportActivities(request.activities))
+                val result = service.exportActivities(request.activities)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
+

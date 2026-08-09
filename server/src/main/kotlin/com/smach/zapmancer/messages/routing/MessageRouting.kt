@@ -1,11 +1,8 @@
 package com.smach.zapmancer.messages.routing
 
-import com.smach.zapmancer.core.common.ApiError
 import com.smach.zapmancer.core.common.ApiResponse
-import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
-import com.smach.zapmancer.core.common.respondResult
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.messages.service.ConnectionManager
 import com.smach.zapmancer.messages.service.MessageService
@@ -41,37 +38,33 @@ fun Route.messageRouting() {
             val isFirstConnection = connectionManager.registerSession(userId, this)
             if (isFirstConnection) {
                 val conversations = service.getConversations(userId)
-                if (conversations is DomainResult.Success) {
-                    conversations.data.forEach { conversation ->
-                        val otherParticipants = service.getConversationParticipants(conversation.id)
-                        if (otherParticipants != null) {
-                            val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
-                            connectionManager.sendToUser(
-                                otherUserId,
-                                ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
-                            )
-                        }
+                conversations.forEach { conversation ->
+                    val otherParticipants = service.getConversationParticipants(conversation.id)
+                    if (otherParticipants != null) {
+                        val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
+                        connectionManager.sendToUser(
+                            otherUserId,
+                            ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
+                        )
                     }
                 }
             }
 
             // Inform client of current online status of all their conversations
             val conversations = service.getConversations(userId)
-            if (conversations is DomainResult.Success) {
-                conversations.data.forEach { conversation ->
-                    val otherParticipants = service.getConversationParticipants(conversation.id)
-                    if (otherParticipants != null) {
-                        val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
-                        val otherOnline = connectionManager.isUserOnline(otherUserId)
-                        if (otherOnline) {
-                            try {
-                                send(
-                                    Json.encodeToString<ChatFrame.ServerToClient>(
-                                        ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
-                                    ),
-                                )
-                            } catch (_: Exception) {}
-                        }
+            conversations.forEach { conversation ->
+                val otherParticipants = service.getConversationParticipants(conversation.id)
+                if (otherParticipants != null) {
+                    val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
+                    val otherOnline = connectionManager.isUserOnline(otherUserId)
+                    if (otherOnline) {
+                        try {
+                            send(
+                                Json.encodeToString<ChatFrame.ServerToClient>(
+                                    ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
+                                ),
+                            )
+                        } catch (_: Exception) {}
                     }
                 }
             }
@@ -108,16 +101,14 @@ fun Route.messageRouting() {
                 val isFullyOffline = connectionManager.deregisterSession(userId, this)
                 if (isFullyOffline) {
                     val userConvs = service.getConversations(userId)
-                    if (userConvs is DomainResult.Success) {
-                        userConvs.data.forEach { conversation ->
-                            val otherParticipants = service.getConversationParticipants(conversation.id)
-                            if (otherParticipants != null) {
-                                val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
-                                connectionManager.sendToUser(
-                                    otherUserId,
-                                    ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = false),
-                                )
-                            }
+                    userConvs.forEach { conversation ->
+                        val otherParticipants = service.getConversationParticipants(conversation.id)
+                        if (otherParticipants != null) {
+                            val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
+                            connectionManager.sendToUser(
+                                otherUserId,
+                                ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = false),
+                            )
                         }
                     }
                 }
@@ -130,7 +121,8 @@ fun Route.messageRouting() {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
                 )
-                call.respondResult(service.getConversations(principal.uid))
+                val conversations = service.getConversations(principal.uid)
+                call.respond(ApiResponse(success = true, data = conversations))
             }
 
             route("/{conversationId}") {
@@ -142,19 +134,8 @@ fun Route.messageRouting() {
                     val convId = call.parameters["conversationId"] ?: return@get call.respond(
                         HttpStatusCode.BadRequest,
                     )
-                    when (val r = service.getMessages(convId, principal.uid)) {
-                        is DomainResult.Success -> call.respond(
-                            ApiResponse(
-                                success = true,
-                                data = r.data,
-                            ),
-                        )
-
-                        is DomainResult.Error -> call.respond(
-                            r.code.httpStatusCode,
-                            ApiResponse<Unit>(false, error = ApiError(r.code.name, r.message ?: "")),
-                        )
-                    }
+                    val messages = service.getMessages(convId, principal.uid)
+                    call.respond(ApiResponse(success = true, data = messages))
                 }
 
                 /** POST /messages/conversations/{conversationId}/send */
@@ -166,7 +147,8 @@ fun Route.messageRouting() {
                         HttpStatusCode.BadRequest,
                     )
                     val req = call.receive<SendMessageRequest>()
-                    call.respondResult(service.sendMessage(convId, principal.uid, req.text))
+                    val result = service.sendMessage(convId, principal.uid, req.text)
+                    call.respond(ApiResponse(success = true, data = result))
                 }
 
                 /** POST /messages/conversations/{conversationId}/read */
@@ -177,9 +159,11 @@ fun Route.messageRouting() {
                     val convId = call.parameters["conversationId"] ?: return@post call.respond(
                         HttpStatusCode.BadRequest,
                     )
-                    call.respondResult(service.markRead(convId, principal.uid))
+                    val result = service.markRead(convId, principal.uid)
+                    call.respond(ApiResponse(success = true, data = result))
                 }
             }
         }
     }
 }
+

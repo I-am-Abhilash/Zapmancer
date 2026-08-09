@@ -12,14 +12,12 @@ import com.smach.zapmancer.core.common.dto.SolutionCardDto
 import com.smach.zapmancer.core.common.dto.SuccessStoryDto
 import com.smach.zapmancer.core.common.dto.TrustSafetyItemDto
 import com.smach.zapmancer.core.common.dto.TwoPathsDataDto
-import com.smach.zapmancer.core.common.utils.DataError
-import com.smach.zapmancer.core.common.utils.Result
 import org.koin.core.annotation.Single
 
 @Single
 class LandingPageService {
-     fun getLandingPageData(): Result<LandingPageDto, DataError.Network> {
-        val dto = LandingPageDto(
+    fun getLandingPageData(): LandingPageDto {
+        return LandingPageDto(
             hero = HeroDataDto(
                 headline = "Great work starts with the right people.",
                 subtext = "Zapmancer connects ambitious businesses with talented independent professionals to turn ideas into real work — from a single project to an entire team.",
@@ -90,6 +88,6 @@ class LandingPageService {
                 ResourceCardDto("r3", "Community", "Zapmancer Builder Network", "Stories, discussions, and insights from people working independently.", "Join Community →"),
             ),
         )
-        return Result.Success(dto)
     }
 }
+

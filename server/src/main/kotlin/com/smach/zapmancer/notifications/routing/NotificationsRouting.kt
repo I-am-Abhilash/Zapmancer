@@ -2,7 +2,7 @@ package com.smach.zapmancer.notifications.routing
 
 import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
 import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.notifications.service.NotificationsService
 import io.ktor.http.HttpStatusCode
@@ -26,7 +26,8 @@ fun Route.notificationsRouting() {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
                 )
-                call.respondResult(service.getNotifications(principal.uid))
+                val result = service.getNotifications(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             route("/{notificationId}") {
@@ -38,13 +39,12 @@ fun Route.notificationsRouting() {
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(HttpStatusCode.BadRequest)
                     val req = call.receive<ExecuteActionRequest>()
-                    call.respondResult(
-                        service.executeAction(
-                            notifId,
-                            principal.uid,
-                            req.actionLabel,
-                        ),
+                    val result = service.executeAction(
+                        notifId,
+                        principal.uid,
+                        req.actionLabel,
                     )
+                    call.respond(ApiResponse(success = true, data = result))
                 }
 
                 /** POST /notifications/{notificationId}/reply */
@@ -55,15 +55,15 @@ fun Route.notificationsRouting() {
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(HttpStatusCode.BadRequest)
                     val req = call.receive<SendQuickReplyRequest>()
-                    call.respondResult(
-                        service.sendQuickReply(
-                            notifId,
-                            principal.uid,
-                            req.replyText,
-                        ),
+                    val result = service.sendQuickReply(
+                        notifId,
+                        principal.uid,
+                        req.replyText,
                     )
+                    call.respond(ApiResponse(success = true, data = result))
                 }
             }
         }
     }
 }
+

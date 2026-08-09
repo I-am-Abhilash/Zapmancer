@@ -1,7 +1,7 @@
 package com.smach.zapmancer.settings.routing
 
 import com.smach.zapmancer.core.common.dto.ToggleRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.settings.service.SettingsService
 import io.ktor.http.HttpStatusCode
@@ -25,7 +25,8 @@ fun Route.settingsRouting() {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
                 )
-                call.respondResult(service.getSettings(principal.uid))
+                val result = service.getSettings(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** PUT /settings/2fa */
@@ -34,7 +35,8 @@ fun Route.settingsRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
-                call.respondResult(service.toggle2fa(principal.uid, req.enabled))
+                val result = service.toggle2fa(principal.uid, req.enabled)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** PUT /settings/email-notifications */
@@ -43,7 +45,8 @@ fun Route.settingsRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
-                call.respondResult(service.toggleEmailNotifications(principal.uid, req.enabled))
+                val result = service.toggleEmailNotifications(principal.uid, req.enabled)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** PUT /settings/client-mode */
@@ -52,8 +55,10 @@ fun Route.settingsRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<ToggleRequest>()
-                call.respondResult(service.toggleClientMode(principal.uid, req.enabled))
+                val result = service.toggleClientMode(principal.uid, req.enabled)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
+

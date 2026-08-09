@@ -1,7 +1,7 @@
 package com.smach.zapmancer.proposal.routing
 
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.proposal.service.ProposalsService
 import io.ktor.http.HttpStatusCode
@@ -27,7 +27,8 @@ fun Route.proposalsRouting() {
                 "Missing or invalid token",
             )
             val req = call.receive<SubmitProposalRequest>()
-            call.respondResult(service.submitProposal(principal.uid, req))
+            val result = service.submitProposal(principal.uid, req)
+            call.respond(ApiResponse(success = true, data = result))
         }
 
         /** GET /projects/{projectId}/proposals (client view) */
@@ -38,8 +39,10 @@ fun Route.proposalsRouting() {
                     HttpStatusCode.BadRequest,
                     "Project ID is missing from the URL",
                 )
-                call.respondResult(service.getProposalsForProject(projectId))
+                val result = service.getProposalsForProject(projectId)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
+

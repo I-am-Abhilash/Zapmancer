@@ -2,7 +2,7 @@ package com.smach.zapmancer.projects.routing
 
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.SaveProjectRequest
-import com.smach.zapmancer.core.common.respondResult
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.projects.service.ProjectsService
 import io.ktor.http.HttpStatusCode
@@ -31,16 +31,15 @@ fun Route.projectsRouting() {
                 val sortBy = call.request.queryParameters["sortBy"]
                 val page = call.request.queryParameters["page"]?.toIntOrNull()
                 val limit = call.request.queryParameters["limit"]?.toIntOrNull()
-                call.respondResult(
-                    service.getProjects(
-                        userId = principal.uid,
-                        query = query,
-                        category = category,
-                        sortBy = sortBy,
-                        page = page,
-                        limit = limit,
-                    ),
+                val result = service.getProjects(
+                    userId = principal.uid,
+                    query = query,
+                    category = category,
+                    sortBy = sortBy,
+                    page = page,
+                    limit = limit,
                 )
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** GET /projects/{id} */
@@ -49,7 +48,8 @@ fun Route.projectsRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.getProjectById(id, principal.uid))
+                val result = service.getProjectById(id, principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** POST /projects/{id}/save */
@@ -60,7 +60,8 @@ fun Route.projectsRouting() {
                 val id =
                     call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
                 val req = call.receive<SaveProjectRequest>()
-                call.respondResult(service.saveProject(principal.uid, id, req.isSaved))
+                val result = service.saveProject(principal.uid, id, req.isSaved)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** POST /projects/{id}/apply */
@@ -70,7 +71,8 @@ fun Route.projectsRouting() {
                 )
                 val id =
                     call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
-                call.respondResult(service.applyToProject(principal.uid, id))
+                val result = service.applyToProject(principal.uid, id)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             /** POST /projects — create new project (client mode) */
@@ -79,8 +81,10 @@ fun Route.projectsRouting() {
                     HttpStatusCode.Unauthorized,
                 )
                 val req = call.receive<CreateProjectRequest>()
-                call.respondResult(service.createProject(principal.uid, req))
+                val result = service.createProject(principal.uid, req)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
+

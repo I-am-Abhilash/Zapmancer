@@ -2,14 +2,11 @@ package com.smach.zapmancer.auth.routing
 
 import com.smach.zapmancer.auth.service.AuthService
 import com.smach.zapmancer.core.common.CommonResponse
-import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.RefreshTokenRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
-import com.smach.zapmancer.core.common.respondResult
-import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
@@ -41,108 +38,76 @@ fun Route.authRouting() {
             // Android / iOS
             post("/login") {
                 val req = call.receive<LoginRequest>()
-
-                call.respondResult(
-                    service.login(
-                        email = req.email,
-                        password = req.password,
-                    ),
+                val result = service.login(
+                    email = req.email,
+                    password = req.password,
                 )
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             // Web
             post("/web/login") {
                 val req = call.receive<LoginRequest>()
+                val tokens = service.login(
+                    email = req.email,
+                    password = req.password,
+                )
 
-                when (
-                    val result = service.login(
-                        email = req.email,
-                        password = req.password,
-                    )
-                ) {
-                    is DomainResult.Success -> {
-                        val tokens = result.data
+                // Refresh token is stored in browser and cannot be accessed by JavaScript
+                call.response.cookies.append(
+                    Cookie(
+                        name = "refresh_token",
+                        value = tokens.refreshToken,
+                        path = "/auth",
+                        secure = true,
+                        httpOnly = true,
+                        extensions = mapOf(
+                            "SameSite" to "Lax",
+                        ),
+                    ),
+                )
 
-                        // Refresh token is stored in browser
-                        // and cannot be accessed by JavaScript
-                        call.response.cookies.append(
-                            Cookie(
-                                name = "refresh_token",
-                                value = tokens.refreshToken,
-                                path = "/auth",
-                                secure = true,
-                                httpOnly = true,
-                                extensions = mapOf(
-                                    "SameSite" to "Lax",
-                                ),
-                            ),
-                        )
-
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = ApiResponse(
-                                success = true,
-                                data = WebLoginResponse(
-                                    accessToken = tokens.accessToken,
-                                ),
-                            ),
-                        )
-                    }
-
-                    is DomainResult.Error -> {
-                        call.respond(
-                            status = result.code.httpStatusCode,
-                            message = ApiResponse<WebLoginResponse>(
-                                success = false,
-                                error = ApiError(
-                                    code = result.code.name,
-                                    message = result.message
-                                        ?: "An unexpected error occurred",
-                                ),
-                            ),
-                        )
-                    }
-                }
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    message = ApiResponse(
+                        success = true,
+                        data = WebLoginResponse(
+                            accessToken = tokens.accessToken,
+                        ),
+                    ),
+                )
             }
 
             post("/register") {
                 val req = call.receive<SignUpRequest>()
-
-                call.respondResult(
-                    service.register(
-                        req.username,
-                        req.email,
-                        req.password,
-                    ),
+                val result = service.register(
+                    req.username,
+                    req.email,
+                    req.password,
                 )
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             post("/forgot-password") {
                 val req = call.receive<ForgotPasswordRequest>()
-
-                call.respondResult(
-                    service.forgotPassword(req.email),
-                )
+                val result = service.forgotPassword(req.email)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             post("/verify-otp") {
                 val req = call.receive<VerifyOtpRequest>()
-
-                call.respondResult(
-                    service.verifyOtp(
-                        req.email,
-                        req.code,
-                    ),
+                val result = service.verifyOtp(
+                    req.email,
+                    req.code,
                 )
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             // Mobile refresh
             post("/refresh") {
                 val req = call.receive<RefreshTokenRequest>()
-
-                call.respondResult(
-                    service.refresh(req.refreshToken),
-                )
+                val result = service.refresh(req.refreshToken)
+                call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
@@ -154,8 +119,11 @@ fun Route.authRouting() {
     authenticate("local-jwt") {
         route("/auth") {
             post("/logout") {
-                call.respondResult(
-                    DomainResult.Success(CommonResponse(success = true, message = "Logged out.")),
+                call.respond(
+                    ApiResponse(
+                        success = true,
+                        data = CommonResponse(success = true, message = "Logged out."),
+                    ),
                 )
             }
         }
@@ -166,3 +134,4 @@ fun Route.authRouting() {
 data class WebLoginResponse(
     val accessToken: String,
 )
+

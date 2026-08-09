@@ -1,5 +1,6 @@
 package com.smach.zapmancer.core.framework
 
+import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.ApiError
 import com.smach.zapmancer.core.common.ApiResponse
 import io.ktor.http.ContentType
@@ -134,6 +135,19 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
                     error = ApiError(
                         "BAD_REQUEST",
                         cause.message ?: "Malformed request body or parameters",
+                    ),
+                ),
+            )
+        }
+
+        exception<ApiException> { call, cause ->
+            call.respond(
+                status = cause.code.httpStatusCode,
+                message = ApiResponse<Unit>(
+                    success = false,
+                    error = ApiError(
+                        code = cause.code.name,
+                        message = cause.message,
                     ),
                 ),
             )

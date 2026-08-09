@@ -8,12 +8,13 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 
 /**
- * DomainResult is a 'Result' pattern used by Services and Repositories.
+ * Custom domain exception thrown by service and repository layers.
+ * Handled centrally by Ktor StatusPages plugin.
  */
-sealed class DomainResult<out T> {
-    data class Success<out T>(val data: T) : DomainResult<T>()
-    data class Error(val code: ErrorCode, val message: String? = null) : DomainResult<Nothing>()
-}
+class ApiException(
+    val code: ErrorCode,
+    override val message: String,
+) : Exception(message)
 
 /**
  * Enumeration of possible error types mapped to their HTTP status codes.
@@ -27,33 +28,7 @@ enum class ErrorCode(val httpStatusCode: HttpStatusCode) {
     INTERNAL_SERVER_ERROR(HttpStatusCode.InternalServerError),
 }
 
-/**
- * Extension function to automatically map a DomainResult to an HTTP response.
- */
-suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: DomainResult<T>) {
-    when (result) {
-        is DomainResult.Success -> {
-            this.respond(
-                status = HttpStatusCode.OK,
-                message = ApiResponse(success = true, data = result.data),
-            )
-        }
-
-        is DomainResult.Error -> {
-            this.respond(
-                status = result.code.httpStatusCode,
-                message = ApiResponse<T>(
-                    success = false,
-                    error = ApiError(
-                        code = result.code.name,
-                        message = result.message ?: "An unexpected error occurred",
-                    ),
-                ),
-            )
-        }
-    }
-}
-
 typealias ApiResponse<T> = ApiResponse<T>
 typealias ApiError = ApiError
 typealias CommonResponse = CommonResponse
+

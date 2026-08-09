@@ -1,7 +1,6 @@
 package com.smach.zapmancer.messages.service
 
 import com.smach.zapmancer.core.common.CommonResponse
-import com.smach.zapmancer.core.common.DomainResult
 import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.ConversationItem
 import com.smach.zapmancer.core.common.dto.MessageItem
@@ -14,18 +13,18 @@ class MessageService(
     private val connectionManager: ConnectionManager,
 ) {
 
-    suspend fun getConversations(userId: String): DomainResult<List<ConversationItem>> = DomainResult.Success(repository.getConversations(userId))
+    suspend fun getConversations(userId: String): List<ConversationItem> = repository.getConversations(userId)
 
     suspend fun getMessages(
         conversationId: String,
         userId: String,
-    ): DomainResult<List<MessageItem>> = DomainResult.Success(repository.getMessages(conversationId, userId))
+    ): List<MessageItem> = repository.getMessages(conversationId, userId)
 
     suspend fun sendMessage(
         conversationId: String,
         senderId: String,
         text: String,
-    ): DomainResult<CommonResponse> {
+    ): CommonResponse {
         val messageId = repository.sendMessage(conversationId, senderId, text)
 
         val participants = repository.getConversationParticipants(conversationId)
@@ -49,10 +48,10 @@ class MessageService(
             }
         }
 
-        return DomainResult.Success(CommonResponse(success = true, message = "Message sent."))
+        return CommonResponse(success = true, message = "Message sent.")
     }
 
-    suspend fun markRead(conversationId: String, userId: String): DomainResult<CommonResponse> {
+    suspend fun markRead(conversationId: String, userId: String): CommonResponse {
         repository.markRead(conversationId, userId)
 
         val participants = repository.getConversationParticipants(conversationId)
@@ -64,13 +63,12 @@ class MessageService(
             )
         }
 
-        return DomainResult.Success(
-            CommonResponse(
-                success = true,
-                message = "Conversation marked as read.",
-            ),
+        return CommonResponse(
+            success = true,
+            message = "Conversation marked as read.",
         )
     }
 
     suspend fun getConversationParticipants(conversationId: String): Pair<String, String>? = repository.getConversationParticipants(conversationId)
 }
+

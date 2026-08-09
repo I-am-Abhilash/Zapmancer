@@ -1,6 +1,6 @@
 package com.smach.zapmancer.home.service
 
-import com.smach.zapmancer.core.common.DomainResult
+import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.ExportActivitiesResponse
 import com.smach.zapmancer.core.common.dto.HomeDashboard
@@ -12,15 +12,15 @@ import java.io.File
 @Single
 class HomeService(private val repository: HomeRepository) {
 
-    suspend fun getDashboard(userId: String): DomainResult<HomeDashboard> {
+    suspend fun getDashboard(userId: String): HomeDashboard {
         val context = repository.getUserContext(userId)
-            ?: return DomainResult.Error(ErrorCode.NOT_FOUND, "User not found.")
+            ?: throw ApiException(ErrorCode.NOT_FOUND, "User not found.")
 
         val activeCount = repository.getActiveProjectsCount(userId)
         val capacity = repository.getCapacity(userId)
         val activities = repository.getRecentActivities(userId)
 
-        val dashboard = HomeDashboard(
+        return HomeDashboard(
             userName = context.name,
             // Earnings and rating are populated once payment milestones are implemented.
             totalEarnings = "$0.00",
@@ -31,10 +31,9 @@ class HomeService(private val repository: HomeRepository) {
             recentActivities = activities,
             isClientMode = context.isClientMode,
         )
-        return DomainResult.Success(dashboard)
     }
 
-    fun exportActivities(activities: List<RecentActivity>): DomainResult<ExportActivitiesResponse> {
+    fun exportActivities(activities: List<RecentActivity>): ExportActivitiesResponse {
         val timestamp = System.currentTimeMillis()
         val fileName = "activities_$timestamp.csv"
         val dir = File("exports")
@@ -49,6 +48,7 @@ class HomeService(private val repository: HomeRepository) {
         }
         file.writeText(csv)
 
-        return DomainResult.Success(ExportActivitiesResponse(filePath = "exports/$fileName"))
+        return ExportActivitiesResponse(filePath = "exports/$fileName")
     }
 }
+
