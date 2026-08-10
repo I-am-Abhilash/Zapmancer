@@ -1,6 +1,9 @@
 package com.smach.zapmancer.projects.routing
 
+import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
+import com.smach.zapmancer.core.common.dto.Project
+import com.smach.zapmancer.core.common.dto.ProjectDetail
 import com.smach.zapmancer.core.common.dto.SaveProjectRequest
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
@@ -21,7 +24,21 @@ fun Route.projectsRouting() {
 
     authenticate("local-jwt") {
         route("/projects") {
-            /** GET /projects — project board */
+            /**
+             * Browse and filter available project postings.
+             *
+             * Query: query [String] Optional search keyword
+             * Query: category [String] Filter by category
+             * Query: sortBy [String] Sorting order
+             * Query: page [Int] Page index
+             * Query: limit [Int] Number of items per page
+             *
+             * Responses:
+             *   – 200 [ApiResponse<List<Project>>] List of matching project summaries.
+             *   – 401 [ApiResponse<Unit>] Unauthorized.
+             *
+             * Tags: Projects
+             */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
@@ -42,7 +59,17 @@ fun Route.projectsRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** GET /projects/{id} */
+            /**
+             * Retrieve detailed project specification by ID.
+             *
+             * Path: id [String] Project ID
+             *
+             * Responses:
+             *   – 200 [ApiResponse<ProjectDetail>] Detailed project information.
+             *   – 404 [ApiResponse<Unit>] Project not found.
+             *
+             * Tags: Projects
+             */
             get("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
@@ -52,7 +79,17 @@ fun Route.projectsRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** POST /projects/{id}/save */
+            /**
+             * Save or remove a project from bookmarked/saved list.
+             *
+             * Path: id [String] Project ID
+             * Request: [SaveProjectRequest] Toggle status
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] Saved status toggled.
+             *
+             * Tags: Projects
+             */
             post("/{id}/save") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                     HttpStatusCode.Unauthorized,
@@ -64,7 +101,17 @@ fun Route.projectsRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** POST /projects/{id}/apply */
+            /**
+             * Submit application interest to a project.
+             *
+             * Path: id [String] Project ID
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] Application submitted.
+             *   – 404 [ApiResponse<Unit>] Project not found.
+             *
+             * Tags: Projects
+             */
             post("/{id}/apply") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                     HttpStatusCode.Unauthorized,
@@ -75,7 +122,16 @@ fun Route.projectsRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** POST /projects — create new project (client mode) */
+            /**
+             * Post a new project (Client mode).
+             *
+             * Request: [CreateProjectRequest] Project creation parameters
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] Project created successfully.
+             *
+             * Tags: Projects
+             */
             post {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                     HttpStatusCode.Unauthorized,
@@ -87,4 +143,5 @@ fun Route.projectsRouting() {
         }
     }
 }
+
 

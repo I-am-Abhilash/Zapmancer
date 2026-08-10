@@ -1,5 +1,7 @@
 package com.smach.zapmancer.proposal.routing
 
+import com.smach.zapmancer.core.common.CommonResponse
+import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
@@ -19,8 +21,17 @@ fun Route.proposalsRouting() {
     val service by inject<ProposalsService>()
 
     authenticate("local-jwt") {
-        /** POST /proposals */
-
+        /**
+         * Submit a proposal bid for a project.
+         *
+         * Request: [SubmitProposalRequest] Proposal parameters
+         *
+         * Responses:
+         *   – 200 [ApiResponse<CommonResponse>] Proposal submitted successfully.
+         *   – 401 [ApiResponse<Unit>] Unauthorized.
+         *
+         * Tags: Proposals
+         */
         post("/proposals") {
             val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                 HttpStatusCode.Unauthorized,
@@ -31,9 +42,18 @@ fun Route.proposalsRouting() {
             call.respond(ApiResponse(success = true, data = result))
         }
 
-        /** GET /projects/{projectId}/proposals (client view) */
-
         route("/projects/{projectId}") {
+            /**
+             * Retrieve proposals submitted for a specific project (Client view).
+             *
+             * Path: projectId [String] Target project ID
+             *
+             * Responses:
+             *   – 200 [ApiResponse<List<Proposal>>] List of submitted proposals.
+             *   – 400 [ApiResponse<Unit>] Missing project ID.
+             *
+             * Tags: Proposals
+             */
             get("/proposals") {
                 val projectId = call.parameters["projectId"] ?: return@get call.respond(
                     HttpStatusCode.BadRequest,
@@ -45,4 +65,5 @@ fun Route.proposalsRouting() {
         }
     }
 }
+
 

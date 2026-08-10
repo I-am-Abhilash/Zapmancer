@@ -1,8 +1,11 @@
 package com.smach.zapmancer.messages.routing
 
-import com.smach.zapmancer.core.common.ApiResponse
+import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.ChatFrame
+import com.smach.zapmancer.core.common.dto.ConversationItem
+import com.smach.zapmancer.core.common.dto.MessageItem
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
+import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.messages.service.ConnectionManager
 import com.smach.zapmancer.messages.service.MessageService
@@ -116,7 +119,15 @@ fun Route.messageRouting() {
         }
 
         route("/messages/conversations") {
-            /** GET /messages/conversations */
+            /**
+             * Retrieve user's active message conversations list.
+             *
+             * Responses:
+             *   – 200 [ApiResponse<List<ConversationItem>>] User conversations list.
+             *   – 401 [ApiResponse<Unit>] Unauthorized.
+             *
+             * Tags: Messages
+             */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
@@ -126,7 +137,17 @@ fun Route.messageRouting() {
             }
 
             route("/{conversationId}") {
-                /** GET /messages/conversations/{conversationId}/messages */
+                /**
+                 * Retrieve message thread for a conversation.
+                 *
+                 * Path: conversationId [String] Conversation ID
+                 *
+                 * Responses:
+                 *   – 200 [ApiResponse<List<MessageItem>>] Thread message history.
+                 *   – 400 [ApiResponse<Unit>] Invalid conversation ID.
+                 *
+                 * Tags: Messages
+                 */
                 get("/messages") {
                     val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                         HttpStatusCode.Unauthorized,
@@ -138,7 +159,18 @@ fun Route.messageRouting() {
                     call.respond(ApiResponse(success = true, data = messages))
                 }
 
-                /** POST /messages/conversations/{conversationId}/send */
+                /**
+                 * Send a text message to a conversation thread.
+                 *
+                 * Path: conversationId [String] Conversation ID
+                 * Request: [SendMessageRequest] Message payload
+                 *
+                 * Responses:
+                 *   – 200 [ApiResponse<CommonResponse>] Message dispatched.
+                 *   – 400 [ApiResponse<Unit>] Invalid input parameters.
+                 *
+                 * Tags: Messages
+                 */
                 post("/send") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
@@ -151,7 +183,16 @@ fun Route.messageRouting() {
                     call.respond(ApiResponse(success = true, data = result))
                 }
 
-                /** POST /messages/conversations/{conversationId}/read */
+                /**
+                 * Mark conversation thread messages as read.
+                 *
+                 * Path: conversationId [String] Conversation ID
+                 *
+                 * Responses:
+                 *   – 200 [ApiResponse<CommonResponse>] Thread marked read.
+                 *
+                 * Tags: Messages
+                 */
                 post("/read") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
@@ -166,4 +207,5 @@ fun Route.messageRouting() {
         }
     }
 }
+
 

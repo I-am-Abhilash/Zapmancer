@@ -7,6 +7,7 @@ import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.RefreshTokenRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
+import com.smach.zapmancer.core.common.dto.AuthResponse
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
@@ -24,6 +25,7 @@ import org.koin.ktor.ext.inject
 /**
  * Auth routes matching the Zapmancer API spec:
  *   POST /auth/login
+ *   POST /auth/web/login
  *   POST /auth/register
  *   POST /auth/forgot-password
  *   POST /auth/verify-otp
@@ -35,7 +37,17 @@ fun Route.authRouting() {
 
     rateLimit(RateLimitName("auth")) {
         route("/auth") {
-            // Android / iOS
+            /**
+             * Authenticate a user with email and password (Mobile/API).
+             *
+             * Request: [LoginRequest] Account credentials
+             *
+             * Responses:
+             *   – 200 [ApiResponse<AuthResponse>] Authentication successful.
+             *   – 401 [ApiResponse<Unit>] Invalid credentials.
+             *
+             * Tags: Authentication
+             */
             post("/login") {
                 val req = call.receive<LoginRequest>()
                 val result = service.login(
@@ -45,7 +57,17 @@ fun Route.authRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            // Web
+            /**
+             * Authenticate a web application user and attach HttpOnly refresh cookie.
+             *
+             * Request: [LoginRequest] Web account credentials
+             *
+             * Responses:
+             *   – 200 [ApiResponse<WebLoginResponse>] Web login successful.
+             *   – 401 [ApiResponse<Unit>] Invalid credentials.
+             *
+             * Tags: Authentication
+             */
             post("/web/login") {
                 val req = call.receive<LoginRequest>()
                 val tokens = service.login(
@@ -78,6 +100,17 @@ fun Route.authRouting() {
                 )
             }
 
+            /**
+             * Register a new user account.
+             *
+             * Request: [SignUpRequest] User sign-up payload
+             *
+             * Responses:
+             *   – 200 [ApiResponse<AuthResponse>] Registration successful.
+             *   – 409 [ApiResponse<Unit>] Username or email already in use.
+             *
+             * Tags: Authentication
+             */
             post("/register") {
                 val req = call.receive<SignUpRequest>()
                 val result = service.register(
@@ -88,12 +121,33 @@ fun Route.authRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
+            /**
+             * Request password reset OTP.
+             *
+             * Request: [ForgotPasswordRequest] Account email address
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] OTP code dispatched.
+             *
+             * Tags: Authentication
+             */
             post("/forgot-password") {
                 val req = call.receive<ForgotPasswordRequest>()
                 val result = service.forgotPassword(req.email)
                 call.respond(ApiResponse(success = true, data = result))
             }
 
+            /**
+             * Verify password reset OTP code.
+             *
+             * Request: [VerifyOtpRequest] Email and 6-digit OTP code
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] OTP verified.
+             *   – 400 [ApiResponse<Unit>] Invalid or expired OTP code.
+             *
+             * Tags: Authentication
+             */
             post("/verify-otp") {
                 val req = call.receive<VerifyOtpRequest>()
                 val result = service.verifyOtp(
@@ -103,7 +157,17 @@ fun Route.authRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            // Mobile refresh
+            /**
+             * Refresh JWT access token.
+             *
+             * Request: [RefreshTokenRequest] Refresh token payload
+             *
+             * Responses:
+             *   – 200 [ApiResponse<AuthResponse>] Tokens refreshed successfully.
+             *   – 401 [ApiResponse<Unit>] Invalid or expired refresh token.
+             *
+             * Tags: Authentication
+             */
             post("/refresh") {
                 val req = call.receive<RefreshTokenRequest>()
                 val result = service.refresh(req.refreshToken)
@@ -118,6 +182,15 @@ fun Route.authRouting() {
     // responsibility (drop it from local storage).
     authenticate("local-jwt") {
         route("/auth") {
+            /**
+             * Logout user session.
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] Logged out successfully.
+             *   – 401 [ApiResponse<Unit>] Missing or invalid token.
+             *
+             * Tags: Authentication
+             */
             post("/logout") {
                 call.respond(
                     ApiResponse(
@@ -134,4 +207,5 @@ fun Route.authRouting() {
 data class WebLoginResponse(
     val accessToken: String,
 )
+
 

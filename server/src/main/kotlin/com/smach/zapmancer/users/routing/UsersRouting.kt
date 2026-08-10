@@ -1,6 +1,8 @@
 package com.smach.zapmancer.users.routing
 
+import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
+import com.smach.zapmancer.core.common.dto.UserProfile
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.users.service.UsersService
@@ -28,7 +30,16 @@ fun Route.usersRouting() {
 
     route("/users") {
         authenticate("local-jwt") {
-            /** GET /users/profile — own profile */
+            /**
+             * Retrieve authenticated user's own profile.
+             *
+             * Responses:
+             *   – 200 [ApiResponse<UserProfile>] Authenticated user profile.
+             *   – 401 [ApiResponse<Unit>] Unauthorized.
+             *   – 404 [ApiResponse<Unit>] Profile not found.
+             *
+             * Tags: Users
+             */
             get("/profile") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
@@ -36,8 +47,17 @@ fun Route.usersRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** PUT /users/profile — update own profile */
-
+            /**
+             * Update authenticated user's profile.
+             *
+             * Request: [UpdateProfileRequest] Profile fields to update
+             *
+             * Responses:
+             *   – 200 [ApiResponse<UserProfile>] Updated profile details.
+             *   – 401 [ApiResponse<Unit>] Unauthorized.
+             *
+             * Tags: Users
+             */
             put("/profile") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
                     HttpStatusCode.Unauthorized,
@@ -47,7 +67,17 @@ fun Route.usersRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** GET /users/profile/{userId} — public profile */
+            /**
+             * Retrieve public user profile by ID.
+             *
+             * Path: userId [String] User ID
+             *
+             * Responses:
+             *   – 200 [ApiResponse<UserProfile>] Public profile details.
+             *   – 404 [ApiResponse<Unit>] Profile not found.
+             *
+             * Tags: Users
+             */
             get("/profile/{userId}") {
                 val userId =
                     call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
@@ -55,7 +85,17 @@ fun Route.usersRouting() {
                 call.respond(ApiResponse(success = true, data = result))
             }
 
-            /** POST /users/{userId}/hire */
+            /**
+             * Send a hire offer notification to a freelancer.
+             *
+             * Path: userId [String] Freelancer user ID
+             *
+             * Responses:
+             *   – 200 [ApiResponse<CommonResponse>] Offer sent.
+             *   – 404 [ApiResponse<Unit>] Freelancer not found.
+             *
+             * Tags: Users
+             */
             post("/{userId}/hire") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@post call.respond(HttpStatusCode.Unauthorized)
@@ -67,4 +107,5 @@ fun Route.usersRouting() {
         }
     }
 }
+
 

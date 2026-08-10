@@ -7,6 +7,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.openapi.OpenApiDoc
+import io.ktor.openapi.OpenApiInfo
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -17,6 +19,7 @@ import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.openapi.openAPI
 import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.plugins.ratelimit.RateLimitName
 import io.ktor.server.plugins.requestvalidation.RequestValidation
@@ -27,7 +30,10 @@ import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.OpenApiDocSource
+import io.ktor.server.routing.openapi.plus
 import io.ktor.server.routing.routing
+import io.ktor.server.routing.routingRoot
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
@@ -170,9 +176,27 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
     }
 
     routing {
-        swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
 
-        scalarUI(path = "scalar", swaggerFile = "openapi/documentation.yaml") {
+        get("/openapi.json") {
+            val doc = OpenApiDoc(info = OpenApiInfo("My API", "1.0")) + call.application.routingRoot.descendants()
+            call.respond(doc)
+
+        }
+
+        openAPI("/openApi")
+
+        swaggerUI("/swaggerUI") {
+            info = OpenApiInfo("My API", "1.0")
+            source = OpenApiDocSource.Routing(
+                contentType = ContentType.Application.Json,
+            )
+        }
+
+        scalarUI("/scalarUI") {
+            info = OpenApiInfo("My API", "1.0.0")
+            source = OpenApiDocSource.Routing(
+                contentType = ContentType.Application.Json, // or Application.Yaml
+            )
             theme = "purple"
             layout = "modern"
         }

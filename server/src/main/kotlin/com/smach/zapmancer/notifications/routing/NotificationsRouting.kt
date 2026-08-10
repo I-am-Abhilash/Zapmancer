@@ -1,6 +1,8 @@
 package com.smach.zapmancer.notifications.routing
 
+import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.ExecuteActionRequest
+import com.smach.zapmancer.core.common.dto.NotificationItem
 import com.smach.zapmancer.core.common.dto.SendQuickReplyRequest
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
@@ -21,7 +23,15 @@ fun Route.notificationsRouting() {
 
     authenticate("local-jwt") {
         route("/notifications") {
-            /** GET /notifications */
+            /**
+             * Retrieve user's system notifications feed.
+             *
+             * Responses:
+             *   – 200 [ApiResponse<List<NotificationItem>>] Notification items list.
+             *   – 401 [ApiResponse<Unit>] Unauthorized.
+             *
+             * Tags: Notifications
+             */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
@@ -31,7 +41,18 @@ fun Route.notificationsRouting() {
             }
 
             route("/{notificationId}") {
-                /** POST /notifications/{notificationId}/action */
+                /**
+                 * Execute an action on a specific notification item.
+                 *
+                 * Path: notificationId [Int] Target notification ID
+                 * Request: [ExecuteActionRequest] Action details
+                 *
+                 * Responses:
+                 *   – 200 [ApiResponse<CommonResponse>] Action executed successfully.
+                 *   – 400 [ApiResponse<Unit>] Invalid notification ID.
+                 *
+                 * Tags: Notifications
+                 */
                 post("/action") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
@@ -47,7 +68,18 @@ fun Route.notificationsRouting() {
                     call.respond(ApiResponse(success = true, data = result))
                 }
 
-                /** POST /notifications/{notificationId}/reply */
+                /**
+                 * Submit a quick inline reply to a notification.
+                 *
+                 * Path: notificationId [Int] Target notification ID
+                 * Request: [SendQuickReplyRequest] Reply text payload
+                 *
+                 * Responses:
+                 *   – 200 [ApiResponse<CommonResponse>] Quick reply sent.
+                 *   – 400 [ApiResponse<Unit>] Invalid notification ID.
+                 *
+                 * Tags: Notifications
+                 */
                 post("/reply") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
@@ -66,4 +98,5 @@ fun Route.notificationsRouting() {
         }
     }
 }
+
 

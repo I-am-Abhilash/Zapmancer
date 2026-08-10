@@ -13,6 +13,11 @@ ktor {
     fatJar {
         archiveFileName.set("fat.jar")
     }
+    openApi {
+        enabled = true
+        codeInferenceEnabled = true
+        onlyCommented = false
+    }
 }
 
 tasks.shadowJar {
