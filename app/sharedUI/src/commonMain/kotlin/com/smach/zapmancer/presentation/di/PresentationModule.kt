@@ -1,4 +1,4 @@
-package com.smach.zapmancer.presentation.common.di
+package com.smach.zapmancer.presentation.di
 
 import com.smach.zapmancer.presentation.auth.viewmodel.ForgotPasswordViewModel
 import com.smach.zapmancer.presentation.auth.viewmodel.LoginViewModel

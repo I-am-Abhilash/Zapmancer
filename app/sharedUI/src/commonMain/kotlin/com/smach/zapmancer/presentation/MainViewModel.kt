@@ -1,4 +1,4 @@
-package com.smach.zapmancer
+package com.smach.zapmancer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

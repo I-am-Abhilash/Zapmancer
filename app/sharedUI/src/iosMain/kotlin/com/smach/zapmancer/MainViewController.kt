@@ -1,4 +1,4 @@
-package org.example.project
+package com.smach.zapmancer
 
 import androidx.compose.ui.window.ComposeUIViewController
 

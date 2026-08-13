@@ -61,7 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smach.zapmancer.presentation.alerts.screen.drawAccentLine
+import com.smach.zapmancer.presentation.notifications.screen.drawAccentLine
 import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
 import com.smach.zapmancer.presentation.common.components.UserAvatar
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar

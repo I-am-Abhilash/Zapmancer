@@ -69,7 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectStatus
-import com.smach.zapmancer.presentation.alerts.screen.drawAccentLine
+import com.smach.zapmancer.presentation.notifications.screen.drawAccentLine
 import com.smach.zapmancer.presentation.common.components.CategoryFilterChip
 import com.smach.zapmancer.presentation.common.components.EmptyState
 import com.smach.zapmancer.presentation.common.components.ErrorState

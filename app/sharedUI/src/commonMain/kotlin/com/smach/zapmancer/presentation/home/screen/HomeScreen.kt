@@ -55,7 +55,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.smach.zapmancer.domain.model.ActivityStatus
 import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.UserActivity
-import com.smach.zapmancer.presentation.alerts.screen.drawAccentLine
+import com.smach.zapmancer.presentation.notifications.screen.drawAccentLine
 import com.smach.zapmancer.presentation.common.adaptive.isExpandedWidth
 import com.smach.zapmancer.presentation.common.adaptive.isMediumWidth
 import com.smach.zapmancer.presentation.common.components.AppShimmer

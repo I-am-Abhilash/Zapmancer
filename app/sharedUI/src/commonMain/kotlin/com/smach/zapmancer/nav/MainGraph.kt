@@ -15,7 +15,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.smach.zapmancer.presentation.alerts.screen.NotificationScreen
+import com.smach.zapmancer.presentation.notifications.screen.NotificationScreen
 import com.smach.zapmancer.presentation.common.adaptive.isCompactWidth
 import com.smach.zapmancer.presentation.common.components.AppDrawerScaffold
 import com.smach.zapmancer.presentation.common.components.LocalDrawerController

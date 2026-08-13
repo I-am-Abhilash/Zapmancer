@@ -1,4 +1,4 @@
-package com.smach.zapmancer.presentation.alerts.viewmodel
+package com.smach.zapmancer.presentation.notifications.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.smach.zapmancer.core.common.base.BaseViewModel
@@ -7,7 +7,7 @@ import com.smach.zapmancer.core.common.utils.toUserMessage
 import com.smach.zapmancer.domain.usecase.ExecuteNotificationActionUseCase
 import com.smach.zapmancer.domain.usecase.GetNotificationsUseCase
 import com.smach.zapmancer.domain.usecase.SendNotificationQuickReplyUseCase
-import com.smach.zapmancer.presentation.alerts.state.NotificationUiState
+import com.smach.zapmancer.presentation.notifications.state.NotificationUiState
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
 

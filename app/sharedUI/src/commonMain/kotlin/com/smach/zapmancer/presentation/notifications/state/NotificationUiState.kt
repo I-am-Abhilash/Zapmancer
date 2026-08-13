@@ -1,4 +1,4 @@
-package com.smach.zapmancer.presentation.alerts.state
+package com.smach.zapmancer.presentation.notifications.state
 
 import com.smach.zapmancer.domain.model.NotificationItem
 

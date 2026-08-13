@@ -1,4 +1,4 @@
-package com.smach.zapmancer.presentation.alerts.screen
+package com.smach.zapmancer.presentation.notifications.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -61,10 +61,10 @@ import androidx.compose.ui.unit.sp
 import com.smach.zapmancer.domain.model.NotificationAction
 import com.smach.zapmancer.domain.model.NotificationItem
 import com.smach.zapmancer.domain.model.NotificationType
-import com.smach.zapmancer.presentation.alerts.state.NotificationUiState
-import com.smach.zapmancer.presentation.alerts.viewmodel.NotificationEffect
-import com.smach.zapmancer.presentation.alerts.viewmodel.NotificationEvent
-import com.smach.zapmancer.presentation.alerts.viewmodel.NotificationViewModel
+import com.smach.zapmancer.presentation.notifications.state.NotificationUiState
+import com.smach.zapmancer.presentation.notifications.viewmodel.NotificationEffect
+import com.smach.zapmancer.presentation.notifications.viewmodel.NotificationEvent
+import com.smach.zapmancer.presentation.notifications.viewmodel.NotificationViewModel
 import com.smach.zapmancer.presentation.common.adaptive.AdaptiveCenterContainer
 import com.smach.zapmancer.presentation.common.components.EmptyState
 import com.smach.zapmancer.presentation.common.components.ZapmancerTopBar

@@ -1,4 +1,4 @@
-package org.example.project
+package com.smach.zapmancer.core.common.utils
 
 import platform.UIKit.UIDevice
 

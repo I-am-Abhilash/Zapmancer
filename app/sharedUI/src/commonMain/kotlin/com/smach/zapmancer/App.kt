@@ -14,6 +14,7 @@ import com.smach.zapmancer.core.common.utils.isWebPlatform
 import com.smach.zapmancer.domain.repository.SettingsRepository
 import com.smach.zapmancer.nav.AuthGraph
 import com.smach.zapmancer.nav.MainGraph
+import com.smach.zapmancer.presentation.MainViewModel
 import com.smach.zapmancer.presentation.auth.screen.OnboardingScreen
 import com.smach.zapmancer.presentation.common.theme.AppTheme
 import com.smach.zapmancer.presentation.landingpage.screen.LandingPageScreen
