@@ -41,7 +41,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core)
-            implementation(project(":app:sharedUI"))
             implementation(libs.ktor.client.core)
             implementation(libs.koin.core)
             implementation(libs.koin.annotations)

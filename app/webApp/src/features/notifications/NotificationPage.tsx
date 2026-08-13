@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Bell, CheckCircle2, DollarSign, MessageSquare, Briefcase, Trash2, Filter } from 'lucide-react';
+import { Bell, DollarSign, MessageSquare, Briefcase, Trash2, Sparkles } from 'lucide-react';
 
 export const NotificationPage: React.FC = () => {
   const [notifications, setNotifications] = useState([
@@ -40,61 +40,60 @@ export const NotificationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
       <Header isLoggedIn={true} />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-2">
-              <Bell className="w-7 h-7 text-indigo-500" /> Notifications Feed
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline pb-6">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
+              <Sparkles className="w-3.5 h-3.5" /> Activity Stream
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-ink flex items-center gap-2">
+              Notifications Feed
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Stay updated on contracts, milestone payouts, and proposal activity.</p>
+            <p className="text-sm text-mute">Stay updated on contracts, milestone payouts, and proposal activity.</p>
           </div>
 
           <button
             onClick={markAllRead}
-            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline w-fit"
+            className="text-xs font-bold uppercase tracking-[0.05em] text-brand-green hover:text-brand-green-hover transition-colors w-fit"
           >
             Mark All as Read
           </button>
         </div>
 
-        {/* List */}
+        {/* Notifications List */}
         <div className="space-y-4">
           {notifications.map((n) => (
             <div
               key={n.id}
-              className={`p-6 rounded-3xl border transition-all flex items-start justify-between gap-4 ${
+              className={`p-6 rounded-xl border transition-all flex items-start justify-between gap-4 ${
                 n.read
-                  ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-80'
-                  : 'bg-white dark:bg-slate-900 border-indigo-500 shadow-md'
+                  ? 'bg-surface border-hairline opacity-75'
+                  : 'bg-surface-elevated border-brand-green shadow-md shadow-brand-green/10'
               }`}
             >
               <div className="flex items-start gap-4">
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold ${
-                  n.type === 'payment' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50' :
-                  n.type === 'proposal' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50' :
-                  'bg-blue-50 text-blue-600 dark:bg-blue-950/50'
-                }`}>
+                <div className="w-11 h-11 rounded-full bg-surface text-brand-green flex items-center justify-center font-bold border border-hairline shrink-0">
                   {n.type === 'payment' ? <DollarSign className="w-5 h-5" /> :
                    n.type === 'proposal' ? <Briefcase className="w-5 h-5" /> :
                    <MessageSquare className="w-5 h-5" />}
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
-                    {n.title} {!n.read && <span className="w-2 h-2 rounded-full bg-indigo-600"></span>}
+                  <h4 className="font-bold text-base text-ink flex items-center gap-2">
+                    {n.title} {!n.read && <span className="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>}
                   </h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">{n.desc}</p>
-                  <span className="text-xs text-slate-400 font-medium block pt-1">{n.time}</span>
+                  <p className="text-sm text-mute leading-relaxed">{n.desc}</p>
+                  <span className="text-xs text-mute font-medium block pt-1">{n.time}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => deleteNotification(n.id)}
-                className="text-slate-400 hover:text-rose-500 p-2 transition-colors"
+                className="text-mute hover:text-red-500 p-2 transition-colors shrink-0"
                 title="Remove notification"
               >
                 <Trash2 className="w-4 h-4" />

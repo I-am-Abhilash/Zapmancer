@@ -4,81 +4,76 @@
 @tailwind utilities;
 
 /* =========================================================================
- * ScriptSide Design Tokens — Single Source of Truth
+ * Zapmancer Design Tokens — Single Source of Truth
  * Canonical token list: app/webApp/tailwind.config.ts
- *   - DESIGN.md (docs/DESIGN.md) is the product source of truth.
- *   - This file (:root block) mirrors the config so legacy var(--color-*)
- *     references in feature CSS keep working.
- *   - npm run lint:tokens diffs these two and fails on drift.
- *   - Dark palette is a ScriptSide extension (DESIGN.md does not define one).
  * ========================================================================= */
 
 :root {
-  /* ---- Fonts (DESIGN.md fallback: Inter + Bebas Neue; Newsreader kept for legacy serif tier) ---- */
+  /* ---- Fonts ---- */
   --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: '"Bebas Neue"', 'Inter', sans-serif;
   --font-serif:   'Newsreader', Georgia, serif;
 
-  /* ---- Canvas / surface (DESIGN.md) ---- */
-  --color-canvas:        #ffffff;
-  --color-soft-cloud:    #f5f5f5;
-  --color-surface-hover: #eaeaea;       /* ScriptSide extension (hover bridge) */
-  --color-hairline:      #cacacb;
-  --color-hairline-soft: #e5e5e5;
+  /* ---- Canvas / surface (Light Mode Default) ---- */
+  --color-canvas:           #f8fafc;
+  --color-surface:          #ffffff;
+  --color-surface-elevated: #f1f5f9;
+  --color-surface-modal:    #e2e8f0;
+  --color-surface-hover:    #f1f5f9;
+  --color-soft-cloud:       #f5f5f5;
+  --color-hairline:         #e2e8f0;
+  --color-hairline-soft:    #f1f5f9;
 
-  /* ---- Text scale (DESIGN.md) ---- */
-  --color-ink:      #111111;
-  --color-charcoal: #39393b;
-  --color-ash:      #4b4b4d;
-  --color-mute:     #707072;
-  --color-stone:    #9e9ea0;
+  /* ---- Green Deck Brand System Tokens ---- */
+  --color-brand-green:       #1DB954;
+  --color-brand-green-hover: #1ED760;
 
-  /* ---- Semantic (DESIGN.md) ---- */
+  /* ---- Text scale ---- */
+  --color-ink:      #0f172a;
+  --color-charcoal: #334155;
+  --color-ash:      #475569;
+  --color-mute:     #64748b;
+  --color-stone:    #94a3b8;
+
+  /* ---- Semantic ---- */
   --color-sale:           #d30005;
-  --color-sale-deep:      #780700;      /* NEW */
-  --color-success:        #007d48;
-  --color-success-bright: #1eaa52;      /* NEW (inverse on dark surfaces) */
+  --color-sale-deep:      #780700;
+  --color-success:        #1DB954;
+  --color-success-bright: #1ED760;
   --color-info:           #1151ff;
-  --color-info-deep:      #0034e3;      /* NEW */
+  --color-info-deep:      #0034e3;
 
-  /* ---- Category accents (DESIGN.md — NEW) ---- */
-  --color-accent-pink:        #ed1aa0;
-  --color-accent-pink-soft:   #ffb0dd;
-  --color-accent-pink-deep:   #4c012d;
-  --color-accent-purple-soft: #beaffd;
-  --color-accent-purple-pale: #d6d1ff;
-  --color-accent-teal:        #0a7281;
-
-  /* ---- Legacy alias (Phase 4 — orphan fix) ---- */
-  --color-cloud: var(--color-soft-cloud);
-
-  /* ---- Radii (DESIGN.md: sm 18 / md 24 / lg 30) ---- */
-  --radius-sm:   18px;   /* was 8px */
-  --radius-md:   24px;   /* was 16px */
+  /* ---- Radii ---- */
+  --radius-sm:   18px;
+  --radius-md:   24px;
   --radius-lg:   30px;
   --radius-full: 9999px;
 
   --max-width: 100%;
 }
 
-/* ScriptSide dark palette — DESIGN.md has no dark block; preserved as
-   a documented ScriptSide extension. Accents + sale-deep/info-deep/
-   success-bright remain light values for v1 (no dark override). */
+/* Green Deck Dark Palette ([data-theme="dark"]) */
 [data-theme="dark"] {
-  --color-canvas:        #0d0d0e;
-  --color-soft-cloud:    #171719;
-  --color-surface-hover: #222226;
-  --color-hairline:      #38383a;
-  --color-hairline-soft: #242426;
+  --color-canvas:           #121212;
+  --color-surface:          #181818;
+  --color-surface-elevated: #282828;
+  --color-surface-modal:    #333333;
+  --color-surface-hover:    #282828;
+  --color-soft-cloud:       #171719;
+  --color-hairline:         #282828;
+  --color-hairline-soft:    #1e1e1e;
 
-  --color-ink:      #f5f5f7;
+  --color-brand-green:       #1DB954;
+  --color-brand-green-hover: #1ED760;
+
+  --color-ink:      #ffffff;
   --color-charcoal: #d1d1d6;
   --color-ash:      #aeae8b;
-  --color-mute:     #8e8e93;
+  --color-mute:     #b3b3b3;
   --color-stone:    #636366;
 
   --color-sale:    #ff453a;
-  --color-success: #30d158;
+  --color-success: #1DB954;
   --color-info:    #0a84ff;
 }
 
@@ -86,6 +81,16 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Global Professional Reset: Remove text underlines on all links & buttons */
+a, button {
+  text-decoration: none !important;
+}
+
+a:hover, a:focus, a:active,
+button:hover, button:focus, button:active {
+  text-decoration: none !important;
 }
 
 html {
@@ -166,7 +171,7 @@ body {
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -193,7 +198,7 @@ body {
   border-radius: var(--radius-full);
   border: 1px solid var(--color-hairline-soft);
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -221,7 +226,6 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 3.5rem;
-  /*padding: 0.75rem 0;*/
 }
 
 .header-logo {
@@ -230,7 +234,7 @@ body {
   font-size: 1.65rem;
   letter-spacing: -0.05em;
   color: var(--color-ink);
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 .header-nav {
@@ -243,7 +247,7 @@ body {
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--color-charcoal);
-  text-decoration: none;
+  text-decoration: none !important;
   transition: color 0.2s ease;
 }
 
@@ -262,16 +266,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 40px;
   height: 40px;
   flex-shrink: 0;
   border-radius: 50%;
-
   border: none;
   background: transparent;
   cursor: pointer;
-
   color: var(--color-mute);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -281,8 +282,6 @@ body {
   background-color: var(--color-surface-hover);
 }
 
-
-
 .btn-signin {
   background: none;
   border: none;
@@ -290,7 +289,7 @@ body {
   font-weight: 600;
   color: var(--color-charcoal);
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: color 0.2s ease;
 }
 
@@ -340,7 +339,7 @@ body {
 
 .footer-list a {
   color: var(--color-mute);
-  text-decoration: none;
+  text-decoration: none !important;
   transition: color 0.2s ease;
 }
 
@@ -373,7 +372,7 @@ body {
 
 .footer-socials a {
   color: var(--color-mute);
-  text-decoration: none;
+  text-decoration: none !important;
   transition: color 0.2s ease;
 }
 

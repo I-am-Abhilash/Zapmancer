@@ -18,9 +18,15 @@ const config: Config = {
     extend: {
       colors: {
         // Canvas / surface
-        canvas:          'var(--color-canvas)',
-        'soft-cloud':    'var(--color-soft-cloud)',
-        'surface-hover': 'var(--color-surface-hover)',
+        canvas:             'var(--color-canvas)',
+        surface:            'var(--color-surface)',
+        'surface-elevated': 'var(--color-surface-elevated)',
+        'surface-modal':    'var(--color-surface-modal)',
+        'soft-cloud':       'var(--color-soft-cloud)',
+        'surface-hover':    'var(--color-surface-hover)',
+        // Brand Green Deck Tokens
+        'brand-green':       'var(--color-brand-green)',
+        'brand-green-hover': 'var(--color-brand-green-hover)',
         // Text scale
         ink:       'var(--color-ink)',
         charcoal:  'var(--color-charcoal)',

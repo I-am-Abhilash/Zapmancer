@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 
 interface SEOProps {
-  title: string;
+  title?: string;
   description?: string;
 }
 
 export const SEO: React.FC<SEOProps> = ({
-  title,
-  description = "ScriptSide is the modern publishing platform for thoughtful tech writers and readers."
+  title = "Zapmancer — KMP Freelance Marketplace",
+  description = "Zapmancer is the open-source Kotlin Multiplatform & Compose freelance marketplace with transparent milestone escrow protection and zero platform fees."
 }) => {
   useEffect(() => {
-    document.title = `${title} — ScriptSide`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', description);
+    document.title = `${title} — Zapmancer`;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', description);
     }
   }, [title, description]);
 

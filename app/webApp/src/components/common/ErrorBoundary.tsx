@@ -1,18 +1,18 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
+    error: null,
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -20,24 +20,23 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ScriptSide UI Error caught by boundary:', error, errorInfo);
+    console.error('Zapmancer UI Error caught by boundary:', error, errorInfo);
   }
 
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)] flex items-center justify-center p-6">
-          <div className="editorial-card max-w-md w-full p-8 text-center bg-[var(--color-soft-cloud)] border-none">
-            <AlertTriangle size={48} className="mx-auto text-[var(--color-sale)] mb-4" />
-            <h2 className="editorial-headline text-2xl font-bold font-serif mb-2">Something went wrong</h2>
-            <p className="text-sm text-[var(--color-mute)] mb-6">
-              An unhandled error occurred. Our team has been notified.
+        <div className="min-h-screen flex items-center justify-center bg-canvas text-ink p-8 font-sans">
+          <div className="max-w-md w-full bg-surface border border-hairline p-8 rounded-xl space-y-4 shadow-xl">
+            <h2 className="text-2xl font-extrabold text-ink">Application Error</h2>
+            <p className="text-sm text-mute leading-relaxed">
+              Something went wrong while rendering this component. Please refresh the browser.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="btn-primary py-2.5 px-6 text-sm"
+              className="w-full py-3 rounded-full bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] transition-all"
             >
-              <RefreshCw size={16} /> Reload Page
+              Refresh Zapmancer
             </button>
           </div>
         </div>

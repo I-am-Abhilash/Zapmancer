@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Search, Filter, ShieldCheck, Clock, ArrowUpRight, PlusCircle, Check } from 'lucide-react';
+import { Search, ShieldCheck, ArrowUpRight, Plus, Sparkles } from 'lucide-react';
 
 export const ProjectListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,36 +74,39 @@ export const ProjectListPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
       <Header isLoggedIn={true} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         
         {/* Top Title & Search */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Explore Project Bounties</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Browse verified freelance contracts across Kotlin, Mobile, and Web stacks.</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-hairline pb-6">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
+              <Sparkles className="w-3.5 h-3.5" /> Live Marketplace
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-ink">Explore Project Bounties</h1>
+            <p className="text-sm text-mute">Browse verified freelance contracts across Kotlin, Mobile, and Web stacks.</p>
           </div>
 
           <Link
             to="/projects/new"
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-xl transition-all shadow-md shadow-indigo-500/20 w-fit"
+            className="flex items-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-6 py-3.5 rounded-full transition-all hover:scale-[1.04] shadow-md shadow-brand-green/20 w-fit"
           >
-            <PlusCircle className="w-5 h-5" /> Post New Bounty
+            <Plus className="w-4 h-4" /> Post New Bounty
           </Link>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center gap-4">
+        <div className="bg-surface p-4 rounded-xl border border-hairline shadow-sm flex flex-col md:flex-row items-center gap-4">
           <div className="relative flex-1 w-full">
-            <Search className="w-5 h-5 text-slate-400 absolute left-4 top-3.5" />
+            <Search className="w-5 h-5 text-mute absolute left-4 top-3.5" />
             <input
               type="text"
               placeholder="Search by keywords, skills, or tech stack..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 text-sm font-medium"
+              className="w-full pl-12 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated focus:outline-none focus:border-brand-green text-sm text-ink font-medium transition-colors"
             />
           </div>
 
@@ -111,7 +114,7 @@ export const ProjectListPage: React.FC = () => {
             <select
               value={experienceLevel}
               onChange={(e) => setExperienceLevel(e.target.value)}
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300"
+              className="px-5 py-3 rounded-full border border-hairline bg-surface-elevated text-xs font-bold uppercase tracking-[0.05em] text-ink focus:outline-none focus:border-brand-green"
             >
               <option value="All">All Levels</option>
               <option value="Entry">Entry Level</option>
@@ -122,15 +125,15 @@ export const ProjectListPage: React.FC = () => {
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.05em] whitespace-nowrap transition-all ${
                 selectedCategory === cat
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                  ? 'bg-brand-green text-white shadow-md shadow-brand-green/20'
+                  : 'bg-surface-elevated border border-hairline text-mute hover:text-ink'
               }`}
             >
               {cat}
@@ -139,50 +142,50 @@ export const ProjectListPage: React.FC = () => {
         </div>
 
         {/* Project Cards List */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-500 transition-all space-y-4"
+              className="bg-surface p-6 rounded-xl border border-hairline shadow-sm hover:bg-surface-elevated hover:scale-[1.01] transition-all duration-200 space-y-4"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">{project.client}</span>
-                    <span className="text-slate-400">&bull;</span>
-                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Verified Client</span>
-                    <span className="text-slate-400">&bull;</span>
-                    <span className="text-slate-400">{project.posted}</span>
+                    <span className="font-bold text-brand-green uppercase tracking-wider">{project.client}</span>
+                    <span className="text-mute">&bull;</span>
+                    <span className="text-mute flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-brand-green" /> Verified Client</span>
+                    <span className="text-mute">&bull;</span>
+                    <span className="text-mute">{project.posted}</span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white hover:text-indigo-600 transition-colors">
+                  <h3 className="text-xl font-bold text-ink hover:text-brand-green transition-colors">
                     <Link to={`/projects/${project.id}`}>{project.title}</Link>
                   </h3>
                 </div>
 
                 <div className="text-left md:text-right">
-                  <div className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">{project.budget}</div>
-                  <div className="text-xs text-slate-400 font-medium">{project.budgetType} &bull; {project.level}</div>
+                  <div className="text-xl font-extrabold text-brand-green">{project.budget}</div>
+                  <div className="text-xs text-mute font-medium">{project.budgetType} &bull; {project.level}</div>
                 </div>
               </div>
 
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-sm text-mute leading-relaxed">
                 {project.description}
               </p>
 
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-hairline">
                 <div className="flex flex-wrap gap-2">
                   {project.skills.map((s) => (
-                    <span key={s} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold">
+                    <span key={s} className="px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-brand-green text-xs font-bold">
                       {s}
                     </span>
                   ))}
                 </div>
 
                 <div className="flex items-center gap-4 text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">{project.proposals} Proposals Submitted</span>
+                  <span className="text-mute">{project.proposals} Proposals Submitted</span>
                   <Link
                     to={`/projects/${project.id}/apply`}
-                    className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold hover:gap-2 transition-all"
+                    className="flex items-center gap-1 text-brand-green font-bold uppercase tracking-[0.05em] hover:text-brand-green-hover transition-colors"
                   >
                     Submit Proposal <ArrowUpRight className="w-4 h-4" />
                   </Link>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './auth.css';
 import { AuthLayout } from './components/AuthLayout';
 import { LoginCard } from './components/LoginCard';
 import { SignupCard } from './components/SignupCard';

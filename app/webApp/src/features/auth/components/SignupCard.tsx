@@ -38,53 +38,53 @@ export const SignupCard: React.FC<SignupCardProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form-body">
+    <form onSubmit={handleSubmit} className="space-y-4">
       
       {error && (
-        <div className="auth-error-banner">
+        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500 text-red-500 text-xs font-semibold">
           {error}
         </div>
       )}
 
-      <div className="auth-field-group">
-        <label className="auth-label">Username (Optional)</label>
-        <div className="auth-input-wrapper">
-          <User className="auth-input-icon" size={18} />
+      <div className="space-y-1.5">
+        <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">Username (Optional)</label>
+        <div className="relative">
+          <User className="w-4 h-4 text-mute absolute left-4 top-3.5" />
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="johndoe"
-            className="auth-input"
+            className="w-full pl-11 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
           />
         </div>
       </div>
 
-      <div className="auth-field-group">
-        <label className="auth-label">Email Address</label>
-        <div className="auth-input-wrapper">
-          <Mail className="auth-input-icon" size={18} />
+      <div className="space-y-1.5">
+        <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">Email Address</label>
+        <div className="relative">
+          <Mail className="w-4 h-4 text-mute absolute left-4 top-3.5" />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="auth-input"
+            className="w-full pl-11 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
             required
           />
         </div>
       </div>
 
-      <div className="auth-field-group">
-        <label className="auth-label">Password</label>
-        <div className="auth-input-wrapper">
-          <Lock className="auth-input-icon" size={18} />
+      <div className="space-y-1.5">
+        <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">Password</label>
+        <div className="relative">
+          <Lock className="w-4 h-4 text-mute absolute left-4 top-3.5" />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 6 characters"
-            className="auth-input"
+            className="w-full pl-11 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
             required
           />
         </div>
@@ -93,30 +93,32 @@ export const SignupCard: React.FC<SignupCardProps> = ({
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary auth-submit-btn"
+        className="w-full py-3.5 rounded-full bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] transition-all hover:scale-[1.02] shadow-md shadow-brand-green/20"
       >
         {isLoading ? 'Creating account...' : 'Create Account'}
       </button>
 
-      <div className="auth-divider">
-        <span>or join with</span>
+      <div className="relative flex py-2 items-center">
+        <div className="flex-grow border-t border-hairline"></div>
+        <span className="flex-shrink mx-4 text-xs font-bold uppercase tracking-wider text-mute">or join with</span>
+        <div className="flex-grow border-t border-hairline"></div>
       </div>
 
-      <div className="auth-social-row">
-        <button type="button" className="btn-secondary auth-social-btn">
+      <div className="grid grid-cols-2 gap-3">
+        <button type="button" className="py-2.5 rounded-full border border-hairline bg-surface-elevated text-ink text-xs font-bold hover:bg-surface-modal transition-colors">
           Google
         </button>
-        <button type="button" className="btn-secondary auth-social-btn">
-          Apple
+        <button type="button" className="py-2.5 rounded-full border border-hairline bg-surface-elevated text-ink text-xs font-bold hover:bg-surface-modal transition-colors">
+          GitHub
         </button>
       </div>
 
-      <div className="auth-footer-note">
+      <div className="text-center text-xs text-mute pt-2">
         <span>Already have an account? </span>
         <button
           type="button"
           onClick={onNavigateToLogin}
-          className="auth-switch-link"
+          className="font-bold text-brand-green hover:text-brand-green-hover transition-colors"
         >
           Log In
         </button>

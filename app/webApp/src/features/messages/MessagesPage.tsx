@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Search, Send, Paperclip, CheckCheck, MoreVertical, ShieldCheck, Phone, Video, Smile } from 'lucide-react';
+import { Search, Send, Paperclip, CheckCheck, ShieldCheck, Phone, Video } from 'lucide-react';
 
 export const MessagesPage: React.FC = () => {
   const [activeThreadId, setActiveThreadId] = useState('1');
@@ -56,58 +56,58 @@ export const MessagesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
       <Header isLoggedIn={true} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[750px]">
+        <div className="bg-surface rounded-xl border border-hairline shadow-sm dark:shadow-none overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[750px]">
           
           {/* Left Column: Conversations List */}
-          <div className="border-r border-slate-200 dark:border-slate-800 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="border-r border-hairline flex flex-col h-full bg-surface-elevated">
             
             {/* Header & Search */}
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 space-y-3">
-              <h2 className="font-extrabold text-xl tracking-tight">Direct Messages</h2>
+            <div className="p-4 border-b border-hairline space-y-3">
+              <h2 className="font-extrabold text-xl tracking-tight text-ink">Direct Messages</h2>
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-mute absolute left-3.5 top-3" />
                 <input
                   type="text"
                   placeholder="Search conversations..."
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-full border border-hairline bg-surface text-ink focus:outline-none focus:border-brand-green placeholder:text-mute"
                 />
               </div>
             </div>
 
             {/* Conversation Threads */}
-            <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="flex-1 overflow-y-auto divide-y divide-hairline">
               {conversations.map((c) => (
                 <div
                   key={c.id}
                   onClick={() => setActiveThreadId(c.id)}
                   className={`p-4 flex items-center gap-3 cursor-pointer transition-all ${
                     activeThreadId === c.id
-                      ? 'bg-indigo-50 dark:bg-indigo-950/40 border-l-4 border-indigo-600'
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                      ? 'bg-surface border-l-4 border-brand-green'
+                      : 'hover:bg-surface'
                   }`}
                 >
                   <div className="relative">
-                    <img src={c.avatar} alt={c.name} className="w-11 h-11 rounded-2xl object-cover" />
+                    <img src={c.avatar} alt={c.name} className="w-11 h-11 rounded-full object-cover border border-hairline" />
                     {c.online && (
-                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-brand-green rounded-full border-2 border-surface"></span>
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">{c.name}</h4>
-                      <span className="text-[10px] text-slate-400">{c.time}</span>
+                      <h4 className="font-bold text-xs text-ink truncate">{c.name}</h4>
+                      <span className="text-[10px] text-mute">{c.time}</span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{c.lastMessage}</p>
+                    <p className="text-xs text-mute truncate mt-0.5">{c.lastMessage}</p>
                   </div>
 
                   {c.unread > 0 && (
-                    <span className="w-5 h-5 bg-indigo-600 text-white rounded-full text-[10px] font-extrabold flex items-center justify-center">
+                    <span className="w-5 h-5 bg-brand-green text-white rounded-full text-[10px] font-extrabold flex items-center justify-center">
                       {c.unread}
                     </span>
                   )}
@@ -118,54 +118,54 @@ export const MessagesPage: React.FC = () => {
           </div>
 
           {/* Right Column: Active Chat Window */}
-          <div className="md:col-span-2 flex flex-col h-full bg-white dark:bg-slate-900">
+          <div className="md:col-span-2 flex flex-col h-full bg-surface">
             
             {/* Active Thread Header */}
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div className="p-4 border-b border-hairline flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={activeThread.avatar} alt={activeThread.name} className="w-10 h-10 rounded-xl object-cover" />
+                <img src={activeThread.avatar} alt={activeThread.name} className="w-10 h-10 rounded-full object-cover border border-hairline" />
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <h3 className="font-bold text-sm text-ink flex items-center gap-1.5">
                     {activeThread.name}
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <ShieldCheck className="w-4 h-4 text-brand-green" />
                   </h3>
-                  <p className="text-xs text-slate-400">{activeThread.role}</p>
+                  <p className="text-xs text-mute">{activeThread.role}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-400">
-                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Phone className="w-4 h-4" /></button>
-                <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><Video className="w-4 h-4" /></button>
+              <div className="flex items-center gap-2 text-mute">
+                <button className="p-2 hover:bg-surface-elevated hover:text-ink rounded-full transition-colors"><Phone className="w-4 h-4" /></button>
+                <button className="p-2 hover:bg-surface-elevated hover:text-ink rounded-full transition-colors"><Video className="w-4 h-4" /></button>
               </div>
             </div>
 
             {/* Message Feed */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/30 dark:bg-slate-950/20">
+            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-canvas">
               {messages.map((m) => (
                 <div
                   key={m.id}
                   className={`flex flex-col ${m.isMe ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-md p-4 rounded-2xl text-sm leading-relaxed ${
+                    className={`max-w-md p-4 rounded-xl text-sm leading-relaxed ${
                       m.isMe
-                        ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-500/10'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-none'
+                        ? 'bg-brand-green text-white rounded-br-none shadow-md shadow-brand-green/10'
+                        : 'bg-surface-elevated text-ink border border-hairline rounded-bl-none'
                     }`}
                   >
                     {m.text}
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                    {m.time} {m.isMe && <CheckCheck className="w-3 h-3 text-indigo-400" />}
+                  <span className="text-[10px] text-mute mt-1 flex items-center gap-1">
+                    {m.time} {m.isMe && <CheckCheck className="w-3 h-3 text-brand-green" />}
                   </span>
                 </div>
               ))}
             </div>
 
             {/* Input Composer */}
-            <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-3">
-              <button type="button" className="p-2.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                <Paperclip className="w-5 h-5" />
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-hairline flex items-center gap-3 bg-surface">
+              <button type="button" className="p-2.5 text-mute hover:text-ink rounded-full hover:bg-surface-elevated transition-colors">
+                <Paperclip className="w-5 h-5 text-brand-green" />
               </button>
 
               <input
@@ -173,14 +173,14 @@ export const MessagesPage: React.FC = () => {
                 placeholder="Type a message or discuss milestone requirements..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-indigo-500 font-medium"
+                className="flex-1 px-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink focus:outline-none focus:border-brand-green font-medium transition-colors"
               />
 
               <button
                 type="submit"
-                className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition-all"
+                className="p-3 bg-brand-green hover:bg-brand-green-hover text-white rounded-full shadow-md shadow-brand-green/20 hover:scale-[1.04] transition-all"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-4 h-4" />
               </button>
             </form>
 
