@@ -1,0 +1,93 @@
+/* ==========================================================================
+   FEATURE MODULE: PROFILE & RESUME
+   ========================================================================== */
+
+.profile-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.profile-main {
+  @apply flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10;
+}
+
+.profile-hero-card {
+  @apply bg-surface rounded-xl border border-hairline space-y-8 p-8 sm:p-10 shadow-sm dark:shadow-none;
+}
+
+.profile-avatar-wrapper {
+  @apply relative shrink-0;
+}
+
+.profile-avatar-img {
+  @apply w-24 h-24 rounded-full object-cover border-2 border-hairline shadow-md;
+}
+
+.profile-status-dot {
+  @apply absolute bottom-1 right-1 w-3.5 h-3.5 bg-brand-green rounded-full border-2 border-surface;
+}
+
+.profile-name-row {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.profile-name {
+  @apply text-2xl sm:text-3xl font-extrabold tracking-tight text-ink;
+}
+
+.profile-verified-badge {
+  @apply inline-flex items-center gap-1 text-[11px] font-bold text-brand-green px-2.5 py-0.5 rounded-full;
+  background-color: rgba(29, 185, 84, 0.1);
+}
+
+.profile-meta-row {
+  @apply flex items-center gap-4 text-xs text-mute pt-0.5;
+}
+
+.profile-cta-group {
+  @apply flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch sm:items-center gap-3 shrink-0;
+}
+
+.profile-btn-share {
+  @apply px-4 py-2.5 rounded-full border border-hairline bg-surface-elevated text-xs font-bold text-mute hover:text-ink transition-colors flex items-center justify-center gap-1.5;
+}
+
+.profile-btn-edit {
+  @apply px-4 py-2.5 rounded-full border border-hairline bg-surface-elevated text-xs font-bold text-ink hover:bg-surface-modal transition-colors text-center;
+}
+
+.profile-btn-primary {
+  @apply bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-7 py-3 rounded-full hover:scale-[1.03] transition-all text-center;
+  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+}
+
+.profile-stats-grid {
+  @apply grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-hairline text-center;
+}
+
+.profile-stat-box {
+  @apply p-4 rounded-xl bg-surface-elevated border border-hairline;
+}
+
+.profile-stat-label {
+  @apply text-[11px] font-bold uppercase tracking-wider text-mute;
+}
+
+.profile-stat-val-green {
+  @apply text-xl font-extrabold text-brand-green mt-1;
+}
+
+.profile-stat-val-ink {
+  @apply text-xl font-extrabold text-ink mt-1;
+}
+
+.profile-card {
+  @apply bg-surface p-8 rounded-xl border border-hairline space-y-4 shadow-sm dark:shadow-none;
+}
+
+.profile-card-title {
+  @apply text-lg font-bold text-ink;
+}
+
+.profile-skill-chip {
+  @apply px-4 py-2 rounded-full bg-surface-elevated text-brand-green text-xs font-bold border border-hairline;
+}

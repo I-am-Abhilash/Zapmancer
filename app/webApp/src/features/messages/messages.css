@@ -1,0 +1,15 @@
+/* ==========================================================================
+   FEATURE MODULE: MESSAGES & DIRECT CHAT
+   ========================================================================== */
+
+.messages-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.messages-main {
+  @apply flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+}
+
+.messages-card {
+  @apply bg-surface rounded-xl border border-hairline shadow-sm dark:shadow-none overflow-hidden flex flex-col md:flex-row min-h-[600px];
+}

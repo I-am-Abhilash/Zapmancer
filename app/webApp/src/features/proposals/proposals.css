@@ -1,0 +1,15 @@
+/* ==========================================================================
+   FEATURE MODULE: PROPOSALS
+   ========================================================================== */
+
+.proposals-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.proposals-main {
+  @apply flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+}
+
+.proposals-card {
+  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4;
+}

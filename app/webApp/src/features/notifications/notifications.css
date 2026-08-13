@@ -1,0 +1,15 @@
+/* ==========================================================================
+   FEATURE MODULE: NOTIFICATIONS
+   ========================================================================== */
+
+.notifications-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.notifications-main {
+  @apply flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+}
+
+.notification-item {
+  @apply p-5 rounded-xl border transition-colors flex items-start gap-4 shadow-sm dark:shadow-none;
+}

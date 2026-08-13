@@ -1,0 +1,37 @@
+/* ==========================================================================
+   FEATURE MODULE: LANDING PAGE
+   ========================================================================== */
+
+.landing-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.landing-hero-section {
+  @apply relative overflow-hidden pt-24 pb-28 border-b border-hairline;
+  background: linear-gradient(to bottom, rgba(29, 185, 84, 0.1), var(--color-canvas), var(--color-canvas));
+}
+
+.landing-hero-badge {
+  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-elevated text-brand-green border border-hairline text-[11px] font-bold tracking-[0.1em] uppercase;
+}
+
+.landing-hero-title {
+  @apply text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-[-0.03em] text-ink max-w-5xl mx-auto leading-[1.1];
+}
+
+.landing-hero-subtitle {
+  @apply text-base sm:text-lg text-mute max-w-2xl mx-auto leading-relaxed;
+}
+
+.landing-btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.04] transition-all duration-200;
+  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+}
+
+.landing-btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-surface hover:bg-surface-elevated text-ink border border-hairline font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.04] transition-all duration-200;
+}
+
+.landing-metric-card {
+  @apply bg-surface border border-hairline p-6 rounded-xl text-center shadow-sm dark:shadow-none transition-all duration-200 hover:bg-surface-elevated hover:scale-[1.03];
+}

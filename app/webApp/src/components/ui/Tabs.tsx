@@ -36,7 +36,7 @@ export function Tabs<T extends string>({
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-[0.05em] transition-all duration-200 w-full text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.05em] transition-all duration-200 w-full text-left ${
                 isActive
                   ? 'bg-brand-green text-white shadow-md shadow-brand-green/20'
                   : 'text-mute hover:text-ink hover:bg-surface-modal'
@@ -60,7 +60,7 @@ export function Tabs<T extends string>({
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.05em] transition-all duration-200 whitespace-nowrap ${
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-[0.05em] transition-all duration-200 whitespace-nowrap ${
               isActive
                 ? 'bg-brand-green text-white shadow-md shadow-brand-green/20 scale-[1.02]'
                 : 'text-mute hover:text-ink hover:bg-surface-modal'

@@ -1,18 +1,14 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * ScriptSide single source of truth for the design system.
- * Mirrors docs/DESIGN.md (Nike commerce system) verbatim.
- * Runtime values live in src/index.css :root block; this file defines
- * the canonical TOKEN NAMES + VALUES. Drift check via
- * npm run lint:tokens (scripts/check-token-drift.mjs).
+ * Green Deck single source of truth for the design system.
+ * Mirrors green-deck-DESIGN.md verbatim.
  */
 const config: Config = {
   content: [
     './index.html',
     './src/**/*.{ts,tsx}',
   ],
-  // data-theme attribute swap on <html> (handled by ThemeContext.tsx).
   darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
@@ -24,7 +20,7 @@ const config: Config = {
         'surface-modal':    'var(--color-surface-modal)',
         'soft-cloud':       'var(--color-soft-cloud)',
         'surface-hover':    'var(--color-surface-hover)',
-        // Brand Green Deck Tokens
+        // Green Deck Brand System Tokens
         'brand-green':       'var(--color-brand-green)',
         'brand-green-hover': 'var(--color-brand-green-hover)',
         // Text scale
@@ -42,50 +38,32 @@ const config: Config = {
         'success-bright': 'var(--color-success-bright)',
         info:        'var(--color-info)',
         'info-deep': 'var(--color-info-deep)',
-        // Category accents
-        'accent-pink':        'var(--color-accent-pink)',
-        'accent-pink-soft':   'var(--color-accent-pink-soft)',
-        'accent-pink-deep':   'var(--color-accent-pink-deep)',
-        'accent-purple-soft': 'var(--color-accent-purple-soft)',
-        'accent-purple-pale': 'var(--color-accent-purple-pale)',
-        'accent-teal':        'var(--color-accent-teal)',
-        // Convenience on-primary (DESIGN.md: single hard value, not theme-dependent)
         'on-primary': '#ffffff',
       },
       fontFamily: {
-        sans:    ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        // Display tier — DESIGN.md: Nike Futura ND, free fallback = Bebas Neue
-        display: ['"Bebas Neue"', 'Inter', 'sans-serif'],
-        serif:   ['Newsreader', 'Georgia', 'serif'], // ScriptSide legacy serif
+        sans: ['"DM Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['"DM Sans"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       borderRadius: {
         none: '0px',
-        sm:   '18px', // DESIGN.md (was 8px legacy ScriptSide)
-        md:   '24px', // DESIGN.md (was 16px legacy ScriptSide)
-        lg:   '30px',
+        sm:   '8px',
+        md:   '12px',
+        lg:   '16px',
         full: '9999px',
       },
       spacing: {
-        xxs: '2px',
-        xs:  '4px',
-        sm:  '8px',
-        md:  '12px',
-        lg:  '18px',
-        xl:  '24px',
-        xxl: '30px',
-        section: '48px',
-      },
-      letterSpacing: {
-        tight:  '-0.025em',
-        tighter: '-0.04em',
-      },
-      maxWidth: {
-        page: '1180px',
+        xxs: '4px',
+        xs:  '8px',
+        sm:  '12px',
+        md:  '16px',
+        lg:  '24px',
+        xl:  '32px',
+        xxl: '48px',
+        section: '64px',
       },
     },
   },
-  // Disable Tailwind's preflight reset to avoid colliding with the
-  // existing index.css reset rules. Re-enable after a full migration.
   corePlugins: {
     preflight: false,
   },

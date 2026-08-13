@@ -1,0 +1,19 @@
+/* ==========================================================================
+   FEATURE MODULE: HOME DASHBOARD
+   ========================================================================== */
+
+.home-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.home-main {
+  @apply flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+}
+
+.home-metric-card {
+  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-2 hover:bg-surface-elevated transition-colors;
+}
+
+.home-card {
+  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4;
+}

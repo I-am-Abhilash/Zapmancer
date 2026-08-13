@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './settings.css';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
 import { Lock, User, CreditCard, Bell, Shield, Sparkles } from 'lucide-react';
@@ -23,26 +24,26 @@ export const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
+    <div className="settings-page">
       <Header isLoggedIn={true} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <main className="settings-main">
         
         {/* Page Title Header */}
-        <div className="space-y-1 border-b border-hairline pb-6">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
+        <div className="settings-header">
+          <div className="settings-badge">
             <Sparkles className="w-3.5 h-3.5" /> Marketplace Settings
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink">Account & Escrow Settings</h1>
-          <p className="text-sm text-mute">Manage security credentials, freelancer profile identity, payout wallets, and developer webhooks.</p>
+          <h1 className="settings-title">Account & Escrow Settings</h1>
+          <p className="settings-subtitle">Manage security credentials, freelancer profile identity, payout wallets, and developer webhooks.</p>
         </div>
 
-        {/* Professional 2-Column Sidebar Layout */}
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+        {/* 2-Column Sidebar Layout */}
+        <div className="settings-layout">
           
           {/* Left Sidebar Navigation */}
-          <aside className="w-full md:w-64 shrink-0 sticky top-24">
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase text-mute mb-3 px-1">
+          <aside className="settings-sidebar">
+            <div className="settings-sidebar-label">
               Settings Navigation
             </div>
             <Tabs
@@ -54,7 +55,7 @@ export const SettingsPage: React.FC = () => {
           </aside>
 
           {/* Right Main Settings Content */}
-          <section className="flex-1 min-w-0 w-full">
+          <section className="settings-content">
             {activeTab === 'account' && <AccountTab />}
             {activeTab === 'profile' && <ProfileTab />}
             {activeTab === 'payout' && <PayoutTab />}

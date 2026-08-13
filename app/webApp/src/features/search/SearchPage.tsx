@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
+import './search.css';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Search, ShieldCheck, User, Code, Sparkles, ArrowRight } from 'lucide-react';
+import { Search, ShieldCheck, Star, MapPin, Sparkles, MessageSquare } from 'lucide-react';
 import { Tabs, TabItem } from '../../components/ui/Tabs';
 
-type SearchTabId = 'talents' | 'projects';
+type TalentCategory = 'All' | 'KMP' | 'Compose' | 'Ktor' | 'Wasm';
 
 export const SearchPage: React.FC = () => {
-  const [tab, setTab] = useState<SearchTabId>('talents');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<TalentCategory>('All');
   const [query, setQuery] = useState('');
 
-  const searchTabs: TabItem<SearchTabId>[] = [
-    { id: 'talents', label: 'Find Freelancers & Talent', icon: User },
-    { id: 'projects', label: 'Find Project Bounties', icon: Code },
+  const specialtyTabs: TabItem<TalentCategory>[] = [
+    { id: 'All', label: 'All Engineers' },
+    { id: 'KMP', label: 'Kotlin Multiplatform' },
+    { id: 'Compose', label: 'Compose Desktop & Mobile' },
+    { id: 'Ktor', label: 'Ktor & Microservices' },
+    { id: 'Wasm', label: 'WebAssembly & AI' },
   ];
 
   const talents = [
@@ -21,158 +25,183 @@ export const SearchPage: React.FC = () => {
       id: 't1',
       name: 'Elena Rostova',
       title: 'Senior KMP & WebAssembly Lead',
+      specialty: 'Wasm',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
       rating: 5.0,
       reviews: 42,
       rate: '$85 / hr',
+      successRate: '100% Success',
       location: 'Berlin, Germany',
-      bio: 'Architected high-throughput Ktor backend microservices and Compose Multiplatform clients.',
-      skills: ['Kotlin', 'Wasm', 'Ktor', 'PostgreSQL', 'Docker']
+      bio: 'Architected high-throughput Ktor backend microservices and Compose Multiplatform clients. Specialist in Kotlin Native compilation to WebAssembly.',
+      skills: ['Kotlin', 'Wasm', 'Ktor', 'PostgreSQL', 'Docker', 'KMP']
     },
     {
       id: 't2',
       name: 'David Chen',
-      title: 'iOS & Android Native KMP Developer',
+      title: 'iOS & Android Native KMP Architect',
+      specialty: 'KMP',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
       rating: 4.9,
       reviews: 38,
       rate: '$75 / hr',
+      successRate: '98% Success',
       location: 'Toronto, Canada',
-      bio: 'Specialized in SwiftUI & Jetpack Compose shared viewmodels with SQLDelight persistence.',
-      skills: ['KMP', 'SwiftUI', 'Compose', 'Coroutines']
-    }
-  ];
-
-  const projects = [
-    {
-      id: 'p1',
-      title: 'Real-Time WebSockets Chat Core in Ktor',
-      client: 'Zapmancer Labs',
-      budget: '$2,800',
-      skills: ['Ktor', 'WebSockets', 'PostgreSQL']
+      bio: 'Specialized in SwiftUI & Jetpack Compose shared viewmodels with SQLDelight offline persistence and Coroutines async streams.',
+      skills: ['KMP', 'SwiftUI', 'Compose', 'Coroutines', 'SQLDelight']
     },
     {
-      id: 'p2',
-      title: 'Gorse AI Recommendation Engine Pipeline Integration',
-      client: 'Retail AI',
-      budget: '$5,000',
-      skills: ['Gorse', 'Kotlin', 'Go']
+      id: 't3',
+      name: 'Marcus Vance',
+      title: 'Backend Systems & Ktor Core Engineer',
+      specialty: 'Ktor',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+      rating: 4.95,
+      reviews: 29,
+      rate: '$90 / hr',
+      successRate: '100% Success',
+      location: 'Austin, TX',
+      bio: 'Exposed ORM maintainer and Ktor WebSocket engine developer. Expert in database connection pooling, Gorse AI pipelines, and Dockerized deployments.',
+      skills: ['Ktor', 'PostgreSQL', 'Exposed ORM', 'Gorse AI', 'Kotlin']
+    },
+    {
+      id: 't4',
+      name: 'Sophia Al-Mansoor',
+      title: 'UI/UX & Compose Multiplatform Lead',
+      specialty: 'Compose',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
+      rating: 5.0,
+      reviews: 51,
+      rate: '$80 / hr',
+      successRate: '100% Success',
+      location: 'London, UK',
+      bio: 'Crafts responsive multiplatform design systems with dynamic Light & Dark themes, custom canvas animations, and fluid micro-interactions.',
+      skills: ['Compose UI', 'Material 3', 'Canvas', 'Design Systems', 'Kotlin']
     }
   ];
 
+  const filteredTalents = talents.filter((t) => {
+    const matchesSearch =
+      t.name.toLowerCase().includes(query.toLowerCase()) ||
+      t.title.toLowerCase().includes(query.toLowerCase()) ||
+      t.bio.toLowerCase().includes(query.toLowerCase()) ||
+      t.skills.some((s) => s.toLowerCase().includes(query.toLowerCase()));
+    const matchesSpecialty = selectedSpecialty === 'All' || t.specialty === selectedSpecialty;
+    return matchesSearch && matchesSpecialty;
+  });
+
   return (
-    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
+    <div className="search-page">
       <Header isLoggedIn={true} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <main className="search-main">
         
         {/* Title Banner */}
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
-            <Sparkles className="w-3.5 h-3.5" /> Discovery Hub
+        <div className="search-header">
+          <div className="search-badge">
+            <Sparkles className="w-3.5 h-3.5" /> Talent Network
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink">Marketplace Search & Discovery</h1>
-          <p className="text-sm text-mute">Find top engineering talent or explore active bounty contracts.</p>
+          <h1 className="search-title">Find & Hire Top Talent</h1>
+          <p className="search-subtitle">Discover vetted Kotlin Multiplatform, Mobile, and Web engineers ready for your next project contract.</p>
         </div>
 
-        {/* Search Input Container */}
-        <div className="bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6">
+        {/* Search & Specialty Filter Controls */}
+        <div className="search-filter-card">
+          
           <div className="relative">
             <Search className="w-5 h-5 text-mute absolute left-4 top-3.5" />
             <input
               type="text"
-              placeholder="Search by engineer name, skills, title, or project scope..."
+              placeholder="Search by engineer name, skills, title, or tech stack..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
+              className="search-input"
             />
           </div>
 
-          {/* Central Green Deck Reusable Tabs Component */}
           <div>
             <Tabs
-              tabs={searchTabs}
-              activeTab={tab}
-              onChange={(id) => setTab(id)}
+              tabs={specialtyTabs}
+              activeTab={selectedSpecialty}
+              onChange={(id) => setSelectedSpecialty(id)}
             />
           </div>
+
         </div>
 
-        {/* Search Results */}
-        {tab === 'talents' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {talents.map((t) => (
-              <div
-                key={t.id}
-                className="bg-surface p-6 rounded-xl border border-hairline hover:bg-surface-elevated hover:scale-[1.02] transition-all duration-200 space-y-4 shadow-sm dark:shadow-none"
-              >
+        {/* Talent Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredTalents.map((t) => (
+            <div
+              key={t.id}
+              className="talent-card-box"
+            >
+              <div className="space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <img
                       src={t.avatar}
                       alt={t.name}
-                      className="w-14 h-14 rounded-full object-cover border border-brand-green/30"
+                      className="talent-avatar"
                     />
                     <div>
-                      <h3 className="font-bold text-lg text-ink flex items-center gap-2">
-                        <Link to="/profile/1" className="hover:text-brand-green transition-colors">
+                      <h3 className="font-extrabold text-lg text-ink flex items-center gap-1.5">
+                        <Link to="/profile/1" className="talent-name">
                           {t.name}
                         </Link>
-                        <ShieldCheck className="w-4 h-4 text-brand-green" />
+                        <ShieldCheck className="w-4 h-4 text-brand-green shrink-0" />
                       </h3>
-                      <p className="text-xs text-mute font-medium">{t.title}</p>
+                      <p className="text-xs font-semibold text-mute">{t.title}</p>
+                      <div className="flex items-center gap-3 text-[11px] text-mute pt-1">
+                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-brand-green" /> {t.location}</span>
+                        <span>&bull;</span>
+                        <span className="flex items-center gap-1 text-brand-green font-bold"><Star className="w-3 h-3 fill-current" /> {t.rating} ({t.reviews})</span>
+                      </div>
                     </div>
                   </div>
-                  <span className="text-lg font-extrabold text-brand-green">{t.rate}</span>
+
+                  <div className="text-right shrink-0">
+                    <div className="talent-rate">{t.rate}</div>
+                    <div className="text-[11px] font-bold text-brand-green bg-brand-green/10 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                      {t.successRate}
+                    </div>
+                  </div>
                 </div>
 
-                <p className="text-xs text-mute leading-relaxed">{t.bio}</p>
+                <p className="text-xs text-mute leading-relaxed line-clamp-3">
+                  {t.bio}
+                </p>
 
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-hairline">
                   {t.skills.map((s) => (
                     <span
                       key={s}
-                      className="px-3 py-1 rounded-full bg-surface-elevated text-brand-green text-xs font-bold border border-hairline"
+                      className="talent-skill-chip"
                     >
                       {s}
                     </span>
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {projects.map((p) => (
-              <div
-                key={p.id}
-                className="bg-surface p-6 rounded-xl border border-hairline hover:bg-surface-elevated hover:scale-[1.01] transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm dark:shadow-none"
-              >
-                <div className="space-y-1">
-                  <h3 className="font-bold text-lg text-ink hover:text-brand-green transition-colors">
-                    <Link to={`/projects/${p.id}`}>{p.title}</Link>
-                  </h3>
-                  <div className="flex items-center gap-2 text-xs text-mute">
-                    <span className="font-semibold text-brand-green">{p.client}</span> &bull; <span>Verified Escrow Deposit</span>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 border-hairline pt-3 sm:pt-0">
-                  <div className="text-right">
-                    <div className="text-lg font-extrabold text-brand-green">{p.budget}</div>
-                    <div className="text-xs text-mute">Fixed Bounty</div>
-                  </div>
-                  <Link
-                    to={`/projects/${p.id}`}
-                    className="inline-flex items-center gap-1.5 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-5 py-2.5 rounded-full hover:scale-[1.04] transition-all shadow-md shadow-brand-green/20"
-                  >
-                    View Bounty <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+              <div className="pt-4 border-t border-hairline flex items-center justify-between gap-3">
+                <Link
+                  to="/profile/1"
+                  className="text-xs font-bold uppercase tracking-[0.05em] text-mute hover:text-ink transition-colors"
+                >
+                  View Profile
+                </Link>
+
+                <Link
+                  to="/messages"
+                  className="talent-btn-primary"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" /> Contact & Hire
+                </Link>
               </div>
-            ))}
-          </div>
-        )}
+
+            </div>
+          ))}
+        </div>
 
       </main>
 

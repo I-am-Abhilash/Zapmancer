@@ -25,7 +25,7 @@ repomix-output.json
 repomix.config.json
 .repomixignore
 .gitignore
-
+.agents
 # Backend specific ignores
 /rustfs_data
 /rustfs_logs
