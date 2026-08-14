@@ -1,0 +1,84 @@
+/* ==========================================================================
+   FEATURE MODULE: COMPANY OPERATIONS PORTAL (COMPANY OS)
+   ========================================================================== */
+
+.company-page {
+  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+}
+
+.company-main {
+  @apply flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+}
+
+/* Header & Banner */
+.company-header-card {
+  @apply bg-surface p-6 sm:p-8 rounded-xl border border-hairline flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm dark:shadow-none relative overflow-hidden;
+}
+
+.company-title {
+  @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-ink flex items-center gap-3;
+}
+
+.company-badge-verified {
+  background-color: rgba(29, 185, 84, 0.1);
+  border-color: rgba(29, 185, 84, 0.2);
+  @apply px-3 py-1 rounded-full border text-brand-green text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5;
+}
+
+/* Key Metrics Bar */
+.company-metric-card {
+  @apply bg-surface p-6 rounded-xl border border-hairline space-y-2 shadow-sm dark:shadow-none hover:bg-surface-elevated transition-all;
+}
+
+.company-metric-value {
+  @apply text-3xl font-extrabold text-brand-green tracking-tight;
+}
+
+.company-metric-label {
+  @apply text-xs font-bold text-mute uppercase tracking-[0.05em];
+}
+
+/* Section Cards & Tables */
+.company-section-card {
+  @apply bg-surface p-6 sm:p-8 rounded-xl border border-hairline space-y-6 shadow-sm dark:shadow-none;
+}
+
+.company-table-container {
+  @apply w-full overflow-x-auto rounded-xl border border-hairline;
+}
+
+.company-table {
+  @apply w-full text-left text-xs text-ink border-collapse;
+}
+
+.company-table th {
+  @apply bg-surface-elevated px-4 py-3.5 font-bold uppercase tracking-wider text-mute border-b border-hairline;
+}
+
+.company-table td {
+  @apply px-4 py-4 border-b border-hairline font-medium transition-colors;
+}
+
+.company-table tr:hover td {
+  @apply bg-surface-elevated;
+}
+
+/* Action Buttons */
+.company-btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-full transition-all hover:scale-[1.04] shrink-0;
+  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+}
+
+.company-btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-surface-elevated hover:bg-surface-modal text-ink font-bold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-full border border-hairline transition-all hover:scale-[1.03] shrink-0;
+}
+
+/* Modal Drawer Overlay */
+.company-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.company-modal-content {
+  @apply bg-surface border border-hairline rounded-xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto text-ink;
+}

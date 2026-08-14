@@ -16,6 +16,8 @@ import { PostProjectPage } from './features/projects/PostProjectPage';
 import { ProposalSubmitPage } from './features/proposals/ProposalSubmitPage';
 import { ClientProposalsPage } from './features/proposals/ClientProposalsPage';
 
+import { CompanyDashboardPage } from './features/company/CompanyDashboardPage';
+
 import { SearchPage } from './features/search/SearchPage';
 import { ProfilePage } from './features/profile/ProfilePage';
 import { EditProfilePage } from './features/profile/EditProfilePage';
@@ -45,6 +47,14 @@ export const AppRouter: React.FC = () => {
                 <>
                   <SEO title="Profile Setup — Zapmancer" />
                   <OnboardingPage />
+                </>
+              } />
+
+              {/* Company OS Dashboard Route */}
+              <Route path="/company/dashboard" element={
+                <>
+                  <SEO title="Company OS Dashboard — Zapmancer" />
+                  <CompanyDashboardPage />
                 </>
               } />
 
