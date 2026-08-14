@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FEATURE MODULE: HOME DASHBOARD
+   FEATURE MODULE: HOME / TALENT PORTAL DASHBOARD
    ========================================================================== */
 
 .home-page {
@@ -15,5 +15,26 @@
 }
 
 .home-card {
-  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4;
+  @apply bg-surface p-6 sm:p-8 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6;
+}
+
+/* Multi-Workspace Selector Pill */
+.home-workspace-pill {
+  @apply inline-flex items-center gap-2 bg-surface-elevated px-4 py-2 rounded-full border border-hairline text-xs font-bold text-ink cursor-pointer hover:border-brand-green transition-all;
+}
+
+.home-workspace-pill-active {
+  background-color: rgba(29, 185, 84, 0.1);
+  border-color: rgba(29, 185, 84, 0.3);
+  @apply text-brand-green font-extrabold;
+}
+
+/* Modal Drawer Overlay */
+.home-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.home-modal-content {
+  @apply bg-surface border border-hairline rounded-xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto text-ink;
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './company.css';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Building2, Users, Layers, DollarSign, Plus, Search, ShieldCheck, Sparkles, UserPlus, CheckCircle2, Clock, ArrowUpRight, Lock, X, Check, Code, Smartphone, Cpu } from 'lucide-react';
+import { Building2, Users, Layers, DollarSign, Plus, Search, ShieldCheck, Sparkles, UserPlus, CheckCircle2, Clock, ArrowUpRight, Lock, X, Check, Code, Smartphone, Cpu, Activity, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface TeamMember {
@@ -12,6 +12,7 @@ interface TeamMember {
   type: 'Full-Time' | 'Contractor';
   salaryOrRate: string;
   activeTask: string;
+  hoursLogged: number;
   status: 'Active' | 'In Review' | 'On Leave';
   avatar: string;
 }
@@ -23,11 +24,12 @@ interface CompanyTask {
   deadline: string;
   status: 'In Progress' | 'PR Review' | 'Completed';
   budget: string;
+  hoursLogged: number;
   isPublicBounty: boolean;
 }
 
 export const CompanyDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'roster' | 'sprints' | 'payroll'>('roster');
+  const [activeTab, setActiveTab] = useState<'roster' | 'sprints' | 'telemetry' | 'payroll'>('roster');
   const [showAddDevModal, setShowAddDevModal] = useState<boolean>(false);
   const [selectedTaskForDev, setSelectedTaskForDev] = useState<string>('Task #102: Compose Wasm Audio Engine');
   const [invitedSuccess, setInvitedSuccess] = useState<boolean>(false);
@@ -40,6 +42,7 @@ export const CompanyDashboardPage: React.FC = () => {
       type: 'Contractor',
       salaryOrRate: '$85 / hr',
       activeTask: 'Task #102: Compose Wasm Audio Engine',
+      hoursLogged: 38,
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
     },
@@ -50,6 +53,7 @@ export const CompanyDashboardPage: React.FC = () => {
       type: 'Full-Time',
       salaryOrRate: '$12,500 / mo',
       activeTask: 'Task #108: Ktor WebSockets Clustering',
+      hoursLogged: 42,
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
     },
@@ -60,6 +64,7 @@ export const CompanyDashboardPage: React.FC = () => {
       type: 'Full-Time',
       salaryOrRate: '$11,000 / mo',
       activeTask: 'Task #112: SKie Swift Interop Migration',
+      hoursLogged: 35,
       status: 'In Review',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80'
     },
@@ -70,6 +75,7 @@ export const CompanyDashboardPage: React.FC = () => {
       type: 'Contractor',
       salaryOrRate: '$90 / hr',
       activeTask: 'Task #115: PostgreSQL Exposed Cluster',
+      hoursLogged: 27,
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
     }
@@ -83,6 +89,7 @@ export const CompanyDashboardPage: React.FC = () => {
       deadline: 'Aug 20, 2026',
       status: 'In Progress',
       budget: '$4,500 Escrow',
+      hoursLogged: 38,
       isPublicBounty: false
     },
     {
@@ -92,6 +99,7 @@ export const CompanyDashboardPage: React.FC = () => {
       deadline: 'Aug 25, 2026',
       status: 'PR Review',
       budget: '$3,200 Salary',
+      hoursLogged: 42,
       isPublicBounty: false
     },
     {
@@ -101,14 +109,36 @@ export const CompanyDashboardPage: React.FC = () => {
       deadline: 'Sep 01, 2026',
       status: 'In Progress',
       budget: '$2,800 Bounty',
+      hoursLogged: 0,
       isPublicBounty: true
     }
   ];
 
-  const availableTalentCandidates = [
-    { name: 'Dr. Lucas Meyer', title: 'Kotlin Wasm & C++ Specialist', rating: '5.0 ★', rate: '$95/hr', skills: ['Wasm', 'C++', 'WebAudio'] },
-    { name: 'Priya Sharma', title: 'Senior Ktor Backend Engineer', rating: '4.9 ★', rate: '$80/hr', skills: ['Ktor', 'PostgreSQL', 'Docker'] },
-    { name: 'Alex Rivera', title: 'Compose Multiplatform UI Architect', rating: '5.0 ★', rate: '$90/hr', skills: ['Compose', 'Android', 'iOS'] }
+  const gorseAiTalentCandidates = [
+    {
+      name: 'Dr. Lucas Meyer',
+      title: 'Kotlin Wasm & C++ Specialist',
+      gorseMatchScore: '98% Gorse AI Match',
+      rating: '5.0 ★',
+      rate: '$95/hr',
+      skills: ['Wasm', 'C++', 'WebAudio', 'KMP Shared']
+    },
+    {
+      name: 'Priya Sharma',
+      title: 'Senior Ktor Backend Engineer',
+      gorseMatchScore: '96% Gorse AI Match',
+      rating: '4.9 ★',
+      rate: '$80/hr',
+      skills: ['Ktor', 'PostgreSQL', 'Docker', 'Exposed']
+    },
+    {
+      name: 'Alex Rivera',
+      title: 'Compose Multiplatform UI Architect',
+      gorseMatchScore: '94% Gorse AI Match',
+      rating: '5.0 ★',
+      rate: '$90/hr',
+      skills: ['Compose', 'Android', 'iOS', 'MVI']
+    }
   ];
 
   const handleSendInvite = () => {
@@ -182,11 +212,11 @@ export const CompanyDashboardPage: React.FC = () => {
 
           <div className="company-metric-card">
             <div className="flex items-center justify-between text-mute">
-              <span className="company-metric-label">Monthly Payroll</span>
-              <DollarSign className="w-4 h-4 text-brand-green" />
+              <span className="company-metric-label">Sprint Hours Logged</span>
+              <Activity className="w-4 h-4 text-brand-green" />
             </div>
-            <div className="company-metric-value">$48,500</div>
-            <div className="text-[11px] text-brand-green font-semibold">Direct Deposit & Escrow</div>
+            <div className="company-metric-value">142 hrs</div>
+            <div className="text-[11px] text-brand-green font-semibold">94% Sprint Velocity On Track</div>
           </div>
 
           <div className="company-metric-card">
@@ -222,6 +252,16 @@ export const CompanyDashboardPage: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setActiveTab('telemetry')}
+            className={`pb-3 text-sm font-bold transition-all relative ${
+              activeTab === 'telemetry' ? 'text-brand-green' : 'text-mute hover:text-ink'
+            }`}
+          >
+            Sprint Velocity & Time Logs
+            {activeTab === 'telemetry' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-green"></span>}
+          </button>
+
+          <button
             onClick={() => setActiveTab('payroll')}
             className={`pb-3 text-sm font-bold transition-all relative ${
               activeTab === 'payroll' ? 'text-brand-green' : 'text-mute hover:text-ink'
@@ -253,7 +293,8 @@ export const CompanyDashboardPage: React.FC = () => {
                     <th>Role</th>
                     <th>Employment Type</th>
                     <th>Compensation / Rate</th>
-                    <th>Active Assigned Task</th>
+                    <th>Active Task</th>
+                    <th>Hours Logged</th>
                     <th>Status</th>
                     <th className="text-right">Actions</th>
                   </tr>
@@ -278,7 +319,8 @@ export const CompanyDashboardPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="font-mono text-brand-green font-bold">{m.salaryOrRate}</td>
-                      <td className="text-mute text-xs truncate max-w-[200px]">{m.activeTask}</td>
+                      <td className="text-mute text-xs truncate max-w-[180px]">{m.activeTask}</td>
+                      <td className="font-mono font-bold text-ink">{m.hoursLogged} hrs</td>
                       <td>
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-green">
                           <CheckCircle2 className="w-3.5 h-3.5" /> {m.status}
@@ -325,7 +367,7 @@ export const CompanyDashboardPage: React.FC = () => {
                       )}
                     </div>
                     <h4 className="font-bold text-base text-ink">{t.title}</h4>
-                    <p className="text-xs text-mute">Assigned to: <strong className="text-ink">{t.assignee}</strong></p>
+                    <p className="text-xs text-mute">Assigned to: <strong className="text-ink">{t.assignee}</strong> &bull; {t.hoursLogged} hrs logged</p>
                   </div>
 
                   <div className="flex items-center gap-4">
@@ -350,7 +392,41 @@ export const CompanyDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 3: PAYROLL & ESCROW */}
+        {/* TAB 3: TELEMETRY & TIME LOGS */}
+        {activeTab === 'telemetry' && (
+          <div className="company-section-card space-y-4">
+            <div>
+              <h3 className="text-xl font-bold text-ink">Sprint Velocity & Time Telemetry</h3>
+              <p className="text-xs text-mute">Real-time breakdown of engineering hours logged across active company tasks.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-xl bg-surface-elevated border border-hairline space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-mute uppercase">
+                  <span>Weekly Logged Hours</span>
+                  <span className="text-brand-green font-mono">142 / 160 hrs</span>
+                </div>
+                <div className="w-full h-3 bg-surface rounded-full overflow-hidden border border-hairline">
+                  <div className="h-full bg-brand-green rounded-full w-[88%]"></div>
+                </div>
+                <p className="text-xs text-mute">Sprint 24 Velocity: <strong className="text-brand-green">88% Capacity Used</strong></p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-surface-elevated border border-hairline space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-mute uppercase">
+                  <span>Milestone Completion Rate</span>
+                  <span className="text-brand-green font-mono">94% Success</span>
+                </div>
+                <div className="w-full h-3 bg-surface rounded-full overflow-hidden border border-hairline">
+                  <div className="h-full bg-brand-green rounded-full w-[94%]"></div>
+                </div>
+                <p className="text-xs text-mute">Milestones Delivered On-Time: <strong className="text-ink">15 / 16 Tasks</strong></p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: PAYROLL & ESCROW */}
         {activeTab === 'payroll' && (
           <div className="company-section-card space-y-4">
             <div>
@@ -382,7 +458,7 @@ export const CompanyDashboardPage: React.FC = () => {
 
       </main>
 
-      {/* INSTANT FELLOW DEV HIRE MODAL DRAWER */}
+      {/* INSTANT FELLOW DEV HIRE MODAL DRAWER WITH GORSE AI MATCHING */}
       {showAddDevModal && (
         <div className="company-modal-overlay">
           <div className="company-modal-content">
@@ -391,7 +467,7 @@ export const CompanyDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-hairline pb-4">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-brand-green uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4" /> Zapmancer Talent Augmentation
+                  <Sparkles className="w-4 h-4" /> Gorse AI Recommender Engine
                 </div>
                 <h3 className="text-xl font-extrabold text-ink">＋ Add Fellow Dev to Task</h3>
               </div>
@@ -408,29 +484,43 @@ export const CompanyDashboardPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Candidate List */}
+            {/* Candidate List with Gorse AI Match Scores */}
             <div className="space-y-3">
-              <label className="text-xs font-bold uppercase text-mute">Top Vetted Freelancers Available Now</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase text-mute">Top AI-Matched Candidates</label>
+                <span className="text-[11px] font-bold text-brand-green flex items-center gap-1">
+                  <Zap className="w-3.5 h-3.5" /> Gorse Recommender Telemetry Active
+                </span>
+              </div>
 
-              {availableTalentCandidates.map((c, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-surface-elevated border border-hairline flex items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-sm text-ink">{c.name}</h4>
+              {gorseAiTalentCandidates.map((c, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-surface-elevated border border-hairline space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-ink">{c.name}</h4>
+                        <span className="px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green border border-brand-green/20 text-[10px] font-extrabold">
+                          {c.gorseMatchScore}
+                        </span>
+                      </div>
+                      <p className="text-xs text-mute">{c.title}</p>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-extrabold text-brand-green font-mono">{c.rate}</p>
                       <span className="text-xs font-bold text-brand-green">{c.rating}</span>
                     </div>
-                    <p className="text-xs text-mute">{c.title}</p>
-                    <div className="flex gap-1.5 pt-1">
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 border-t border-hairline pt-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {c.skills.map((s) => (
                         <span key={s} className="px-2 py-0.5 rounded-full bg-surface text-[10px] font-bold text-brand-green border border-hairline">
                           {s}
                         </span>
                       ))}
                     </div>
-                  </div>
 
-                  <div className="text-right space-y-2">
-                    <p className="text-sm font-extrabold text-brand-green font-mono">{c.rate}</p>
                     <button
                       onClick={handleSendInvite}
                       className="company-btn-primary py-1.5 px-4 text-[11px]"
@@ -444,7 +534,7 @@ export const CompanyDashboardPage: React.FC = () => {
 
             {invitedSuccess && (
               <div className="p-3 rounded-xl bg-brand-green/10 border border-brand-green/30 text-brand-green text-xs font-bold text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4" /> Invitation & Milestone Escrow Offer Sent!
+                <CheckCircle2 className="w-4 h-4" /> Gorse AI Match Invite & Escrow Offer Sent!
               </div>
             )}
 

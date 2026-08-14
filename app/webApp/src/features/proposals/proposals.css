@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FEATURE MODULE: PROPOSALS
+   FEATURE MODULE: PROPOSALS & ESCROW MILESTONES
    ========================================================================== */
 
 .proposals-page {
@@ -11,5 +11,25 @@
 }
 
 .proposals-card {
-  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4;
+  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4 transition-colors;
+}
+
+.proposals-card:hover {
+  border-color: rgba(29, 185, 84, 0.3);
+}
+
+/* Legal Work-for-Hire Contract Modal Drawer */
+.proposals-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.proposals-modal-content {
+  @apply bg-surface border border-hairline rounded-xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto text-ink;
+}
+
+.proposals-contract-stamp {
+  background-color: rgba(29, 185, 84, 0.1);
+  border-color: rgba(29, 185, 84, 0.3);
+  @apply p-4 rounded-xl border text-brand-green font-mono text-xs space-y-1;
 }

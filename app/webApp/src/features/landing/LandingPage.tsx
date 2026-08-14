@@ -3,7 +3,7 @@ import './landing.css';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, ArrowRight, Code, Cpu, Smartphone, Layers, CheckCircle2, Lock, Sparkles, Scale, GitBranch, ChevronDown, ChevronUp, Palette, Terminal, Globe, Monitor, Copy, Check, Sliders, HelpCircle } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Code, Cpu, Smartphone, Layers, CheckCircle2, Lock, Sparkles, Scale, GitBranch, ChevronDown, ChevronUp, Palette, Terminal, Globe, Monitor, Copy, Check, Sliders, HelpCircle, Download, Server, Laptop } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -16,6 +16,33 @@ export const LandingPage: React.FC = () => {
   const upworkPayout = calcAmount * 0.8; // 20% fee
   const freelancerPayout = calcAmount * 0.76; // 24% fee
   const developerSavings = calcAmount - upworkPayout;
+
+  const multiplatformPlatforms = [
+    {
+      title: 'Android Native Client',
+      badge: 'Compose Multiplatform',
+      desc: 'Native Android app powered by Compose Material 3 adaptive UI layouts and KMP shared domain models.',
+      icon: Smartphone
+    },
+    {
+      title: 'iOS Native Client',
+      badge: 'Swift & KMP Shared',
+      desc: 'SwiftUI and Compose Multiplatform iOS client with SKie interop for native iOS performance.',
+      icon: Smartphone
+    },
+    {
+      title: 'Web & Desktop OS',
+      badge: 'React 19 & Wasm',
+      desc: 'Desktop web platform for Company OS team management, task boards, and Instant Dev Hires.',
+      icon: Laptop
+    },
+    {
+      title: 'Ktor Backend Cluster',
+      badge: 'Ktor 3.0 & Gorse AI',
+      desc: 'Asynchronous backend microservice handling WebSockets, escrow locks, and Gorse AI talent matching.',
+      icon: Server
+    }
+  ];
 
   const categories = [
     { name: 'Kotlin & KMP Core', count: '142 Open Projects', icon: Code },
@@ -227,82 +254,113 @@ data class LegalIpTransferReceipt(
         </div>
       </section>
 
-      {/* Interactive Fee & Payout Calculator Widget */}
+      {/* Multiplatform Ecosystem Architecture Section */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-12">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Interactive Payout Estimator</div>
-          <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Calculate Your Freelancer Savings</h2>
+          <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Unified Cross-Platform Stack</div>
+          <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Built for Mobile, Web & Backend Synchronization</h2>
           <p className="text-mute text-sm leading-relaxed">
-            Drag the slider to see how much more money you keep on Zapmancer compared to legacy 20% fee platforms.
+            Shared Kotlin Multiplatform core powering native Android, iOS, WebAssembly, and Ktor server instances.
           </p>
         </div>
 
-        <div className="bg-surface p-8 sm:p-10 rounded-xl border border-hairline shadow-sm dark:shadow-none max-w-4xl mx-auto space-y-8">
-          
-          {/* Slider Control */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-mute flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-brand-green" /> Contract Bounty Amount
-              </label>
-              <span className="text-2xl font-extrabold text-brand-green">${calcAmount.toLocaleString()}</span>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {multiplatformPlatforms.map((p) => {
+            const Icon = p.icon;
+            return (
+              <div key={p.title} className="p-6 rounded-xl bg-surface border border-hairline space-y-4 hover:border-brand-green/40 hover:bg-surface-elevated transition-all">
+                <div className="w-10 h-10 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center border border-brand-green/20">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-brand-green uppercase tracking-wider">{p.badge}</span>
+                  <h3 className="font-bold text-lg text-ink">{p.title}</h3>
+                  <p className="text-xs text-mute leading-relaxed">{p.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
-            <input
-              type="range"
-              min="500"
-              max="20000"
-              step="500"
-              value={calcAmount}
-              onChange={(e) => setCalcAmount(Number(e.target.value))}
-              className="w-full accent-brand-green cursor-pointer h-2 bg-surface-elevated rounded-lg"
-            />
-            <div className="flex justify-between text-[11px] text-mute font-bold">
-              <span>$500</span>
-              <span>$5,000</span>
-              <span>$10,000</span>
-              <span>$20,000</span>
-            </div>
+      {/* Interactive Fee & Payout Calculator Widget */}
+      <section className="py-20 bg-surface border-y border-hairline">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-12">
+          <div className="text-center space-y-2 max-w-2xl mx-auto">
+            <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Interactive Payout Estimator</div>
+            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Calculate Your Freelancer Savings</h2>
+            <p className="text-mute text-sm leading-relaxed">
+              Drag the slider to see how much more money you keep on Zapmancer compared to legacy 20% fee platforms.
+            </p>
           </div>
 
-          {/* Comparison Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-hairline">
-            <div className="p-6 rounded-xl bg-brand-green/10 border border-brand-green/30 space-y-2">
-              <span className="text-[11px] font-extrabold text-brand-green uppercase tracking-wider">Zapmancer (0% Fee)</span>
-              <p className="text-3xl font-extrabold text-brand-green">${zapmancerPayout.toLocaleString()}.00</p>
-              <p className="text-xs text-brand-green font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> 100% Payout Retained
-              </p>
+          <div className="bg-surface-elevated p-8 sm:p-10 rounded-xl border border-hairline shadow-sm dark:shadow-none max-w-4xl mx-auto space-y-8">
+            
+            {/* Slider Control */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-mute flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-brand-green" /> Contract Bounty Amount
+                </label>
+                <span className="text-2xl font-extrabold text-brand-green">${calcAmount.toLocaleString()}</span>
+              </div>
+
+              <input
+                type="range"
+                min="500"
+                max="20000"
+                step="500"
+                value={calcAmount}
+                onChange={(e) => setCalcAmount(Number(e.target.value))}
+                className="w-full accent-brand-green cursor-pointer h-2 bg-surface rounded-lg"
+              />
+              <div className="flex justify-between text-[11px] text-mute font-bold">
+                <span>$500</span>
+                <span>$5,000</span>
+                <span>$10,000</span>
+                <span>$20,000</span>
+              </div>
             </div>
 
-            <div className="p-6 rounded-xl bg-surface-elevated border border-hairline space-y-2 opacity-75">
-              <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Upwork (20% Cut)</span>
-              <p className="text-2xl font-extrabold text-mute">${upworkPayout.toLocaleString()}.00</p>
-              <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - upworkPayout).toLocaleString()}</p>
+            {/* Comparison Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-hairline">
+              <div className="p-6 rounded-xl bg-brand-green/10 border border-brand-green/30 space-y-2">
+                <span className="text-[11px] font-extrabold text-brand-green uppercase tracking-wider">Zapmancer (0% Fee)</span>
+                <p className="text-3xl font-extrabold text-brand-green">${zapmancerPayout.toLocaleString()}.00</p>
+                <p className="text-xs text-brand-green font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 100% Payout Retained
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-surface border border-hairline space-y-2 opacity-75">
+                <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Upwork (20% Cut)</span>
+                <p className="text-2xl font-extrabold text-mute">${upworkPayout.toLocaleString()}.00</p>
+                <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - upworkPayout).toLocaleString()}</p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-surface border border-hairline space-y-2 opacity-60">
+                <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Freelancer.com (24% Cut)</span>
+                <p className="text-2xl font-extrabold text-mute">${freelancerPayout.toLocaleString()}.00</p>
+                <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - freelancerPayout).toLocaleString()}</p>
+              </div>
             </div>
 
-            <div className="p-6 rounded-xl bg-surface-elevated border border-hairline space-y-2 opacity-60">
-              <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Freelancer.com (24% Cut)</span>
-              <p className="text-2xl font-extrabold text-mute">${freelancerPayout.toLocaleString()}.00</p>
-              <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - freelancerPayout).toLocaleString()}</p>
+            <div className="bg-surface p-4 rounded-xl border border-hairline flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold text-ink">Extra earnings kept on this project:</p>
+                <p className="text-sm font-extrabold text-brand-green">+${developerSavings.toLocaleString()}.00 into your wallet</p>
+              </div>
+              <Link to="/signup" className="landing-btn-primary py-2.5 px-6 shrink-0">
+                Start Earning 100% Now
+              </Link>
             </div>
+
           </div>
-
-          <div className="bg-surface-elevated p-4 rounded-xl border border-hairline flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-            <div className="space-y-0.5">
-              <p className="text-xs font-bold text-ink">Extra earnings kept on this project:</p>
-              <p className="text-sm font-extrabold text-brand-green">+${developerSavings.toLocaleString()}.00 into your wallet</p>
-            </div>
-            <Link to="/signup" className="landing-btn-primary py-2.5 px-6 shrink-0">
-              Start Earning 100% Now
-            </Link>
-          </div>
-
         </div>
       </section>
 
       {/* Developer Architecture & Code Terminal Carousel */}
-      <section className="py-20 bg-surface border-y border-hairline">
+      <section className="py-20 bg-canvas border-b border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-2 max-w-2xl mx-auto">
@@ -314,7 +372,7 @@ data class LegalIpTransferReceipt(
           </div>
 
           {/* Code Window Container */}
-          <div className="max-w-4xl mx-auto bg-canvas rounded-xl border border-hairline shadow-2xl overflow-hidden">
+          <div className="max-w-4xl mx-auto bg-surface rounded-xl border border-hairline shadow-2xl overflow-hidden">
             
             {/* Terminal Header Bar */}
             <div className="bg-surface-elevated px-4 py-3 border-b border-hairline flex items-center justify-between">
@@ -362,7 +420,7 @@ data class LegalIpTransferReceipt(
             </div>
 
             {/* Code Body */}
-            <pre className="p-6 font-mono text-xs text-brand-green bg-canvas overflow-x-auto leading-relaxed">
+            <pre className="p-6 font-mono text-xs text-brand-green bg-surface overflow-x-auto leading-relaxed">
               <code>{codeSnippets[activeCodeTab]}</code>
             </pre>
 
@@ -372,7 +430,7 @@ data class LegalIpTransferReceipt(
       </section>
 
       {/* Featured Categories / Skill Ecosystems */}
-      <section className="py-20 bg-canvas border-b border-hairline">
+      <section className="py-20 bg-surface border-b border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-hairline pb-6">
             <div>
@@ -392,10 +450,10 @@ data class LegalIpTransferReceipt(
                 <Link
                   key={cat.name}
                   to="/projects"
-                  className="p-6 rounded-xl bg-surface border border-hairline hover:bg-surface-elevated hover:scale-[1.03] transition-all duration-200 shadow-sm dark:shadow-none group flex flex-col justify-between"
+                  className="p-6 rounded-xl bg-surface-elevated border border-hairline hover:border-brand-green/40 hover:bg-surface-modal hover:scale-[1.03] transition-all duration-200 shadow-sm dark:shadow-none group flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-10 h-10 rounded-full bg-surface-elevated text-brand-green flex items-center justify-center mb-4 group-hover:bg-brand-green group-hover:text-white transition-colors border border-hairline">
+                    <div className="w-10 h-10 rounded-full bg-surface text-brand-green flex items-center justify-center mb-4 group-hover:bg-brand-green group-hover:text-white transition-colors border border-hairline">
                       <Icon className="w-5 h-5" />
                     </div>
                     <h3 className="font-bold text-base text-ink group-hover:text-brand-green transition-colors">{cat.name}</h3>
@@ -409,7 +467,7 @@ data class LegalIpTransferReceipt(
       </section>
 
       {/* Community Testimonials */}
-      <section className="py-20 bg-surface border-y border-hairline">
+      <section className="py-20 bg-canvas border-y border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-2 max-w-2xl mx-auto">
@@ -422,7 +480,7 @@ data class LegalIpTransferReceipt(
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {testimonials.map((t, idx) => (
-              <div key={idx} className="p-8 rounded-xl bg-surface-elevated border border-hairline space-y-4 flex flex-col justify-between">
+              <div key={idx} className="p-8 rounded-xl bg-surface border border-hairline space-y-4 flex flex-col justify-between">
                 <p className="text-sm text-mute leading-relaxed italic">
                   "{t.quote}"
                 </p>
@@ -446,132 +504,6 @@ data class LegalIpTransferReceipt(
             ))}
           </div>
 
-        </div>
-      </section>
-
-      {/* How Payment & Escrow Works Section */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-12">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Transparent Payments</div>
-          <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">How Escrow & Payouts Work</h2>
-          <p className="text-mute text-sm leading-relaxed">
-            Zero surprise fees. Funds are protected in milestone escrow before coding begins, and released instantly upon sign-off.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {paymentSteps.map((step) => (
-            <div key={step.step} className="bg-surface border border-hairline p-8 rounded-xl space-y-4 shadow-sm dark:shadow-none hover:bg-surface-elevated transition-colors">
-              <div className="text-2xl font-extrabold text-brand-green font-mono">{step.step}</div>
-              <h3 className="text-lg font-bold text-ink">{step.title}</h3>
-              <p className="text-xs text-mute leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Legal & Open Source Compliance Section */}
-      <section className="py-20 bg-surface border-y border-hairline">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Open Source & Legal Safety</div>
-            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Auditable Code, Guaranteed IP Transfer</h2>
-            <p className="text-mute text-sm leading-relaxed">
-              Addressing legal challenges, IP rights, and open-source transparency for enterprise teams and developers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-xl bg-surface-elevated border border-hairline space-y-4">
-              <div className="w-10 h-10 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center border border-brand-green/20">
-                <Scale className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-ink">Work-for-Hire IP Transfer</h3>
-              <p className="text-xs text-mute leading-relaxed">
-                All contract submissions include automated legal IP copyright transfer. Clients retain 100% exclusive ownership of custom code deliverables, patents, and design assets upon milestone funds release.
-              </p>
-              <div className="flex items-center gap-2 text-xs font-bold text-brand-green pt-1">
-                <ShieldCheck className="w-4 h-4" /> Standardized Legal Contracts Attached
-              </div>
-            </div>
-
-            <div className="p-8 rounded-xl bg-surface-elevated border border-hairline space-y-4">
-              <div className="w-10 h-10 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center border border-brand-green/20">
-                <GitBranch className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-ink">Why 100% Open Source?</h3>
-              <p className="text-xs text-mute leading-relaxed">
-                By keeping the platform core open-source, escrow logic and matching algorithms are completely auditable. No hidden black-box algorithms or proprietary vendor lock-in.
-              </p>
-              <div className="flex items-center gap-2 text-xs font-bold text-brand-green pt-1">
-                <CheckCircle2 className="w-4 h-4" /> Apache 2.0 Audited Marketplace Core
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Live Marketplace — Active Project Bounties Section */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-hairline pb-6">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
-              <Sparkles className="w-3.5 h-3.5" /> Live Marketplace
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-ink">Active Project Bounties</h2>
-            <p className="text-sm text-mute">Explore verified contract bounties with funded milestone escrows.</p>
-          </div>
-          <Link to="/projects" className="text-brand-green hover:text-brand-green-hover text-xs font-bold uppercase tracking-[0.05em] transition-colors shrink-0">
-            Explore All Projects &rarr;
-          </Link>
-        </div>
-
-        {/* Clean Project Cards List */}
-        <div className="space-y-4">
-          {featuredProjects.map((p) => (
-            <div
-              key={p.id}
-              className="bg-surface p-6 rounded-xl border border-hairline hover:bg-surface-elevated hover:scale-[1.005] transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm dark:shadow-none"
-            >
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="font-bold text-brand-green uppercase tracking-wider">{p.client}</span>
-                  <span className="text-mute">&bull;</span>
-                  <span className="text-mute flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-brand-green" /> Verified Escrow</span>
-                  <span className="text-mute">&bull;</span>
-                  <span className="text-mute">{p.posted}</span>
-                </div>
-
-                <h3 className="font-extrabold text-lg text-ink hover:text-brand-green transition-colors">
-                  <Link to={`/projects/${p.id}`}>{p.title}</Link>
-                </h3>
-
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {p.tags.map((t) => (
-                    <span key={t} className="px-3.5 py-1 rounded-full bg-surface-elevated text-brand-green text-xs font-bold border border-hairline">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 border-hairline pt-4 md:pt-0 shrink-0">
-                <div className="text-left md:text-right">
-                  <div className="text-xl font-extrabold text-brand-green tracking-tight">{p.budget}</div>
-                  <div className="text-xs text-mute font-bold uppercase tracking-wider">{p.budgetType}</div>
-                </div>
-
-                <Link
-                  to={`/projects/${p.id}/apply`}
-                  className="bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-full hover:scale-[1.04] transition-all shadow-md shadow-brand-green/20"
-                >
-                  Apply Now
-                </Link>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
