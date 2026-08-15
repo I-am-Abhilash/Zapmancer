@@ -1,15 +1,192 @@
-/* ==========================================================================
-   FEATURE MODULE: NOTIFICATIONS
-   ========================================================================== */
+/* Notifications Page — notion-DESIGN.md compliant */
 
 .notifications-page {
-  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .notifications-main {
-  @apply flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+  flex: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.notifications-header {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.notifications-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+.notifications-sub {
+  font-size: 14px;
+  color: var(--color-steel);
+  margin-top: 4px;
+}
+
+.notifications-mark-all {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.notifications-mark-all:hover {
+  text-decoration: underline;
+}
+
+/* ---- List ---- */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-hairline);
 }
 
 .notification-item {
-  @apply p-5 rounded-xl border transition-colors flex items-start gap-4 shadow-sm dark:shadow-none;
+  background-color: var(--color-canvas);
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.notification-item:hover {
+  background-color: var(--color-surface);
+}
+
+.notification-item.unread {
+  background-color: var(--color-surface);
+}
+
+.notification-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notification-icon-mint {
+  background-color: var(--color-card-tint-mint);
+  color: #1aae39;
+}
+
+[data-theme="dark"] .notification-icon-mint {
+  background-color: #0d2e16;
+  color: #4ade80;
+}
+
+.notification-icon-sky {
+  background-color: var(--color-card-tint-sky);
+  color: var(--color-link-blue);
+}
+
+[data-theme="dark"] .notification-icon-sky {
+  background-color: #0d1e38;
+  color: #60a5fa;
+}
+
+.notification-icon-lavender {
+  background-color: var(--color-card-tint-lavender);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .notification-icon-lavender {
+  background-color: #1a0d2e;
+  color: #a78bfa;
+}
+
+.notification-icon-peach {
+  background-color: var(--color-card-tint-peach);
+  color: #793400;
+}
+
+[data-theme="dark"] .notification-icon-peach {
+  background-color: #2e1505;
+  color: #fb923c;
+}
+
+.notification-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notification-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.35;
+}
+
+.notification-time {
+  font-size: 11px;
+  color: var(--color-steel);
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.notification-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-steel);
+  margin-top: 4px;
+}
+
+.notification-unread-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background-color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* Empty */
+.notifications-empty {
+  text-align: center;
+  padding: 64px 0;
+  font-size: 14px;
+  color: var(--color-steel);
 }

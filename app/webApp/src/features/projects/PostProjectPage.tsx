@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, ArrowRight, Sparkles, Plus, X, Lock, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Plus, X, CheckCircle2 } from 'lucide-react';
 
 export const PostProjectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,205 +11,234 @@ export const PostProjectPage: React.FC = () => {
   const [category, setCategory] = useState('Software & Web Dev');
   const [description, setDescription] = useState('');
   const [budgetType, setBudgetType] = useState<'Fixed' | 'Hourly'>('Fixed');
-  const [budgetAmount, setBudgetAmount] = useState<string>('3500');
+  const [budgetAmount, setBudgetAmount] = useState('3500');
   const [skillInput, setSkillInput] = useState('');
-  const [skills, setSkills] = useState<string[]>(['TypeScript', 'React', 'Node.js']);
+  const [skills, setSkills] = useState(['TypeScript', 'React', 'Node.js']);
 
   const addSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()]);
-      setSkillInput('');
-    }
+    const s = skillInput.trim();
+    if (s && !skills.includes(s)) { setSkills([...skills, s]); setSkillInput(''); }
   };
 
-  const removeSkill = (s: string) => {
-    setSkills(skills.filter((item) => item !== s));
-  };
+  const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     navigate('/projects');
   };
 
+  const field: React.CSSProperties = {
+    width: '100%',
+    padding: '9px 12px',
+    border: '1px solid var(--color-hairline-strong)',
+    borderRadius: 8,
+    backgroundColor: 'var(--color-canvas)',
+    color: 'var(--color-ink)',
+    fontSize: 14,
+    fontFamily: 'var(--font-sans)',
+    outline: 'none',
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Header isLoggedIn={true} />
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        
-        {/* Title Header */}
-        <div className="space-y-1 border-b border-hairline pb-6">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
-            <Lock className="w-3.5 h-3.5" /> Enterprise Client Portal
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink">Post a Project & Contract Milestone</h1>
-          <p className="text-sm text-mute">Publish project scope and requirements to receive proposals from vetted global developers, designers, and AI builders.</p>
+      <main style={{ flex: 1, maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px' }}>
+
+        {/* Page header */}
+        <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--color-hairline)', marginBottom: 32 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.4px', color: 'var(--color-ink)', lineHeight: 1.2 }}>
+            Post a contract
+          </h1>
+          <p style={{ fontSize: 14, color: 'var(--color-steel)', marginTop: 4, lineHeight: 1.5 }}>
+            Publish your project scope to receive proposals from vetted developers, designers, and AI builders.
+          </p>
         </div>
 
-        {/* High-Trust Enterprise Form */}
-        <form onSubmit={handleSubmit} className="bg-surface p-8 sm:p-10 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6">
-          
-          {/* Title Input */}
-          <div className="space-y-1.5">
-            <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-              Project / Contract Title *
-            </label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+          {/* Title */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Contract title *</label>
             <input
               type="text"
               required
-              placeholder="e.g. Build Custom RAG AI Agent Workflow & Next.js Dashboard"
+              placeholder="e.g. Build a RAG AI Agent and Next.js dashboard"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm font-semibold text-ink focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/30 transition-all placeholder:text-mute"
+              style={field}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.borderWidth = '2px'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--color-hairline-strong)'; e.target.style.borderWidth = '1px'; }}
             />
           </div>
 
-          {/* Primary Category Select */}
-          <div className="space-y-1.5">
-            <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-              Primary Discipline / Category *
-            </label>
+          {/* Category */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Discipline *</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm font-semibold text-ink focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/30 transition-all cursor-pointer"
+              style={{ ...field, cursor: 'pointer' }}
             >
-              <option value="Software & Web Dev">Software & Full-Stack Web Development</option>
+              <option value="Software & Web Dev">Software & Full-Stack Web Dev</option>
               <option value="AI Builders & Agents">AI Builders, RAG & Machine Learning</option>
               <option value="UI/UX & Product Design">UI/UX & Product Design Systems</option>
               <option value="Mobile (Android/iOS)">Mobile (Android & iOS)</option>
-              <option value="DevOps & Cloud Systems">DevOps, Kubernetes & Cloud Systems</option>
+              <option value="DevOps & Cloud Systems">DevOps, Kubernetes & Cloud</option>
               <option value="Growth & Marketing">Growth & Performance Marketing</option>
             </select>
           </div>
 
-          {/* Description Scope */}
-          <div className="space-y-1.5">
-            <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-              Project Specifications & Deliverables *
-            </label>
+          {/* Description */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Project scope & deliverables *</label>
             <textarea
               rows={6}
               required
               placeholder="Detail the milestone scope, tech stack expectations, API requirements, and expected timeline..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm text-ink leading-relaxed focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/30 transition-all placeholder:text-mute"
+              style={{ ...field, resize: 'vertical', lineHeight: 1.6 }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.borderWidth = '2px'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--color-hairline-strong)'; e.target.style.borderWidth = '1px'; }}
             />
           </div>
 
-          {/* Budget Model & Amount */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1.5">
-              <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-                Budget Structure
-              </label>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setBudgetType('Fixed')}
-                  className={`flex-1 py-3 rounded-xl border text-xs font-bold uppercase tracking-[0.05em] transition-all cursor-pointer ${
-                    budgetType === 'Fixed'
-                      ? 'bg-brand-green text-white border-brand-green shadow-sm'
-                      : 'bg-surface-elevated border-hairline text-mute hover:text-ink hover:bg-surface-modal'
-                  }`}
-                >
-                  Fixed Milestone
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBudgetType('Hourly')}
-                  className={`flex-1 py-3 rounded-xl border text-xs font-bold uppercase tracking-[0.05em] transition-all cursor-pointer ${
-                    budgetType === 'Hourly'
-                      ? 'bg-brand-green text-white border-brand-green shadow-sm'
-                      : 'bg-surface-elevated border-hairline text-mute hover:text-ink hover:bg-surface-modal'
-                  }`}
-                >
-                  Hourly Rate
-                </button>
+          {/* Budget */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Budget type</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {(['Fixed', 'Hourly'] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setBudgetType(t)}
+                    style={{
+                      flex: 1,
+                      padding: '8px 0',
+                      borderRadius: 8,
+                      border: `1px solid ${budgetType === t ? 'var(--color-primary)' : 'var(--color-hairline-strong)'}`,
+                      backgroundColor: budgetType === t ? 'var(--color-primary)' : 'var(--color-canvas)',
+                      color: budgetType === t ? '#ffffff' : 'var(--color-steel)',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-sans)',
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-                Estimated Budget ($ USD) *
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>
+                Budget (USD) *
               </label>
-              <div className="relative">
-                <span className="absolute left-4 top-3 text-mute font-bold text-sm">$</span>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-steel)', fontSize: 14, fontWeight: 500 }}>$</span>
                 <input
                   type="number"
                   required
                   value={budgetAmount}
                   onChange={(e) => setBudgetAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm font-bold text-ink focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/30 transition-all font-mono"
+                  style={{ ...field, paddingLeft: 26 }}
+                  onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.borderWidth = '2px'; }}
+                  onBlur={(e) => { e.target.style.borderColor = 'var(--color-hairline-strong)'; e.target.style.borderWidth = '1px'; }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Required Skills */}
-          <div className="space-y-1.5">
-            <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">
-              Required Skills & Technologies
-            </label>
-            
-            <div className="flex gap-2 mb-3 max-w-md">
+          {/* Skills */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Required skills</label>
+            <div style={{ display: 'flex', gap: 8, maxWidth: 400 }}>
               <input
                 type="text"
-                placeholder="Add skill tag (e.g. React, OpenAI, Figma)..."
+                placeholder="Add a skill (e.g. React, Python, Figma)"
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-hairline bg-surface-elevated text-xs text-ink focus:outline-none focus:border-brand-green"
+                style={{ ...field, flex: 1 }}
               />
               <button
                 type="button"
                 onClick={addSkill}
-                className="px-5 py-2.5 bg-surface-elevated hover:bg-surface-modal border border-hairline text-ink rounded-xl text-xs font-bold uppercase tracking-[0.05em] transition-all cursor-pointer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '8px 14px', borderRadius: 8,
+                  border: '1px solid var(--color-hairline-strong)',
+                  backgroundColor: 'var(--color-canvas)',
+                  color: 'var(--color-ink)', fontSize: 13, fontWeight: 500,
+                  cursor: 'pointer', fontFamily: 'var(--font-sans)', whiteSpace: 'nowrap',
+                }}
               >
-                <Plus className="w-3.5 h-3.5 text-brand-green inline mr-1" /> Add Tag
+                <Plus size={14} /> Add
               </button>
             </div>
+            {skills.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                {skills.map((s) => (
+                  <span
+                    key={s}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5,
+                      fontSize: 12, fontWeight: 600, padding: '3px 10px',
+                      borderRadius: 6, cursor: 'pointer',
+                      backgroundColor: 'var(--color-card-tint-sky)',
+                      color: 'var(--color-link-blue)',
+                      border: '1px solid rgba(0,117,222,0.15)',
+                    }}
+                    onClick={() => removeSkill(s)}
+                    title="Click to remove"
+                  >
+                    {s} <X size={11} />
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
 
-            <div className="flex flex-wrap gap-2">
-              {skills.map((s) => (
-                <span
-                  key={s}
-                  onClick={() => removeSkill(s)}
-                  className="px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-brand-green text-xs font-bold cursor-pointer hover:border-red-500 hover:text-red-500 transition-all inline-flex items-center gap-1"
-                >
-                  {s} <X className="w-3 h-3" />
-                </span>
-              ))}
+          {/* Escrow note */}
+          <div style={{
+            padding: '14px 16px',
+            borderRadius: 8,
+            backgroundColor: 'var(--color-card-tint-mint)',
+            border: '1px solid rgba(26,174,57,0.2)',
+            display: 'flex', gap: 10, alignItems: 'flex-start',
+          }}>
+            <ShieldCheck size={16} style={{ color: '#1aae39', flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1a5c2a', margin: 0 }}>Milestone escrow & 0% worker fee</p>
+              <p style={{ fontSize: 12, color: '#256334', margin: '3px 0 0', lineHeight: 1.5 }}>
+                Escrow funding is required only after hiring. All deliverables include automated Work-for-Hire IP transfer upon milestone release.
+              </p>
             </div>
           </div>
 
-          {/* Escrow Guarantee Box */}
-          <div className="p-4 rounded-xl bg-brand-green/10 border border-brand-green/30 text-xs text-brand-green space-y-1">
-            <p className="font-bold flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" /> 100% Milestone Escrow Protection & 0% Worker Cut
-            </p>
-            <p className="text-[11px] leading-relaxed text-brand-green/80">
-              Escrow funding is required only after you select and hire your preferred candidate. All deliverables include automated Work-for-Hire legal IP transfers upon milestone release.
-            </p>
-          </div>
-
-          {/* Form Footer Actions */}
-          <div className="pt-4 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs text-mute font-medium">
-              <CheckCircle2 className="w-4 h-4 text-brand-green" /> Instant publishing & no posting fee
-            </div>
-
+          {/* Footer */}
+          <div style={{ paddingTop: 16, borderTop: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-steel)' }}>
+              <CheckCircle2 size={14} style={{ color: '#1aae39' }} /> Free to post · No subscription required
+            </span>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.03] transition-all shadow-md shadow-brand-green/20 cursor-pointer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: 'var(--color-primary)', color: '#ffffff',
+                fontSize: 14, fontWeight: 500, padding: '10px 20px',
+                borderRadius: 8, border: 'none', cursor: 'pointer',
+                fontFamily: 'var(--font-sans)',
+              }}
             >
-              Publish Project Contract <ArrowRight className="w-4 h-4" />
+              Publish contract <ArrowRight size={15} />
             </button>
           </div>
 
         </form>
-
       </main>
 
       <Footer />

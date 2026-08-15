@@ -3,12 +3,11 @@ import './proposals.css';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, Star, Sparkles, GitPullRequest, ExternalLink, Scale, CheckCircle2, Lock, FileText, X, Check, ArrowRight, DollarSign, GitBranch, CheckSquare, Terminal } from 'lucide-react';
-import { Tabs, TabItem } from '../../components/ui/Tabs';
+import { ShieldCheck, Star, GitPullRequest, ExternalLink, Scale, CheckCircle2, X, Check, ArrowRight, GitBranch, CheckSquare } from 'lucide-react';
 
-type ClientHubTabId = 'milestones' | 'proposals';
+type TabId = 'milestones' | 'proposals';
 
-interface SubmittedMilestone {
+interface Milestone {
   id: string;
   projectTitle: string;
   developerName: string;
@@ -18,252 +17,208 @@ interface SubmittedMilestone {
   prUrl: string;
   commitHash: string;
   demoUrl: string;
-  repoSync: string;
   testSuiteStatus: string;
   coverage: string;
   submittedDate: string;
   status: 'Pending Client Approval' | 'Escrow Released & IP Transferred';
 }
 
+const MILESTONES: Milestone[] = [
+  {
+    id: 'm-102',
+    projectTitle: 'Task #102 · Compose Wasm WebAudio Processing Engine',
+    developerName: 'Elena Rostova',
+    developerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+    developerRole: 'KMP & Wasm Lead',
+    milestoneBudget: '$4,500.00',
+    prUrl: 'https://github.com/acme-ai/kmp-core/pull/42',
+    commitHash: 'b8f9a2e',
+    demoUrl: 'https://demo.acme.ai/wasm-preview',
+    testSuiteStatus: '14/14 unit tests passing',
+    coverage: '94% coverage',
+    submittedDate: '2 hours ago',
+    status: 'Pending Client Approval',
+  },
+  {
+    id: 'm-108',
+    projectTitle: 'Task #108 · High-Concurrency Ktor WebSockets Clustering',
+    developerName: 'Marcus Vance',
+    developerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+    developerRole: 'Backend Architect',
+    milestoneBudget: '$3,200.00',
+    prUrl: 'https://github.com/acme-ai/ktor-server/pull/84',
+    commitHash: 'f4a19c3',
+    demoUrl: 'https://demo.acme.ai/ktor-ws',
+    testSuiteStatus: '28/28 integration tests passing',
+    coverage: '98% coverage',
+    submittedDate: '1 day ago',
+    status: 'Pending Client Approval',
+  },
+];
+
+const PROPOSALS = [
+  {
+    id: 'pr1',
+    name: 'Elena Rostova',
+    title: 'Senior KMP & WebAssembly Lead',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+    bid: '$3,200',
+    rating: 5.0,
+    reviews: 42,
+    pitch: 'I have architected over 15 Compose Multiplatform desktop and mobile clients connected to Ktor backends. Ready to deliver milestone 1 within 5 days with full test coverage.',
+    skills: ['Kotlin', 'Wasm', 'Ktor', 'Compose'],
+  },
+];
+
 export const ClientProposalsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<ClientHubTabId>('milestones');
-  const [showLegalContractModal, setShowLegalContractModal] = useState<boolean>(false);
-  const [selectedMilestone, setSelectedMilestone] = useState<SubmittedMilestone | null>(null);
-  const [contractSignedSuccess, setContractSignedSuccess] = useState<boolean>(false);
+  const [tab, setTab] = useState<TabId>('milestones');
+  const [modalMilestone, setModalMilestone] = useState<Milestone | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const hubTabs: TabItem<ClientHubTabId>[] = [
-    { id: 'milestones', label: 'Milestone Escrows Under Review (2)' },
-    { id: 'proposals', label: 'Contract Proposals & Bids (8)' },
-  ];
-
-  const milestonesUnderReview: SubmittedMilestone[] = [
-    {
-      id: 'm-102',
-      projectTitle: 'Task #102: Compose Wasm WebAudio Processing Engine',
-      developerName: 'Elena Rostova',
-      developerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-      developerRole: 'KMP & Wasm Lead',
-      milestoneBudget: '$4,500.00',
-      prUrl: 'https://github.com/acme-ai/kmp-core/pull/42',
-      commitHash: 'b8f9a2e',
-      demoUrl: 'https://demo.acme.ai/wasm-preview',
-      repoSync: 'github.com/acme-ai/kmp-core',
-      testSuiteStatus: '14/14 Unit Tests Passing',
-      coverage: '94% Coverage',
-      submittedDate: '2 hours ago',
-      status: 'Pending Client Approval'
-    },
-    {
-      id: 'm-108',
-      projectTitle: 'Task #108: High-Concurrency Ktor WebSockets Clustering',
-      developerName: 'Marcus Vance',
-      developerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      developerRole: 'Backend Architect',
-      milestoneBudget: '$3,200.00',
-      prUrl: 'https://github.com/acme-ai/ktor-server/pull/84',
-      commitHash: 'f4a19c3',
-      demoUrl: 'https://demo.acme.ai/ktor-ws',
-      repoSync: 'github.com/acme-ai/ktor-server',
-      testSuiteStatus: '28/28 Integration Tests Passing',
-      coverage: '98% Coverage',
-      submittedDate: '1 day ago',
-      status: 'Pending Client Approval'
-    }
-  ];
-
-  const proposals = [
-    {
-      id: 'pr1',
-      name: 'Elena Rostova',
-      title: 'Senior KMP & WebAssembly Lead',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-      bid: '$3,200',
-      rating: 5.0,
-      reviews: 42,
-      pitch: 'I have architected over 15 Compose Multiplatform desktop and mobile clients connected to Ktor backends. Ready to deliver milestone 1 within 5 days with full test coverage.',
-      skills: ['Kotlin', 'Wasm', 'Ktor', 'Compose']
-    }
-  ];
-
-  const handleOpenApprovalModal = (m: SubmittedMilestone) => {
-    setSelectedMilestone(m);
-    setShowLegalContractModal(true);
-  };
-
-  const handleConfirmEscrowRelease = () => {
-    setContractSignedSuccess(true);
+  const confirmRelease = () => {
+    setSuccess(true);
     setTimeout(() => {
-      if (selectedMilestone) {
-        selectedMilestone.status = 'Escrow Released & IP Transferred';
-      }
-      setContractSignedSuccess(false);
-      setShowLegalContractModal(false);
+      if (modalMilestone) modalMilestone.status = 'Escrow Released & IP Transferred';
+      setSuccess(false);
+      setModalMilestone(null);
     }, 2000);
   };
+
+  const TABS = [
+    { id: 'milestones' as TabId, label: `Milestone Escrows (${MILESTONES.length})` },
+    { id: 'proposals' as TabId, label: `Proposals & Bids (${PROPOSALS.length})` },
+  ];
 
   return (
     <div className="proposals-page">
       <Header isLoggedIn={true} />
 
       <main className="proposals-main">
-        
-        {/* Page Header */}
-        <div className="space-y-1 border-b border-hairline pb-6">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
-            <Sparkles className="w-3.5 h-3.5" /> Company Escrow & Proposal Hub
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink">Contract Milestone Escrow Hub</h1>
-          <p className="text-sm text-mute">Review code PR deliverables, GitHub automated test passes, and execute legal Work-for-Hire IP transfers.</p>
+
+        {/* Header */}
+        <div className="proposals-header">
+          <h1 className="proposals-page-title">Escrow & Proposals Hub</h1>
+          <p className="proposals-page-sub">Review submitted deliverables, approve milestones, and release escrow payments.</p>
         </div>
 
-        {/* Tab Navigation */}
-        <div>
-          <Tabs
-            tabs={hubTabs}
-            activeTab={activeTab}
-            onChange={(id) => setActiveTab(id)}
-          />
+        {/* Tabs */}
+        <div className="proposals-tabs">
+          {TABS.map((t) => (
+            <button key={t.id} onClick={() => setTab(t.id)} className={`proposals-tab${tab === t.id ? ' active' : ''}`}>
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        {/* TAB 1: MILESTONES UNDER REVIEW */}
-        {activeTab === 'milestones' && (
-          <div className="space-y-6">
-            
-            {/* Fee Transparency & Repo Sync Banner */}
-            <div className="bg-surface-elevated p-6 rounded-xl border border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-brand-green uppercase tracking-wider">Fee Transparency Guarantee</span>
-                  <span className="text-mute">&bull;</span>
-                  <span className="text-[10px] font-bold text-brand-green flex items-center gap-1">
-                    <GitBranch className="w-3 h-3 text-brand-green" /> GitHub CI/CD Sync Active
-                  </span>
-                </div>
-                <h3 className="font-extrabold text-ink text-base">0% Developer Fee Escrow Protection</h3>
-                <p className="text-xs text-mute leading-relaxed">
-                  Developers receive 100% of the milestone budget upon sign-off. Clients pay a 3% deposit operational fee at escrow funding time.
-                </p>
+        {/* ---- Milestones tab ---- */}
+        {tab === 'milestones' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Info banner */}
+            <div className="proposals-info-banner">
+              <div>
+                <p className="proposals-info-banner-label"><GitBranch size={12} style={{ display: 'inline', marginRight: 4 }} />GitHub CI/CD sync active</p>
+                <p className="proposals-info-banner-title">0% developer fee · Milestone escrow protection</p>
+                <p className="proposals-info-banner-sub">Developers receive 100% of the budget on sign-off. Clients pay a 3% deposit fee at escrow funding.</p>
               </div>
-              <span className="text-2xl font-extrabold text-brand-green font-mono shrink-0">$0 Dev Cut</span>
+              <p className="proposals-info-banner-stat">$0 dev cut</p>
             </div>
 
-            {/* Milestones Card List */}
-            <div className="space-y-4">
-              {milestonesUnderReview.map((m) => (
+            {/* List */}
+            <div className="proposals-list">
+              {MILESTONES.map((m) => (
                 <div key={m.id} className="proposals-card">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-hairline pb-4">
-                    <div className="flex items-center gap-4">
-                      <img src={m.developerAvatar} alt={m.developerName} className="w-12 h-12 rounded-full object-cover border border-hairline shrink-0" />
+                  {/* Top */}
+                  <div className="proposals-card-top">
+                    <div className="proposals-card-identity">
+                      <img src={m.developerAvatar} alt={m.developerName} className="proposals-avatar" />
                       <div>
-                        <h3 className="font-extrabold text-ink text-lg flex items-center gap-1.5">
-                          {m.developerName} <ShieldCheck className="w-4 h-4 text-brand-green" />
-                        </h3>
-                        <p className="text-xs text-mute font-medium">{m.developerRole}</p>
-                        <p className="text-xs font-bold text-brand-green pt-0.5">{m.projectTitle}</p>
+                        <p className="proposals-name">
+                          {m.developerName}
+                          <span className="proposals-verified"><ShieldCheck size={11} /> KYC</span>
+                        </p>
+                        <p className="proposals-role">{m.developerRole}</p>
+                        <p className="proposals-project-ref">{m.projectTitle}</p>
                       </div>
                     </div>
-
-                    <div className="text-left md:text-right shrink-0">
-                      <p className="text-2xl font-extrabold text-brand-green font-mono">{m.milestoneBudget}</p>
-                      <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full ${
-                        m.status.includes('Released') ? 'bg-brand-green/10 text-brand-green border border-brand-green/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
-                      }`}>
+                    <div className="proposals-card-amount">
+                      <p className="proposals-budget">{m.milestoneBudget}</p>
+                      <span className={`proposals-status-badge ${m.status.includes('Released') ? 'proposals-status-released' : 'proposals-status-pending'}`}>
                         {m.status}
                       </span>
                     </div>
                   </div>
 
-                  {/* PR & Automated Test Verification Details */}
-                  <div className="p-4 rounded-xl bg-surface-elevated border border-hairline grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                  {/* Deliverables */}
+                  <div className="proposals-deliverables">
                     <div>
-                      <span className="text-mute font-bold uppercase block text-[10px]">GitHub Pull Request & Repo</span>
-                      <a href={m.prUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-brand-green hover:underline font-bold flex items-center gap-1 mt-0.5">
-                        <GitPullRequest className="w-3.5 h-3.5" /> PR #42 ({m.commitHash}) <ExternalLink className="w-3 h-3" />
+                      <p className="proposals-deliverable-label">GitHub Pull Request</p>
+                      <a href={m.prUrl} target="_blank" rel="noopener noreferrer" className="proposals-deliverable-link">
+                        <GitPullRequest size={12} /> PR #{m.id.split('-')[1]} · {m.commitHash} <ExternalLink size={11} />
                       </a>
                     </div>
-
                     <div>
-                      <span className="text-mute font-bold uppercase block text-[10px]">Automated Test Suite</span>
-                      <span className="font-mono font-bold text-brand-green flex items-center gap-1 mt-0.5">
-                        <CheckSquare className="w-3.5 h-3.5" /> {m.testSuiteStatus}
-                      </span>
+                      <p className="proposals-deliverable-label">Automated Test Suite</p>
+                      <p className="proposals-deliverable-value"><CheckSquare size={12} style={{ color: '#1aae39' }} /> {m.testSuiteStatus}</p>
                     </div>
-
                     <div>
-                      <span className="text-mute font-bold uppercase block text-[10px]">Coverage & Live Preview</span>
-                      <a href={m.demoUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-brand-green hover:underline font-bold flex items-center gap-1 mt-0.5">
-                        {m.coverage} &bull; Build Artifact <ExternalLink className="w-3 h-3" />
+                      <p className="proposals-deliverable-label">Coverage & Preview</p>
+                      <a href={m.demoUrl} target="_blank" rel="noopener noreferrer" className="proposals-deliverable-link">
+                        {m.coverage} · Build artifact <ExternalLink size={11} />
                       </a>
                     </div>
                   </div>
 
-                  {/* Card Actions */}
-                  <div className="flex items-center justify-between gap-4 pt-2">
-                    <p className="text-xs text-mute">Submitted <strong className="text-ink">{m.submittedDate}</strong></p>
-
+                  {/* Footer */}
+                  <div className="proposals-card-footer">
+                    <p className="proposals-footer-meta">Submitted <strong style={{ color: 'var(--color-ink)' }}>{m.submittedDate}</strong></p>
                     {m.status.includes('Released') ? (
-                      <span className="text-xs font-bold text-brand-green flex items-center gap-1.5 bg-brand-green/10 px-4 py-2 rounded-full border border-brand-green/20">
-                        <CheckCircle2 className="w-4 h-4" /> Escrow Released & IP Transferred
-                      </span>
+                      <span className="proposals-released-badge"><CheckCircle2 size={14} /> Escrow released & IP transferred</span>
                     ) : (
-                      <button
-                        onClick={() => handleOpenApprovalModal(m)}
-                        className="bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-6 py-2.5 rounded-full shadow-md shadow-brand-green/20 hover:scale-[1.03] transition-all flex items-center gap-2"
-                      >
-                        <Scale className="w-4 h-4" /> Approve & Release Escrow
+                      <button onClick={() => setModalMilestone(m)} className="proposals-btn-primary">
+                        <Scale size={14} /> Approve & release escrow
                       </button>
                     )}
                   </div>
                 </div>
               ))}
             </div>
-
           </div>
         )}
 
-        {/* TAB 2: PROPOSALS & BIDS */}
-        {activeTab === 'proposals' && (
-          <div className="space-y-4">
-            {proposals.map((p) => (
+        {/* ---- Proposals tab ---- */}
+        {tab === 'proposals' && (
+          <div className="proposals-list">
+            {PROPOSALS.map((p) => (
               <div key={p.id} className="proposals-card">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <img src={p.avatar} alt={p.name} className="w-12 h-12 rounded-full object-cover border border-hairline shrink-0" />
+                <div className="proposals-card-top">
+                  <div className="proposals-card-identity">
+                    <img src={p.avatar} alt={p.name} className="proposals-avatar" />
                     <div>
-                      <h3 className="font-extrabold text-lg text-ink flex items-center gap-1.5">
-                        {p.name} <ShieldCheck className="w-4 h-4 text-brand-green" />
-                      </h3>
-                      <p className="text-xs text-mute font-medium">{p.title}</p>
-                      <div className="flex items-center gap-2 text-xs text-brand-green font-bold pt-0.5">
-                        <Star className="w-3.5 h-3.5 fill-current" /> {p.rating} ({p.reviews} reviews)
-                      </div>
+                      <p className="proposals-name">
+                        {p.name}
+                        <span className="proposals-verified"><ShieldCheck size={11} /> KYC</span>
+                      </p>
+                      <p className="proposals-role">{p.title}</p>
+                      <p style={{ fontSize: 12, color: 'var(--color-steel)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <Star size={11} fill="#f59e0b" style={{ color: '#f59e0b' }} /> {p.rating} ({p.reviews} reviews)
+                      </p>
                     </div>
                   </div>
-
-                  <div className="text-left sm:text-right shrink-0">
-                    <div className="text-xl font-extrabold text-brand-green">{p.bid}</div>
-                    <div className="text-xs text-mute font-bold uppercase tracking-wider">Fixed Bid</div>
+                  <div className="proposals-card-amount">
+                    <p className="proposals-budget">{p.bid}</p>
+                    <p style={{ fontSize: 11, color: 'var(--color-steel)', marginTop: 2 }}>Fixed bid</p>
                   </div>
                 </div>
 
-                <p className="text-xs text-mute leading-relaxed bg-surface-elevated p-4 rounded-xl border border-hairline">
-                  "{p.pitch}"
-                </p>
+                <blockquote className="proposals-pitch">"{p.pitch}"</blockquote>
 
-                <div className="flex items-center justify-between gap-4 pt-2 border-t border-hairline">
-                  <div className="flex flex-wrap gap-2">
-                    {p.skills.map((s) => (
-                      <span key={s} className="px-3 py-1 rounded-full bg-surface-elevated text-brand-green text-xs font-bold border border-hairline">
-                        {s}
-                      </span>
-                    ))}
+                <div className="proposals-card-footer">
+                  <div className="proposals-skills">
+                    {p.skills.map((s) => <span key={s} className="proposals-skill-tag">{s}</span>)}
                   </div>
-
-                  <Link
-                    to="/messages"
-                    className="bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-6 py-2.5 rounded-full shadow-md shadow-brand-green/20 hover:scale-[1.03] transition-all"
-                  >
-                    Hire & Award Contract
+                  <Link to="/messages" className="proposals-btn-primary">
+                    Hire & award contract <ArrowRight size={13} />
                   </Link>
                 </div>
               </div>
@@ -273,79 +228,59 @@ export const ClientProposalsPage: React.FC = () => {
 
       </main>
 
-      {/* AUTOMATED WORK-FOR-HIRE LEGAL CONTRACT & ESCROW RELEASE MODAL */}
-      {showLegalContractModal && selectedMilestone && (
-        <div className="proposals-modal-overlay">
-          <div className="proposals-modal-content">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-hairline pb-4">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-brand-green uppercase tracking-wider">
-                  <Scale className="w-4 h-4" /> Legal Work-for-Hire Agreement
-                </div>
-                <h3 className="text-xl font-extrabold text-ink">Automated IP Transfer & Escrow Release</h3>
+      {/* ---- Modal ---- */}
+      {modalMilestone && (
+        <div className="proposals-modal-overlay" onClick={() => setModalMilestone(null)}>
+          <div className="proposals-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
+                  <Scale size={12} style={{ display: 'inline', marginRight: 4 }} />Work-for-Hire Agreement
+                </p>
+                <h3 className="proposals-modal-title">Automated IP Transfer & Escrow Release</h3>
               </div>
-              <button onClick={() => setShowLegalContractModal(false)} className="p-2 rounded-full text-mute hover:text-ink">
-                <X className="w-5 h-5" />
+              <button onClick={() => setModalMilestone(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-steel)', padding: 4 }}>
+                <X size={18} />
               </button>
             </div>
 
-            {/* Legal Contract Document Box */}
-            <div className="space-y-4 text-xs text-mute leading-relaxed bg-surface-elevated p-5 rounded-xl border border-hairline max-h-[300px] overflow-y-auto font-mono">
-              <div className="flex items-center justify-between border-b border-hairline pb-2 font-sans font-bold text-ink">
-                <span>CONTRACT AGREEMENT ID: IP-TRANSFER-2026-88192</span>
-                <span className="text-brand-green">STATUS: EXECUTABLE</span>
+            {/* Contract doc */}
+            <div className="proposals-contract-doc">
+              <div style={{ borderBottom: '1px solid var(--color-hairline)', paddingBottom: 8, marginBottom: 12, fontFamily: 'var(--font-sans)', display: 'flex', justifyContent: 'space-between' }}>
+                <strong>CONTRACT ID: IP-TRANSFER-2026-88192</strong>
+                <span style={{ color: '#1aae39' }}>STATUS: EXECUTABLE</span>
               </div>
-
-              <p className="text-ink font-bold">1. PARTIES & ENGAGEMENT</p>
-              <p>
-                This Work-for-Hire Assignment Agreement is executed by and between <strong>Acme AI Systems (Client)</strong> and <strong>{selectedMilestone.developerName} (Developer)</strong> upon release of escrow funds in the amount of <strong>{selectedMilestone.milestoneBudget}</strong>.
-              </p>
-
-              <p className="text-ink font-bold">2. INTELLECTUAL PROPERTY & COPYRIGHT ASSIGNMENT</p>
-              <p>
-                Developer hereby irrevocably assigns, transfers, and conveys to Client 100% exclusive ownership of all right, title, and interest in and to the software deliverables, source code commits ({selectedMilestone.commitHash}), Pull Request deliverables ({selectedMilestone.prUrl}), patents, and derivative works.
-              </p>
-
-              <p className="text-ink font-bold">3. 0% DEVELOPER COMMISSION GUARANTEE</p>
-              <p>
-                Zapmancer certifies that 100% of the milestone funds ({selectedMilestone.milestoneBudget}) will be transferred directly to Developer with $0 platform commission deductions.
-              </p>
+              <p><strong>1. PARTIES & ENGAGEMENT</strong></p>
+              <p>This Work-for-Hire Agreement is executed between <strong>Acme AI Systems (Client)</strong> and <strong>{modalMilestone.developerName} (Developer)</strong> upon release of escrow funds of <strong>{modalMilestone.milestoneBudget}</strong>.</p>
+              <br />
+              <p><strong>2. INTELLECTUAL PROPERTY ASSIGNMENT</strong></p>
+              <p>Developer irrevocably assigns to Client 100% ownership of all deliverables, source code ({modalMilestone.commitHash}), and derivative works submitted via {modalMilestone.prUrl}.</p>
+              <br />
+              <p><strong>3. 0% DEVELOPER COMMISSION GUARANTEE</strong></p>
+              <p>Zapmancer certifies that 100% of {modalMilestone.milestoneBudget} transfers directly to Developer with $0 platform deductions.</p>
             </div>
 
-            {/* Stamp Receipt Box */}
+            {/* Stamp */}
             <div className="proposals-contract-stamp">
-              <p className="font-bold uppercase tracking-wider text-brand-green">Digital Transfer Signature Receipt</p>
-              <p className="text-ink">Client Legal Entity: <strong>Acme AI Systems (Delaware C-Corp)</strong></p>
-              <p className="text-ink">Developer Recipient: <strong>{selectedMilestone.developerName}</strong></p>
-              <p className="text-mute">Timestamp: <strong>{new Date().toUTCString()}</strong></p>
+              <p style={{ fontWeight: 700, color: 'var(--color-primary)', fontFamily: 'var(--font-sans)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Digital Transfer Receipt</p>
+              <p><strong>Client:</strong> Acme AI Systems (Delaware C-Corp)</p>
+              <p><strong>Developer:</strong> {modalMilestone.developerName}</p>
+              <p style={{ color: 'var(--color-steel)' }}><strong>Timestamp:</strong> {new Date().toUTCString()}</p>
             </div>
 
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-3 pt-2 border-t border-hairline">
-              <button
-                type="button"
-                onClick={() => setShowLegalContractModal(false)}
-                className="px-5 py-2.5 rounded-full bg-surface-elevated hover:bg-surface-modal text-ink font-bold text-xs uppercase"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmEscrowRelease}
-                className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-6 py-2.5 rounded-full hover:scale-[1.03] transition-all shadow-md shadow-brand-green/20"
-              >
-                <CheckCircle2 className="w-4 h-4" /> Sign Contract & Release Escrow Now
-              </button>
-            </div>
-
-            {contractSignedSuccess && (
-              <div className="p-3 rounded-xl bg-brand-green/10 border border-brand-green/30 text-brand-green text-xs font-bold text-center flex items-center justify-center gap-2">
-                <Check className="w-4 h-4" /> Legal IP Transfer Executed & Funds Released!
+            {success && (
+              <div className="proposals-success-banner">
+                <Check size={16} /> Legal IP transfer executed & funds released!
               </div>
             )}
 
+            {/* Actions */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, paddingTop: 4, borderTop: '1px solid var(--color-hairline)' }}>
+              <button onClick={() => setModalMilestone(null)} className="proposals-btn-secondary">Cancel</button>
+              <button onClick={confirmRelease} className="proposals-btn-primary">
+                <CheckCircle2 size={14} /> Sign & release escrow
+              </button>
+            </div>
           </div>
         </div>
       )}

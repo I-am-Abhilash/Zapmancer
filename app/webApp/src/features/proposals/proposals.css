@@ -1,34 +1,473 @@
-/* Notion Proposals & Escrow Milestones */
+/* Proposals Page — notion-DESIGN.md compliant */
 
 .proposals-page {
-  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .proposals-main {
-  @apply flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+  flex: 1;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---- Page header ---- */
+.proposals-header {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.proposals-page-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+.proposals-page-sub {
+  font-size: 14px;
+  color: var(--color-steel);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* ---- Tab pills ---- */
+.proposals-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.proposals-tab {
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--color-hairline);
+  color: var(--color-steel);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.proposals-tab.active {
+  background-color: var(--color-ink-deep);
+  color: #ffffff;
+  border-color: var(--color-ink-deep);
+}
+
+/* ---- Info banner ---- */
+.proposals-info-banner {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.proposals-info-banner-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.proposals-info-banner-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-top: 2px;
+}
+
+.proposals-info-banner-sub {
+  font-size: 13px;
+  color: var(--color-steel);
+  margin-top: 2px;
+}
+
+.proposals-info-banner-stat {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+/* ---- Milestone / Proposal list ---- */
+.proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-hairline);
 }
 
 .proposals-card {
-  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-4 transition-colors;
+  background-color: var(--color-canvas);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .proposals-card:hover {
-  border-color: var(--color-primary);
+  background-color: var(--color-surface);
 }
 
-/* Legal Work-for-Hire Contract Modal Drawer */
+/* ---- Card top row ---- */
+.proposals-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.proposals-card-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.proposals-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid var(--color-hairline);
+  flex-shrink: 0;
+}
+
+.proposals-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.proposals-role {
+  font-size: 13px;
+  color: var(--color-steel);
+  margin-top: 2px;
+}
+
+.proposals-project-ref {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 4px;
+}
+
+.proposals-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--color-card-tint-mint);
+  color: #1aae39;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+[data-theme="dark"] .proposals-verified {
+  background-color: #0d2e16;
+  color: #4ade80;
+}
+
+.proposals-card-amount {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.proposals-budget {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
+}
+
+.proposals-status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.proposals-status-pending {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+[data-theme="dark"] .proposals-status-pending {
+  background-color: #2e2005;
+  color: #fbbf24;
+}
+
+.proposals-status-released {
+  background-color: var(--color-card-tint-mint);
+  color: #1a5c2a;
+}
+
+[data-theme="dark"] .proposals-status-released {
+  background-color: #0d2e16;
+  color: #4ade80;
+}
+
+/* ---- Deliverables grid ---- */
+.proposals-deliverables {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .proposals-deliverables {
+    grid-template-columns: 1fr;
+  }
+}
+
+.proposals-deliverable-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-steel);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.proposals-deliverable-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.proposals-deliverable-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.proposals-deliverable-link:hover {
+  text-decoration: underline;
+}
+
+/* ---- Card footer ---- */
+.proposals-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.proposals-footer-meta {
+  font-size: 13px;
+  color: var(--color-steel);
+}
+
+/* Buttons */
+.proposals-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.proposals-btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.proposals-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-hairline-strong);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.proposals-btn-secondary:hover {
+  background-color: var(--color-surface);
+}
+
+/* ---- Pitch quote ---- */
+.proposals-pitch {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-steel);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 14px;
+}
+
+/* ---- Skill tags ---- */
+.proposals-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.proposals-skill-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background-color: var(--color-card-tint-sky);
+  color: var(--color-link-blue);
+}
+
+[data-theme="dark"] .proposals-skill-tag {
+  background-color: #0d1e38;
+  color: #60a5fa;
+}
+
+/* ---- Success inline ---- */
+.proposals-released-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a5c2a;
+  background-color: var(--color-card-tint-mint);
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(26,174,57,0.2);
+}
+
+[data-theme="dark"] .proposals-released-badge {
+  background-color: #0d2e16;
+  color: #4ade80;
+}
+
+/* ---- Modal ---- */
 .proposals-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.65);
-  @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
 }
 
 .proposals-modal-content {
-  @apply bg-surface border border-hairline rounded-xl p-6 sm:p-8 max-w-2xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto text-ink;
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.proposals-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
+}
+
+.proposals-contract-doc {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  line-height: 1.7;
+  color: var(--color-steel);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.proposals-contract-doc strong {
+  color: var(--color-ink);
 }
 
 .proposals-contract-stamp {
   background-color: var(--color-card-tint-lavender);
-  border-color: var(--color-primary);
-  color: var(--color-primary-deep);
-  @apply p-4 rounded-xl border font-mono text-xs space-y-1;
+  border: 1px solid rgba(123, 63, 242, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-ink);
+}
+
+.proposals-success-banner {
+  background-color: var(--color-card-tint-mint);
+  border: 1px solid rgba(26,174,57,0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a5c2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }

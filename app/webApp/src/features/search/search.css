@@ -1,82 +1,320 @@
-/* Notion Search & Talent Discovery */
+/* Search Page — notion-DESIGN.md compliant */
 
 .search-page {
-  @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .search-main {
-  @apply flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
+  flex: 1;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
 }
 
+/* ---- Header ---- */
 .search-header {
-  @apply space-y-1 border-b border-hairline pb-6;
-}
-
-.search-badge {
-  color: var(--color-primary);
-  @apply inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-hairline);
+  margin-bottom: 24px;
 }
 
 .search-title {
-  @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-ink;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--color-ink);
+  line-height: 1.2;
 }
 
 .search-subtitle {
-  @apply text-sm text-mute;
+  font-size: 14px;
+  color: var(--color-steel);
+  margin-top: 4px;
+  line-height: 1.5;
 }
 
-.search-filter-card {
-  @apply bg-surface p-6 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6;
+/* ---- Filters ---- */
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.search-input-wrap {
+  position: relative;
+}
+
+.search-input-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-steel);
 }
 
 .search-input {
-  @apply w-full pl-12 pr-4 py-3 rounded-lg border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none transition-colors font-medium;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px 0 38px;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: 8px;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--color-steel);
 }
 
 .search-input:focus {
   border-color: var(--color-primary);
+  border-width: 2px;
 }
 
-/* Talent Card Box */
-.talent-card-box {
-  @apply bg-surface p-6 rounded-xl border border-hairline hover:bg-surface-elevated transition-all duration-200 space-y-5 shadow-sm dark:shadow-none flex flex-col justify-between;
+/* Category pill tabs */
+.search-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.talent-card-box:hover {
-  border-color: var(--color-primary);
+.search-cat {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--color-hairline);
+  color: var(--color-steel);
+  background-color: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.search-cat.active {
+  background-color: var(--color-ink-deep);
+  color: #ffffff;
+  border-color: var(--color-ink-deep);
+}
+
+/* ---- Count ---- */
+.search-count {
+  font-size: 13px;
+  color: var(--color-steel);
+  margin-bottom: 12px;
+}
+
+/* ---- Talent list ---- */
+.talent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-hairline);
+}
+
+.talent-card {
+  background-color: var(--color-canvas);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.talent-card:hover {
+  background-color: var(--color-surface);
+}
+
+/* Top row */
+.talent-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.talent-card-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .talent-avatar {
-  border-color: var(--color-primary);
-  @apply w-14 h-14 rounded-full object-cover border-2 shadow-sm shrink-0;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid var(--color-hairline);
+  flex-shrink: 0;
 }
 
 .talent-name {
-  @apply font-extrabold text-lg text-ink transition-colors;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
 }
 
 .talent-name:hover {
   color: var(--color-primary);
 }
 
-.talent-rate {
-  color: var(--color-primary);
-  @apply text-xl font-extrabold;
+.talent-title-text {
+  font-size: 13px;
+  color: var(--color-steel);
+  margin-top: 2px;
 }
 
-.talent-skill-chip {
+.talent-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--color-steel);
+  margin-top: 4px;
+}
+
+.talent-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--color-card-tint-mint);
+  color: #1aae39;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+[data-theme="dark"] .talent-verified {
+  background-color: #0d2e16;
+  color: #4ade80;
+}
+
+.talent-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* Rate column */
+.talent-rate-col {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.talent-rate {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.2px;
+}
+
+.talent-success {
+  font-size: 11px;
+  color: #1aae39;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+/* Bio */
+.talent-bio {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-steel);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer row */
+.talent-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.talent-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.talent-skill-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
   background-color: var(--color-card-tint-sky);
   color: var(--color-link-blue);
-  border-color: rgba(0, 117, 222, 0.2);
-  @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold border;
+}
+
+[data-theme="dark"] .talent-skill-tag {
+  background-color: #0d1e38;
+  color: #60a5fa;
+}
+
+.talent-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.talent-link-secondary {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-steel);
+  text-decoration: none;
+}
+
+.talent-link-secondary:hover {
+  color: var(--color-ink);
 }
 
 .talent-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background-color: var(--color-primary);
   color: #ffffff;
-  @apply inline-flex items-center gap-1.5 text-white text-xs font-semibold uppercase tracking-[0.05em] px-5 py-2.5 rounded-md transition-all cursor-pointer shadow-sm;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .talent-btn-primary:hover {
   background-color: var(--color-primary-hover);
+}
+
+/* Empty */
+.search-empty {
+  text-align: center;
+  padding: 64px 0;
+  font-size: 14px;
+  color: var(--color-steel);
 }
