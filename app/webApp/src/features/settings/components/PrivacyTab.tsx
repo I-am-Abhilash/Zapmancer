@@ -1,136 +1,98 @@
 import React, { useState } from 'react';
-import { Eye, Download, AlertTriangle, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import '../settings.css';
+import { Eye, Download, AlertTriangle, CheckCircle2, Check } from 'lucide-react';
 
 export const PrivacyTab: React.FC = () => {
   const [visibility, setVisibility] = useState<'public' | 'clients_only' | 'private'>('public');
-  const [isExporting, setIsExporting] = useState(false);
-  const [exportComplete, setExportComplete] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportDone, setExportDone] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const handleExportData = () => {
-    setIsExporting(true);
-    setTimeout(() => {
-      setIsExporting(false);
-      setExportComplete(true);
-    }, 1500);
+  const handleExport = () => {
+    setExporting(true);
+    setTimeout(() => { setExporting(false); setExportDone(true); }, 1500);
   };
 
+  const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+
+  const VISIBILITY_OPTIONS = [
+    { id: 'public' as const, label: 'Public', desc: 'Visible to all marketplace clients and indexed by search engines.' },
+    { id: 'clients_only' as const, label: 'Logged-in clients only', desc: 'Hidden from search engines. Only verified Zapmancer clients can view your profile.' },
+    { id: 'private' as const, label: 'Private', desc: 'Hidden from all searches. Only clients you apply to directly can view your profile.' },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Profile Privacy & Search Visibility */}
-      <div className="bg-surface p-8 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-ink flex items-center gap-2">
-            <Eye className="w-5 h-5 text-brand-green" /> Profile Privacy & Discovery
-          </h2>
-          <p className="text-xs text-mute mt-1">Control who can discover your freelancer profile and view project proposals.</p>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-        <div className="space-y-3">
-          <label
-            onClick={() => setVisibility('public')}
-            className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${
-              visibility === 'public'
-                ? 'bg-surface-elevated border-brand-green'
-                : 'bg-surface border-hairline hover:bg-surface-elevated'
-            }`}
-          >
-            <div>
-              <div className="text-sm font-bold text-ink">🌐 Public (Recommended)</div>
-              <div className="text-xs text-mute">Visible to all marketplace clients and indexed by search engines.</div>
-            </div>
-            <input type="radio" name="visibility" checked={visibility === 'public'} onChange={() => {}} className="accent-brand-green" />
-          </label>
-
-          <label
-            onClick={() => setVisibility('clients_only')}
-            className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${
-              visibility === 'clients_only'
-                ? 'bg-surface-elevated border-brand-green'
-                : 'bg-surface border-hairline hover:bg-surface-elevated'
-            }`}
-          >
-            <div>
-              <div className="text-sm font-bold text-ink">🔒 Logged-in Zapmancer Clients Only</div>
-              <div className="text-xs text-mute">Hidden from search engines; only verified clients on Zapmancer can view your profile.</div>
-            </div>
-            <input type="radio" name="visibility" checked={visibility === 'clients_only'} onChange={() => {}} className="accent-brand-green" />
-          </label>
-
-          <label
-            onClick={() => setVisibility('private')}
-            className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${
-              visibility === 'private'
-                ? 'bg-surface-elevated border-brand-green'
-                : 'bg-surface border-hairline hover:bg-surface-elevated'
-            }`}
-          >
-            <div>
-              <div className="text-sm font-bold text-ink">🕵️ Private & Stealth Mode</div>
-              <div className="text-xs text-mute">Hidden from all searches. Only clients you submit direct proposals to can view your profile.</div>
-            </div>
-            <input type="radio" name="visibility" checked={visibility === 'private'} onChange={() => {}} className="accent-brand-green" />
-          </label>
-        </div>
-      </div>
-
-      {/* GDPR Data Export */}
-      <div className="bg-surface p-8 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-ink flex items-center gap-2">
-            <Download className="w-5 h-5 text-brand-green" /> GDPR Data Export
-          </h2>
-          <p className="text-xs text-mute mt-1">Download a complete JSON archive of your account profile, proposal history, and invoices.</p>
-        </div>
-
-        <div className="p-4 rounded-xl bg-surface-elevated border border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Visibility */}
+      <div className="settings-section">
+        <div className="settings-section-header">
+          <Eye size={15} style={{ color: 'var(--color-steel)' }} />
           <div>
-            <div className="text-sm font-bold text-ink flex items-center gap-2">
-              <FileText className="w-4 h-4 text-brand-green" /> Complete Profile & Escrow Transaction Record
-            </div>
-            <div className="text-xs text-mute">Package includes user metadata, proposal logs, and payout ledger receipts.</div>
+            <p className="settings-section-title">Profile visibility</p>
+            <p className="settings-section-sub">Control who can discover your freelancer profile.</p>
           </div>
-
-          <button
-            onClick={handleExportData}
-            disabled={isExporting}
-            className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.05em] transition-all hover:scale-[1.04] shrink-0"
-          >
-            {isExporting ? (
-              'Generating Archive...'
-            ) : exportComplete ? (
-              <>
-                <CheckCircle2 className="w-4 h-4" /> Download Ready (.ZIP)
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" /> Export My Data
-              </>
-            )}
-          </button>
+        </div>
+        <div className="settings-section-body">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {VISIBILITY_OPTIONS.map((o) => (
+              <div
+                key={o.id}
+                className={`settings-radio-row${visibility === o.id ? ' active' : ''}`}
+                onClick={() => setVisibility(o.id)}
+              >
+                <div>
+                  <p className="settings-radio-title">{o.label}</p>
+                  <p className="settings-radio-desc">{o.desc}</p>
+                </div>
+                <input type="radio" name="visibility" readOnly checked={visibility === o.id} style={{ accentColor: 'var(--color-primary)' }} />
+              </div>
+            ))}
+          </div>
+          {saved && <div className="settings-toast"><Check size={14} /> Visibility preference saved.</div>}
+          <div className="settings-btn-row">
+            <button className="settings-btn-primary" onClick={save}>Save visibility</button>
+          </div>
         </div>
       </div>
 
-      {/* Danger Zone: Account Closure */}
-      <div className="bg-surface p-8 rounded-xl border border-red-500/30 space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-red-500 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5" /> Danger Zone: Account Deletion
-          </h2>
-          <p className="text-xs text-mute mt-1">Permanently close your Zapmancer freelancer account and remove your active bounties.</p>
+      {/* Data export */}
+      <div className="settings-section">
+        <div className="settings-section-header">
+          <Download size={15} style={{ color: 'var(--color-steel)' }} />
+          <div>
+            <p className="settings-section-title">Data export (GDPR)</p>
+            <p className="settings-section-sub">Download a complete JSON archive of your account, proposals, and invoices.</p>
+          </div>
         </div>
-
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 space-y-2">
-          <p className="font-bold">⚠️ Account deletion guard checks:</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>You must have $0.00 pending escrow wallet balances.</li>
-            <li>No active milestone contracts or pending disputes can be in progress.</li>
-          </ul>
+        <div className="settings-section-body">
+          <div className="settings-list-row">
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)' }}>Complete profile & escrow transaction record</p>
+              <p style={{ fontSize: 12, color: 'var(--color-steel)', marginTop: 2 }}>Includes user metadata, proposal logs, and payout ledger receipts.</p>
+            </div>
+            <button className="settings-btn-secondary" onClick={handleExport} disabled={exporting}>
+              {exporting ? 'Generating...' : exportDone ? <><CheckCircle2 size={14} /> Download ready</> : <><Download size={14} /> Export</>}
+            </button>
+          </div>
         </div>
-
-        <button className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-[0.05em] transition-all hover:scale-[1.04]">
-          Request Account Deletion
-        </button>
       </div>
+
+      {/* Danger zone */}
+      <div className="settings-section-danger">
+        <div className="settings-danger-header">
+          <p className="settings-danger-title"><AlertTriangle size={14} /> Danger zone</p>
+        </div>
+        <div className="settings-danger-body">
+          <div className="settings-note-warn">
+            <strong>Account deletion guard:</strong> You must have $0.00 pending escrow and no active milestone contracts before requesting deletion.
+          </div>
+          <div>
+            <button className="settings-btn-danger">Request account deletion</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
