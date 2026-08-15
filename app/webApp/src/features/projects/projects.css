@@ -1,6 +1,4 @@
-/* ==========================================================================
-   FEATURE MODULE: PROJECTS & BOUNTIES
-   ========================================================================== */
+/* Notion Projects & Hire Contracts */
 
 .projects-page {
   @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
@@ -15,7 +13,8 @@
 }
 
 .projects-badge {
-  @apply inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase;
+  color: var(--color-primary);
+  @apply inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase;
 }
 
 .projects-title {
@@ -27,8 +26,13 @@
 }
 
 .projects-btn-primary {
-  @apply flex items-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-6 py-3.5 rounded-full transition-all hover:scale-[1.04] shrink-0;
-  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  @apply flex items-center gap-2 font-semibold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-md transition-all shrink-0 cursor-pointer shadow-sm;
+}
+
+.projects-btn-primary:hover {
+  background-color: var(--color-primary-hover);
 }
 
 /* Filter Card */
@@ -37,20 +41,28 @@
 }
 
 .projects-search-input {
-  @apply w-full pl-12 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors font-medium;
+  @apply w-full pl-12 pr-4 py-3 rounded-md border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none transition-colors font-medium;
+}
+
+.projects-search-input:focus {
+  border-color: var(--color-primary);
 }
 
 .projects-select {
-  @apply w-full sm:w-auto px-5 py-3 rounded-full border border-hairline bg-surface-elevated text-xs font-bold uppercase tracking-[0.05em] text-ink focus:outline-none focus:border-brand-green cursor-pointer;
+  @apply w-full sm:w-auto px-5 py-3 rounded-md border border-hairline bg-surface-elevated text-xs font-semibold uppercase tracking-[0.05em] text-ink focus:outline-none cursor-pointer;
+}
+
+.projects-select:focus {
+  border-color: var(--color-primary);
 }
 
 /* Project Card Box */
 .project-card-box {
-  @apply bg-surface p-6 sm:p-7 rounded-xl border border-hairline hover:bg-surface-elevated hover:scale-[1.005] transition-all duration-200 space-y-5 shadow-sm dark:shadow-none relative;
+  @apply bg-surface p-6 sm:p-7 rounded-xl border border-hairline hover:bg-surface-elevated transition-all duration-200 space-y-5 shadow-sm dark:shadow-none relative;
 }
 
 .project-card-box:hover {
-  border-color: rgba(29, 185, 84, 0.4);
+  border-color: var(--color-primary);
 }
 
 .project-card-title {
@@ -58,18 +70,27 @@
 }
 
 .project-card-box:hover .project-card-title {
-  color: var(--color-brand-green);
+  color: var(--color-primary);
 }
 
 .project-card-budget {
-  @apply text-2xl font-extrabold text-brand-green tracking-tight;
+  color: var(--color-primary);
+  @apply text-2xl font-extrabold tracking-tight;
 }
 
 .project-card-tag {
-  @apply px-3.5 py-1 rounded-full bg-surface-elevated text-brand-green text-xs font-bold border border-hairline;
+  background-color: var(--color-card-tint-sky);
+  color: var(--color-link-blue);
+  border-color: rgba(0, 117, 222, 0.2);
+  @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold border;
 }
 
 .project-card-cta {
-  @apply inline-flex items-center justify-center gap-1.5 bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-6 py-2.5 rounded-full hover:scale-[1.04] transition-all;
-  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  @apply inline-flex items-center justify-center gap-1.5 text-white text-xs font-semibold uppercase tracking-[0.05em] px-6 py-2.5 rounded-md transition-all cursor-pointer shadow-sm;
+}
+
+.project-card-cta:hover {
+  background-color: var(--color-primary-hover);
 }

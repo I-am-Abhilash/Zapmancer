@@ -14,11 +14,10 @@ interface TabsProps<T extends string> {
 }
 
 /**
- * Green Deck Pill Tab Navigation Component
- * Adheres strictly to green-deck-DESIGN.md:
- * - Pill-shaped (rounded-full / 9999px radius) for horizontal, rounded-xl for vertical sidebar
- * - Level 2 surface background (bg-surface-elevated) for container & inactive tabs
- * - Selected state: High contrast active accent (bg-brand-green text-white)
+ * Notion Design System Pill & Segmented Tab Navigation Component
+ * Adheres strictly to notion-DESIGN.md:
+ * - Pill-tab: rounded-full, hairline border, active state (bg-primary text-white or bg-ink-deep text-on-dark)
+ * - Vertical sidebar: rounded-lg container, rounded-md items with primary focus highlight
  */
 export function Tabs<T extends string>({
   tabs,
@@ -28,7 +27,7 @@ export function Tabs<T extends string>({
 }: TabsProps<T>) {
   if (orientation === 'vertical') {
     return (
-      <nav className="flex flex-col p-2 rounded-2xl bg-surface-elevated border border-hairline gap-1.5 w-full">
+      <nav className="flex flex-col p-2 rounded-xl bg-surface border border-hairline gap-1 w-full">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -36,13 +35,13 @@ export function Tabs<T extends string>({
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.05em] transition-all duration-200 w-full text-left ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-150 w-full text-left cursor-pointer ${
                 isActive
-                  ? 'bg-brand-green text-white shadow-md shadow-brand-green/20'
-                  : 'text-mute hover:text-ink hover:bg-surface-modal'
+                  ? 'bg-primary text-white font-semibold shadow-sm'
+                  : 'text-steel hover:text-ink hover:bg-surface-elevated'
               }`}
             >
-              {Icon && <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-mute'}`} />}
+              {Icon && <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-steel'}`} />}
               <span className="truncate">{tab.label}</span>
             </button>
           );
@@ -52,7 +51,7 @@ export function Tabs<T extends string>({
   }
 
   return (
-    <div className="inline-flex p-1.5 rounded-full bg-surface-elevated border border-hairline gap-1.5 overflow-x-auto max-w-full no-scrollbar">
+    <div className="inline-flex p-1 rounded-full bg-surface border border-hairline gap-1 overflow-x-auto max-w-full no-scrollbar">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
@@ -60,13 +59,13 @@ export function Tabs<T extends string>({
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-[0.05em] transition-all duration-200 whitespace-nowrap ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-150 whitespace-nowrap cursor-pointer ${
               isActive
-                ? 'bg-brand-green text-white shadow-md shadow-brand-green/20 scale-[1.02]'
-                : 'text-mute hover:text-ink hover:bg-surface-modal'
+                ? 'bg-primary text-white font-semibold shadow-sm'
+                : 'text-steel hover:text-ink hover:bg-surface-elevated'
             }`}
           >
-            {Icon && <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-mute'}`} />}
+            {Icon && <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-steel'}`} />}
             {tab.label}
           </button>
         );

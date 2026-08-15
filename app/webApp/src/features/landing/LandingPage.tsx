@@ -3,12 +3,12 @@ import './landing.css';
 import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, ArrowRight, Code, Cpu, Smartphone, Layers, CheckCircle2, Lock, Sparkles, Scale, GitBranch, ChevronDown, ChevronUp, Palette, Terminal, Globe, Monitor, Copy, Check, Sliders, HelpCircle, Download, Server, Laptop } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Code, Cpu, Smartphone, Layers, CheckCircle2, Lock, Sparkles, Scale, GitBranch, ChevronDown, ChevronUp, Palette, Terminal, Globe, Monitor, Copy, Check, Sliders, HelpCircle, Download, Server, Laptop, PenTool, Megaphone, TrendingUp, Paintbrush, Database, Bot, Users, Building2, Clock, CheckSquare, Zap } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [calcAmount, setCalcAmount] = useState<number>(5000);
-  const [activeCodeTab, setActiveCodeTab] = useState<'kmp' | 'ktor' | 'escrow'>('kmp');
+  const [activeCodeTab, setActiveCodeTab] = useState<'code' | 'ai' | 'design'>('code');
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   // Fee calculation logic
@@ -17,172 +17,110 @@ export const LandingPage: React.FC = () => {
   const freelancerPayout = calcAmount * 0.76; // 24% fee
   const developerSavings = calcAmount - upworkPayout;
 
-  const multiplatformPlatforms = [
-    {
-      title: 'Android Native Client',
-      badge: 'Compose Multiplatform',
-      desc: 'Native Android app powered by Compose Material 3 adaptive UI layouts and KMP shared domain models.',
-      icon: Smartphone
-    },
-    {
-      title: 'iOS Native Client',
-      badge: 'Swift & KMP Shared',
-      desc: 'SwiftUI and Compose Multiplatform iOS client with SKie interop for native iOS performance.',
-      icon: Smartphone
-    },
-    {
-      title: 'Web & Desktop OS',
-      badge: 'React 19 & Wasm',
-      desc: 'Desktop web platform for Company OS team management, task boards, and Instant Dev Hires.',
-      icon: Laptop
-    },
-    {
-      title: 'Ktor Backend Cluster',
-      badge: 'Ktor 3.0 & Gorse AI',
-      desc: 'Asynchronous backend microservice handling WebSockets, escrow locks, and Gorse AI talent matching.',
-      icon: Server
-    }
-  ];
-
   const categories = [
-    { name: 'Kotlin & KMP Core', count: '142 Open Projects', icon: Code },
-    { name: 'Mobile (Android & iOS)', count: '215 Open Projects', icon: Smartphone },
-    { name: 'Full-Stack & Ktor', count: '189 Open Projects', icon: Layers },
-    { name: 'AI Systems & Gorse', count: '94 Open Projects', icon: Cpu },
-    { name: 'WebAssembly (Wasm)', count: '86 Open Projects', icon: Globe },
-    { name: 'Desktop & Compose UI', count: '112 Open Projects', icon: Monitor },
-    { name: 'UI/UX & Design Tokens', count: '78 Open Projects', icon: Palette },
-    { name: 'DevOps & Backend Services', count: '65 Open Projects', icon: Terminal },
-  ];
-
-  const featuredProjects = [
-    {
-      id: '1',
-      title: 'Compose Multiplatform Desktop App for Ktor Analytics',
-      budget: '$3,200',
-      budgetType: 'Fixed Milestone',
-      client: 'Acme AI Systems',
-      posted: '2 hours ago',
-      tags: ['Compose', 'Ktor', 'Desktop', 'SQLDelight']
-    },
-    {
-      id: '2',
-      title: 'High-Concurrency PostgreSQL Exposed ORM Migration',
-      budget: '$1,800',
-      budgetType: 'Fixed Milestone',
-      client: 'Fintech Core',
-      posted: '5 hours ago',
-      tags: ['PostgreSQL', 'Exposed', 'Ktor', 'HikariCP']
-    },
-    {
-      id: '3',
-      title: 'WebAssembly Wasm Component for Audio Processing',
-      budget: '$4,500',
-      budgetType: 'Fixed Milestone',
-      client: 'AudioCraft Labs',
-      posted: '1 day ago',
-      tags: ['Wasm', 'Kotlin', 'WebAudio', 'C++']
-    },
+    { name: 'Full-Stack & Web Dev', count: '342 Open Bounties', icon: Code, tint: 'landing-card-mint' },
+    { name: 'AI Builders & Agents', count: '215 Open Bounties', icon: Bot, tint: 'landing-card-lavender' },
+    { name: 'UI/UX & Product Design', count: '189 Open Bounties', icon: Palette, tint: 'landing-card-sky' },
+    { name: 'Mobile (iOS & Android)', count: '194 Open Bounties', icon: Smartphone, tint: 'landing-card-peach' },
+    { name: 'DevOps & Cloud Systems', count: '126 Open Bounties', icon: Terminal, tint: 'landing-card-rose' },
+    { name: 'Data Engineering & Analytics', count: '112 Open Bounties', icon: Database, tint: 'landing-card-mint' },
+    { name: 'Technical Writing & Content', count: '78 Open Bounties', icon: PenTool, tint: 'landing-card-sky' },
+    { name: 'Growth & Digital Marketing', count: '95 Open Bounties', icon: TrendingUp, tint: 'landing-card-peach' },
   ];
 
   const paymentSteps = [
     {
       step: '01',
-      title: 'Client Milestone Escrow Lock',
-      desc: 'Before engineering work starts, the client deposits the milestone budget into a secure escrow account (Stripe / USDC).'
+      title: 'Company Milestone Escrow Deposit',
+      desc: 'Before project work starts, the company deposits the milestone budget into a secure escrow account (Stripe / USDC).'
     },
     {
       step: '02',
-      title: 'Code Delivery & Review',
-      desc: 'The engineer builds the feature, submits PR deliverables, and provides live demonstration build artifacts.'
+      title: 'Deliverable Submission & Review',
+      desc: 'The freelancer or employee builds the deliverable, submits work artifacts, and provides live demonstration links.'
     },
     {
       step: '03',
-      title: 'Instant Release & IP Transfer',
-      desc: 'Upon client sign-off, funds release immediately to the developer with automated legal IP copyright transfer.'
+      title: 'Instant Payout & Legal IP Transfer',
+      desc: 'Upon company sign-off, funds release immediately to the worker with automated legal Work-for-Hire copyright transfer.'
     }
   ];
 
   const codeSnippets = {
-    kmp: `// Shared Kotlin Multiplatform Wallet Repository
-expect class PlatformWalletContext {
-    val platformName: String
-}
+    code: `// Universal API Microservice & WebSocket Event Router
+export async function releaseEscrowMilestone(req: MilestoneRequest) {
+  const contract = await db.contracts.findUnique({ id: req.contractId });
+  
+  if (contract.status === 'DELIVERABLE_SUBMITTED') {
+    await stripe.transfers.create({
+      amount: contract.amount,
+      currency: 'usd',
+      destination: contract.freelancerStripeId,
+    });
+    
+    return { status: 'FUNDS_RELEASED', ipTransferred: true };
+  }
+}`,
+    ai: `# AI Agent RAG Pipeline & Multi-Modal Matching Engine
+from langchain.vectorstores import PGVector
+from langchain.embeddings import OpenAIEmbeddings
 
-class KmpWalletEngine(
-    private val database: SQLDelightDriver,
-    private val ktorClient: HttpClient
-) {
-    suspend fun releaseEscrowMilestone(contractId: String): PayoutResult {
-        return ktorClient.post("https://api.zapmancer.io/v1/escrow/release") {
-            setBody(EscrowReleaseRequest(contractId, autoIpTransfer = true))
-        }.body()
-    }
-}`,
-    ktor: `// Ktor 3.0 High-Throughput Server WebSockets Router
-fun Application.configureEscrowSockets() {
-    routing {
-        webSocket("/ws/escrow/{contractId}") {
-            val contractId = call.parameters["contractId"]
-            val liveSession = EscrowSessionManager.register(contractId)
-            
-            for (frame in incoming) {
-                if (frame is Frame.Text) {
-                    val event = Json.decodeFromString<MilestoneEvent>(frame.readText())
-                    liveSession.broadcastEvent(event)
-                }
-            }
-        }
-    }
-}`,
-    escrow: `// Automated Legal Copyright & IP Transfer Contract
-data class LegalIpTransferReceipt(
-    val contractId: String,
-    val clientLegalEntity: String,
-    val engineerWalletAddress: String,
-    val escrowPayoutAmount: Double,
-    val copyrightLicense: String = "Exclusive Work-For-Hire Copyright Transfer (MIT/Proprietary)",
-    val timestampUtc: Long = System.currentTimeMillis()
-)`
+def match_talent_for_task(company_task_description: str):
+    embeddings = OpenAIEmbeddings()
+    talent_index = PGVector.from_existing_index(embeddings)
+    
+    matched_freelancers = talent_index.similarity_search(
+        query=company_task_description,
+        k=5,
+        filter={"kyc_verified": True}
+    )
+    return [dev.metadata for dev in matched_freelancers]`,
+    design: `/* Notion Central Design Token Specification */
+:root {
+  --color-primary: #5645d4; /* Signature Notion Purple */
+  --color-brand-navy: #0a1530;
+  --font-family-sans: 'Inter', sans-serif;
+  --radius-[md]: 8px; /* Sober Editorial Geometry */
+}`
   };
 
   const testimonials = [
     {
       name: 'Elena Rostova',
-      role: 'KMP & Wasm Lead Engineer',
+      role: 'Full-Stack & AI Builder',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
       earned: '$68,000+ Earned',
-      quote: 'Zapmancer saved me over $12,000 in platform fees compared to Upwork. The milestone escrow releases are instant and the KMP project quality is unmatched.'
+      quote: 'Zapmancer saved me over $12,000 in platform fees compared to Upwork. The milestone escrow releases are instant and I work with top global companies.'
     },
     {
       name: 'Marcus Vance',
       role: 'CTO at Acme AI Systems',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
       earned: '14 Bounties Funded',
-      quote: 'Finding vetted Kotlin Multiplatform and Ktor backend talent used to take weeks. With Zapmancer’s Gorse AI matching, we awarded our first milestone in 24 hours.'
+      quote: 'Managing our core internal team and instant-hiring expert designers and AI engineers in 1 click has completely streamlined our company operations.'
     }
   ];
 
   const landingFaqs = [
     {
-      q: 'How does Zapmancer handle Intellectual Property (IP) ownership?',
-      a: 'Every completed milestone includes an automated, legally binding Work-for-Hire copyright transfer agreement. Upon escrow funds release, 100% of code IP, patents, and assets transfer exclusively to the client under standard software license terms (or custom NDA).'
+      q: 'Who can join Zapmancer and create a company workspace?',
+      a: 'Zapmancer is open to everyone! Any company, startup, or agency can register a Company Workspace to manage employees and hire freelancers. Any developer, designer, AI builder, marketer, or creator can join to find work or contract with companies.'
     },
     {
-      q: 'Why is Zapmancer Open Source and how does it prevent legal lock-in?',
-      a: 'The core Zapmancer platform is 100% open-source under the Apache 2.0 license. This guarantees total auditability of escrow logic, eliminates vendor lock-in, and allows enterprise teams to self-host private marketplace nodes.'
+      q: 'How does Zapmancer handle Intellectual Property (IP) ownership?',
+      a: 'Every completed milestone includes an automated, legally binding Work-for-Hire copyright transfer agreement. Upon escrow funds release, 100% of project deliverables, design assets, and code IP transfer exclusively to the client company.'
     },
     {
       q: 'What are the exact platform pricing fees?',
-      a: 'Unlike traditional platforms taking a 20% cut from engineers, Zapmancer charges 0% commission to developers. Clients pay a flat 3% to 5% operational cost recovery fee at escrow deposit time.'
+      a: 'Unlike traditional platforms taking a 20% cut from freelancers, Zapmancer charges 0% commission to workers. Companies pay a flat 3% to 5% operational cost recovery fee at milestone deposit time.'
     },
     {
-      q: 'How are dispute resolution and escrow refunds managed?',
-      a: 'If a milestone deliverable does not match agreed contract specs, either party can initiate automated dispute resolution backed by code repository audit logs and milestone verification windows.'
+      q: 'How does Instant Dev & Creator Hiring work for companies?',
+      a: 'Inside your Company Workspace task board, company admins can click "＋ Add Fellow Dev/Creator" to instantly invite top AI-matched talent directly into active project tasks.'
     },
     {
       q: 'Which payment methods are supported for escrow deposits & payouts?',
-      a: 'Zapmancer supports automated Stripe Direct Bank Deposit, Credit Card, and Web3 USDC stablecoin payments directly into developer wallets with zero holding delays.'
+      a: 'Zapmancer supports automated Stripe Direct Bank Deposit (USD/EUR/GBP), Credit Card, and Web3 USDC stablecoin payments directly into worker accounts with zero holding delays.'
     }
   ];
 
@@ -196,88 +134,184 @@ data class LegalIpTransferReceipt(
     <div className="landing-page">
       <Header isLoggedIn={false} />
 
-      {/* Hero Section */}
+      {/* Notion Navy Hero Band */}
       <section className="landing-hero-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-8">
           
           {/* Overline Badge */}
           <div className="landing-hero-badge">
-            <Sparkles className="w-3.5 h-3.5" /> Open-Source KMP Freelance Platform
+            <Sparkles className="w-3.5 h-3.5" /> All-in-One Company OS & Universal Freelance Network
           </div>
 
-          {/* Hero Title */}
+          {/* Notion Hero Display Title */}
           <h1 className="landing-hero-title">
-            Fair, Transparent Escrow Freelancing Built for <span className="text-brand-green">Engineers & Creators</span>
+            Run your company & hire top developers, designers & AI builders.
           </h1>
 
           {/* Subtitle */}
           <p className="landing-hero-subtitle">
-            Zapmancer eliminates high fee extractions (0% developer commission). Work directly with client escrow protection powered by Kotlin Multiplatform.
+            Manage your full-time team tasks and instant-hire expert freelancers with 0% worker commission and 100% milestone escrow protection.
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          {/* Signature Notion Purple Pill Primary CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Link
               to="/signup"
               className="landing-btn-primary"
             >
-              Get Started Free <ArrowRight className="w-4 h-4" />
+              Get Zapmancer free <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               to="/projects"
               className="landing-btn-secondary"
             >
-              Browse Open Bounties
+              Request a demo
             </Link>
           </div>
 
+          {/* Real Embedded Workspace UI Mockup Card (notion-DESIGN.md Spec) */}
+          <div className="pt-8">
+            <div className="landing-workspace-mockup">
+              
+              {/* Mockup Header Bar */}
+              <div className="bg-surface-elevated px-4 py-3 border-b border-hairline flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-red-400"></span>
+                    <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+                    <span className="w-3 h-3 rounded-full bg-green-400"></span>
+                  </div>
+                  <span className="text-xs font-semibold text-mute flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-primary" /> Acme AI Systems Workspace &bull; Sprint Board
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                  <ShieldCheck className="w-4 h-4 text-primary" /> Verified Entity &bull; 0% Fee Escrow Vault Active
+                </div>
+              </div>
+
+              {/* Mockup Content Grid */}
+              <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                {/* Column 1 */}
+                <div className="p-4 rounded-lg bg-surface border border-hairline space-y-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-mute">
+                    <span>Task #102 &bull; AI Agent RAG</span>
+                    <span className="text-primary font-bold">$4,500 Escrow</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-ink">Custom RAG AI Pipeline Integration</h4>
+                  <div className="flex items-center justify-between text-xs text-mute pt-2 border-t border-hairline">
+                    <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> Elena Rostova</span>
+                    <span className="text-primary font-semibold">In Progress</span>
+                  </div>
+                </div>
+
+                {/* Column 2 */}
+                <div className="p-4 rounded-lg bg-surface border border-hairline space-y-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-mute">
+                    <span>Task #108 &bull; Fine-Tuning</span>
+                    <span className="text-primary font-bold">$3,800 Salary</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-ink">Multi-Modal Model Vector Store</h4>
+                  <div className="flex items-center justify-between text-xs text-mute pt-2 border-t border-hairline">
+                    <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> Dr. Lucas Meyer</span>
+                    <span className="text-primary font-semibold">PR Review</span>
+                  </div>
+                </div>
+
+                {/* Column 3 */}
+                <div className="p-4 rounded-lg bg-surface border border-hairline space-y-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-mute">
+                    <span>Task #114 &bull; UI Design</span>
+                    <span className="text-primary font-bold">$2,800 Bounty</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-ink">Design System Micro-Animations</h4>
+                  <div className="flex items-center justify-between text-xs text-mute pt-2 border-t border-hairline">
+                    <span className="flex items-center gap-1"><Users className="w-3 h-3 text-primary" /> Sophia Al-Mansoor</span>
+                    <span className="text-primary font-semibold">Needs Designer</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
           {/* Quick Metrics */}
-          <div className="pt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-12">
+          <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             <div className="landing-metric-card">
-              <div className="text-3xl font-extrabold text-brand-green">$1.2M+</div>
-              <div className="text-xs font-bold text-mute uppercase tracking-[0.05em] mt-1.5">Escrow Bounties Paid</div>
+              <div className="metric-val">$1.2M+</div>
+              <div className="metric-lbl">Escrow Bounties Paid</div>
             </div>
             <div className="landing-metric-card">
-              <div className="text-3xl font-extrabold text-ink">100%</div>
-              <div className="text-xs font-bold text-mute uppercase tracking-[0.05em] mt-1.5">Open Source Codebase</div>
+              <div className="metric-val">100%</div>
+              <div className="metric-lbl">Open Source Core</div>
             </div>
             <div className="landing-metric-card">
-              <div className="text-3xl font-extrabold text-brand-green">0%</div>
-              <div className="text-xs font-bold text-mute uppercase tracking-[0.05em] mt-1.5">Developer Fees</div>
+              <div className="metric-val">0%</div>
+              <div className="metric-lbl">Freelancer Fees</div>
             </div>
             <div className="landing-metric-card">
-              <div className="text-3xl font-extrabold text-ink">3,400+</div>
-              <div className="text-xs font-bold text-mute uppercase tracking-[0.05em] mt-1.5">Verified Engineers</div>
+              <div className="metric-val">3,400+</div>
+              <div className="metric-lbl">Verified Workers & Companies</div>
             </div>
           </div>
 
         </div>
       </section>
 
-      {/* Multiplatform Ecosystem Architecture Section */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-12">
+      {/* Notion Bold Yellow High-Emphasis Banner Section (notion-DESIGN.md Spec) */}
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="landing-card-yellow-bold flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider">
+              <Zap className="w-4 h-4 fill-current text-primary" /> On-Demand Talent Matching
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              On-demand talent matching & instant milestone escrow payouts 24/7.
+            </h2>
+            <p className="text-xs sm:text-sm leading-relaxed opacity-90">
+              Zapmancer matches your company's active task specifications with top pre-vetted engineers, UI/UX designers, and AI builders in under 60 seconds.
+            </p>
+          </div>
+
+          <Link
+            to="/projects/new"
+            className="landing-btn-primary py-3 px-6 shrink-0"
+          >
+            Post a Project Now <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Notion Pastel Feature Cards Grid (notion-DESIGN.md Spec) */}
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Unified Cross-Platform Stack</div>
-          <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Built for Mobile, Web & Backend Synchronization</h2>
+          <div className="text-primary text-[11px] font-semibold tracking-[0.1em] uppercase">Universal Discipline Ecosystems</div>
+          <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Built for Every Discipline & Industry</h2>
           <p className="text-mute text-sm leading-relaxed">
-            Shared Kotlin Multiplatform core powering native Android, iOS, WebAssembly, and Ktor server instances.
+            Explore specialized talent pools and contract bounties rendered in Notion's signature pastel card property palette.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {multiplatformPlatforms.map((p) => {
-            const Icon = p.icon;
+          {categories.map((cat) => {
+            const Icon = cat.icon;
             return (
-              <div key={p.title} className="p-6 rounded-xl bg-surface border border-hairline space-y-4 hover:border-brand-green/40 hover:bg-surface-elevated transition-all">
-                <div className="w-10 h-10 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center border border-brand-green/20">
+              <Link
+                key={cat.name}
+                to="/projects"
+                className={`${cat.tint} block space-y-4 hover:scale-[1.02] transition-all cursor-pointer shadow-sm`}
+              >
+                <div className="w-10 h-10 rounded-lg bg-white/40 dark:bg-black/20 flex items-center justify-center border border-current/20">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-brand-green uppercase tracking-wider">{p.badge}</span>
-                  <h3 className="font-bold text-lg text-ink">{p.title}</h3>
-                  <p className="text-xs text-mute leading-relaxed">{p.desc}</p>
+                  <h3 className="font-extrabold text-base">{cat.name}</h3>
+                  <p className="text-xs opacity-80 font-medium">{cat.count}</p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
@@ -287,8 +321,8 @@ data class LegalIpTransferReceipt(
       <section className="py-20 bg-surface border-y border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-12">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Interactive Payout Estimator</div>
-            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Calculate Your Freelancer Savings</h2>
+            <div className="text-primary text-[11px] font-semibold tracking-[0.1em] uppercase">Interactive Payout Estimator</div>
+            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Calculate Your Worker Savings</h2>
             <p className="text-mute text-sm leading-relaxed">
               Drag the slider to see how much more money you keep on Zapmancer compared to legacy 20% fee platforms.
             </p>
@@ -299,10 +333,10 @@ data class LegalIpTransferReceipt(
             {/* Slider Control */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-mute flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-brand-green" /> Contract Bounty Amount
+                <label className="text-xs font-semibold uppercase tracking-wider text-mute flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-primary" /> Contract Project Amount
                 </label>
-                <span className="text-2xl font-extrabold text-brand-green">${calcAmount.toLocaleString()}</span>
+                <span className="text-2xl font-extrabold text-primary">${calcAmount.toLocaleString()}</span>
               </div>
 
               <input
@@ -312,9 +346,9 @@ data class LegalIpTransferReceipt(
                 step="500"
                 value={calcAmount}
                 onChange={(e) => setCalcAmount(Number(e.target.value))}
-                className="w-full accent-brand-green cursor-pointer h-2 bg-surface rounded-lg"
+                className="w-full accent-primary cursor-pointer h-2 bg-surface rounded-lg"
               />
-              <div className="flex justify-between text-[11px] text-mute font-bold">
+              <div className="flex justify-between text-[11px] text-mute font-medium">
                 <span>$500</span>
                 <span>$5,000</span>
                 <span>$10,000</span>
@@ -324,31 +358,31 @@ data class LegalIpTransferReceipt(
 
             {/* Comparison Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-hairline">
-              <div className="p-6 rounded-xl bg-brand-green/10 border border-brand-green/30 space-y-2">
-                <span className="text-[11px] font-extrabold text-brand-green uppercase tracking-wider">Zapmancer (0% Fee)</span>
-                <p className="text-3xl font-extrabold text-brand-green">${zapmancerPayout.toLocaleString()}.00</p>
-                <p className="text-xs text-brand-green font-bold flex items-center gap-1">
+              <div className="p-6 rounded-xl bg-primary/10 border border-primary/30 space-y-2">
+                <span className="text-[11px] font-extrabold text-primary uppercase tracking-wider">Zapmancer (0% Fee)</span>
+                <p className="text-3xl font-extrabold text-primary">${zapmancerPayout.toLocaleString()}.00</p>
+                <p className="text-xs text-primary font-semibold flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> 100% Payout Retained
                 </p>
               </div>
 
               <div className="p-6 rounded-xl bg-surface border border-hairline space-y-2 opacity-75">
-                <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Upwork (20% Cut)</span>
+                <span className="text-[11px] font-semibold text-mute uppercase tracking-wider">Upwork (20% Cut)</span>
                 <p className="text-2xl font-extrabold text-mute">${upworkPayout.toLocaleString()}.00</p>
-                <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - upworkPayout).toLocaleString()}</p>
+                <p className="text-xs text-red-500 font-semibold">Loss: -${(calcAmount - upworkPayout).toLocaleString()}</p>
               </div>
 
               <div className="p-6 rounded-xl bg-surface border border-hairline space-y-2 opacity-60">
-                <span className="text-[11px] font-bold text-mute uppercase tracking-wider">Freelancer.com (24% Cut)</span>
+                <span className="text-[11px] font-semibold text-mute uppercase tracking-wider">Freelancer.com (24% Cut)</span>
                 <p className="text-2xl font-extrabold text-mute">${freelancerPayout.toLocaleString()}.00</p>
-                <p className="text-xs text-red-400 font-semibold">Loss: -${(calcAmount - freelancerPayout).toLocaleString()}</p>
+                <p className="text-xs text-red-500 font-semibold">Loss: -${(calcAmount - freelancerPayout).toLocaleString()}</p>
               </div>
             </div>
 
             <div className="bg-surface p-4 rounded-xl border border-hairline flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-ink">Extra earnings kept on this project:</p>
-                <p className="text-sm font-extrabold text-brand-green">+${developerSavings.toLocaleString()}.00 into your wallet</p>
+                <p className="text-xs font-semibold text-ink">Extra earnings kept on this project:</p>
+                <p className="text-sm font-extrabold text-primary">+${developerSavings.toLocaleString()}.00 into your wallet</p>
               </div>
               <Link to="/signup" className="landing-btn-primary py-2.5 px-6 shrink-0">
                 Start Earning 100% Now
@@ -359,15 +393,15 @@ data class LegalIpTransferReceipt(
         </div>
       </section>
 
-      {/* Developer Architecture & Code Terminal Carousel */}
+      {/* Code, AI & Design Terminal Carousel */}
       <section className="py-20 bg-canvas border-b border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Developer Experience</div>
-            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Built for Kotlin & Multiplatform Engineering</h2>
+            <div className="text-primary text-[11px] font-semibold tracking-[0.1em] uppercase">Engineering & Creative Showcase</div>
+            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Built for Code, AI & Product Design</h2>
             <p className="text-mute text-sm leading-relaxed">
-              Explore clean, auditable KMP and Ktor backend integration templates powered by JetBrains Mono.
+              Explore clean integration templates and design token specifications powering modern tech companies.
             </p>
           </div>
 
@@ -380,47 +414,47 @@ data class LegalIpTransferReceipt(
                 <span className="w-3 h-3 rounded-full bg-red-500/80"></span>
                 <span className="w-3 h-3 rounded-full bg-yellow-500/80"></span>
                 <span className="w-3 h-3 rounded-full bg-green-500/80"></span>
-                <span className="text-xs font-mono text-mute ml-2">zapmancer-kmp-engine &bull; bash</span>
+                <span className="text-xs font-mono text-mute ml-2">zapmancer-platform &bull; bash</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setActiveCodeTab('kmp')}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeTab === 'kmp' ? 'bg-brand-green text-white font-bold' : 'text-mute hover:text-ink'
+                  onClick={() => setActiveCodeTab('code')}
+                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer ${
+                    activeCodeTab === 'code' ? 'bg-primary text-white font-bold' : 'text-mute hover:text-ink'
                   }`}
                 >
-                  WalletRepo.kt
+                  SoftwareApi.ts
                 </button>
                 <button
-                  onClick={() => setActiveCodeTab('ktor')}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeTab === 'ktor' ? 'bg-brand-green text-white font-bold' : 'text-mute hover:text-ink'
+                  onClick={() => setActiveCodeTab('ai')}
+                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer ${
+                    activeCodeTab === 'ai' ? 'bg-primary text-white font-bold' : 'text-mute hover:text-ink'
                   }`}
                 >
-                  Router.kt
+                  AiAgent.py
                 </button>
                 <button
-                  onClick={() => setActiveCodeTab('escrow')}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeTab === 'escrow' ? 'bg-brand-green text-white font-bold' : 'text-mute hover:text-ink'
+                  onClick={() => setActiveCodeTab('design')}
+                  className={`px-3 py-1 rounded-md text-xs font-mono transition-colors cursor-pointer ${
+                    activeCodeTab === 'design' ? 'bg-primary text-white font-bold' : 'text-mute hover:text-ink'
                   }`}
                 >
-                  LegalIpContract.kt
+                  DesignTokens.css
                 </button>
 
                 <button
                   onClick={handleCopyCode}
-                  className="p-1.5 rounded-md text-mute hover:text-brand-green transition-colors"
+                  className="p-1.5 rounded-md text-mute hover:text-primary transition-colors cursor-pointer"
                   title="Copy Code"
                 >
-                  {copiedCode ? <Check className="w-4 h-4 text-brand-green" /> : <Copy className="w-4 h-4" />}
+                  {copiedCode ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             {/* Code Body */}
-            <pre className="p-6 font-mono text-xs text-brand-green bg-surface overflow-x-auto leading-relaxed">
+            <pre className="p-6 font-mono text-xs text-primary bg-surface overflow-x-auto leading-relaxed">
               <code>{codeSnippets[activeCodeTab]}</code>
             </pre>
 
@@ -429,74 +463,37 @@ data class LegalIpTransferReceipt(
         </div>
       </section>
 
-      {/* Featured Categories / Skill Ecosystems */}
-      <section className="py-20 bg-surface border-b border-hairline">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-hairline pb-6">
-            <div>
-              <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Engineering Ecosystems</div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-ink mt-1">Explore Skill Ecosystems</h2>
-              <p className="text-sm text-mute">Specialized talent pools and contract bounties across 8 core engineering disciplines.</p>
-            </div>
-            <Link to="/projects" className="text-brand-green hover:text-brand-green-hover text-xs font-bold uppercase tracking-[0.05em] transition-colors shrink-0">
-              View All Categories &rarr;
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <Link
-                  key={cat.name}
-                  to="/projects"
-                  className="p-6 rounded-xl bg-surface-elevated border border-hairline hover:border-brand-green/40 hover:bg-surface-modal hover:scale-[1.03] transition-all duration-200 shadow-sm dark:shadow-none group flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-10 h-10 rounded-full bg-surface text-brand-green flex items-center justify-center mb-4 group-hover:bg-brand-green group-hover:text-white transition-colors border border-hairline">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-bold text-base text-ink group-hover:text-brand-green transition-colors">{cat.name}</h3>
-                  </div>
-                  <p className="text-xs text-mute mt-3 font-semibold">{cat.count}</p>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Community Testimonials */}
-      <section className="py-20 bg-canvas border-y border-hairline">
+      <section className="py-20 bg-surface border-y border-hairline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">Vetted Community</div>
-            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Trusted by Engineers & Founders</h2>
+            <div className="text-primary text-[11px] font-semibold tracking-[0.1em] uppercase">Vetted Community</div>
+            <h2 className="text-3xl font-extrabold tracking-[-0.01em] text-ink">Trusted by Workers & Founders</h2>
             <p className="text-mute text-sm leading-relaxed">
-              Read how developers and enterprise teams build products faster with zero fee extractions.
+              Read how freelancers and company teams build products faster with zero fee extractions.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {testimonials.map((t, idx) => (
-              <div key={idx} className="p-8 rounded-xl bg-surface border border-hairline space-y-4 flex flex-col justify-between">
+              <div key={idx} className="p-8 rounded-xl bg-surface-elevated border border-hairline space-y-4 flex flex-col justify-between">
                 <p className="text-sm text-mute leading-relaxed italic">
                   "{t.quote}"
                 </p>
 
                 <div className="flex items-center justify-between border-t border-hairline pt-4">
                   <div className="flex items-center gap-4">
-                    <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-brand-green/40" />
+                    <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-primary/40" />
                     <div>
                       <h4 className="font-bold text-ink text-base flex items-center gap-1.5">
-                        {t.name} <ShieldCheck className="w-4 h-4 text-brand-green" />
+                        {t.name} <ShieldCheck className="w-4 h-4 text-primary" />
                       </h4>
                       <p className="text-xs text-mute font-medium">{t.role}</p>
                     </div>
                   </div>
 
-                  <span className="text-xs font-bold text-brand-green bg-brand-green/10 px-3 py-1 rounded-full border border-brand-green/20">
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
                     {t.earned}
                   </span>
                 </div>
@@ -507,14 +504,14 @@ data class LegalIpTransferReceipt(
         </div>
       </section>
 
-      {/* Native Q&A / FAQ Section (Moved to Bottom) */}
+      {/* Native Q&A / FAQ Section */}
       <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-10 border-t border-hairline">
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
+          <div className="inline-flex items-center gap-1.5 text-primary text-[11px] font-semibold tracking-[0.1em] uppercase">
             <HelpCircle className="w-3.5 h-3.5" /> Frequently Asked Questions
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight text-ink">Everything You Need to Know</h2>
-          <p className="text-sm text-mute">Clear answers regarding contract escrow, 0% developer fees, IP ownership, and open-source compliance.</p>
+          <p className="text-sm text-mute">Clear answers regarding company workspace management, 0% freelancer fees, IP ownership, and open-source compliance.</p>
         </div>
 
         <div className="space-y-4">
@@ -526,19 +523,19 @@ data class LegalIpTransferReceipt(
                 onClick={() => setOpenFaq(isOpen ? null : idx)}
                 className={`p-6 rounded-xl border transition-all duration-200 cursor-pointer ${
                   isOpen
-                    ? 'bg-surface-elevated border-brand-green/40 shadow-sm'
+                    ? 'bg-surface-elevated border-primary/40 shadow-sm'
                     : 'bg-surface border-hairline hover:bg-surface-elevated'
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="text-base font-bold text-ink leading-snug flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-brand-green/10 text-brand-green font-mono text-xs flex items-center justify-center shrink-0">
+                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary font-mono text-xs flex items-center justify-center shrink-0">
                       ?
                     </span>
                     {faq.q}
                   </h3>
                   {isOpen ? (
-                    <ChevronUp className="w-5 h-5 text-brand-green shrink-0" />
+                    <ChevronUp className="w-5 h-5 text-primary shrink-0" />
                   ) : (
                     <ChevronDown className="w-5 h-5 text-mute shrink-0" />
                   )}
@@ -559,15 +556,15 @@ data class LegalIpTransferReceipt(
       <section className="py-16 bg-surface border-t border-hairline text-ink">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center gap-2 text-brand-green font-bold text-[11px] uppercase tracking-[0.1em]">
+            <div className="flex items-center gap-2 text-primary font-semibold text-[11px] uppercase tracking-[0.1em]">
               <Lock className="w-4 h-4" /> Built-in Escrow Security
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-ink">Zero Risk Milestone Escrow Protection</h2>
             <p className="text-mute text-sm leading-relaxed">
-              Client funds are safely locked in escrow prior to milestone commencement. Freelancers deliver clean code, and payments release seamlessly upon milestone approval.
+              Company funds are safely locked in escrow prior to project commencement. Freelancers and creators deliver clean work, and payments release seamlessly upon milestone sign-off.
             </p>
           </div>
-          <Link to="/signup" className="bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-8 py-4 rounded-full hover:scale-[1.04] transition-all shrink-0 shadow-md shadow-brand-green/20">
+          <Link to="/signup" className="landing-btn-primary shrink-0">
             Join Marketplace Now
           </Link>
         </div>

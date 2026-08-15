@@ -1,37 +1,211 @@
-/* ==========================================================================
-   FEATURE MODULE: LANDING PAGE
-   ========================================================================== */
+/* Notion Landing Page — Dual Theme Supported (notion-DESIGN.md) */
 
 .landing-page {
   @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
 }
 
+/* Light Mode Hero Section (Default) */
 .landing-hero-section {
-  @apply relative overflow-hidden pt-24 pb-28 border-b border-hairline;
-  background: linear-gradient(to bottom, rgba(29, 185, 84, 0.1), var(--color-canvas), var(--color-canvas));
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  @apply relative overflow-hidden pt-20 pb-24 border-b border-hairline transition-colors duration-200;
 }
 
 .landing-hero-badge {
-  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-elevated text-brand-green border border-hairline text-[11px] font-bold tracking-[0.1em] uppercase;
+  background-color: var(--color-card-tint-lavender);
+  border: 1px solid rgba(86, 69, 212, 0.3);
+  color: var(--color-primary-deep);
+  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-bold tracking-[0.05em] uppercase transition-colors;
 }
 
 .landing-hero-title {
-  @apply text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-[-0.03em] text-ink max-w-5xl mx-auto leading-[1.1];
+  color: var(--color-ink);
+  @apply text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-[-0.03em] max-w-5xl mx-auto leading-[1.08] transition-colors;
 }
 
 .landing-hero-subtitle {
-  @apply text-base sm:text-lg text-mute max-w-2xl mx-auto leading-relaxed;
+  color: var(--color-steel);
+  @apply text-base sm:text-lg max-w-2xl mx-auto leading-relaxed transition-colors;
 }
 
+/* Grounded Notion 8px Rectangular Primary CTA Button (#5645d4) */
 .landing-btn-primary {
-  @apply inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.04] transition-all duration-200;
-  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  @apply inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-md transition-colors cursor-pointer;
+}
+
+.landing-btn-primary:hover {
+  background-color: var(--color-primary-hover);
 }
 
 .landing-btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 bg-surface hover:bg-surface-elevated text-ink border border-hairline font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.04] transition-all duration-200;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline-strong);
+  @apply inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-md transition-colors cursor-pointer;
 }
 
+.landing-btn-secondary:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+/* Light Mode Metrics Grid */
 .landing-metric-card {
-  @apply bg-surface border border-hairline p-6 rounded-xl text-center shadow-sm dark:shadow-none transition-all duration-200 hover:bg-surface-elevated hover:scale-[1.03];
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  color: var(--color-ink);
+  @apply p-6 rounded-xl text-center transition-colors;
+}
+
+.landing-metric-card:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+.landing-metric-card .metric-val {
+  color: var(--color-primary);
+  @apply text-3xl font-extrabold;
+}
+
+.landing-metric-card .metric-lbl {
+  color: var(--color-mute);
+  @apply text-xs font-semibold uppercase tracking-[0.05em] mt-1;
+}
+
+/* Dark Mode Theme Overrides ([data-theme="dark"]) */
+[data-theme="dark"] .landing-hero-section {
+  background-color: var(--color-brand-navy);
+  color: #ffffff;
+  border-color: var(--color-hairline);
+}
+
+[data-theme="dark"] .landing-hero-badge {
+  background-color: rgba(86, 69, 212, 0.2);
+  border-color: rgba(86, 69, 212, 0.4);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .landing-hero-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .landing-hero-subtitle {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .landing-btn-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .landing-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .landing-metric-card {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .landing-metric-card:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .landing-metric-card .metric-val {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .landing-metric-card .metric-lbl {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Notion Embedded Workspace Mockup Card */
+.landing-workspace-mockup {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline);
+  box-shadow: rgba(15, 15, 15, 0.15) 0px 16px 36px -8px;
+  @apply rounded-xl overflow-hidden max-w-5xl mx-auto text-left transition-colors;
+}
+
+/* Notion Pastel Feature Card Tints */
+.landing-card-yellow-bold {
+  background-color: var(--color-card-tint-yellow-bold);
+  color: #37352f;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  @apply p-8 sm:p-10 rounded-xl space-y-4 shadow-sm transition-colors;
+}
+
+.landing-card-mint {
+  background-color: var(--color-card-tint-mint);
+  color: #1aae39;
+  border: 1px solid rgba(26, 174, 57, 0.15);
+  @apply p-6 sm:p-8 rounded-xl space-y-4 transition-colors;
+}
+
+.landing-card-lavender {
+  background-color: var(--color-card-tint-lavender);
+  color: #391c57;
+  border: 1px solid rgba(123, 63, 242, 0.15);
+  @apply p-6 sm:p-8 rounded-xl space-y-4 transition-colors;
+}
+
+.landing-card-sky {
+  background-color: var(--color-card-tint-sky);
+  color: #005bab;
+  border: 1px solid rgba(0, 117, 222, 0.15);
+  @apply p-6 sm:p-8 rounded-xl space-y-4 transition-colors;
+}
+
+.landing-card-peach {
+  background-color: var(--color-card-tint-peach);
+  color: #793400;
+  border: 1px solid rgba(221, 91, 0, 0.15);
+  @apply p-6 sm:p-8 rounded-xl space-y-4 transition-colors;
+}
+
+.landing-card-rose {
+  background-color: var(--color-card-tint-rose);
+  color: #a02e6d;
+  border: 1px solid rgba(255, 100, 200, 0.15);
+  @apply p-6 sm:p-8 rounded-xl space-y-4 transition-colors;
+}
+
+/* Dark Mode Adaptation for Feature Tints */
+[data-theme="dark"] .landing-card-yellow-bold {
+  background-color: #332b13;
+  color: #f5d75e;
+  border-color: rgba(245, 215, 94, 0.3);
+}
+
+[data-theme="dark"] .landing-card-mint {
+  background-color: #0d2e16;
+  color: #d9f3e1;
+  border-color: rgba(26, 174, 57, 0.3);
+}
+
+[data-theme="dark"] .landing-card-lavender {
+  background-color: #201333;
+  color: #e6e0f5;
+  border-color: rgba(123, 63, 242, 0.3);
+}
+
+[data-theme="dark"] .landing-card-sky {
+  background-color: #0d2238;
+  color: #dcecfa;
+  border-color: rgba(0, 117, 222, 0.3);
+}
+
+[data-theme="dark"] .landing-card-peach {
+  background-color: #331c0a;
+  color: #ffe8d4;
+  border-color: rgba(221, 91, 0, 0.3);
+}
+
+[data-theme="dark"] .landing-card-rose {
+  background-color: #381026;
+  color: #fde0ec;
+  border-color: rgba(255, 100, 200, 0.3);
 }

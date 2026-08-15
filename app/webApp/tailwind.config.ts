@@ -1,8 +1,8 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Green Deck single source of truth for the design system.
- * Mirrors green-deck-DESIGN.md verbatim.
+ * Notion Design System Configuration
+ * Canonical specification: notion-DESIGN.md
  */
 const config: Config = {
   content: [
@@ -13,43 +13,65 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Canvas / surface
+        // Canvas & surface
         canvas:             'var(--color-canvas)',
         surface:            'var(--color-surface)',
         'surface-elevated': 'var(--color-surface-elevated)',
         'surface-modal':    'var(--color-surface-modal)',
-        'soft-cloud':       'var(--color-soft-cloud)',
         'surface-hover':    'var(--color-surface-hover)',
-        // Green Deck Brand System Tokens
-        'brand-green':       'var(--color-brand-green)',
-        'brand-green-hover': 'var(--color-brand-green-hover)',
-        // Text scale
+        
+        // Notion Brand Accent Tokens
+        primary:             'var(--color-primary)',
+        'primary-hover':     'var(--color-primary-hover)',
+        'primary-deep':      'var(--color-primary-deep)',
+        'brand-green':       'var(--color-primary)', // Mapped to Primary Accent (#5645d4) for seamless theme consistency
+        'brand-green-hover': 'var(--color-primary-hover)',
+        'brand-navy':        'var(--color-brand-navy)',
+        'brand-navy-deep':   'var(--color-brand-navy-deep)',
+        'brand-navy-mid':    'var(--color-brand-navy-mid)',
+        'link-blue':         'var(--color-link-blue)',
+
+        // Pastel Card Tints (notion-DESIGN.md)
+        'tint-peach':    'var(--color-card-tint-peach)',
+        'tint-rose':     'var(--color-card-tint-rose)',
+        'tint-mint':     'var(--color-card-tint-mint)',
+        'tint-lavender': 'var(--color-card-tint-lavender)',
+        'tint-sky':      'var(--color-card-tint-sky)',
+        'tint-yellow':   'var(--color-card-tint-yellow)',
+        'tint-gray':     'var(--color-card-tint-gray)',
+
+        // Ink & Text scale
         ink:       'var(--color-ink)',
+        'ink-deep':'var(--color-ink-deep)',
         charcoal:  'var(--color-charcoal)',
-        ash:       'var(--color-ash)',
+        slate:     'var(--color-slate)',
+        steel:     'var(--color-steel)',
         mute:      'var(--color-mute)',
         stone:     'var(--color-stone)',
         hairline:  'var(--color-hairline)',
         'hairline-soft': 'var(--color-hairline-soft)',
-        // Semantic
-        sale:        'var(--color-sale)',
-        'sale-deep': 'var(--color-sale-deep)',
+        'hairline-strong': 'var(--color-hairline-strong)',
+
+        // Semantics
         success:     'var(--color-success)',
-        'success-bright': 'var(--color-success-bright)',
+        warning:     'var(--color-warning)',
+        error:       'var(--color-error)',
         info:        'var(--color-info)',
-        'info-deep': 'var(--color-info-deep)',
         'on-primary': '#ffffff',
       },
       fontFamily: {
-        sans: ['"DM Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        display: ['"DM Sans"', 'sans-serif'],
+        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['"Inter"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       borderRadius: {
         none: '0px',
-        sm:   '8px',
-        md:   '12px',
-        lg:   '16px',
+        xs:   '4px',
+        sm:   '6px',
+        md:   '8px',
+        lg:   '12px',
+        xl:   '16px',
+        xxl:  '20px',
         full: '9999px',
       },
       spacing: {
@@ -57,10 +79,10 @@ const config: Config = {
         xs:  '8px',
         sm:  '12px',
         md:  '16px',
-        lg:  '24px',
-        xl:  '32px',
-        xxl: '48px',
-        section: '64px',
+        lg:  '20px',
+        xl:  '24px',
+        xxl: '32px',
+        hero: '120px',
       },
     },
   },

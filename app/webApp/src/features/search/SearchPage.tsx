@@ -6,76 +6,77 @@ import { Footer } from '../../components/layout/Footer';
 import { Search, ShieldCheck, Star, MapPin, Sparkles, MessageSquare } from 'lucide-react';
 import { Tabs, TabItem } from '../../components/ui/Tabs';
 
-type TalentCategory = 'All' | 'KMP' | 'Compose' | 'Ktor' | 'Wasm';
+type TalentCategory = 'All' | 'Dev' | 'AI' | 'Design' | 'DevOps' | 'Growth';
 
 export const SearchPage: React.FC = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState<TalentCategory>('All');
   const [query, setQuery] = useState('');
 
   const specialtyTabs: TabItem<TalentCategory>[] = [
-    { id: 'All', label: 'All Engineers' },
-    { id: 'KMP', label: 'Kotlin Multiplatform' },
-    { id: 'Compose', label: 'Compose Desktop & Mobile' },
-    { id: 'Ktor', label: 'Ktor & Microservices' },
-    { id: 'Wasm', label: 'WebAssembly & AI' },
+    { id: 'All', label: 'All Talent' },
+    { id: 'Dev', label: 'Software & Web Dev' },
+    { id: 'AI', label: 'AI Builders & Agents' },
+    { id: 'Design', label: 'UI/UX & Product Design' },
+    { id: 'DevOps', label: 'DevOps & Cloud' },
+    { id: 'Growth', label: 'Growth & Marketing' },
   ];
 
   const talents = [
     {
       id: 't1',
       name: 'Elena Rostova',
-      title: 'Senior KMP & WebAssembly Lead',
-      specialty: 'Wasm',
+      title: 'Senior Full-Stack & WebAssembly Lead',
+      specialty: 'Dev',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
       rating: 5.0,
       reviews: 42,
       rate: '$85 / hr',
       successRate: '100% Success',
       location: 'Berlin, Germany',
-      bio: 'Architected high-throughput Ktor backend microservices and Compose Multiplatform clients. Specialist in Kotlin Native compilation to WebAssembly.',
-      skills: ['Kotlin', 'Wasm', 'Ktor', 'PostgreSQL', 'Docker', 'KMP']
+      bio: 'Architected high-throughput backend microservices, React web applications, and WebAssembly audio processing components.',
+      skills: ['TypeScript', 'React', 'Node.js', 'Wasm', 'PostgreSQL', 'Docker']
     },
     {
       id: 't2',
-      name: 'David Chen',
-      title: 'iOS & Android Native KMP Architect',
-      specialty: 'KMP',
+      name: 'Dr. Lucas Meyer',
+      title: 'AI Agent & RAG Pipeline Specialist',
+      specialty: 'AI',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      rating: 4.9,
+      rating: 5.0,
       reviews: 38,
-      rate: '$75 / hr',
-      successRate: '98% Success',
-      location: 'Toronto, Canada',
-      bio: 'Specialized in SwiftUI & Jetpack Compose shared viewmodels with SQLDelight offline persistence and Coroutines async streams.',
-      skills: ['KMP', 'SwiftUI', 'Compose', 'Coroutines', 'SQLDelight']
+      rate: '$95 / hr',
+      successRate: '100% Success',
+      location: 'Zurich, Switzerland',
+      bio: 'Specialized in vector embeddings, LangChain RAG pipelines, fine-tuning LLMs, and Gorse AI recommendation clusters for enterprise companies.',
+      skills: ['Python', 'OpenAI', 'LangChain', 'PGVector', 'Gorse AI', 'PyTorch']
     },
     {
       id: 't3',
-      name: 'Marcus Vance',
-      title: 'Backend Systems & Ktor Core Engineer',
-      specialty: 'Ktor',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
-      rating: 4.95,
-      reviews: 29,
-      rate: '$90 / hr',
-      successRate: '100% Success',
-      location: 'Austin, TX',
-      bio: 'Exposed ORM maintainer and Ktor WebSocket engine developer. Expert in database connection pooling, Gorse AI pipelines, and Dockerized deployments.',
-      skills: ['Ktor', 'PostgreSQL', 'Exposed ORM', 'Gorse AI', 'Kotlin']
-    },
-    {
-      id: 't4',
       name: 'Sophia Al-Mansoor',
-      title: 'UI/UX & Compose Multiplatform Lead',
-      specialty: 'Compose',
+      title: 'Principal UI/UX & Design Systems Lead',
+      specialty: 'Design',
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
       rating: 5.0,
       reviews: 51,
       rate: '$80 / hr',
       successRate: '100% Success',
       location: 'London, UK',
-      bio: 'Crafts responsive multiplatform design systems with dynamic Light & Dark themes, custom canvas animations, and fluid micro-interactions.',
-      skills: ['Compose UI', 'Material 3', 'Canvas', 'Design Systems', 'Kotlin']
+      bio: 'Crafts responsive multiplatform design systems in Figma with dynamic Light & Dark themes, custom canvas animations, and fluid micro-interactions.',
+      skills: ['Figma', 'UI/UX Design', 'Design Tokens', 'Tailwind', 'Prototyping']
+    },
+    {
+      id: '4',
+      name: 'Marcus Vance',
+      title: 'DevOps, Ktor & Cloud Systems Engineer',
+      specialty: 'DevOps',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+      rating: 4.95,
+      reviews: 29,
+      rate: '$90 / hr',
+      successRate: '100% Success',
+      location: 'Austin, TX',
+      bio: 'Cloud infra maintainer and backend WebSockets engine developer. Expert in Kubernetes, CI/CD pipelines, database connection pooling, and Dockerized deployments.',
+      skills: ['DevOps', 'Kubernetes', 'Ktor', 'PostgreSQL', 'Docker', 'AWS']
     }
   ];
 
@@ -98,10 +99,10 @@ export const SearchPage: React.FC = () => {
         {/* Title Banner */}
         <div className="search-header">
           <div className="search-badge">
-            <Sparkles className="w-3.5 h-3.5" /> Talent Network
+            <Sparkles className="w-3.5 h-3.5" /> Universal Talent Network
           </div>
           <h1 className="search-title">Find & Hire Top Talent</h1>
-          <p className="search-subtitle">Discover vetted Kotlin Multiplatform, Mobile, and Web engineers ready for your next project contract.</p>
+          <p className="search-subtitle">Discover vetted developers, AI builders, UI/UX designers, and growth experts ready for your next project contract.</p>
         </div>
 
         {/* Search & Specialty Filter Controls */}
@@ -111,7 +112,7 @@ export const SearchPage: React.FC = () => {
             <Search className="w-5 h-5 text-mute absolute left-4 top-3.5" />
             <input
               type="text"
-              placeholder="Search by engineer name, skills, title, or tech stack..."
+              placeholder="Search by worker name, skills, title, or discipline..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="search-input"

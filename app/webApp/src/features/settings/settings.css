@@ -1,6 +1,4 @@
-/* ==========================================================================
-   FEATURE MODULE: SETTINGS CENTER
-   ========================================================================== */
+/* Notion Settings Center */
 
 .settings-page {
   @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
@@ -15,7 +13,8 @@
 }
 
 .settings-badge {
-  @apply inline-flex items-center gap-1.5 text-brand-green text-xs font-bold tracking-[0.1em] uppercase;
+  color: var(--color-primary);
+  @apply inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.1em] uppercase;
 }
 
 .settings-title {
@@ -65,29 +64,46 @@
 }
 
 .settings-input {
-  @apply w-full px-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink focus:outline-none focus:border-brand-green transition-colors placeholder:text-mute font-medium;
+  @apply w-full px-4 py-3 rounded-md border border-hairline bg-surface-elevated text-sm text-ink focus:outline-none transition-colors placeholder:text-mute font-medium;
+}
+
+.settings-input:focus {
+  border-color: var(--color-primary);
 }
 
 .settings-textarea {
-  @apply w-full px-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm text-ink focus:outline-none focus:border-brand-green transition-colors placeholder:text-mute leading-relaxed;
+  @apply w-full px-4 py-3 rounded-md border border-hairline bg-surface-elevated text-sm text-ink focus:outline-none transition-colors placeholder:text-mute leading-relaxed;
+}
+
+.settings-textarea:focus {
+  border-color: var(--color-primary);
 }
 
 .settings-select {
-  @apply w-full px-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm font-bold text-ink focus:outline-none focus:border-brand-green transition-colors cursor-pointer;
+  @apply w-full px-4 py-3 rounded-md border border-hairline bg-surface-elevated text-sm font-semibold text-ink focus:outline-none transition-colors cursor-pointer;
+}
+
+.settings-select:focus {
+  border-color: var(--color-primary);
 }
 
 /* Buttons & Badges */
 .settings-btn-primary {
-  @apply inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] px-6 py-3 rounded-full hover:scale-[1.03] transition-all;
-  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  @apply inline-flex items-center justify-center gap-2 font-semibold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-md transition-all cursor-pointer shadow-sm;
+}
+
+.settings-btn-primary:hover {
+  background-color: var(--color-primary-hover);
 }
 
 .settings-btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 bg-surface-elevated hover:bg-surface-modal text-ink border border-hairline text-xs font-bold uppercase tracking-[0.05em] px-5 py-2.5 rounded-full transition-all;
+  @apply inline-flex items-center justify-center gap-2 bg-surface-elevated hover:bg-surface-modal text-ink border border-hairline text-xs font-bold uppercase tracking-[0.05em] px-5 py-2.5 rounded-md transition-all cursor-pointer;
 }
 
 .settings-btn-danger {
-  @apply inline-flex items-center justify-center gap-2 text-red-500 text-xs font-bold uppercase tracking-[0.05em] px-5 py-2.5 rounded-full transition-all;
+  @apply inline-flex items-center justify-center gap-2 text-red-500 text-xs font-bold uppercase tracking-[0.05em] px-5 py-2.5 rounded-md transition-all cursor-pointer;
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
@@ -97,5 +113,8 @@
 }
 
 .settings-chip {
-  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-elevated border border-hairline text-brand-green text-xs font-bold;
+  background-color: var(--color-card-tint-lavender);
+  color: var(--color-primary-deep);
+  border-color: rgba(86, 69, 212, 0.2);
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold;
 }

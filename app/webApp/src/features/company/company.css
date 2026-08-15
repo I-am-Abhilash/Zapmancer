@@ -1,6 +1,4 @@
-/* ==========================================================================
-   FEATURE MODULE: COMPANY OPERATIONS PORTAL (COMPANY OS)
-   ========================================================================== */
+/* Notion Company Operations Portal */
 
 .company-page {
   @apply min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans;
@@ -10,41 +8,119 @@
   @apply flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8;
 }
 
-/* Header & Banner */
-.company-header-card {
-  @apply bg-surface p-6 sm:p-8 rounded-xl border border-hairline flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm dark:shadow-none relative overflow-hidden;
+/* Notion Hero Band & Identity */
+.company-hero-banner {
+  background: var(--color-brand-navy);
+  color: var(--color-on-dark);
+  @apply p-8 sm:p-10 rounded-xl border border-hairline shadow-sm relative overflow-hidden space-y-8;
 }
 
-.company-title {
-  @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-ink flex items-center gap-3;
+.company-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(86, 69, 212, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.company-hero-top-row {
+  @apply flex flex-wrap items-center justify-between gap-4 border-b border-hairline-soft pb-4;
 }
 
 .company-badge-verified {
-  background-color: rgba(29, 185, 84, 0.1);
-  border-color: rgba(29, 185, 84, 0.2);
-  @apply px-3 py-1 rounded-full border text-brand-green text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5;
+  background-color: rgba(86, 69, 212, 0.2);
+  border-color: rgba(86, 69, 212, 0.4);
+  color: #ffffff;
+  @apply px-2.5 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider inline-flex items-center gap-1;
 }
 
-/* Key Metrics Bar */
+.company-meta-chip {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  @apply px-2.5 py-0.5 rounded-full border text-[10px] font-medium inline-flex items-center gap-1;
+}
+
+.company-identity-group {
+  @apply flex flex-col sm:flex-row sm:items-center gap-6;
+}
+
+.company-logo-box {
+  background-color: rgba(86, 69, 212, 0.2);
+  border-color: rgba(86, 69, 212, 0.4);
+  color: #ffffff;
+  @apply w-16 h-16 sm:w-20 sm:h-20 rounded-xl border flex items-center justify-center shrink-0 shadow-sm;
+}
+
+.company-title-group {
+  @apply space-y-1;
+}
+
+.company-title {
+  color: #ffffff;
+  @apply text-3xl sm:text-4xl font-extrabold tracking-tight;
+}
+
+.company-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  @apply text-xs sm:text-sm leading-relaxed max-w-2xl;
+}
+
+.company-actions-wrapper {
+  @apply flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2 border-t border-hairline-soft;
+}
+
+/* Notion Primary Button (#5645d4) — Grounded 8px Rectangle */
+.company-btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  @apply inline-flex items-center justify-center gap-2 font-semibold text-xs uppercase tracking-[0.05em] px-5 py-2.5 rounded-md transition-colors shrink-0 cursor-pointer;
+}
+
+.company-btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.company-btn-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  @apply inline-flex items-center justify-center gap-2 font-semibold text-xs uppercase tracking-[0.05em] px-5 py-2.5 rounded-md border transition-colors shrink-0 cursor-pointer;
+}
+
+.company-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Metrics Grid */
 .company-metric-card {
-  @apply bg-surface p-6 rounded-xl border border-hairline space-y-2 shadow-sm dark:shadow-none hover:bg-surface-elevated transition-all;
+  @apply bg-surface p-6 rounded-xl border border-hairline space-y-2 shadow-sm dark:shadow-none hover:bg-surface-elevated transition-colors;
 }
 
 .company-metric-value {
-  @apply text-3xl font-extrabold text-brand-green tracking-tight;
+  color: var(--color-primary);
+  @apply text-3xl font-extrabold tracking-tight;
 }
 
 .company-metric-label {
-  @apply text-xs font-bold text-mute uppercase tracking-[0.05em];
+  @apply text-xs font-semibold text-mute uppercase tracking-[0.05em];
 }
 
-/* Section Cards & Tables */
+/* Section Cards & Panels */
 .company-section-card {
   @apply bg-surface p-6 sm:p-8 rounded-xl border border-hairline space-y-6 shadow-sm dark:shadow-none;
 }
 
+.company-card-header {
+  @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline pb-4;
+}
+
+/* Team Roster Table */
 .company-table-container {
-  @apply w-full overflow-x-auto rounded-xl border border-hairline;
+  @apply w-full overflow-x-auto rounded-xl border border-hairline bg-surface-elevated;
 }
 
 .company-table {
@@ -52,30 +128,62 @@
 }
 
 .company-table th {
-  @apply bg-surface-elevated px-4 py-3.5 font-bold uppercase tracking-wider text-mute border-b border-hairline;
+  @apply bg-surface-elevated px-5 py-4 font-semibold uppercase tracking-wider text-mute border-b border-hairline;
 }
 
 .company-table td {
-  @apply px-4 py-4 border-b border-hairline font-medium transition-colors;
+  @apply px-5 py-4 border-b border-hairline font-medium transition-colors;
 }
 
 .company-table tr:hover td {
-  @apply bg-surface-elevated;
+  @apply bg-surface-modal;
 }
 
-/* Action Buttons */
-.company-btn-primary {
-  @apply inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-full transition-all hover:scale-[1.04] shrink-0;
-  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.2);
+/* Sprint & Task Cards */
+.company-task-card {
+  @apply bg-surface-elevated p-6 rounded-xl border border-hairline flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all shadow-sm dark:shadow-none;
 }
 
-.company-btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 bg-surface-elevated hover:bg-surface-modal text-ink font-bold text-xs uppercase tracking-[0.05em] px-6 py-3 rounded-full border border-hairline transition-all hover:scale-[1.03] shrink-0;
+.company-task-card:hover {
+  border-color: var(--color-primary);
+}
+
+.company-task-bounty-badge {
+  background-color: var(--color-card-tint-lavender);
+  color: var(--color-primary-deep);
+  border-color: rgba(86, 69, 212, 0.2);
+  @apply px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1;
+}
+
+.company-skill-chip {
+  background-color: var(--color-card-tint-sky);
+  color: var(--color-link-blue);
+  border-color: rgba(0, 117, 222, 0.2);
+  @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold border inline-block;
+}
+
+/* Telemetry & Time Logs */
+.company-telemetry-box {
+  @apply p-6 rounded-xl bg-surface-elevated border border-hairline space-y-4 shadow-sm dark:shadow-none;
+}
+
+.company-progress-track {
+  @apply w-full h-3 bg-surface rounded-full overflow-hidden border border-hairline p-0.5;
+}
+
+.company-progress-fill {
+  background-color: var(--color-primary);
+  @apply h-full rounded-full transition-all duration-300;
+}
+
+/* Payroll & Escrow */
+.company-payroll-box {
+  @apply p-6 rounded-xl bg-surface-elevated border border-hairline space-y-4 shadow-sm dark:shadow-none;
 }
 
 /* Modal Drawer Overlay */
 .company-modal-overlay {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.65);
   @apply fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4;
 }
 
