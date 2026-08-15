@@ -7,130 +7,65 @@ interface LoginCardProps {
   onLoginSuccess?: () => void;
 }
 
-export const LoginCard: React.FC<LoginCardProps> = ({
-  onNavigateToForgot,
-  onNavigateToSignup,
-  onLoginSuccess
-}) => {
+export const LoginCard: React.FC<LoginCardProps> = ({ onNavigateToForgot, onNavigateToSignup, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      setError('Please enter your email address');
-      return;
-    }
-    if (!password) {
-      setError('Please enter your password');
-      return;
-    }
-
+    if (!email) { setError('Please enter your email address'); return; }
+    if (!password) { setError('Please enter your password'); return; }
     setError(null);
-    setIsLoading(true);
-
-    // Simulate authentication API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onLoginSuccess?.();
-    }, 1000);
+    setLoading(true);
+    setTimeout(() => { setLoading(false); onLoginSuccess?.(); }, 1000);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      
-      {error && (
-        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500 text-red-500 text-xs font-semibold">
-          {error}
-        </div>
-      )}
+    <form onSubmit={handleSubmit} className="auth-form">
+      {error && <div className="auth-error">{error}</div>}
 
-      <div className="space-y-1.5">
-        <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">Email Address</label>
-        <div className="relative">
-          <Mail className="w-4 h-4 text-mute absolute left-4 top-3.5" />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full pl-11 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
-            required
-          />
+      <div className="auth-field">
+        <label className="auth-label">Email address</label>
+        <div className="auth-input-wrap">
+          <span className="auth-input-icon"><Mail size={15} /></span>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="auth-input" required />
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute">Password</label>
+      <div className="auth-field">
+        <div className="auth-label-row">
+          <label className="auth-label">Password</label>
           {onNavigateToForgot && (
-            <button
-              type="button"
-              onClick={onNavigateToForgot}
-              className="text-xs font-bold text-brand-green hover:text-brand-green-hover transition-colors"
-            >
-              Forgot Password?
-            </button>
+            <button type="button" onClick={onNavigateToForgot} className="auth-link-btn">Forgot password?</button>
           )}
         </div>
-        <div className="relative">
-          <Lock className="w-4 h-4 text-mute absolute left-4 top-3.5" />
-          <input
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className="w-full pl-11 pr-11 py-3 rounded-full border border-hairline bg-surface-elevated text-sm text-ink placeholder:text-mute focus:outline-none focus:border-brand-green transition-colors"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-3.5 text-mute hover:text-ink transition-colors"
-            aria-label="Toggle password visibility"
-          >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+        <div className="auth-input-wrap">
+          <span className="auth-input-icon"><Lock size={15} /></span>
+          <input type={showPwd ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="auth-input" style={{ paddingRight: 40 }} required />
+          <button type="button" onClick={() => setShowPwd(!showPwd)} className="auth-pwd-toggle" aria-label="Toggle password">
+            {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full py-3.5 rounded-full bg-brand-green hover:bg-brand-green-hover text-white text-xs font-bold uppercase tracking-[0.05em] transition-all hover:scale-[1.02] shadow-md shadow-brand-green/20"
-      >
-        {isLoading ? 'Signing in...' : 'Log In to Zapmancer'}
+      <button type="submit" disabled={loading} className="auth-submit">
+        {loading ? 'Signing in…' : 'Log in'}
       </button>
 
-      <div className="relative flex py-2 items-center">
-        <div className="flex-grow border-t border-hairline"></div>
-        <span className="flex-shrink mx-4 text-xs font-bold uppercase tracking-wider text-mute">or continue with</span>
-        <div className="flex-grow border-t border-hairline"></div>
+      <div className="auth-divider"><span>or continue with</span></div>
+
+      <div className="auth-social-grid">
+        <button type="button" className="auth-social-btn">Google</button>
+        <button type="button" className="auth-social-btn">GitHub</button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <button type="button" className="py-2.5 rounded-full border border-hairline bg-surface-elevated text-ink text-xs font-bold hover:bg-surface-modal transition-colors">
-          Google
-        </button>
-        <button type="button" className="py-2.5 rounded-full border border-hairline bg-surface-elevated text-ink text-xs font-bold hover:bg-surface-modal transition-colors">
-          GitHub
-        </button>
-      </div>
-
-      <div className="text-center text-xs text-mute pt-2">
-        <span>Don't have an account? </span>
-        <button
-          type="button"
-          onClick={onNavigateToSignup}
-          className="font-bold text-brand-green hover:text-brand-green-hover transition-colors"
-        >
-          Sign Up
-        </button>
-      </div>
-
+      <p className="auth-footer">
+        Don't have an account?{' '}
+        <button type="button" onClick={onNavigateToSignup} className="auth-link-btn" style={{ fontWeight: 600, color: 'var(--color-ink)' }}>Sign up</button>
+      </p>
     </form>
   );
 };

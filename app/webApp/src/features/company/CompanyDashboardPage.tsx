@@ -2,161 +2,60 @@ import React, { useState } from 'react';
 import './company.css';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Building2, Users, Layers, DollarSign, Plus, Search, ShieldCheck, Sparkles, UserPlus, CheckCircle2, Clock, ArrowUpRight, Lock, X, Check, Activity, Zap, MapPin, Globe, CreditCard } from 'lucide-react';
+import { Building2, Users, Layers, Plus, ShieldCheck, UserPlus, CheckCircle2, Clock, X, Check, Activity, Zap, MapPin, Globe, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Tabs, TabItem } from '../../components/ui/Tabs';
 
-type CompanyTabId = 'roster' | 'sprints' | 'telemetry' | 'payroll';
+type TabId = 'roster' | 'sprints' | 'telemetry' | 'payroll';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  type: 'Full-Time' | 'Contractor';
-  salaryOrRate: string;
-  activeTask: string;
-  hoursLogged: number;
-  status: 'Active' | 'In Review' | 'On Leave';
-  avatar: string;
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'roster', label: 'Team roster (4)' },
+  { id: 'sprints', label: 'Sprint board (3)' },
+  { id: 'telemetry', label: 'Velocity & time logs' },
+  { id: 'payroll', label: 'Payroll & escrow' },
+];
+
+const TEAM = [
+  { id: '1', name: 'Elena Rostova', role: 'Full-Stack & Web Architect', type: 'Contractor' as const, comp: '$85 / hr', task: 'Task #102: Custom RAG AI Agent Pipeline', hrs: 38, status: 'Active' as const, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+  { id: '2', name: 'Dr. Lucas Meyer', role: 'AI Agent Specialist', type: 'Full-Time' as const, comp: '$14,500 / mo', task: 'Task #108: Multi-Modal Model Fine-Tuning', hrs: 42, status: 'Active' as const, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80' },
+  { id: '3', name: 'Sophia Al-Mansoor', role: 'Lead UI/UX Designer', type: 'Full-Time' as const, comp: '$11,000 / mo', task: 'Task #112: Design System Tokens Redesign', hrs: 35, status: 'In Review' as const, avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80' },
+  { id: '4', name: 'David Kim', role: 'DevOps & Infra Specialist', type: 'Contractor' as const, comp: '$90 / hr', task: 'Task #115: Kubernetes Cluster Auto-Scaling', hrs: 27, status: 'Active' as const, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' },
+];
+
+const TASKS = [
+  { id: '102', title: 'Custom RAG AI Agent Pipeline Integration', assignee: 'Elena Rostova', deadline: 'Aug 20, 2026', status: 'In Progress', budget: '$4,500', budgetType: 'Escrow', hrs: 38, bounty: false },
+  { id: '108', title: 'Multi-Modal LLM Fine-Tuning & Vector Store', assignee: 'Dr. Lucas Meyer', deadline: 'Aug 25, 2026', status: 'PR Review', budget: '$3,800', budgetType: 'Salary', hrs: 42, bounty: false },
+  { id: '114', title: 'Mobile App Design System & Micro-Animations', assignee: 'Unassigned', deadline: 'Sep 01, 2026', status: 'Open', budget: '$2,800', budgetType: 'Bounty', hrs: 0, bounty: true },
+];
+
+const CANDIDATES = [
+  { name: 'Dr. Lucas Meyer', title: 'AI Agent & RAG Pipeline Specialist', match: '98% match', rating: '5.0', rate: '$95/hr', skills: ['AI Agent', 'Python', 'LangChain', 'OpenAI'] },
+  { name: 'Sophia Al-Mansoor', title: 'Principal UI/UX & Design Systems Lead', match: '96% match', rating: '5.0', rate: '$80/hr', skills: ['Figma', 'UI/UX Design', 'Design Tokens'] },
+  { name: 'Alex Rivera', title: 'Full-Stack Software Architect', match: '94% match', rating: '5.0', rate: '$90/hr', skills: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'] },
+];
+
+function statusBadgeClass(s: string) {
+  if (s === 'Active') return 'company-badge company-badge-active';
+  if (s === 'In Review') return 'company-badge company-badge-review';
+  return 'company-badge';
 }
 
-interface CompanyTask {
-  id: string;
-  title: string;
-  assignee: string;
-  deadline: string;
-  status: 'In Progress' | 'PR Review' | 'Completed';
-  budget: string;
-  hoursLogged: number;
-  isPublicBounty: boolean;
+function taskStatusClass(s: string) {
+  if (s === 'In Progress') return 'company-badge company-badge-contractor';
+  if (s === 'PR Review') return 'company-badge company-badge-review';
+  return 'company-badge company-badge-bounty';
 }
 
 export const CompanyDashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<CompanyTabId>('roster');
-  const [showAddDevModal, setShowAddDevModal] = useState<boolean>(false);
-  const [selectedTaskForDev, setSelectedTaskForDev] = useState<string>('Task #102: Custom RAG AI Agent Pipeline');
-  const [invitedSuccess, setInvitedSuccess] = useState<boolean>(false);
+  const [tab, setTab] = useState<TabId>('roster');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState('Task #102: Custom RAG AI Agent Pipeline');
+  const [inviteSuccess, setInviteSuccess] = useState(false);
 
-  const companyTabs: TabItem<CompanyTabId>[] = [
-    { id: 'roster', label: 'Team Roster (4)', icon: Users },
-    { id: 'sprints', label: 'Sprint & Task Board (3)', icon: Layers },
-    { id: 'telemetry', label: 'Sprint Velocity & Time Logs', icon: Activity },
-    { id: 'payroll', label: 'Payroll & Escrow Payouts', icon: CreditCard },
-  ];
+  const openModal = (taskLabel: string) => { setSelectedTask(taskLabel); setModalOpen(true); };
 
-  const teamMembers: TeamMember[] = [
-    {
-      id: '1',
-      name: 'Elena Rostova',
-      role: 'Full-Stack & Web Architect',
-      type: 'Contractor',
-      salaryOrRate: '$85 / hr',
-      activeTask: 'Task #102: Custom RAG AI Agent Pipeline',
-      hoursLogged: 38,
-      status: 'Active',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
-    },
-    {
-      id: '2',
-      name: 'Dr. Lucas Meyer',
-      role: 'AI Agent Specialist',
-      type: 'Full-Time',
-      salaryOrRate: '$14,500 / mo',
-      activeTask: 'Task #108: Multi-Modal Model Fine-Tuning',
-      hoursLogged: 42,
-      status: 'Active',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
-    },
-    {
-      id: '3',
-      name: 'Sophia Al-Mansoor',
-      role: 'Lead UI/UX Designer',
-      type: 'Full-Time',
-      salaryOrRate: '$11,000 / mo',
-      activeTask: 'Task #112: Design System Tokens Redesign',
-      hoursLogged: 35,
-      status: 'In Review',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80'
-    },
-    {
-      id: '4',
-      name: 'David Kim',
-      role: 'DevOps & Infra Specialist',
-      type: 'Contractor',
-      salaryOrRate: '$90 / hr',
-      activeTask: 'Task #115: Kubernetes Cluster Auto-Scaling',
-      hoursLogged: 27,
-      status: 'Active',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80'
-    }
-  ];
-
-  const companyTasks: CompanyTask[] = [
-    {
-      id: '102',
-      title: 'Custom RAG AI Agent Pipeline Integration',
-      assignee: 'Elena Rostova',
-      deadline: 'Aug 20, 2026',
-      status: 'In Progress',
-      budget: '$4,500 Escrow',
-      hoursLogged: 38,
-      isPublicBounty: false
-    },
-    {
-      id: '108',
-      title: 'Multi-Modal LLM Fine-Tuning & Vector Store',
-      assignee: 'Dr. Lucas Meyer',
-      deadline: 'Aug 25, 2026',
-      status: 'PR Review',
-      budget: '$3,800 Salary',
-      hoursLogged: 42,
-      isPublicBounty: false
-    },
-    {
-      id: '114',
-      title: 'Mobile App Design System & Micro-Animations',
-      assignee: 'Unassigned (Needs Designer)',
-      deadline: 'Sep 01, 2026',
-      status: 'In Progress',
-      budget: '$2,800 Bounty',
-      hoursLogged: 0,
-      isPublicBounty: true
-    }
-  ];
-
-  const gorseAiTalentCandidates = [
-    {
-      name: 'Dr. Lucas Meyer',
-      title: 'AI Agent & RAG Pipeline Specialist',
-      gorseMatchScore: '98% AI Match',
-      rating: '5.0 ★',
-      rate: '$95/hr',
-      skills: ['AI Agent', 'Python', 'LangChain', 'OpenAI']
-    },
-    {
-      name: 'Sophia Al-Mansoor',
-      title: 'Principal UI/UX & Design Systems Lead',
-      gorseMatchScore: '96% AI Match',
-      rating: '5.0 ★',
-      rate: '$80/hr',
-      skills: ['Figma', 'UI/UX Design', 'Design Tokens', 'Tailwind']
-    },
-    {
-      name: 'Alex Rivera',
-      title: 'Full-Stack Software Architect',
-      gorseMatchScore: '94% AI Match',
-      rating: '5.0 ★',
-      rate: '$90/hr',
-      skills: ['TypeScript', 'React', 'Node.js', 'PostgreSQL']
-    }
-  ];
-
-  const handleSendInvite = () => {
-    setInvitedSuccess(true);
-    setTimeout(() => {
-      setInvitedSuccess(false);
-      setShowAddDevModal(false);
-    }, 1800);
+  const sendInvite = () => {
+    setInviteSuccess(true);
+    setTimeout(() => { setInviteSuccess(false); setModalOpen(false); }, 1800);
   };
 
   return (
@@ -164,163 +63,115 @@ export const CompanyDashboardPage: React.FC = () => {
       <Header isLoggedIn={true} />
 
       <main className="company-main">
-        
-        {/* Spacious Hero Banner */}
-        <section className="company-hero-banner">
-          
-          {/* Top Meta Row */}
-          <div className="company-hero-top-row">
-            <span className="company-badge-verified">
-              <ShieldCheck className="w-3.5 h-3.5" /> Verified Business Entity
-            </span>
 
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="company-meta-chip">
-                <Globe className="w-3 h-3 text-brand-green" /> acme.ai
-              </span>
-              <span className="company-meta-chip">
-                <MapPin className="w-3 h-3 text-brand-green" /> San Francisco, CA
-              </span>
-              <span className="company-meta-chip">
-                <Users className="w-3 h-3 text-brand-green" /> 12 Active Team Members
-              </span>
+        {/* Header */}
+        <div className="company-header">
+          <div className="company-identity">
+            <div className="company-logo"><Building2 size={22} /></div>
+            <div>
+              <h1 className="company-name">
+                Acme AI Systems
+                <span className="company-verified"><ShieldCheck size={11} /> Verified</span>
+              </h1>
+              <div className="company-meta">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Globe size={12} /> acme.ai</span>
+                <span>·</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} /> San Francisco, CA</span>
+                <span>·</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Users size={12} /> 12 team members</span>
+              </div>
             </div>
           </div>
-
-          {/* Main Identity Group */}
-          <div className="company-identity-group">
-            <div className="company-logo-box">
-              <Building2 className="w-9 h-9" />
-            </div>
-
-            <div className="company-title-group">
-              <h1 className="company-title">Acme AI Systems</h1>
-              <p className="company-subtitle">
-                Central Company Operations Workspace. Manage full-time staff, assign sprint tasks, track payroll, and instant-hire expert developers, designers, and AI builders on-demand.
-              </p>
-            </div>
-          </div>
-
-          {/* Actions Row */}
-          <div className="company-actions-wrapper">
-            <button
-              onClick={() => setShowAddDevModal(true)}
-              className="company-btn-primary"
-            >
-              <UserPlus className="w-4 h-4" /> ＋ Add Fellow Dev/Creator to Task
+          <div className="company-actions">
+            <button onClick={() => openModal('Task #102: Custom RAG AI Agent Pipeline')} className="company-btn-secondary">
+              <UserPlus size={14} /> Add developer
             </button>
-
-            <Link to="/projects/new" className="company-btn-secondary">
-              <Plus className="w-4 h-4 text-brand-green" /> Post Public Bounty
+            <Link to="/projects/new" className="company-btn-primary">
+              <Plus size={14} /> Post bounty
             </Link>
           </div>
+        </div>
 
-        </section>
-
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="company-metric-card">
-            <div className="flex items-center justify-between text-mute">
-              <span className="company-metric-label">Team Members</span>
-              <Users className="w-4 h-4 text-brand-green" />
-            </div>
-            <div className="company-metric-value">12</div>
-            <div className="text-[11px] text-mute font-medium">8 Full-Time &bull; 4 Contractors</div>
+        {/* Metrics */}
+        <div className="company-metrics">
+          <div className="company-metric">
+            <p className="company-metric-label">Team members <Users size={13} /></p>
+            <p className="company-metric-value">12</p>
+            <p className="company-metric-sub">8 full-time · 4 contractors</p>
           </div>
-
-          <div className="company-metric-card">
-            <div className="flex items-center justify-between text-mute">
-              <span className="company-metric-label">Active Sprints</span>
-              <Layers className="w-4 h-4 text-brand-green" />
-            </div>
-            <div className="company-metric-value">3</div>
-            <div className="text-[11px] text-mute font-medium">14 Active Tasks Managed</div>
+          <div className="company-metric">
+            <p className="company-metric-label">Active sprints <Layers size={13} /></p>
+            <p className="company-metric-value">3</p>
+            <p className="company-metric-sub">14 tasks managed</p>
           </div>
-
-          <div className="company-metric-card">
-            <div className="flex items-center justify-between text-mute">
-              <span className="company-metric-label">Sprint Hours Logged</span>
-              <Activity className="w-4 h-4 text-brand-green" />
-            </div>
-            <div className="company-metric-value">142 hrs</div>
-            <div className="text-[11px] text-brand-green font-semibold">94% Sprint Velocity On Track</div>
+          <div className="company-metric">
+            <p className="company-metric-label">Hours logged <Activity size={13} /></p>
+            <p className="company-metric-value">142 hrs</p>
+            <p className="company-metric-sub">94% velocity on track</p>
           </div>
-
-          <div className="company-metric-card">
-            <div className="flex items-center justify-between text-mute">
-              <span className="company-metric-label">Public Bounties</span>
-              <Sparkles className="w-4 h-4 text-brand-green" />
-            </div>
-            <div className="company-metric-value">2 Open</div>
-            <div className="text-[11px] text-mute font-medium">0% Fee Escrows</div>
+          <div className="company-metric">
+            <p className="company-metric-label">Open bounties <Zap size={13} /></p>
+            <p className="company-metric-value">2 open</p>
+            <p className="company-metric-sub">0% fee escrows</p>
           </div>
         </div>
 
-        {/* Reusable Central Pill Tab Navigation */}
-        <div>
-          <Tabs
-            tabs={companyTabs}
-            activeTab={activeTab}
-            onChange={(id) => setActiveTab(id)}
-          />
+        {/* Tabs */}
+        <div className="company-tabs">
+          {TABS.map((t) => (
+            <button key={t.id} onClick={() => setTab(t.id)} className={`company-tab${tab === t.id ? ' active' : ''}`}>
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        {/* TAB 1: TEAM ROSTER */}
-        {activeTab === 'roster' && (
-          <div className="company-section-card">
-            <div className="company-card-header">
+        {/* Roster */}
+        {tab === 'roster' && (
+          <div className="company-section">
+            <div className="company-section-header">
               <div>
-                <h3 className="text-xl font-extrabold text-ink">Employee & Contractor Roster</h3>
-                <p className="text-xs text-mute mt-0.5">Manage internal staff, contract rates, and active task assignments across all disciplines.</p>
+                <p className="company-section-title">Employee & contractor roster</p>
+                <p className="company-section-sub">Manage staff, rates, and active task assignments.</p>
               </div>
-              <button onClick={() => setShowAddDevModal(true)} className="company-btn-primary py-2.5 px-5 text-xs">
-                <UserPlus className="w-3.5 h-3.5" /> Add Team Member
+              <button onClick={() => openModal('Task #102: Custom RAG AI Agent Pipeline')} className="company-btn-primary">
+                <UserPlus size={14} /> Add member
               </button>
             </div>
-
-            <div className="company-table-container">
+            <div className="company-table-wrap">
               <table className="company-table">
                 <thead>
                   <tr>
-                    <th>Member Name</th>
+                    <th>Member</th>
                     <th>Role</th>
-                    <th>Employment Type</th>
-                    <th>Compensation / Rate</th>
-                    <th>Active Task</th>
-                    <th>Hours Logged</th>
+                    <th>Type</th>
+                    <th>Compensation</th>
+                    <th>Active task</th>
+                    <th>Hours</th>
                     <th>Status</th>
-                    <th className="text-right">Actions</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {teamMembers.map((m) => (
+                  {TEAM.map((m) => (
                     <tr key={m.id}>
                       <td>
-                        <div className="flex items-center gap-3">
-                          <img src={m.avatar} alt={m.name} className="w-8 h-8 rounded-full object-cover border border-hairline" />
-                          <div>
-                            <p className="font-bold text-ink text-xs">{m.name}</p>
-                          </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <img src={m.avatar} alt={m.name} style={{ width: 32, height: 32, borderRadius: 9999, objectFit: 'cover', border: '1px solid var(--color-hairline)' }} />
+                          <span style={{ fontWeight: 600 }}>{m.name}</span>
                         </div>
                       </td>
-                      <td className="font-semibold text-ink">{m.role}</td>
+                      <td style={{ color: 'var(--color-steel)' }}>{m.role}</td>
                       <td>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          m.type === 'Full-Time' ? 'bg-surface-elevated text-ink border border-hairline' : 'bg-brand-green/10 text-brand-green border border-brand-green/20'
-                        }`}>
-                          {m.type}
-                        </span>
+                        <span className={m.type === 'Full-Time' ? 'company-badge company-badge-fulltime' : 'company-badge company-badge-contractor'}>{m.type}</span>
                       </td>
-                      <td className="font-mono text-brand-green font-bold">{m.salaryOrRate}</td>
-                      <td className="text-mute text-xs truncate max-w-[180px]">{m.activeTask}</td>
-                      <td className="font-mono font-bold text-ink">{m.hoursLogged} hrs</td>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{m.comp}</td>
+                      <td style={{ color: 'var(--color-steel)', fontSize: 12, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.task}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{m.hrs} hrs</td>
                       <td>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-green">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> {m.status}
-                        </span>
+                        <span className={statusBadgeClass(m.status)}>{m.status}</span>
                       </td>
-                      <td className="text-right">
-                        <button className="text-xs font-bold text-mute hover:text-brand-green transition-colors cursor-pointer">
+                      <td style={{ textAlign: 'right' }}>
+                        <button style={{ fontSize: 13, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>
                           Manage
                         </button>
                       </td>
@@ -332,51 +183,43 @@ export const CompanyDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: SPRINTS & TASKS */}
-        {activeTab === 'sprints' && (
-          <div className="company-section-card">
-            <div className="company-card-header">
+        {/* Sprints */}
+        {tab === 'sprints' && (
+          <div className="company-section">
+            <div className="company-section-header">
               <div>
-                <h3 className="text-xl font-extrabold text-ink">Active Sprint Tasks</h3>
-                <p className="text-xs text-mute mt-0.5">Track internal milestone deliverables or convert a task into a public bounty.</p>
+                <p className="company-section-title">Active sprint tasks</p>
+                <p className="company-section-sub">Track internal milestone deliverables or convert to a public bounty.</p>
               </div>
-              <Link to="/projects/new" className="company-btn-primary py-2.5 px-5 text-xs">
-                <Plus className="w-3.5 h-3.5" /> Create Task
-              </Link>
+              <Link to="/projects/new" className="company-btn-primary"><Plus size={14} /> Create task</Link>
             </div>
-
-            <div className="space-y-4">
-              {companyTasks.map((t) => (
-                <div key={t.id} className="company-task-card">
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-mono text-brand-green font-bold">#{t.id}</span>
-                      <span className="text-mute">&bull;</span>
-                      <span className="text-mute flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Due {t.deadline}</span>
-                      {t.isPublicBounty && (
-                        <span className="company-task-bounty-badge">
-                          Public Bounty
-                        </span>
-                      )}
+            <div className="company-task-list">
+              {TASKS.map((t) => (
+                <div key={t.id} className="company-task-row">
+                  <div style={{ flex: 1 }}>
+                    <div className="company-task-meta">
+                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-ink)' }}>#{t.id}</span>
+                      <span>·</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> Due {t.deadline}</span>
+                      {t.bounty && <span className="company-badge company-badge-bounty">Public bounty</span>}
                     </div>
-                    <h4 className="font-extrabold text-base text-ink">{t.title}</h4>
-                    <p className="text-xs text-mute">Assigned to: <strong className="text-ink">{t.assignee}</strong> &bull; {t.hoursLogged} hrs logged</p>
+                    <p className="company-task-title">{t.title}</p>
+                    <p className="company-task-sub">
+                      Assigned to: <strong style={{ color: 'var(--color-ink)', fontWeight: 600 }}>{t.assignee}</strong>
+                      {t.hrs > 0 && <> · {t.hrs} hrs logged</>}
+                    </p>
                   </div>
-
-                  <div className="flex items-center gap-4 shrink-0">
-                    <div className="text-right">
-                      <p className="text-sm font-extrabold text-brand-green font-mono">{t.budget}</p>
-                      <p className="text-[10px] text-mute font-bold uppercase tracking-wider">{t.status}</p>
+                  <div className="company-task-right">
+                    <div style={{ textAlign: 'right' }}>
+                      <p className="company-task-budget">{t.budget}</p>
+                      <p style={{ fontSize: 11, color: 'var(--color-steel)', marginTop: 2 }}>{t.budgetType}</p>
+                      <span className={taskStatusClass(t.status)} style={{ marginTop: 4, display: 'inline-block' }}>{t.status}</span>
                     </div>
-
                     <button
-                      onClick={() => {
-                        setSelectedTaskForDev(`Task #${t.id}: ${t.title}`);
-                        setShowAddDevModal(true);
-                      }}
-                      className="company-btn-secondary py-2.5 px-4 text-xs"
+                      onClick={() => openModal(`Task #${t.id}: ${t.title}`)}
+                      className="company-btn-secondary"
                     >
-                      <UserPlus className="w-3.5 h-3.5 text-brand-green" /> Add Fellow Dev/Creator
+                      <UserPlus size={13} /> Add dev
                     </button>
                   </div>
                 </div>
@@ -385,65 +228,60 @@ export const CompanyDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 3: TELEMETRY & TIME LOGS */}
-        {activeTab === 'telemetry' && (
-          <div className="company-section-card">
-            <div>
-              <h3 className="text-xl font-extrabold text-ink">Sprint Velocity & Time Telemetry</h3>
-              <p className="text-xs text-mute mt-0.5">Real-time breakdown of logged hours across active company tasks.</p>
+        {/* Telemetry */}
+        {tab === 'telemetry' && (
+          <div className="company-section">
+            <div className="company-section-header">
+              <div>
+                <p className="company-section-title">Sprint velocity & time telemetry</p>
+                <p className="company-section-sub">Real-time breakdown of logged hours across active tasks.</p>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="company-telemetry-box">
-                <div className="flex items-center justify-between text-xs font-bold text-mute uppercase tracking-wider">
-                  <span>Weekly Logged Hours</span>
-                  <span className="text-brand-green font-mono font-extrabold">142 / 160 hrs</span>
+            <div className="company-telemetry-body">
+              {[
+                { label: 'Weekly logged hours', value: '142 / 160 hrs', pct: 88, sub: 'Sprint 24 velocity: 88% capacity used' },
+                { label: 'Milestone completion rate', value: '94% success', pct: 94, sub: 'Milestones delivered on-time: 15 / 16 tasks' },
+              ].map((item) => (
+                <div key={item.label} className="company-progress-wrap">
+                  <div className="company-progress-label">
+                    <span>{item.label}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{item.value}</span>
+                  </div>
+                  <div className="company-progress-track">
+                    <div className="company-progress-fill" style={{ width: `${item.pct}%` }} />
+                  </div>
+                  <p style={{ fontSize: 12, color: 'var(--color-steel)', marginTop: 2 }}>{item.sub}</p>
                 </div>
-                <div className="company-progress-track">
-                  <div className="company-progress-fill w-[88%]"></div>
-                </div>
-                <p className="text-xs text-mute">Sprint 24 Velocity: <strong className="text-brand-green font-bold">88% Capacity Used</strong></p>
-              </div>
-
-              <div className="company-telemetry-box">
-                <div className="flex items-center justify-between text-xs font-bold text-mute uppercase tracking-wider">
-                  <span>Milestone Completion Rate</span>
-                  <span className="text-brand-green font-mono font-extrabold">94% Success</span>
-                </div>
-                <div className="company-progress-track">
-                  <div className="company-progress-fill w-[94%]"></div>
-                </div>
-                <p className="text-xs text-mute">Milestones Delivered On-Time: <strong className="text-ink font-bold">15 / 16 Tasks</strong></p>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* TAB 4: PAYROLL & ESCROW */}
-        {activeTab === 'payroll' && (
-          <div className="company-section-card">
-            <div>
-              <h3 className="text-xl font-extrabold text-ink">Payroll & Milestone Escrow Overview</h3>
-              <p className="text-xs text-mute mt-0.5">Automated monthly employee salary payouts and funded contractor milestone escrows.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="company-payroll-box">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-mute">Monthly Employee Payroll</span>
-                  <span className="text-xs font-bold text-brand-green bg-brand-green/10 px-2 py-0.5 rounded-full border border-brand-green/20">Auto-Deposit Active</span>
-                </div>
-                <p className="text-3xl font-extrabold text-ink font-mono">$23,500.00</p>
-                <p className="text-xs text-mute">Next Payout Schedule: <strong className="text-ink">August 31, 2026</strong> (Direct Deposit)</p>
+        {/* Payroll */}
+        {tab === 'payroll' && (
+          <div className="company-section">
+            <div className="company-section-header">
+              <div>
+                <p className="company-section-title">Payroll & milestone escrow</p>
+                <p className="company-section-sub">Automated employee payouts and funded contractor milestone escrows.</p>
               </div>
-
-              <div className="company-payroll-box">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-mute">Milestone Escrow Vault</span>
-                  <span className="text-xs font-bold text-brand-green bg-brand-green/10 px-2 py-0.5 rounded-full border border-brand-green/20">0% Freelancer Fee</span>
+            </div>
+            <div className="company-payroll-grid">
+              <div className="company-payroll-card">
+                <div className="company-payroll-label">
+                  Monthly payroll
+                  <span className="company-badge company-badge-active">Auto-deposit</span>
                 </div>
-                <p className="text-3xl font-extrabold text-brand-green font-mono">$25,000.00</p>
-                <p className="text-xs text-mute">Protected in Stripe Escrow with 100% Work-for-Hire IP Transfer</p>
+                <p className="company-payroll-amount">$23,500.00</p>
+                <p className="company-payroll-sub">Next payout: <strong style={{ color: 'var(--color-ink)' }}>August 31, 2026</strong></p>
+              </div>
+              <div className="company-payroll-card">
+                <div className="company-payroll-label">
+                  Escrow vault
+                  <span className="company-badge company-badge-contractor">0% fee</span>
+                </div>
+                <p className="company-payroll-amount">$25,000.00</p>
+                <p className="company-payroll-sub">Protected in Stripe Escrow · 100% IP transfer on release</p>
               </div>
             </div>
           </div>
@@ -451,86 +289,66 @@ export const CompanyDashboardPage: React.FC = () => {
 
       </main>
 
-      {/* INSTANT FELLOW DEV HIRE MODAL DRAWER WITH AI MATCHING */}
-      {showAddDevModal && (
-        <div className="company-modal-overlay">
-          <div className="company-modal-content">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-hairline pb-4">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-brand-green uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4" /> Zapmancer Universal AI Matcher
-                </div>
-                <h3 className="text-xl font-extrabold text-ink">＋ Add Fellow Dev/Creator to Task</h3>
+      {/* Modal */}
+      {modalOpen && (
+        <div className="company-modal-overlay" onClick={() => setModalOpen(false)}>
+          <div className="company-modal" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
+                  <Zap size={12} style={{ display: 'inline', marginRight: 4 }} />AI Talent Matcher
+                </p>
+                <h3 className="company-modal-title">Add developer to task</h3>
               </div>
-              <button onClick={() => setShowAddDevModal(false)} className="p-2 rounded-full text-mute hover:text-ink cursor-pointer">
-                <X className="w-5 h-5" />
+              <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-steel)', padding: 4 }}>
+                <X size={18} />
               </button>
             </div>
 
-            {/* Target Task Select */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase text-mute">Target Company Task</label>
-              <div className="p-3 rounded-xl bg-surface-elevated border border-hairline text-xs font-bold text-ink">
-                {selectedTaskForDev}
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-steel)', marginBottom: 6 }}>Target task</p>
+              <div style={{ padding: '10px 12px', border: '1px solid var(--color-hairline)', borderRadius: 8, fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', backgroundColor: 'var(--color-surface)' }}>
+                {selectedTask}
               </div>
             </div>
 
-            {/* Candidate List with AI Match Scores */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase text-mute">Top AI-Matched Candidates Across All Disciplines</label>
-                <span className="text-[11px] font-bold text-brand-green flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5" /> Recommender Telemetry Active
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-steel)' }}>Top AI-matched candidates</p>
+                <span style={{ fontSize: 11, color: '#1aae39', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Zap size={11} /> Recommender active
                 </span>
               </div>
-
-              {gorseAiTalentCandidates.map((c, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-surface-elevated border border-hairline space-y-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-ink">{c.name}</h4>
-                        <span className="px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green border border-brand-green/20 text-[10px] font-extrabold">
-                          {c.gorseMatchScore}
-                        </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {CANDIDATES.map((c, i) => (
+                  <div key={i} className="company-candidate">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)' }}>{c.name}</p>
+                          <span className="company-match-badge">{c.match}</span>
+                        </div>
+                        <p style={{ fontSize: 12, color: 'var(--color-steel)' }}>{c.title}</p>
                       </div>
-                      <p className="text-xs text-mute">{c.title}</p>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <p style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-ink)' }}>{c.rate}</p>
+                        <p style={{ fontSize: 12, color: 'var(--color-steel)' }}>★ {c.rating}</p>
+                      </div>
                     </div>
-
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-extrabold text-brand-green font-mono">{c.rate}</p>
-                      <span className="text-xs font-bold text-brand-green">{c.rating}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid var(--color-hairline)' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                        {c.skills.map((s) => <span key={s} className="company-skill-tag">{s}</span>)}
+                      </div>
+                      <button onClick={sendInvite} className="company-btn-primary">Invite</button>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between gap-4 border-t border-hairline pt-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {c.skills.map((s) => (
-                        <span key={s} className="company-skill-chip">
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={handleSendInvite}
-                      className="company-btn-primary py-2 px-5 text-xs"
-                    >
-                      Invite Worker
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {invitedSuccess && (
-              <div className="p-3 rounded-xl bg-brand-green/10 border border-brand-green/30 text-brand-green text-xs font-bold text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4" /> Candidate Invite & Escrow Offer Sent!
-              </div>
+            {inviteSuccess && (
+              <div className="company-toast"><CheckCircle2 size={14} /> Invite & escrow offer sent!</div>
             )}
-
           </div>
         </div>
       )}

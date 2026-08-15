@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Send, ShieldCheck, Plus, Trash2, ArrowLeft, Sparkles } from 'lucide-react';
+import { Send, ShieldCheck, Plus, Trash2, ArrowLeft } from 'lucide-react';
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', height: 40, padding: '0 12px',
+  border: '1px solid var(--color-hairline-strong)', borderRadius: 8,
+  backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)',
+  fontSize: 14, fontFamily: 'var(--font-sans)', outline: 'none',
+  boxSizing: 'border-box',
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', display: 'block', marginBottom: 6,
+};
 
 export const ProposalSubmitPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,168 +25,130 @@ export const ProposalSubmitPage: React.FC = () => {
   const [coverLetter, setCoverLetter] = useState(
     'Hi, I have extensive experience delivering Compose Multiplatform desktop and mobile clients connected to Ktor backends. I can implement clean MVI architecture, adaptive layout widgets, and WebSockets sync.'
   );
-
   const [milestones, setMilestones] = useState([
     { title: 'KMP Architecture & Ktor Integration', amount: '1200' },
     { title: 'Compose UI Desktop Views & Analytics Charts', amount: '1200' },
     { title: 'Testing, Polishing & Final Delivery', amount: '800' },
   ]);
 
-  const addMilestone = () => {
-    setMilestones([...milestones, { title: 'New Milestone', amount: '500' }]);
-  };
+  const addMilestone = () => setMilestones([...milestones, { title: 'New milestone', amount: '500' }]);
+  const removeMilestone = (i: number) => setMilestones(milestones.filter((_, idx) => idx !== i));
 
-  const removeMilestone = (index: number) => {
-    setMilestones(milestones.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate('/home');
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); navigate('/home'); };
 
   return (
-    <div className="min-h-screen flex flex-col bg-canvas text-ink transition-colors duration-200 antialiased font-sans">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
       <Header isLoggedIn={true} />
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-xs uppercase font-bold tracking-[0.05em] text-mute hover:text-ink transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 text-brand-green" /> Cancel & Return
+      <main style={{ flex: 1, maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+        {/* Back */}
+        <button onClick={() => navigate(-1)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-steel)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)', padding: 0 }}>
+          <ArrowLeft size={15} /> Back
         </button>
 
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-brand-green text-[11px] font-bold tracking-[0.1em] uppercase">
-            <Sparkles className="w-3.5 h-3.5" /> Proposal Submission
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink">Submit Proposal</h1>
-          <p className="text-sm text-mute">
-            Applying for: <strong className="text-ink">Compose Multiplatform Desktop App for Ktor Analytics</strong>
+        {/* Page heading */}
+        <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--color-hairline)' }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.4px', color: 'var(--color-ink)', lineHeight: 1.2 }}>Submit proposal</h1>
+          <p style={{ fontSize: 14, color: 'var(--color-steel)', marginTop: 4 }}>
+            Applying for: <strong style={{ color: 'var(--color-ink)' }}>Compose Multiplatform Desktop App for Ktor Analytics</strong>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-surface p-8 rounded-xl border border-hairline shadow-sm dark:shadow-none space-y-8">
-          
-          {/* Bid terms */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute mb-1.5">
-                Total Bid Amount ($ USD)
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-3 text-mute font-bold text-sm">$</span>
-                <input
-                  type="number"
-                  required
-                  value={bidAmount}
-                  onChange={(e) => setBidAmount(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm font-bold text-ink focus:outline-none focus:border-brand-green transition-colors"
-                />
-              </div>
-              <p className="text-xs text-mute mt-1.5">Zero platform deduction on Zapmancer ($0 fee).</p>
-            </div>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            <div>
-              <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute mb-1.5">
-                Estimated Delivery (Days)
-              </label>
-              <input
-                type="number"
-                required
-                value={deliveryDays}
-                onChange={(e) => setDeliveryDays(e.target.value)}
-                className="w-full px-4 py-3 rounded-full border border-hairline bg-surface-elevated text-sm font-bold text-ink focus:outline-none focus:border-brand-green transition-colors"
-              />
+          {/* Bid terms */}
+          <div style={{ border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-hairline)', fontWeight: 600, fontSize: 14, color: 'var(--color-ink)', backgroundColor: 'var(--color-canvas)' }}>
+              Bid terms
+            </div>
+            <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Total bid ($ USD)</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: 12, top: 11, fontSize: 13, color: 'var(--color-steel)', fontWeight: 600 }}>$</span>
+                  <input type="number" required value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} style={{ ...inputStyle, paddingLeft: 26 }} />
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--color-steel)', marginTop: 5 }}>0% platform fee — you receive the full amount.</p>
+              </div>
+              <div>
+                <label style={labelStyle}>Delivery estimate (days)</label>
+                <input type="number" required value={deliveryDays} onChange={(e) => setDeliveryDays(e.target.value)} style={inputStyle} />
+              </div>
             </div>
           </div>
 
-          {/* Milestone Breakdown */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-ink">Escrow Milestone Breakdown</h3>
-              <button
-                type="button"
-                onClick={addMilestone}
-                className="flex items-center gap-1 text-xs font-bold text-brand-green uppercase tracking-[0.05em] hover:text-brand-green-hover transition-colors"
-              >
-                <Plus className="w-4 h-4" /> Add Milestone
+          {/* Milestone breakdown */}
+          <div style={{ border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--color-canvas)' }}>
+              <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-ink)' }}>Escrow milestone breakdown</p>
+              <button type="button" onClick={addMilestone} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 500, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>
+                <Plus size={14} /> Add milestone
               </button>
             </div>
-
-            <div className="space-y-3">
+            <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {milestones.map((m, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-surface-elevated border border-hairline">
-                  <span className="text-xs font-bold text-brand-green">#{idx + 1}</span>
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-steel)', minWidth: 24, textAlign: 'center' }}>#{idx + 1}</span>
                   <input
                     type="text"
                     value={m.title}
-                    onChange={(e) => {
-                      const updated = [...milestones];
-                      updated[idx].title = e.target.value;
-                      setMilestones(updated);
-                    }}
-                    className="flex-1 px-4 py-2 rounded-full border border-hairline bg-surface text-sm font-medium text-ink focus:outline-none focus:border-brand-green"
+                    onChange={(e) => { const u = [...milestones]; u[idx].title = e.target.value; setMilestones(u); }}
+                    style={{ ...inputStyle, flex: 1 }}
+                    placeholder="Milestone title"
                   />
-                  <div className="relative w-32">
-                    <span className="absolute left-3 top-2.5 text-xs text-mute font-bold">$</span>
+                  <div style={{ position: 'relative', width: 110, flexShrink: 0 }}>
+                    <span style={{ position: 'absolute', left: 10, top: 11, fontSize: 13, color: 'var(--color-steel)', fontWeight: 600 }}>$</span>
                     <input
                       type="number"
                       value={m.amount}
-                      onChange={(e) => {
-                        const updated = [...milestones];
-                        updated[idx].amount = e.target.value;
-                        setMilestones(updated);
-                      }}
-                      className="w-full pl-6 pr-3 py-2 rounded-full border border-hairline bg-surface text-sm font-bold text-ink focus:outline-none focus:border-brand-green"
+                      onChange={(e) => { const u = [...milestones]; u[idx].amount = e.target.value; setMilestones(u); }}
+                      style={{ ...inputStyle, paddingLeft: 22, width: '100%' }}
                     />
                   </div>
                   {milestones.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeMilestone(idx)}
-                      className="text-mute hover:text-red-500 p-1 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
+                    <button type="button" onClick={() => removeMilestone(idx)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-steel)', padding: 4 }}>
+                      <Trash2 size={15} />
                     </button>
                   )}
                 </div>
               ))}
+              <div style={{ paddingTop: 10, borderTop: '1px solid var(--color-hairline)', fontSize: 12, color: 'var(--color-steel)' }}>
+                Total: <strong style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-mono)' }}>${milestones.reduce((s, m) => s + (Number(m.amount) || 0), 0).toLocaleString()}</strong>
+              </div>
             </div>
           </div>
 
-          {/* Cover Letter */}
-          <div>
-            <label className="block text-xs uppercase font-bold tracking-[0.05em] text-mute mb-1.5">
-              Cover Letter & Proposal Pitch
-            </label>
-            <textarea
-              rows={6}
-              required
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-hairline bg-surface-elevated text-sm text-ink leading-relaxed focus:outline-none focus:border-brand-green transition-colors"
-            />
+          {/* Cover letter */}
+          <div style={{ border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--color-hairline)', fontWeight: 600, fontSize: 14, color: 'var(--color-ink)', backgroundColor: 'var(--color-canvas)' }}>
+              Cover letter & pitch
+            </div>
+            <div style={{ padding: 20 }}>
+              <textarea
+                rows={6}
+                required
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--color-hairline-strong)', borderRadius: 8, backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontSize: 14, fontFamily: 'var(--font-sans)', lineHeight: 1.65, outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+              />
+            </div>
           </div>
 
-          {/* Action Button & Escrow Note */}
-          <div className="pt-4 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs text-brand-green font-bold">
-              <ShieldCheck className="w-4 h-4" /> Milestone Escrow Protection active upon hire
+          {/* Submit row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, paddingTop: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#1aae39', fontWeight: 600 }}>
+              <ShieldCheck size={14} /> Milestone escrow protection active upon hire
             </div>
-
             <button
               type="submit"
-              className="flex items-center gap-2 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-xs uppercase tracking-[0.05em] px-8 py-3.5 rounded-full hover:scale-[1.04] transition-all shadow-md shadow-brand-green/20"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'var(--color-primary)', color: '#ffffff', fontSize: 14, fontWeight: 500, padding: '10px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}
             >
-              Submit Proposal <Send className="w-4 h-4" />
+              Submit proposal <Send size={14} />
             </button>
           </div>
 
         </form>
-
       </main>
 
       <Footer />
