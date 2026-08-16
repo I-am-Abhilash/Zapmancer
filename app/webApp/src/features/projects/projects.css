@@ -12,10 +12,13 @@
 
 .projects-main {
   flex: 1;
-  max-width: 1024px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 40px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* ---- Header ---- */
@@ -25,7 +28,6 @@
   gap: 4px;
   padding-bottom: 24px;
   border-bottom: 1px solid var(--color-hairline);
-  margin-bottom: 24px;
 }
 
 .projects-header-row {
@@ -72,24 +74,237 @@
   background-color: var(--color-primary-hover);
 }
 
-/* ---- Filters ---- */
-.projects-filters {
+/* ---- 2-Column Layout ---- */
+.projects-layout {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 28px;
+  align-items: flex-start;
 }
 
-.projects-search-row {
+@media (max-width: 860px) {
+  .projects-layout {
+    flex-direction: column;
+  }
+}
+
+/* ---- Sidebar Filter Panel ---- */
+.projects-sidebar {
+  width: 260px;
+  flex-shrink: 0;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 20px;
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+
+@media (max-width: 860px) {
+  .projects-sidebar {
+    width: 100%;
+    position: static;
+    box-sizing: border-box;
+  }
+}
+
+.projects-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-hairline);
+  padding-bottom: 16px;
+}
+
+.projects-filter-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.projects-filter-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Radio & Checkbox options */
+.projects-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-ink);
+  cursor: pointer;
+  user-select: none;
+}
+
+.projects-filter-option input[type="radio"],
+.projects-filter-option input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Numeric inputs grid */
+.projects-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.projects-number-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: 8px;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.projects-number-input:focus {
+  border-color: var(--color-primary);
+}
+
+.projects-number-input::placeholder {
+  color: var(--color-steel);
+}
+
+/* Skill Tags & AND/OR Switch */
+.projects-skill-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.projects-skill-chip-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-surface);
+  color: var(--color-steel);
+  cursor: pointer;
+}
+
+.projects-skill-chip-btn.selected {
+  background-color: var(--color-card-tint-sky);
+  color: var(--color-link-blue);
+  border-color: rgba(0, 117, 222, 0.3);
+}
+
+.projects-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--color-surface);
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid var(--color-hairline);
+  margin-bottom: 4px;
+}
+
+.projects-mode-btn {
+  flex: 1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 0;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: var(--color-steel);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.projects-mode-btn.active {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+/* Clear btn */
+.projects-clear-btn {
+  background: none;
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-steel);
+  cursor: pointer;
+  width: 100%;
+  font-family: var(--font-sans);
+}
+
+.projects-clear-btn:hover {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* ---- Content Area ---- */
+.projects-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Smart Preset Bar ---- */
+.projects-presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.projects-preset-chip {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--color-hairline);
+  color: var(--color-steel);
+  background-color: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.projects-preset-chip.active {
+  background-color: var(--color-ink-deep);
+  color: #ffffff;
+  border-color: var(--color-ink-deep);
+}
+
+/* ---- Top Toolbar ---- */
+.projects-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .projects-search-wrap {
   position: relative;
   flex: 1;
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .projects-search-wrap svg {
@@ -111,6 +326,7 @@
   font-size: 14px;
   font-family: var(--font-sans);
   outline: none;
+  box-sizing: border-box;
 }
 
 .projects-search-input::placeholder {
@@ -122,7 +338,7 @@
   border-width: 2px;
 }
 
-.projects-select {
+.projects-sort-select {
   height: 40px;
   padding: 0 12px;
   border: 1px solid var(--color-hairline-strong);
@@ -135,41 +351,9 @@
   cursor: pointer;
 }
 
-.projects-select:focus {
-  border-color: var(--color-primary);
-}
-
-/* ---- Category chips ---- */
-.projects-cats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.projects-cat {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 13px;
-  font-weight: 500;
-  border: 1px solid var(--color-hairline);
-  color: var(--color-steel);
-  background-color: transparent;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.projects-cat.active {
-  background-color: var(--color-ink-deep);
-  color: #ffffff;
-  border-color: var(--color-ink-deep);
-}
-
-/* ---- Results count ---- */
 .projects-count {
   font-size: 13px;
   color: var(--color-steel);
-  margin-bottom: 12px;
 }
 
 /* ---- Project Cards ---- */
