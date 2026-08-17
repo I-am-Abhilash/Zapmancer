@@ -11,12 +11,12 @@ import com.smach.zapmancer.core.security.JwtConfig
 import com.smach.zapmancer.core.verification.ResendEmailService
 import com.smach.zapmancer.core.verification.TelnyxSmsService
 import org.koin.core.annotation.Single
+import java.security.SecureRandom
 import java.util.UUID
-import kotlin.random.Random
 
 /**
  * AuthService handles all authentication and verification business logic.
- * Integrated with Resend (Email) and Telnyx (SMS Phone).
+ * Integrated with Resend (Email), Telnyx (SMS Phone), and SecureRandom.
  */
 @Single
 class AuthService(
@@ -24,6 +24,12 @@ class AuthService(
     private val resendEmailService: ResendEmailService? = null,
     private val telnyxSmsService: TelnyxSmsService? = null
 ) {
+    private val secureRandom = SecureRandom()
+
+    private fun generateSecureOtp(): String {
+        val codeNumber = 100_000 + secureRandom.nextInt(900_000)
+        return codeNumber.toString()
+    }
 
     // ------------------------------------------------------------------
     // Registration
@@ -34,30 +40,36 @@ class AuthService(
         email: String,
         password: String,
     ): AuthResponse {
-        if (repository.findByEmail(email) != null) {
+        val normalizedEmail = email.trim().lowercase()
+        val normalizedUsername = username.trim()
+
+        if (password.length < 8) {
+            throw ApiException(ErrorCode.BAD_REQUEST, "Password must be at least 8 characters.")
+        }
+        if (repository.findByEmail(normalizedEmail) != null) {
             throw ApiException(
                 ErrorCode.CONFLICT,
                 "An account with this email already exists.",
             )
         }
-        if (repository.usernameExists(username)) {
+        if (repository.usernameExists(normalizedUsername)) {
             throw ApiException(ErrorCode.CONFLICT, "Username is already taken.")
         }
 
         val passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray())
         val id = "user_${UUID.randomUUID().toString().replace("-", "").take(12)}"
 
-        repository.createUser(id, username, email, passwordHash)
+        repository.createUser(id, normalizedUsername, normalizedEmail, passwordHash)
 
         // Automatically dispatch welcome email verification code via Resend
-        val code = (100000..999999).random().toString()
-        repository.saveOtp(email, code)
-        resendEmailService?.sendVerificationOtp(email, code, username)
+        val code = generateSecureOtp()
+        repository.saveOtp(normalizedEmail, code)
+        resendEmailService?.sendVerificationOtp(normalizedEmail, code, normalizedUsername)
 
-        val tokens = JwtConfig.generateTokens(id, email)
+        val tokens = JwtConfig.generateTokens(id, normalizedEmail)
         return AuthResponse(
             id = id,
-            email = email,
+            email = normalizedEmail,
             accessToken = tokens.accessToken,
             refreshToken = tokens.refreshToken,
             isNewUser = true,
@@ -69,7 +81,8 @@ class AuthService(
     // ------------------------------------------------------------------
 
     suspend fun login(email: String, password: String): AuthResponse {
-        val user = repository.findByEmail(email, includeDeleted = true)
+        val normalizedEmail = email.trim().lowercase()
+        val user = repository.findByEmail(normalizedEmail, includeDeleted = true)
             ?: throw ApiException(ErrorCode.UNAUTHORIZED, "Invalid credentials.")
 
         val hash = user.passwordHash
@@ -119,17 +132,38 @@ class AuthService(
     }
 
     // ------------------------------------------------------------------
-    // Forgot Password — OTP Flow (Resend)
+    // Forgot Password & Reset Password — OTP Flow (Resend)
     // ------------------------------------------------------------------
 
     suspend fun forgotPassword(email: String): CommonResponse {
-        val user = repository.findByEmail(email)
+        val normalizedEmail = email.trim().lowercase()
+        val user = repository.findByEmail(normalizedEmail)
         if (user != null) {
-            val code = (100000..999999).random().toString()
-            repository.saveOtp(email, code)
-            resendEmailService?.sendPasswordResetOtp(email, code)
+            val code = generateSecureOtp()
+            repository.saveOtp(normalizedEmail, code)
+            resendEmailService?.sendPasswordResetOtp(normalizedEmail, code)
         }
         return CommonResponse(success = true, message = "OTP verification code sent to your email.")
+    }
+
+    suspend fun resetPassword(email: String, code: String, newPassword: String): CommonResponse {
+        val normalizedEmail = email.trim().lowercase()
+        if (newPassword.length < 8) {
+            throw ApiException(ErrorCode.BAD_REQUEST, "New password must be at least 8 characters.")
+        }
+
+        val valid = repository.verifyAndConsumeOtp(normalizedEmail, code)
+        if (!valid) {
+            throw ApiException(ErrorCode.BAD_REQUEST, "Invalid or expired OTP code.")
+        }
+
+        val passwordHash = BCrypt.withDefaults().hashToString(12, newPassword.toCharArray())
+        val updated = repository.updatePassword(normalizedEmail, passwordHash)
+        if (!updated) {
+            throw ApiException(ErrorCode.NOT_FOUND, "User account not found.")
+        }
+
+        return CommonResponse(success = true, message = "Password reset successfully. You can now log in.")
     }
 
     // ------------------------------------------------------------------
@@ -140,7 +174,7 @@ class AuthService(
         val user = repository.findById(userId)
             ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
 
-        val code = (100000..999999).random().toString()
+        val code = generateSecureOtp()
         repository.saveOtp(user.email, code)
         resendEmailService?.sendVerificationOtp(user.email, code, user.username)
 
@@ -165,15 +199,16 @@ class AuthService(
     // ------------------------------------------------------------------
 
     suspend fun sendPhoneOtp(userId: String, phoneNumber: String): CommonResponse {
-        if (phoneNumber.length < 8 || !phoneNumber.replace("+", "").all { it.isDigit() }) {
+        val cleanedPhone = phoneNumber.trim()
+        if (cleanedPhone.length < 8 || !cleanedPhone.replace("+", "").all { it.isDigit() }) {
             throw ApiException(ErrorCode.BAD_REQUEST, "Invalid phone number format. Please provide E.164 format (e.g., +1234567890).")
         }
 
-        val code = (100000..999999).random().toString()
-        repository.savePhoneOtp(userId, phoneNumber, code)
-        telnyxSmsService?.sendOtpSms(phoneNumber, code)
+        val code = generateSecureOtp()
+        repository.savePhoneOtp(userId, cleanedPhone, code)
+        telnyxSmsService?.sendOtpSms(cleanedPhone, code)
 
-        return CommonResponse(success = true, message = "SMS verification code dispatched to $phoneNumber.")
+        return CommonResponse(success = true, message = "SMS verification code dispatched to $cleanedPhone.")
     }
 
     suspend fun verifyPhoneOtp(userId: String, code: String): CommonResponse {

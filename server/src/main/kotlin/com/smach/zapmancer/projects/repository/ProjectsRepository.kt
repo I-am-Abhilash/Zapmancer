@@ -81,10 +81,25 @@ class ProjectsRepository {
             expr = expr.limit(limit).offset(offset)
         }
 
-        expr.map { row ->
+        val rows = expr.toList()
+        if (rows.isEmpty()) return@dbQuery emptyList()
+
+        val projectIds = rows.map { it[ProjectsTable.id] }
+
+        val skillsMap = ProjectSkillsTable.selectAll()
+            .where { org.jetbrains.exposed.v1.core.InListOp(ProjectSkillsTable.projectId, projectIds) }
+            .groupBy({ it[ProjectSkillsTable.projectId] }, { it[ProjectSkillsTable.skill] })
+
+        val savedSet = SavedProjectsTable.selectAll()
+            .where {
+                (SavedProjectsTable.userId eq userId) and
+                org.jetbrains.exposed.v1.core.InListOp(SavedProjectsTable.projectId, projectIds)
+            }
+            .map { it[SavedProjectsTable.projectId] }
+            .toSet()
+
+        rows.map { row ->
             val projectId = row[ProjectsTable.id]
-            val skills = getSkills(projectId)
-            val isSaved = isSavedByUser(userId, projectId)
             Project(
                 id = projectId,
                 category = row[ProjectsTable.category],
@@ -94,11 +109,12 @@ class ProjectsRepository {
                 isPaymentVerified = row[ProjectsTable.isPaymentVerified],
                 budgetRange = row[ProjectsTable.budgetRange],
                 projectType = row[ProjectsTable.projectType],
-                skills = skills,
-                isSaved = isSaved,
+                skills = skillsMap[projectId] ?: emptyList(),
+                isSaved = savedSet.contains(projectId),
             )
         }
     }
+
 
     suspend fun findById(projectId: String, userId: String): ProjectDetail? = dbQuery {
         val row = ProjectsTable.selectAll()

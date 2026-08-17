@@ -5,35 +5,60 @@ import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.slf4j.LoggerFactory
 
 /**
  * DatabaseFactory is responsible for setting up the connection pool (HikariCP),
  * running database migrations (Flyway), and connecting the Exposed ORM.
  */
 object DatabaseFactory {
+    private val logger = LoggerFactory.getLogger(DatabaseFactory::class.java)
+    private var dataSource: HikariDataSource? = null
 
     /**
      * Initializes the database connection and migrations.
      * @param config The database configuration (driver, url, user, password).
      */
     fun init(config: DatabaseConfig) {
-        val dataSource = HikariDataSource(
-            HikariConfig().apply {
-                driverClassName = config.driver
-                jdbcUrl = config.url
-                username = config.user
-                password = config.password
-                maximumPoolSize = 3 // Limited for local/dev, increase for production
-                isAutoCommit = false
-                transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-                validate()
-            },
-        )
+        val hikariConfig = HikariConfig().apply {
+            driverClassName = config.driver
+            jdbcUrl = config.url
+            username = config.user
+            password = config.password
+            maximumPoolSize = 20
+            minimumIdle = 5
+            idleTimeout = 300000
+            maxLifetime = 1800000
+            connectionTimeout = 10000
+            isAutoCommit = false
+            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+            validate()
+        }
 
-        val flyway = Flyway.configure().dataSource(dataSource).load()
+        val ds = HikariDataSource(hikariConfig)
+        dataSource = ds
+
+        val flyway = Flyway.configure().dataSource(ds).load()
         flyway.migrate()
 
-        Database.connect(dataSource)
+        Database.connect(ds)
+        logger.info("Database initialized and Flyway migrations applied successfully.")
+
+        Runtime.getRuntime().addShutdownHook(Thread {
+            close()
+        })
+    }
+
+    /**
+     * Closes the HikariCP connection pool on application shutdown.
+     */
+    fun close() {
+        try {
+            dataSource?.close()
+            logger.info("HikariCP DataSource closed successfully.")
+        } catch (e: Exception) {
+            logger.error("Error closing HikariCP DataSource: ${e.message}")
+        }
     }
 
     /**

@@ -138,6 +138,15 @@ class AuthRepository {
         true
     }
 
+    /** Updates user's password hash following successful OTP verification. */
+    suspend fun updatePassword(email: String, passwordHash: String): Boolean = dbQuery {
+        val normalizedEmail = email.trim().lowercase()
+        UsersTable.update({ UsersTable.email eq normalizedEmail }) {
+            it[UsersTable.passwordHash] = passwordHash
+        } > 0
+    }
+
+
     suspend fun setUserEmailVerified(userId: String): Boolean = dbQuery {
         UsersTable.update({ UsersTable.id eq userId }) {
             it[isEmailVerified] = true

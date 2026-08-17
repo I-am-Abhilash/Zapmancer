@@ -23,14 +23,6 @@ fun Route.proposalsRouting() {
     authenticate("local-jwt") {
         /**
          * Submit a proposal bid for a project.
-         *
-         * Request: [SubmitProposalRequest] Proposal parameters
-         *
-         * Responses:
-         *   – 200 [ApiResponse<CommonResponse>] Proposal submitted successfully.
-         *   – 401 [ApiResponse<Unit>] Unauthorized.
-         *
-         * Tags: Proposals
          */
         post("/proposals") {
             val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -39,31 +31,25 @@ fun Route.proposalsRouting() {
             )
             val req = call.receive<SubmitProposalRequest>()
             val result = service.submitProposal(principal.uid, req)
-            call.respond(ApiResponse(success = true, data = result))
+            call.respond(HttpStatusCode.Created, ApiResponse(success = true, data = result))
         }
 
         route("/projects/{projectId}") {
             /**
-             * Retrieve proposals submitted for a specific project (Client view).
-             *
-             * Path: projectId [String] Target project ID
-             *
-             * Responses:
-             *   – 200 [ApiResponse<List<Proposal>>] List of submitted proposals.
-             *   – 400 [ApiResponse<Unit>] Missing project ID.
-             *
-             * Tags: Proposals
+             * Retrieve proposals submitted for a specific project (Project Owner only).
              */
             get("/proposals") {
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized,
+                    "Missing or invalid token",
+                )
                 val projectId = call.parameters["projectId"] ?: return@get call.respond(
                     HttpStatusCode.BadRequest,
                     "Project ID is missing from the URL",
                 )
-                val result = service.getProposalsForProject(projectId)
+                val result = service.getProposalsForProject(principal.uid, projectId)
                 call.respond(ApiResponse(success = true, data = result))
             }
         }
     }
 }
-
-

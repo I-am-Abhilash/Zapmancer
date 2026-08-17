@@ -35,7 +35,15 @@ class MessageService(
         conversationId: String,
         userId: String,
         limit: Int = 50
-    ): List<MessageItem> = repository.getMessages(conversationId, userId, limit)
+    ): List<MessageItem> {
+        val participants = repository.getConversationParticipants(conversationId)
+            ?: throw ApiException(ErrorCode.NOT_FOUND, "Conversation not found.")
+
+        if (participants.first != userId && participants.second != userId) {
+            throw ApiException(ErrorCode.FORBIDDEN, "You are not a participant in this conversation.")
+        }
+        return repository.getMessages(conversationId, userId, limit)
+    }
 
     suspend fun sendMessage(
         conversationId: String,
@@ -47,6 +55,13 @@ class MessageService(
         attachmentSizeBytes: Long? = null,
         replyToMessageId: String? = null
     ): CommonResponse {
+        val participants = repository.getConversationParticipants(conversationId)
+            ?: throw ApiException(ErrorCode.NOT_FOUND, "Conversation not found.")
+
+        if (participants.first != senderId && participants.second != senderId) {
+            throw ApiException(ErrorCode.FORBIDDEN, "You are not a participant in this conversation.")
+        }
+
         val messageId = repository.sendMessage(
             conversationId = conversationId,
             senderId = senderId,
@@ -57,6 +72,7 @@ class MessageService(
             attachmentSizeBytes = attachmentSizeBytes,
             replyToMessageId = replyToMessageId
         )
+
 
         val participants = repository.getConversationParticipants(conversationId)
         if (participants != null) {
@@ -143,19 +159,23 @@ class MessageService(
     }
 
     suspend fun markAllRead(conversationId: String, userId: String): CommonResponse {
-        repository.markAllRead(conversationId, userId)
-
         val participants = repository.getConversationParticipants(conversationId)
-        if (participants != null) {
-            val otherId = if (userId == participants.first) participants.second else participants.first
-            connectionManager.sendToUser(
-                otherId,
-                ChatFrame.ServerToClient.MessageStatusUpdate(conversationId, "", "READ"),
-            )
+            ?: throw ApiException(ErrorCode.NOT_FOUND, "Conversation not found.")
+
+        if (participants.first != userId && participants.second != userId) {
+            throw ApiException(ErrorCode.FORBIDDEN, "You are not a participant in this conversation.")
         }
+
+        repository.markAllRead(conversationId, userId)
+        val otherId = if (userId == participants.first) participants.second else participants.first
+        connectionManager.sendToUser(
+            otherId,
+            ChatFrame.ServerToClient.MessageStatusUpdate(conversationId, "", "READ"),
+        )
 
         return CommonResponse(success = true, message = "Conversation marked as read.")
     }
+
 
     suspend fun uploadAttachment(
         userId: String,

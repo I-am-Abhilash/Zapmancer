@@ -79,16 +79,30 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
 
     install(RateLimit) {
         register(RateLimitName("auth")) {
-            rateLimiter(limit = 5, refillPeriod = 60.seconds)
+            rateLimiter(limit = 30, refillPeriod = 60.seconds)
+            requestKey { call ->
+                call.request.headers["X-Forwarded-For"]?.split(",")?.firstOrNull()?.trim()
+                    ?: call.request.headers["CF-Connecting-IP"]
+                    ?: "ip_${call.request.headers[HttpHeaders.UserAgent]?.hashCode() ?: 0}"
+            }
+        }
+        register(RateLimitName("otp")) {
+            rateLimiter(limit = 5, refillPeriod = 300.seconds)
+            requestKey { call ->
+                call.request.headers["X-Forwarded-For"]?.split(",")?.firstOrNull()?.trim()
+                    ?: call.request.headers["CF-Connecting-IP"]
+                    ?: "ip_${call.request.headers[HttpHeaders.UserAgent]?.hashCode() ?: 0}"
+            }
         }
     }
 
     install(WebSockets) {
         pingPeriod = 15.seconds
         timeout = 15.seconds
-        maxFrameSize = Long.MAX_VALUE
+        maxFrameSize = 1024 * 1024 // 1 MB max frame size to prevent memory exhaustion
         masking = false
     }
+
 
     install(ContentNegotiation) {
         json(

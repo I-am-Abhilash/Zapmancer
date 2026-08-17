@@ -118,19 +118,12 @@ fun Route.authRouting() {
                     req.email,
                     req.password,
                 )
-                call.respond(ApiResponse(success = true, data = result))
+                call.respond(HttpStatusCode.Created, ApiResponse(success = true, data = result))
             }
 
             /**
-             * Request password reset OTP.
-             *
-             * Request: [ForgotPasswordRequest] Account email address
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] OTP code dispatched.
-             *
-             * Tags: Authentication
-             */
+              * Request password reset OTP.
+              */
             post("/forgot-password") {
                 val req = call.receive<ForgotPasswordRequest>()
                 val result = service.forgotPassword(req.email)
@@ -138,21 +131,26 @@ fun Route.authRouting() {
             }
 
             /**
-             * Verify password reset OTP code.
-             *
-             * Request: [VerifyOtpRequest] Email and 6-digit OTP code
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] OTP verified.
-             *   – 400 [ApiResponse<Unit>] Invalid or expired OTP code.
-             *
-             * Tags: Authentication
-             */
+              * Verify password reset OTP code.
+              */
             post("/verify-otp") {
                 val req = call.receive<VerifyOtpRequest>()
                 val result = service.verifyOtp(
                     req.email,
                     req.code,
+                )
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+              * Set new password using verified OTP code.
+              */
+            post("/reset-password") {
+                val req = call.receive<com.smach.zapmancer.core.common.dto.ResetPasswordRequest>()
+                val result = service.resetPassword(
+                    email = req.email,
+                    code = req.code,
+                    newPassword = req.newPassword
                 )
                 call.respond(ApiResponse(success = true, data = result))
             }

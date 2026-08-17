@@ -138,7 +138,7 @@ fun Route.projectsRouting() {
                 )
                 val req = call.receive<CreateProjectRequest>()
                 val result = service.createProject(principal.uid, req)
-                call.respond(ApiResponse(success = true, data = result))
+                call.respond(HttpStatusCode.Created, ApiResponse(success = true, data = result))
             }
         }
     }

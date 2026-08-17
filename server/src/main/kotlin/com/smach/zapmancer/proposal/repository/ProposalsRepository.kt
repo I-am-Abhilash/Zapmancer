@@ -3,6 +3,7 @@ package com.smach.zapmancer.proposal.repository
 import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
 import com.smach.zapmancer.core.database.DatabaseFactory.dbQuery
+import com.smach.zapmancer.core.database.ProjectsTable
 import com.smach.zapmancer.core.database.ProposalsTable
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -14,6 +15,13 @@ import kotlin.time.Clock.System
 class ProposalsRepository {
 
     private fun now() = System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+    suspend fun getProjectOwnerId(projectId: String): String? = dbQuery {
+        ProjectsTable.selectAll()
+            .where { ProjectsTable.id eq projectId }
+            .map { it[ProjectsTable.userId] }
+            .singleOrNull()
+    }
 
     suspend fun submit(freelancerId: String, req: SubmitProposalRequest): Int = dbQuery {
         ProposalsTable.insert {

@@ -33,7 +33,7 @@ class HomeService(private val repository: HomeRepository) {
         )
     }
 
-    fun exportActivities(activities: List<RecentActivity>): ExportActivitiesResponse {
+    suspend fun exportActivities(activities: List<RecentActivity>): ExportActivitiesResponse = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         val timestamp = System.currentTimeMillis()
         val fileName = "activities_$timestamp.csv"
         val dir = File("exports")
@@ -43,12 +43,31 @@ class HomeService(private val repository: HomeRepository) {
         val csv = buildString {
             appendLine("id,projectName,category,categoryTag,status,date,value")
             activities.forEach { a ->
-                appendLine("${a.id},${a.projectName},${a.category},${a.categoryTag},${a.status},${a.date},${a.value}")
+                appendLine(
+                    listOf(
+                        sanitizeCsv(a.id),
+                        sanitizeCsv(a.projectName),
+                        sanitizeCsv(a.category),
+                        sanitizeCsv(a.categoryTag),
+                        sanitizeCsv(a.status),
+                        sanitizeCsv(a.date),
+                        sanitizeCsv(a.value)
+                    ).joinToString(",")
+                )
             }
         }
         file.writeText(csv)
 
-        return ExportActivitiesResponse(filePath = "exports/$fileName")
+        ExportActivitiesResponse(filePath = "exports/$fileName")
+    }
+
+    private fun sanitizeCsv(value: String): String {
+        var str = value.replace("\"", "\"\"")
+        if (str.startsWith("=") || str.startsWith("+") || str.startsWith("-") || str.startsWith("@") || str.startsWith("\t") || str.startsWith("\r")) {
+            str = "'$str"
+        }
+        return "\"$str\""
     }
 }
+
 
