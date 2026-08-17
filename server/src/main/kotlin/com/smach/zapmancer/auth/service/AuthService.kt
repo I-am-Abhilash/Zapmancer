@@ -146,6 +146,19 @@ class AuthService(
         return CommonResponse(success = true, message = "OTP verification code sent to your email.")
     }
 
+    suspend fun verifyOtp(email: String, code: String): CommonResponse {
+        val normalizedEmail = email.trim().lowercase()
+        val valid = repository.verifyAndConsumeOtp(normalizedEmail, code)
+        if (valid) {
+            return CommonResponse(
+                success = true,
+                message = "OTP verified successfully.",
+            )
+        } else {
+            throw ApiException(ErrorCode.BAD_REQUEST, "Invalid or expired OTP code.")
+        }
+    }
+
     suspend fun resetPassword(email: String, code: String, newPassword: String): CommonResponse {
         val normalizedEmail = email.trim().lowercase()
         if (newPassword.length < 8) {

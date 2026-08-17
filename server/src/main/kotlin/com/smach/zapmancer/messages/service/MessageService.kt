@@ -1,6 +1,8 @@
 package com.smach.zapmancer.messages.service
 
+import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.CommonResponse
+import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.AttachmentUploadResponse
 import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.ConversationItem
@@ -9,6 +11,7 @@ import com.smach.zapmancer.core.framework.storage.StorageService
 import com.smach.zapmancer.messages.repository.MessageRepository
 import org.koin.core.annotation.Single
 import java.util.UUID
+import kotlin.time.Clock
 
 @Single
 class MessageService(
@@ -74,25 +77,22 @@ class MessageService(
         )
 
 
-        val participants = repository.getConversationParticipants(conversationId)
-        if (participants != null) {
-            val recipientId = if (senderId == participants.first) participants.second else participants.first
+        val recipientId = if (senderId == participants.first) participants.second else participants.first
 
-            val recipientMsg = repository.getMessage(messageId, recipientId)
-            if (recipientMsg != null) {
-                connectionManager.sendToUser(
-                    recipientId,
-                    ChatFrame.ServerToClient.NewMessage(conversationId, recipientMsg),
-                )
-            }
+        val recipientMsg = repository.getMessage(messageId, recipientId)
+        if (recipientMsg != null) {
+            connectionManager.sendToUser(
+                recipientId,
+                ChatFrame.ServerToClient.NewMessage(conversationId, recipientMsg),
+            )
+        }
 
-            val senderMsg = repository.getMessage(messageId, senderId)
-            if (senderMsg != null) {
-                connectionManager.sendToUser(
-                    senderId,
-                    ChatFrame.ServerToClient.NewMessage(conversationId, senderMsg),
-                )
-            }
+        val senderMsg = repository.getMessage(messageId, senderId)
+        if (senderMsg != null) {
+            connectionManager.sendToUser(
+                senderId,
+                ChatFrame.ServerToClient.NewMessage(conversationId, senderMsg),
+            )
         }
 
         return CommonResponse(success = true, message = "Message sent.")
@@ -149,7 +149,7 @@ class MessageService(
     suspend fun markMessageRead(conversationId: String, readerId: String, messageId: String): CommonResponse {
         val senderId = repository.markMessageRead(messageId, readerId)
         if (senderId != null) {
-            val nowTime = kotlinx.datetime.Clock.System.now().toString().take(16).replace("T", " ")
+            val nowTime = Clock.System.now().toString().take(16).replace("T", " ")
             connectionManager.sendToUser(
                 senderId,
                 ChatFrame.ServerToClient.MessageStatusUpdate(conversationId, messageId, "READ", readAt = nowTime)

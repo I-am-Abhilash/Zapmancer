@@ -19,7 +19,7 @@ class ProposalsRepository {
     suspend fun getProjectOwnerId(projectId: String): String? = dbQuery {
         ProjectsTable.selectAll()
             .where { ProjectsTable.id eq projectId }
-            .map { it[ProjectsTable.userId] }
+            .map { it[ProjectsTable.clientId] }
             .singleOrNull()
     }
 

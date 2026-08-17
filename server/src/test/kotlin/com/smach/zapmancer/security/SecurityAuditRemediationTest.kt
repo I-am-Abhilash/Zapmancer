@@ -25,6 +25,26 @@ class SecurityAuditRemediationTest {
     private val proposalsService = ProposalsService(repository = proposalsRepository)
 
     @Test
+    fun testVerifyOtpSuccess() = runBlocking {
+        coEvery { authRepository.verifyAndConsumeOtp("user@zapmancer.com", "849201") } returns true
+
+        val response = authService.verifyOtp("user@zapmancer.com", "849201")
+
+        assertTrue(response.success)
+        assertEquals("OTP verified successfully.", response.message)
+    }
+
+    @Test
+    fun testVerifyOtpInvalidCodeFails() = runBlocking {
+        coEvery { authRepository.verifyAndConsumeOtp("user@zapmancer.com", "000000") } returns false
+
+        val ex = assertFailsWith<ApiException> {
+            authService.verifyOtp("user@zapmancer.com", "000000")
+        }
+        assertEquals(ErrorCode.BAD_REQUEST, ex.code)
+    }
+
+    @Test
     fun testResetPasswordFlowSuccess() = runBlocking {
         coEvery { authRepository.verifyAndConsumeOtp("victim@zapmancer.com", "849201") } returns true
         coEvery { authRepository.updatePassword("victim@zapmancer.com", any()) } returns true

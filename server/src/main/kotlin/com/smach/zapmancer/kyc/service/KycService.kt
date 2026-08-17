@@ -7,14 +7,14 @@ import com.smach.zapmancer.core.common.dto.KycInitResponse
 import com.smach.zapmancer.core.common.dto.KycReceiptResponse
 import com.smach.zapmancer.core.common.dto.KycStatus
 import com.smach.zapmancer.core.common.dto.KycStatusResponse
+import com.smach.zapmancer.core.framework.storage.StorageService
 import com.smach.zapmancer.kyc.client.OpenBiometricsClient
 import com.smach.zapmancer.kyc.repository.KycRepository
 import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
-import com.smach.zapmancer.core.framework.storage.StorageService
-import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
+import kotlin.time.Clock.System
 
 @Serializable
 data class CanonicalKycReceiptData(
@@ -38,23 +38,33 @@ class KycService(
     private val bucketName: String = "zapmancer-assets"
 ) {
     /**
-     * Start a new KYC session with an active/passive liveness challenge.
+     * Initializes a KYC session and returns an active liveness gesture challenge.
      */
     suspend fun initializeKyc(userId: String, request: KycInitRequest): KycInitResponse {
-        val livenessSession = openBiometricsClient.createLivenessSession(request.livenessPreset.name.lowercase())
-        val verificationId = UUID.randomUUID().toString()
+        val verificationId = "kyc_" + UUID.randomUUID().toString().replace("-", "").take(16)
+        val livenessInit = openBiometricsClient.createLivenessSession(request.livenessPreset.name.lowercase())
+
+        kycRepository.createVerification(
+            id = verificationId,
+            userId = userId,
+            documentType = request.documentType,
+            documentFrontUrl = "",
+            documentBackUrl = null,
+            selfieUrl = "",
+            status = KycStatus.PENDING
+        )
 
         return KycInitResponse(
             verificationId = verificationId,
-            livenessSessionId = livenessSession.session_id,
-            instruction = livenessSession.instruction,
-            preset = livenessSession.preset,
-            expiresAtUtc = livenessSession.expires_at
+            livenessSessionId = livenessInit.session_id,
+            instruction = livenessInit.instruction,
+            preset = livenessInit.preset,
+            expiresAtUtc = livenessInit.expires_at
         )
     }
 
     /**
-     * Submit uploaded document and selfie frames for AI verification and Ed25519 signing.
+     * Complete pipeline: Upload -> OCR -> Face Match -> Active Liveness -> Decision -> Ed25519 Receipt -> DB
      */
     suspend fun processKycSubmission(
         userId: String,
@@ -64,58 +74,54 @@ class KycService(
         frontBytes: ByteArray,
         backBytes: ByteArray?,
         selfieBytes: ByteArray,
-        registeredUsername: String
+        registeredUsername: String = ""
     ): KycStatusResponse {
-        // 1. Upload files to storage
-        val frontUrl = storageService.uploadFile(bucketName, "kyc/$userId/${verificationId}_front.jpg", frontBytes, "image/jpeg")
-        val backUrl = backBytes?.let {
-            storageService.uploadFile(bucketName, "kyc/$userId/${verificationId}_back.jpg", it, "image/jpeg")
+        // 1. Upload files to Object Storage
+        val frontPath = "kyc/$userId/$verificationId/front.jpg"
+        val selfiePath = "kyc/$userId/$verificationId/selfie.jpg"
+        val frontUrl = storageService.uploadFile(bucketName, frontPath, frontBytes, "image/jpeg")
+        val selfieUrl = storageService.uploadFile(bucketName, selfiePath, selfieBytes, "image/jpeg")
+
+        var backUrl: String? = null
+        if (backBytes != null) {
+            val backPath = "kyc/$userId/$verificationId/back.jpg"
+            backUrl = storageService.uploadFile(bucketName, backPath, backBytes, "image/jpeg")
         }
-        val selfieUrl = storageService.uploadFile(bucketName, "kyc/$userId/${verificationId}_selfie.jpg", selfieBytes, "image/jpeg")
 
+        // 2. Perform Document OCR & Tamper Analysis
+        val ocrResponse = openBiometricsClient.processDocument(frontBytes)
+        val extractedName = ocrResponse.fields["name"]
+        val extractedDob = ocrResponse.fields["dob"]
+        val extractedDocNum = ocrResponse.fields["document_number"]
+        val extractedExpiry = ocrResponse.fields["expiry_date"]
 
-        // 2. Initial record creation
-        kycRepository.createVerification(
-            id = verificationId,
-            userId = userId,
-            documentType = documentType,
-            documentFrontUrl = frontUrl,
-            documentBackUrl = backUrl,
-            selfieUrl = selfieUrl,
-            status = KycStatus.PENDING
-        )
-
-        // 3. Document OCR / MRZ processing
-        val docResponse = openBiometricsClient.processDocument(frontBytes)
-        val extractedName = docResponse.fields["name"] ?: docResponse.mrz["name"]
-        val extractedDob = docResponse.fields["dob"] ?: docResponse.mrz["dob"]
-        val extractedDocNum = docResponse.fields["document_number"] ?: docResponse.mrz["document_number"]
-        val extractedExpiry = docResponse.fields["expiry"] ?: docResponse.mrz["expiry"]
-
-        // 4. Liveness evaluation
-        val livenessResponse = openBiometricsClient.evaluateLiveness(livenessSessionId, selfieBytes)
-
-        // 5. 1:1 Face Match verification
+        // 3. Perform 1:1 Biometric Face Match (ID photo vs Live Selfie)
         val faceMatchResponse = openBiometricsClient.verifyFaces(frontBytes, selfieBytes)
 
+        // 4. Verify Active Liveness & Anti-spoofing
+        val livenessResponse = openBiometricsClient.evaluateLiveness(livenessSessionId, selfieBytes)
+
+        // 5. Fraud and Integrity Checks
+        val isTampered = ocrResponse.confidence < 0.50
+
         // 6. Name match evaluation
-        val isNameMatched = if (extractedName != null && registeredUsername.isNotBlank()) {
+        val isNameMatched = if (!extractedName.isNullOrBlank() && registeredUsername.isNotBlank()) {
             val normalizedExtracted = extractedName.lowercase().replace(" ", "")
             val normalizedUser = registeredUsername.lowercase().replace(" ", "")
             normalizedExtracted.contains(normalizedUser) || normalizedUser.contains(normalizedExtracted)
         } else {
-            true // Default to true if name not found in OCR to allow manual review if needed
+            true
         }
 
         // 7. Decision rule engine
         val decision = evaluateDecision(
             similarity = faceMatchResponse.similarity,
-            livenessPassed = livenessResponse.passed && livenessResponse.anti_spoof_passed,
+            livenessPassed = livenessResponse.passed && livenessResponse.anti_spoof_passed && !isTampered,
             isNameMatched = isNameMatched
         )
 
         // 8. Generate Ed25519 Cryptographic Receipt
-        val nowUtc = Clock.System.now().toString()
+        val nowUtc = System.now().toString()
         val frontSha256 = receiptService.sha256Hex(frontBytes)
         val selfieSha256 = receiptService.sha256Hex(selfieBytes)
 
@@ -156,7 +162,7 @@ class KycService(
             kycRepository.updateProjectIdentityFlags(userId, true)
         }
 
-        return result ?: kycRepository.getVerificationById(verificationId)!
+        return result ?: kycRepository.getVerificationById(verificationId)!!
     }
 
     suspend fun getKycStatus(userId: String): KycStatusResponse? {
@@ -165,14 +171,15 @@ class KycService(
 
     suspend fun getReceipt(verificationId: String): KycReceiptResponse? {
         val record = kycRepository.getVerificationById(verificationId) ?: return null
-        if (record.receiptSignature == null || record.receiptHash == null) return null
+        val sig = record.receiptSignature ?: return null
+        val rHash = record.receiptHash ?: return null
 
         val canonicalData = CanonicalKycReceiptData(
             verificationId = record.verificationId,
             userId = record.userId,
             documentType = record.documentType.name,
-            documentFrontSha256 = record.receiptHash, // reference hash
-            selfieSha256 = record.receiptHash,
+            documentFrontSha256 = rHash,
+            selfieSha256 = rHash,
             extractedName = record.extractedName,
             faceSimilarityScore = record.faceSimilarityScore,
             livenessScore = record.livenessScore,
@@ -180,15 +187,15 @@ class KycService(
             timestampUtc = record.createdAt
         )
         val canonicalJson = Json.encodeToString(canonicalData)
-        val isValid = receiptService.verify(canonicalJson, record.receiptSignature, receiptService.publicKeyBase64)
+        val isValid = receiptService.verify(canonicalJson, sig, receiptService.publicKeyBase64)
 
         return KycReceiptResponse(
             verificationId = record.verificationId,
             userId = record.userId,
             isValid = isValid,
             canonicalPayloadJson = canonicalJson,
-            ed25519SignatureBase64 = record.receiptSignature,
-            receiptHashSha256 = record.receiptHash,
+            ed25519SignatureBase64 = sig,
+            receiptHashSha256 = rHash,
             publicKeyBase64 = receiptService.publicKeyBase64,
             verifiedAtUtc = record.updatedAt
         )
@@ -205,7 +212,7 @@ class KycService(
         notes: String?
     ): KycStatusResponse? {
         val updated = kycRepository.updateAdminReview(verificationId, adminUserId, decision, notes)
-        if (decision == KycStatus.VERIFIED && updated != null) {
+        if (updated != null && decision == KycStatus.VERIFIED) {
             kycRepository.updateProjectIdentityFlags(updated.userId, true)
         }
         return updated
@@ -214,9 +221,9 @@ class KycService(
     companion object {
         fun evaluateDecision(similarity: Double, livenessPassed: Boolean, isNameMatched: Boolean): KycStatus {
             if (!livenessPassed) return KycStatus.FAILED
-            if (similarity >= 0.85 && isNameMatched) return KycStatus.VERIFIED
-            if (similarity >= 0.65) return KycStatus.MANUAL_REVIEW
-            return KycStatus.FAILED
+            if (similarity < 0.60) return KycStatus.FAILED
+            if (similarity in 0.60..0.80 || !isNameMatched) return KycStatus.MANUAL_REVIEW
+            return KycStatus.VERIFIED
         }
     }
 }

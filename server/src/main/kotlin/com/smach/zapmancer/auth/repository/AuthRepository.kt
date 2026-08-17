@@ -202,7 +202,7 @@ class AuthRepository {
         } > 0
 
         // Synchronize project phone verification badge
-        ProjectsTable.update({ ProjectsTable.userId eq userId }) {
+        ProjectsTable.update({ ProjectsTable.clientId eq userId }) {
             it[isPhoneVerified] = true
         }
 

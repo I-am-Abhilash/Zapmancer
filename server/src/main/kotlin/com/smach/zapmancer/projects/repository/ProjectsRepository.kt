@@ -20,6 +20,7 @@ import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.VarCharColumnType
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -87,13 +88,13 @@ class ProjectsRepository {
         val projectIds = rows.map { it[ProjectsTable.id] }
 
         val skillsMap = ProjectSkillsTable.selectAll()
-            .where { org.jetbrains.exposed.v1.core.InListOp(ProjectSkillsTable.projectId, projectIds) }
+            .where { ProjectSkillsTable.projectId inList projectIds }
             .groupBy({ it[ProjectSkillsTable.projectId] }, { it[ProjectSkillsTable.skill] })
 
         val savedSet = SavedProjectsTable.selectAll()
             .where {
                 (SavedProjectsTable.userId eq userId) and
-                org.jetbrains.exposed.v1.core.InListOp(SavedProjectsTable.projectId, projectIds)
+                (SavedProjectsTable.projectId inList projectIds)
             }
             .map { it[SavedProjectsTable.projectId] }
             .toSet()

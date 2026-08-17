@@ -27,6 +27,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
+import io.ktor.utils.io.readRemaining
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
@@ -159,13 +160,16 @@ fun Route.messageRouting() {
                     if (part is PartData.FileItem) {
                         fileName = part.originalFileName ?: "attachment.bin"
                         contentType = part.contentType?.toString() ?: "application/octet-stream"
-                        fileBytes = part.provider().readByteArray()
+                        fileBytes = part.provider().readRemaining().readByteArray()
                     }
                     part.dispose()
                 }
 
                 if (fileBytes == null) {
-                    return@post call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, message = "Missing file payload"))
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(success = false, error = com.smach.zapmancer.core.network.ktor.ApiError("BAD_REQUEST", "Missing file payload"))
+                    )
                 }
 
                 val result = service.uploadAttachment(principal.uid, fileName, fileBytes!!, contentType)

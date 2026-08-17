@@ -7,12 +7,14 @@ import com.smach.zapmancer.core.common.dto.KycInitRequest
 import com.smach.zapmancer.core.common.dto.KycInitResponse
 import com.smach.zapmancer.core.common.dto.KycReceiptResponse
 import com.smach.zapmancer.core.common.dto.KycStatusResponse
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.kyc.service.KycService
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
+import io.ktor.http.content.streamProvider
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
@@ -22,7 +24,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.ktor.utils.io.core.readBytes
+import io.ktor.utils.io.readRemaining
 import kotlinx.io.readByteArray
 import org.koin.ktor.ext.inject
 
@@ -39,9 +41,15 @@ fun Route.kycRouting() {
          */
         get("/receipt/{id}") {
             val verificationId = call.parameters["id"]
-                ?: return@get call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, message = "Missing verification id"))
+                ?: return@get call.respond(
+                    HttpStatusCode.BadRequest,
+                    ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing verification id"))
+                )
             val receipt = kycService.getReceipt(verificationId)
-                ?: return@get call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, message = "Receipt not found"))
+                ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Receipt not found"))
+                )
 
             call.respond(ApiResponse(success = true, data = receipt))
         }
@@ -93,7 +101,7 @@ fun Route.kycRouting() {
                             }
                         }
                         is PartData.FileItem -> {
-                            val bytes = part.provider().readByteArray()
+                            val bytes = part.provider().readRemaining().readByteArray()
                             when (part.name) {
                                 "document_front" -> frontBytes = bytes
                                 "document_back" -> backBytes = bytes
@@ -108,7 +116,10 @@ fun Route.kycRouting() {
                 if (verificationId.isBlank() || frontBytes == null || selfieBytes == null) {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, message = "Missing required fields (verification_id, document_front, or selfie)")
+                        ApiResponse<Unit>(
+                            success = false,
+                            error = ApiError("BAD_REQUEST", "Missing required fields (verification_id, document_front, or selfie)")
+                        )
                     )
                 }
 
@@ -120,7 +131,7 @@ fun Route.kycRouting() {
                     frontBytes = frontBytes!!,
                     backBytes = backBytes,
                     selfieBytes = selfieBytes!!,
-                    registeredUsername = principal.uid // fallback identifier / username
+                    registeredUsername = principal.uid
                 )
 
                 call.respond(ApiResponse(success = true, data = result))
@@ -133,7 +144,10 @@ fun Route.kycRouting() {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
                 val status = kycService.getKycStatus(principal.uid)
-                    ?: return@get call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, message = "No KYC record found"))
+                    ?: return@get call.respond(
+                        HttpStatusCode.NotFound,
+                        ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "No KYC record found"))
+                    )
 
                 call.respond(ApiResponse(success = true, data = status))
             }
@@ -148,7 +162,6 @@ fun Route.kycRouting() {
             get("/admin/queue") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                // In production, check for ADMIN role
                 val queue = kycService.getAdminQueue()
                 call.respond(ApiResponse(success = true, data = queue))
             }
@@ -160,7 +173,10 @@ fun Route.kycRouting() {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val verificationId = call.parameters["id"]
-                    ?: return@post call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, message = "Missing verification id"))
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing verification id"))
+                    )
                 val request = call.receive<KycAdminReviewRequest>()
 
                 val updated = kycService.reviewKycSubmission(
@@ -168,7 +184,10 @@ fun Route.kycRouting() {
                     adminUserId = principal.uid,
                     decision = request.decision,
                     notes = request.notes
-                ) ?: return@post call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, message = "Verification not found"))
+                ) ?: return@post call.respond(
+                    HttpStatusCode.NotFound,
+                    ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Verification not found"))
+                )
 
                 call.respond(ApiResponse(success = true, data = updated))
             }

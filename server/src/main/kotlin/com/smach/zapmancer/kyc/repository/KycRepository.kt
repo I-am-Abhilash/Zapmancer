@@ -8,14 +8,16 @@ import com.smach.zapmancer.core.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.core.database.KycVerificationsTable
 import com.smach.zapmancer.core.database.ProjectsTable
 import com.smach.zapmancer.core.database.UsersTable
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
-import org.jetbrains.exposed.v1.core.insert
-import org.jetbrains.exposed.v1.core.selectAll
-import org.jetbrains.exposed.v1.core.update
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
+import kotlin.time.Clock.System
 
 class KycRepository {
 
@@ -28,7 +30,7 @@ class KycRepository {
         selfieUrl: String,
         status: KycStatus = KycStatus.PENDING
     ): KycStatusResponse = dbQuery {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.insert {
             it[KycVerificationsTable.id] = id
             it[KycVerificationsTable.userId] = userId
@@ -58,7 +60,7 @@ class KycRepository {
         receiptHash: String?,
         reviewerNotes: String? = null
     ): KycStatusResponse? = dbQuery {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.update({ KycVerificationsTable.id eq id }) {
             it[KycVerificationsTable.status] = status.name
             it[KycVerificationsTable.extractedName] = extractedName
@@ -127,7 +129,7 @@ class KycRepository {
         decision: KycStatus,
         notes: String?
     ): KycStatusResponse? = dbQuery {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.update({ KycVerificationsTable.id eq id }) {
             it[KycVerificationsTable.status] = decision.name
             it[KycVerificationsTable.reviewerNotes] = notes
