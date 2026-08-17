@@ -6,15 +6,12 @@ import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.Project
 import com.smach.zapmancer.core.common.dto.ProjectDetail
-import com.smach.zapmancer.core.recommendations.GorseClient
 import com.smach.zapmancer.projects.repository.ProjectsRepository
 import org.koin.core.annotation.Single
-
 
 @Single
 class ProjectsService(
     private val repository: ProjectsRepository,
-    private val gorseClient: GorseClient,
 ) {
 
     suspend fun getProjects(
@@ -32,6 +29,10 @@ class ProjectsService(
         page = page,
         limit = limit,
     )
+
+    suspend fun getRecommendedProjects(userId: String, limit: Int = 10): List<Project> {
+        return repository.getRecommendedProjects(userId = userId, limit = limit)
+    }
 
     suspend fun getProjectById(projectId: String, userId: String): ProjectDetail {
         return repository.findById(projectId, userId)
@@ -52,7 +53,6 @@ class ProjectsService(
         repository.findById(projectId, userId)
             ?: throw ApiException(ErrorCode.NOT_FOUND, "Project not found.")
         repository.apply(userId, projectId)
-        gorseClient.insertFeedback("apply", userId, projectId)
         return CommonResponse(
             success = true,
             message = "Application submitted successfully.",
@@ -63,12 +63,10 @@ class ProjectsService(
         clientId: String,
         request: CreateProjectRequest,
     ): CommonResponse {
-        val projectId = repository.create(clientId, request)
-        gorseClient.insertItem(projectId)
+        repository.create(clientId, request)
         return CommonResponse(
             success = true,
             message = "Project created successfully.",
         )
     }
 }
-

@@ -1,5 +1,5 @@
 services:
-  # Main App Database (now also handles Gorse)
+  # Main App Database (PostgreSQL with pg_trgm & FTS)
   db:
     image: postgres:16-alpine
     container_name: zap_db
@@ -18,32 +18,26 @@ services:
       timeout: 5s
       retries: 10
 
-  # Gorse Master
-  gorse-master:
-    image: zhenghaoz/gorse-master
-    container_name: gorse-master_zap
-    command: "-c /etc/gorse/config.toml"
+  # OpenBiometrics - Official eKYC Face Recognition, Active Liveness, and Document OCR Engine
+  openbiometrics:
+    build:
+      context: ./services/openbiometrics
+      dockerfile: Dockerfile
+    container_name: openbiometrics_zap
     ports:
-      - "8088:8088"
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DEVICE=cpu
+      - MODULES=face,documents,person
     volumes:
-      - ./gorse-config.toml:/etc/gorse/config.toml
-    depends_on:
-      db:
-        condition: service_healthy
+      - ./services/openbiometrics/watchlists:/app/watchlists
+      - ./services/openbiometrics/models:/app/models
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8088/api/dashboard/cluster" ]
-      interval: 5s
-      timeout: 3s
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/admin/health" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
-    restart: unless-stopped
-
-  # Gorse Worker
-  gorse-worker:
-    image: zhenghaoz/gorse-worker
-    container_name: gorse-worker_zap
-    command: "--master-host gorse-master --master-port 8086"
-    depends_on:
-      - gorse-master
     restart: unless-stopped
 
   # Main Application
@@ -56,7 +50,6 @@ services:
       # Ktor's Netty EngineMain only honors the system property form for the
       # port override; passing PORT alone is not picked up by application.conf.
       - JAVA_TOOL_OPTIONS=-Dktor.deployment.port=8080
-      - GORSE_URL=http://gorse-master:8088
       - STORAGE_JDBC_URL=jdbc:postgresql://db:5432/postgres
       - STORAGE_USER=postgres
       - STORAGE_PASSWORD=password
@@ -65,9 +58,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      gorse-master:
-        condition: service_started
       redis:
+        condition: service_healthy
+      openbiometrics:
         condition: service_healthy
   #    restart: unless-stopped
 
@@ -98,28 +91,7 @@ services:
     depends_on:
       - db
 
-  # OpenBiometrics - eKYC Face Recognition, Liveness, and Document OCR Engine
-  openbiometrics:
-    image: ghcr.io/openbm/openbiometrics:latest
-    container_name: openbiometrics_zap
-    ports:
-      - "8000:8000"
-    environment:
-      - PORT=8000
-      - DETECTOR=yunet
-      - RECOGNIZER=sface
-      - LIVENESS=minifasnet
-    volumes:
-      - openbiometrics_models:/app/models
-    healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/api/v1/admin/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
   # RustFS - Lightweight S3-compatible storage
-  # Inside your rustfs service:
   rustfs:
     image: rustfs/rustfs:latest
     container_name: rustfs_storage_zap
@@ -140,5 +112,4 @@ volumes:
   postgres_data:
   rustfs_data:
   rustfs_logs:
-  openbiometrics_models:
   redis_data:

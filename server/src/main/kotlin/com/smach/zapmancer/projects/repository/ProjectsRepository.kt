@@ -4,6 +4,7 @@ import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.Project
 import com.smach.zapmancer.core.common.dto.ProjectDetail
 import com.smach.zapmancer.core.database.DatabaseFactory.dbQuery
+import com.smach.zapmancer.core.database.ProfileSkillsTable
 import com.smach.zapmancer.core.database.ProjectApplicationsTable
 import com.smach.zapmancer.core.database.ProjectDeliverablesTable
 import com.smach.zapmancer.core.database.ProjectSkillsTable
@@ -21,6 +22,7 @@ import org.jetbrains.exposed.v1.core.VarCharColumnType
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -116,6 +118,79 @@ class ProjectsRepository {
         }
     }
 
+    suspend fun getRecommendedProjects(userId: String, limit: Int = 10): List<Project> = dbQuery {
+        val userSkills = ProfileSkillsTable.selectAll()
+            .where { ProfileSkillsTable.userId eq userId }
+            .map { it[ProfileSkillsTable.skill] }
+
+        val appliedIds = ProjectApplicationsTable.selectAll()
+            .where { ProjectApplicationsTable.userId eq userId }
+            .map { it[ProjectApplicationsTable.projectId] }
+            .toSet()
+
+        val rows = if (userSkills.isNotEmpty()) {
+            val matchingProjectIds = ProjectSkillsTable.selectAll()
+                .where { ProjectSkillsTable.skill inList userSkills }
+                .map { it[ProjectSkillsTable.projectId] }
+                .distinct()
+                .filter { !appliedIds.contains(it) }
+
+            if (matchingProjectIds.isNotEmpty()) {
+                ProjectsTable.selectAll()
+                    .where {
+                        (ProjectsTable.clientId neq userId) and
+                        (ProjectsTable.id inList matchingProjectIds)
+                    }
+                    .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+                    .limit(limit)
+                    .toList()
+            } else {
+                ProjectsTable.selectAll()
+                    .where { ProjectsTable.clientId neq userId }
+                    .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+                    .limit(limit)
+                    .toList()
+            }
+        } else {
+            ProjectsTable.selectAll()
+                .where { ProjectsTable.clientId neq userId }
+                .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+                .limit(limit)
+                .toList()
+        }
+
+        if (rows.isEmpty()) return@dbQuery emptyList()
+
+        val projectIds = rows.map { it[ProjectsTable.id] }
+
+        val skillsMap = ProjectSkillsTable.selectAll()
+            .where { ProjectSkillsTable.projectId inList projectIds }
+            .groupBy({ it[ProjectSkillsTable.projectId] }, { it[ProjectSkillsTable.skill] })
+
+        val savedSet = SavedProjectsTable.selectAll()
+            .where {
+                (SavedProjectsTable.userId eq userId) and
+                (SavedProjectsTable.projectId inList projectIds)
+            }
+            .map { it[SavedProjectsTable.projectId] }
+            .toSet()
+
+        rows.map { row ->
+            val projectId = row[ProjectsTable.id]
+            Project(
+                id = projectId,
+                category = row[ProjectsTable.category],
+                title = row[ProjectsTable.title],
+                postedTime = row[ProjectsTable.postedTime],
+                location = row[ProjectsTable.location],
+                isPaymentVerified = row[ProjectsTable.isPaymentVerified],
+                budgetRange = row[ProjectsTable.budgetRange],
+                projectType = row[ProjectsTable.projectType],
+                skills = skillsMap[projectId] ?: emptyList(),
+                isSaved = savedSet.contains(projectId),
+            )
+        }
+    }
 
     suspend fun findById(projectId: String, userId: String): ProjectDetail? = dbQuery {
         val row = ProjectsTable.selectAll()

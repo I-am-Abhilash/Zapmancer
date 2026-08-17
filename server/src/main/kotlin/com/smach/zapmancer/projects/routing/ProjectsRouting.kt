@@ -60,6 +60,18 @@ fun Route.projectsRouting() {
             }
 
             /**
+             * Retrieve personalized project recommendations based on user skills.
+             */
+            get("/recommended") {
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+                val result = service.getRecommendedProjects(userId = principal.uid, limit = limit)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
              * Retrieve detailed project specification by ID.
              *
              * Path: id [String] Project ID

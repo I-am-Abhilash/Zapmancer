@@ -60,12 +60,19 @@ dependencies {
     implementation(libs.koin.logger.slf4j)
     implementation(libs.google.cloud.storage)
     implementation(libs.aws.s3)
-    // Database-convention libraries
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.hikaricp)
     implementation(libs.jedis)
+
+    // Test dependencies
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.koin.test)
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 }
 
 configurations.all {

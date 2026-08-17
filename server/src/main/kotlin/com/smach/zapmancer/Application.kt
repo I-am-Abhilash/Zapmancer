@@ -13,7 +13,6 @@ import com.smach.zapmancer.core.di.settingsModule
 import com.smach.zapmancer.core.di.usersModule
 import com.smach.zapmancer.core.framework.configureFramework
 import com.smach.zapmancer.core.framework.di.storageModule
-import com.smach.zapmancer.core.recommendations.createGorseModule
 import com.smach.zapmancer.core.security.configureSecurity
 import com.smach.zapmancer.core.di.landingPageModule
 import com.smach.zapmancer.core.di.kycModule
@@ -43,13 +42,9 @@ fun Application.module() {
     )
     DatabaseFactory.init(dbConfig)
 
-    val gorseBaseUrl = environment.config.propertyOrNull("gorse.baseUrl")?.getString()
-        ?: "http://localhost:8088"
-
     configureFramework(
         listOf(
             storageModule,
-            createGorseModule(gorseBaseUrl),
             authModule,
             usersModule,
             homeModule,
