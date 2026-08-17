@@ -217,3 +217,33 @@ object NotificationActionsTable : Table("notification_actions") {
     val isError = bool("is_error").default(false)
     override val primaryKey = PrimaryKey(id)
 }
+
+// ---------------------------------------------------------------------------
+// KYC / Identity Verification
+// ---------------------------------------------------------------------------
+
+object KycVerificationsTable : Table("kyc_verifications") {
+    val id = varchar("id", 128)
+    val userId = varchar("user_id", 128).references(UsersTable.id)
+    val status = varchar("status", 30).default("PENDING")
+    val documentType = varchar("document_type", 50)
+    val documentFrontUrl = varchar("document_front_url", 255)
+    val documentBackUrl = varchar("document_back_url", 255).nullable()
+    val selfieUrl = varchar("selfie_url", 255)
+    val extractedName = varchar("extracted_name", 150).nullable()
+    val extractedDob = varchar("extracted_dob", 50).nullable()
+    val extractedDocNumber = varchar("extracted_doc_number", 100).nullable()
+    val extractedExpiry = varchar("extracted_expiry", 50).nullable()
+    val faceSimilarityScore = double("face_similarity_score").nullable()
+    val livenessScore = double("liveness_score").nullable()
+    val livenessPassed = bool("liveness_passed").default(false)
+    val isNameMatched = bool("is_name_matched").default(false)
+    val receiptSignature = text("receipt_signature").nullable()
+    val receiptHash = varchar("receipt_hash", 64).nullable()
+    val reviewerNotes = text("reviewer_notes").nullable()
+    val reviewedBy = varchar("reviewed_by", 128).references(UsersTable.id).nullable()
+    val createdAt = datetime("created_at")
+    val updatedAt = datetime("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+

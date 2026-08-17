@@ -60,6 +60,7 @@ services:
       - STORAGE_JDBC_URL=jdbc:postgresql://db:5432/postgres
       - STORAGE_USER=postgres
       - STORAGE_PASSWORD=password
+      - OPENBIOMETRICS_URL=http://openbiometrics:8000
     depends_on:
       db:
         condition: service_healthy
@@ -78,6 +79,26 @@ services:
       PGADMIN_DEFAULT_PASSWORD: "password"
     depends_on:
       - db
+
+  # OpenBiometrics - eKYC Face Recognition, Liveness, and Document OCR Engine
+  openbiometrics:
+    image: ghcr.io/openbm/openbiometrics:latest
+    container_name: openbiometrics_zap
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DETECTOR=yunet
+      - RECOGNIZER=sface
+      - LIVENESS=minifasnet
+    volumes:
+      - openbiometrics_models:/app/models
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/api/v1/admin/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   # RustFS - Lightweight S3-compatible storage
   # Inside your rustfs service:
@@ -101,3 +122,4 @@ volumes:
   postgres_data:
   rustfs_data:
   rustfs_logs:
+  openbiometrics_models:

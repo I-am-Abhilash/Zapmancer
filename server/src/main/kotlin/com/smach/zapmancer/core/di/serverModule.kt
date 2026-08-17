@@ -17,8 +17,11 @@ import com.smach.zapmancer.proposal.service.ProposalsService
 import com.smach.zapmancer.settings.repository.SettingsRepository
 import com.smach.zapmancer.settings.service.SettingsService
 import com.smach.zapmancer.users.repository.UsersRepository
-import com.smach.zapmancer.users.service.UsersService
-import com.smach.zapmancer.users.service.UsersServiceImpl
+import com.smach.zapmancer.kyc.client.OpenBiometricsClient
+import com.smach.zapmancer.kyc.repository.KycRepository
+import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
+import com.smach.zapmancer.kyc.service.KycService
+import io.ktor.server.application.Application
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -67,3 +70,30 @@ val usersModule = module {
 val landingPageModule = module {
     singleOf(::LandingPageService)
 }
+
+val kycModule = module {
+    single {
+        val config = get<Application>().environment.config
+        val baseUrl = config.propertyOrNull("openbiometrics.baseUrl")?.getString() ?: "http://localhost:8000"
+        val apiKey = config.propertyOrNull("openbiometrics.apiKey")?.getString()
+        OpenBiometricsClient(baseUrl, apiKey)
+    }
+    single {
+        val config = get<Application>().environment.config
+        val privateKey = config.propertyOrNull("kyc.ed25519PrivateKey")?.getString()
+        Ed25519ReceiptService(privateKey)
+    }
+    singleOf(::KycRepository)
+    single {
+        val config = get<Application>().environment.config
+        val bucketName = config.propertyOrNull("storage.bucket")?.getString() ?: "zapmancer-assets"
+        KycService(
+            kycRepository = get(),
+            openBiometricsClient = get(),
+            receiptService = get(),
+            storageService = get(),
+            bucketName = bucketName
+        )
+    }
+}
+
