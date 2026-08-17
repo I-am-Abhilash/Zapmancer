@@ -28,11 +28,32 @@ import io.ktor.server.application.Application
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import com.smach.zapmancer.core.verification.ResendEmailService
+import com.smach.zapmancer.core.verification.TelnyxSmsService
 
 val authModule = module {
+    single {
+        val config = get<Application>().environment.config
+        val apiKey = config.propertyOrNull("resend.apiKey")?.getString()
+        val fromEmail = config.propertyOrNull("resend.fromEmail")?.getString() ?: "Zapmancer <noreply@zapmancer.com>"
+        ResendEmailService(apiKey, fromEmail)
+    }
+    single {
+        val config = get<Application>().environment.config
+        val apiKey = config.propertyOrNull("telnyx.apiKey")?.getString()
+        val fromNumber = config.propertyOrNull("telnyx.fromNumber")?.getString() ?: "+18005550199"
+        TelnyxSmsService(apiKey, fromNumber)
+    }
     singleOf(::AuthRepository)
-    singleOf(::AuthService)
+    single {
+        AuthService(
+            repository = get(),
+            resendEmailService = get(),
+            telnyxSmsService = get()
+        )
+    }
 }
+
 
 val homeModule = module {
     singleOf(::HomeRepository)

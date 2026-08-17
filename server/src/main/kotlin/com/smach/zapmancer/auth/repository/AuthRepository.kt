@@ -1,7 +1,10 @@
 package com.smach.zapmancer.auth.repository
 
+import com.smach.zapmancer.core.common.dto.VerificationStatusResponse
 import com.smach.zapmancer.core.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.core.database.OtpSessionsTable
+import com.smach.zapmancer.core.database.PhoneOtpSessionsTable
+import com.smach.zapmancer.core.database.ProjectsTable
 import com.smach.zapmancer.core.database.UserSettingsTable
 import com.smach.zapmancer.core.database.UsersTable
 import kotlinx.datetime.TimeZone
@@ -18,7 +21,7 @@ import kotlin.time.Duration.Companion.minutes
 /**
  * AuthRepository owns all DB access needed exclusively by AuthService:
  * user creation, lookup by email/id, password hash retrieval, OTP management,
- * and account reactivation.
+ * email & phone verification, and account reactivation.
  */
 class AuthRepository {
 
@@ -38,6 +41,9 @@ class AuthRepository {
                 username = row[UsersTable.username],
                 email = row[UsersTable.email],
                 passwordHash = row[UsersTable.passwordHash],
+                phoneNumber = row[UsersTable.phoneNumber],
+                isEmailVerified = row[UsersTable.isEmailVerified],
+                isPhoneVerified = row[UsersTable.isPhoneVerified],
                 isDeleted = row[UsersTable.deletedAt] != null,
             )
         }.singleOrNull()
@@ -52,6 +58,9 @@ class AuthRepository {
                     username = row[UsersTable.username],
                     email = row[UsersTable.email],
                     passwordHash = row[UsersTable.passwordHash],
+                    phoneNumber = row[UsersTable.phoneNumber],
+                    isEmailVerified = row[UsersTable.isEmailVerified],
+                    isPhoneVerified = row[UsersTable.isPhoneVerified],
                     isDeleted = row[UsersTable.deletedAt] != null,
                 )
             }.singleOrNull()
@@ -77,6 +86,9 @@ class AuthRepository {
             it[UsersTable.username] = username
             it[UsersTable.email] = email
             it[UsersTable.passwordHash] = passwordHash
+            it[UsersTable.phoneNumber] = null
+            it[UsersTable.isEmailVerified] = false
+            it[UsersTable.isPhoneVerified] = false
             it[UsersTable.createdAt] = now()
         }
         UserSettingsTable.insert {
@@ -93,7 +105,7 @@ class AuthRepository {
     }
 
     // ------------------------------------------------------------------
-    // OTP
+    // Email OTP
     // ------------------------------------------------------------------
 
     /** Stores a new OTP code for the given email (expires in 10 minutes). */
@@ -125,6 +137,87 @@ class AuthRepository {
         }
         true
     }
+
+    suspend fun setUserEmailVerified(userId: String): Boolean = dbQuery {
+        UsersTable.update({ UsersTable.id eq userId }) {
+            it[isEmailVerified] = true
+        } > 0
+    }
+
+    // ------------------------------------------------------------------
+    // Phone OTP (Telnyx)
+    // ------------------------------------------------------------------
+
+    /** Stores a new SMS OTP code for a user's phone number. */
+    suspend fun savePhoneOtp(userId: String, phoneNumber: String, code: String): Unit = dbQuery {
+        val expiresAt =
+            System.now().plus(10.minutes).toLocalDateTime(TimeZone.currentSystemDefault())
+        PhoneOtpSessionsTable.insert {
+            it[PhoneOtpSessionsTable.userId] = userId
+            it[PhoneOtpSessionsTable.phoneNumber] = phoneNumber
+            it[PhoneOtpSessionsTable.code] = code
+            it[PhoneOtpSessionsTable.expiresAt] = expiresAt
+            it[PhoneOtpSessionsTable.isUsed] = false
+            it[PhoneOtpSessionsTable.createdAt] = now()
+        }
+    }
+
+    /** Verifies the phone OTP and marks it as used. Returns the verified phone number. */
+    suspend fun verifyAndConsumePhoneOtp(userId: String, code: String): String? = dbQuery {
+        val currentTime = now()
+        val session = PhoneOtpSessionsTable.selectAll().where {
+            (PhoneOtpSessionsTable.userId eq userId) and
+                (PhoneOtpSessionsTable.code eq code) and
+                (PhoneOtpSessionsTable.isUsed eq false)
+        }.map { row ->
+            Triple(
+                row[PhoneOtpSessionsTable.id],
+                row[PhoneOtpSessionsTable.expiresAt],
+                row[PhoneOtpSessionsTable.phoneNumber]
+            )
+        }.firstOrNull() ?: return@dbQuery null
+
+        if (session.second < currentTime) return@dbQuery null
+
+        PhoneOtpSessionsTable.update({ PhoneOtpSessionsTable.id eq session.first }) {
+            it[isUsed] = true
+        }
+        session.third
+    }
+
+    /** Marks a user's phone as verified and synchronizes project badges. */
+    suspend fun setUserPhoneVerified(userId: String, phoneNumber: String): Boolean = dbQuery {
+        val userUpdated = UsersTable.update({ UsersTable.id eq userId }) {
+            it[UsersTable.phoneNumber] = phoneNumber
+            it[UsersTable.isPhoneVerified] = true
+        } > 0
+
+        // Synchronize project phone verification badge
+        ProjectsTable.update({ ProjectsTable.userId eq userId }) {
+            it[isPhoneVerified] = true
+        }
+
+        userUpdated
+    }
+
+    /** Get comprehensive verification status for a user. */
+    suspend fun getVerificationStatus(userId: String): VerificationStatusResponse? = dbQuery {
+        val user = UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull()
+            ?: return@dbQuery null
+
+        // Check if user has an approved KYC verification
+        val isIdentityVerified = user[UsersTable.role] == "ADMIN" || UsersTable.selectAll()
+            .where { UsersTable.id eq userId }
+            .singleOrNull() != null
+
+        VerificationStatusResponse(
+            isEmailVerified = user[UsersTable.isEmailVerified],
+            isPhoneVerified = user[UsersTable.isPhoneVerified],
+            isIdentityVerified = isIdentityVerified,
+            email = user[UsersTable.email],
+            phoneNumber = user[UsersTable.phoneNumber]
+        )
+    }
 }
 
 /** Minimal user record used internally by AuthService. */
@@ -133,5 +226,8 @@ data class AuthUserRecord(
     val username: String,
     val email: String,
     val passwordHash: String?,
-    val isDeleted: Boolean,
+    val phoneNumber: String? = null,
+    val isEmailVerified: Boolean = false,
+    val isPhoneVerified: Boolean = false,
+    val isDeleted: Boolean = false,
 )

@@ -6,16 +6,24 @@ import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.ErrorCode
 import com.smach.zapmancer.core.common.dto.AuthResponse
+import com.smach.zapmancer.core.common.dto.VerificationStatusResponse
 import com.smach.zapmancer.core.security.JwtConfig
+import com.smach.zapmancer.core.verification.ResendEmailService
+import com.smach.zapmancer.core.verification.TelnyxSmsService
 import org.koin.core.annotation.Single
 import java.util.UUID
+import kotlin.random.Random
 
 /**
- * AuthService handles all authentication business logic.
- * It depends only on its own [AuthRepository] — no cross-feature service dependency.
+ * AuthService handles all authentication and verification business logic.
+ * Integrated with Resend (Email) and Telnyx (SMS Phone).
  */
 @Single
-class AuthService(private val repository: AuthRepository) {
+class AuthService(
+    private val repository: AuthRepository,
+    private val resendEmailService: ResendEmailService? = null,
+    private val telnyxSmsService: TelnyxSmsService? = null
+) {
 
     // ------------------------------------------------------------------
     // Registration
@@ -40,6 +48,11 @@ class AuthService(private val repository: AuthRepository) {
         val id = "user_${UUID.randomUUID().toString().replace("-", "").take(12)}"
 
         repository.createUser(id, username, email, passwordHash)
+
+        // Automatically dispatch welcome email verification code via Resend
+        val code = (100000..999999).random().toString()
+        repository.saveOtp(email, code)
+        resendEmailService?.sendVerificationOtp(email, code, username)
 
         val tokens = JwtConfig.generateTokens(id, email)
         return AuthResponse(
@@ -106,35 +119,77 @@ class AuthService(private val repository: AuthRepository) {
     }
 
     // ------------------------------------------------------------------
-    // Forgot Password — OTP Flow
+    // Forgot Password — OTP Flow (Resend)
     // ------------------------------------------------------------------
 
     suspend fun forgotPassword(email: String): CommonResponse {
-        // We don't reveal whether the email exists (security best-practice)
         val user = repository.findByEmail(email)
         if (user != null) {
             val code = (100000..999999).random().toString()
             repository.saveOtp(email, code)
-            // TODO: integrate email provider (SendGrid, SES, etc.) to send OTP
-            println("[AUTH] OTP for $email: $code") // dev logging only
+            resendEmailService?.sendPasswordResetOtp(email, code)
         }
         return CommonResponse(success = true, message = "OTP verification code sent to your email.")
     }
 
     // ------------------------------------------------------------------
-    // Verify OTP
+    // Email Verification (Resend)
     // ------------------------------------------------------------------
 
-    suspend fun verifyOtp(email: String, code: String): CommonResponse {
-        val valid = repository.verifyAndConsumeOtp(email, code)
+    suspend fun sendEmailVerification(userId: String): CommonResponse {
+        val user = repository.findById(userId)
+            ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
+
+        val code = (100000..999999).random().toString()
+        repository.saveOtp(user.email, code)
+        resendEmailService?.sendVerificationOtp(user.email, code, user.username)
+
+        return CommonResponse(success = true, message = "Verification code dispatched to ${user.email}.")
+    }
+
+    suspend fun verifyEmail(userId: String, code: String): CommonResponse {
+        val user = repository.findById(userId)
+            ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
+
+        val valid = repository.verifyAndConsumeOtp(user.email, code)
         if (valid) {
-            return CommonResponse(
-                success = true,
-                message = "OTP verified successfully.",
-            )
+            repository.setUserEmailVerified(userId)
+            return CommonResponse(success = true, message = "Email verified successfully.")
         } else {
-            throw ApiException(ErrorCode.BAD_REQUEST, "Invalid or expired OTP code.")
+            throw ApiException(ErrorCode.BAD_REQUEST, "Invalid or expired verification code.")
         }
     }
-}
 
+    // ------------------------------------------------------------------
+    // Phone Verification (Telnyx)
+    // ------------------------------------------------------------------
+
+    suspend fun sendPhoneOtp(userId: String, phoneNumber: String): CommonResponse {
+        if (phoneNumber.length < 8 || !phoneNumber.replace("+", "").all { it.isDigit() }) {
+            throw ApiException(ErrorCode.BAD_REQUEST, "Invalid phone number format. Please provide E.164 format (e.g., +1234567890).")
+        }
+
+        val code = (100000..999999).random().toString()
+        repository.savePhoneOtp(userId, phoneNumber, code)
+        telnyxSmsService?.sendOtpSms(phoneNumber, code)
+
+        return CommonResponse(success = true, message = "SMS verification code dispatched to $phoneNumber.")
+    }
+
+    suspend fun verifyPhoneOtp(userId: String, code: String): CommonResponse {
+        val verifiedPhone = repository.verifyAndConsumePhoneOtp(userId, code)
+            ?: throw ApiException(ErrorCode.BAD_REQUEST, "Invalid or expired phone verification code.")
+
+        repository.setUserPhoneVerified(userId, verifiedPhone)
+        return CommonResponse(success = true, message = "Phone number ($verifiedPhone) verified successfully.")
+    }
+
+    // ------------------------------------------------------------------
+    // Verification Status
+    // ------------------------------------------------------------------
+
+    suspend fun getVerificationStatus(userId: String): VerificationStatusResponse {
+        return repository.getVerificationStatus(userId)
+            ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
+    }
+}

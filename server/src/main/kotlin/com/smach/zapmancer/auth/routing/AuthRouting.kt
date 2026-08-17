@@ -184,12 +184,6 @@ fun Route.authRouting() {
         route("/auth") {
             /**
              * Logout user session.
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] Logged out successfully.
-             *   – 401 [ApiResponse<Unit>] Missing or invalid token.
-             *
-             * Tags: Authentication
              */
             post("/logout") {
                 call.respond(
@@ -199,8 +193,67 @@ fun Route.authRouting() {
                     ),
                 )
             }
+
+            /**
+             * Get user email, phone, and identity verification status.
+             */
+            get("/verification-status") {
+                val principal = call.principal<com.smach.zapmancer.core.security.UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val status = service.getVerificationStatus(principal.uid)
+                call.respond(ApiResponse(success = true, data = status))
+            }
+
+            /**
+             * Dispatch an SMS verification OTP to a user's phone via Telnyx.
+             */
+            post("/phone/send-otp") {
+                val principal = call.principal<com.smach.zapmancer.core.security.UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val req = call.receive<com.smach.zapmancer.core.common.dto.SendPhoneOtpRequest>()
+                val result = service.sendPhoneOtp(principal.uid, req.phoneNumber)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Verify phone SMS OTP code.
+             */
+            post("/phone/verify") {
+                val principal = call.principal<com.smach.zapmancer.core.security.UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val req = call.receive<com.smach.zapmancer.core.common.dto.VerifyPhoneOtpRequest>()
+                val result = service.verifyPhoneOtp(principal.uid, req.code)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Dispatch an email verification OTP via Resend.
+             */
+            post("/email/send-verification") {
+                val principal = call.principal<com.smach.zapmancer.core.security.UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val result = service.sendEmailVerification(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Verify email OTP code.
+             */
+            post("/email/verify") {
+                val principal = call.principal<com.smach.zapmancer.core.security.UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                )
+                val req = call.receive<com.smach.zapmancer.core.common.dto.VerifyEmailRequest>()
+                val result = service.verifyEmail(principal.uid, req.code)
+                call.respond(ApiResponse(success = true, data = result))
+            }
         }
     }
+
 }
 
 @Serializable

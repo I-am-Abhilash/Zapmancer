@@ -19,6 +19,9 @@ object UsersTable : Table("users") {
     val passwordHash = varchar("password_hash", 255).nullable()
     val avatarUrl = varchar("avatar_url", 255).nullable()
     val role = varchar("role", 20).default("FREELANCER")
+    val phoneNumber = varchar("phone_number", 30).nullable()
+    val isEmailVerified = bool("is_email_verified").default(false)
+    val isPhoneVerified = bool("is_phone_verified").default(false)
     val deletedAt = datetime("deleted_at").nullable()
     val createdAt = datetime("created_at")
     override val primaryKey = PrimaryKey(id)
@@ -35,7 +38,7 @@ object UserSettingsTable : Table("user_settings") {
     override val primaryKey = PrimaryKey(userId)
 }
 
-/** OTP codes for forgot-password flow. */
+/** OTP codes for email / forgot-password flow. */
 object OtpSessionsTable : Table("otp_sessions") {
     val id = integer("id").autoIncrement()
     val email = varchar("email", 100)
@@ -44,6 +47,19 @@ object OtpSessionsTable : Table("otp_sessions") {
     val isUsed = bool("is_used").default(false)
     override val primaryKey = PrimaryKey(id)
 }
+
+/** OTP codes for SMS phone verification. */
+object PhoneOtpSessionsTable : Table("phone_otp_sessions") {
+    val id = integer("id").autoIncrement()
+    val userId = varchar("user_id", 128).references(UsersTable.id)
+    val phoneNumber = varchar("phone_number", 30)
+    val code = varchar("code", 10)
+    val expiresAt = datetime("expires_at")
+    val isUsed = bool("is_used").default(false)
+    val createdAt = datetime("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 
 // ---------------------------------------------------------------------------
 // User Profile (extended details, 1:1 with UsersTable)
