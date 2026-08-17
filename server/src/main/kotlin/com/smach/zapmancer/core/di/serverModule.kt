@@ -17,6 +17,9 @@ import com.smach.zapmancer.proposal.service.ProposalsService
 import com.smach.zapmancer.settings.repository.SettingsRepository
 import com.smach.zapmancer.settings.service.SettingsService
 import com.smach.zapmancer.users.repository.UsersRepository
+import com.smach.zapmancer.users.service.UsersService
+import com.smach.zapmancer.users.service.UsersServiceImpl
+import com.smach.zapmancer.messages.redis.RedisClientService
 import com.smach.zapmancer.kyc.client.OpenBiometricsClient
 import com.smach.zapmancer.kyc.repository.KycRepository
 import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
@@ -37,10 +40,27 @@ val homeModule = module {
 }
 
 val messagesModule = module {
+    single {
+        val config = get<Application>().environment.config
+        val host = config.propertyOrNull("redis.host")?.getString() ?: "localhost"
+        val port = config.propertyOrNull("redis.port")?.getString()?.toIntOrNull() ?: 6379
+        val password = config.propertyOrNull("redis.password")?.getString()
+        RedisClientService(host, port, password)
+    }
     singleOf(::MessageRepository)
-    singleOf(::ConnectionManager)
-    singleOf(::MessageService)
+    single { ConnectionManager(redisClientService = get()) }
+    single {
+        val config = get<Application>().environment.config
+        val bucketName = config.propertyOrNull("storage.bucket")?.getString() ?: "zapmancer-assets"
+        MessageService(
+            repository = get(),
+            connectionManager = get(),
+            storageService = getOrNull(),
+            bucketName = bucketName
+        )
+    }
 }
+
 
 val notificationsModule = module {
     singleOf(::NotificationsRepository)

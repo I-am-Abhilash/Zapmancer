@@ -61,12 +61,30 @@ services:
       - STORAGE_USER=postgres
       - STORAGE_PASSWORD=password
       - OPENBIOMETRICS_URL=http://openbiometrics:8000
+      - REDIS_HOST=redis
     depends_on:
       db:
         condition: service_healthy
       gorse-master:
         condition: service_started
+      redis:
+        condition: service_healthy
   #    restart: unless-stopped
+
+  # Redis - High-Speed Real-time Pub/Sub & Presence Broker
+  redis:
+    image: redis:7-alpine
+    container_name: zap_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
 
   # pgAdmin - Database Management Tool
   pgAdmin:
@@ -123,3 +141,4 @@ volumes:
   rustfs_data:
   rustfs_logs:
   openbiometrics_models:
+  redis_data:

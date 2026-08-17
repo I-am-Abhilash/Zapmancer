@@ -183,9 +183,27 @@ object MessagesTable : Table("messages") {
 
     /** "SENT", "DELIVERED", or "READ" */
     val status = varchar("status", 20).default("SENT")
+    val attachmentUrl = varchar("attachment_url", 255).nullable()
+    val attachmentType = varchar("attachment_type", 50).nullable()
+    val attachmentName = varchar("attachment_name", 150).nullable()
+    val attachmentSizeBytes = long("attachment_size_bytes").nullable()
+    val replyToMessageId = varchar("reply_to_message_id", 128).references(id).nullable()
+    val isEdited = bool("is_edited").default(false)
+    val isDeleted = bool("is_deleted").default(false)
+    val readAt = datetime("read_at").nullable()
     val createdAt = datetime("created_at")
     override val primaryKey = PrimaryKey(id)
 }
+
+object MessageReactionsTable : Table("message_reactions") {
+    val id = integer("id").autoIncrement()
+    val messageId = varchar("message_id", 128).references(MessagesTable.id)
+    val userId = varchar("user_id", 128).references(UsersTable.id)
+    val emoji = varchar("emoji", 32)
+    val createdAt = datetime("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 
 // ---------------------------------------------------------------------------
 // Notifications

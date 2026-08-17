@@ -1,6 +1,7 @@
 package com.smach.zapmancer.messages.routing
 
 import com.smach.zapmancer.core.common.CommonResponse
+import com.smach.zapmancer.core.common.dto.AttachmentUploadResponse
 import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.ConversationItem
 import com.smach.zapmancer.core.common.dto.MessageItem
@@ -10,13 +11,18 @@ import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.messages.service.ConnectionManager
 import com.smach.zapmancer.messages.service.MessageService
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.CloseReason
@@ -24,6 +30,7 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
+import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 
@@ -47,7 +54,7 @@ fun Route.messageRouting() {
                         val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
                         connectionManager.sendToUser(
                             otherUserId,
-                            ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
+                            ChatFrame.ServerToClient.PresenceUpdate(conversation.id, userId, isOnline = true),
                         )
                     }
                 }
@@ -64,7 +71,7 @@ fun Route.messageRouting() {
                         try {
                             send(
                                 Json.encodeToString<ChatFrame.ServerToClient>(
-                                    ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = true),
+                                    ChatFrame.ServerToClient.PresenceUpdate(conversation.id, otherUserId, isOnline = true),
                                 ),
                             )
                         } catch (_: Exception) {}
@@ -79,15 +86,32 @@ fun Route.messageRouting() {
                         try {
                             val clientFrame = Json.decodeFromString<ChatFrame.ClientToServer>(text)
                             when (clientFrame) {
+                                is ChatFrame.ClientToServer.SendMessage -> {
+                                    service.sendMessage(
+                                        conversationId = clientFrame.conversationId,
+                                        senderId = userId,
+                                        text = clientFrame.text,
+                                        attachmentUrl = clientFrame.attachmentUrl,
+                                        attachmentType = clientFrame.attachmentType,
+                                        attachmentName = clientFrame.attachmentName,
+                                        attachmentSizeBytes = clientFrame.attachmentSizeBytes,
+                                        replyToMessageId = clientFrame.replyToMessageId
+                                    )
+                                }
                                 is ChatFrame.ClientToServer.Typing -> {
-                                    val otherParticipants = service.getConversationParticipants(clientFrame.conversationId)
-                                    if (otherParticipants != null) {
-                                        val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
-                                        connectionManager.sendToUser(
-                                            otherUserId,
-                                            ChatFrame.ServerToClient.TypingUpdate(clientFrame.conversationId, clientFrame.isTyping),
-                                        )
-                                    }
+                                    service.handleTyping(clientFrame.conversationId, userId, clientFrame.isTyping)
+                                }
+                                is ChatFrame.ClientToServer.MarkRead -> {
+                                    service.markMessageRead(clientFrame.conversationId, userId, clientFrame.messageId)
+                                }
+                                is ChatFrame.ClientToServer.React -> {
+                                    service.handleReact(clientFrame.conversationId, userId, clientFrame.messageId, clientFrame.emoji)
+                                }
+                                is ChatFrame.ClientToServer.EditMessage -> {
+                                    service.handleEditMessage(clientFrame.conversationId, userId, clientFrame.messageId, clientFrame.newText)
+                                }
+                                is ChatFrame.ClientToServer.DeleteMessage -> {
+                                    service.handleDeleteMessage(clientFrame.conversationId, userId, clientFrame.messageId)
                                 }
                             }
                         } catch (e: Exception) {
@@ -110,7 +134,7 @@ fun Route.messageRouting() {
                             val otherUserId = if (userId == otherParticipants.first) otherParticipants.second else otherParticipants.first
                             connectionManager.sendToUser(
                                 otherUserId,
-                                ChatFrame.ServerToClient.PresenceUpdate(conversation.id, isOnline = false),
+                                ChatFrame.ServerToClient.PresenceUpdate(conversation.id, userId, isOnline = false),
                             )
                         }
                     }
@@ -118,94 +142,143 @@ fun Route.messageRouting() {
             }
         }
 
-        route("/messages/conversations") {
+        route("/messages") {
             /**
-             * Retrieve user's active message conversations list.
-             *
-             * Responses:
-             *   – 200 [ApiResponse<List<ConversationItem>>] User conversations list.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *
-             * Tags: Messages
+             * Upload an attachment (image, pdf, document, audio clip).
              */
-            get {
-                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+            post("/attachment") {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                     HttpStatusCode.Unauthorized,
                 )
-                val conversations = service.getConversations(principal.uid)
-                call.respond(ApiResponse(success = true, data = conversations))
+                val multipart = call.receiveMultipart()
+                var fileBytes: ByteArray? = null
+                var fileName = "attachment.bin"
+                var contentType = "application/octet-stream"
+
+                multipart.forEachPart { part ->
+                    if (part is PartData.FileItem) {
+                        fileName = part.originalFileName ?: "attachment.bin"
+                        contentType = part.contentType?.toString() ?: "application/octet-stream"
+                        fileBytes = part.provider().readByteArray()
+                    }
+                    part.dispose()
+                }
+
+                if (fileBytes == null) {
+                    return@post call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, message = "Missing file payload"))
+                }
+
+                val result = service.uploadAttachment(principal.uid, fileName, fileBytes!!, contentType)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
-            route("/{conversationId}") {
+            route("/conversations") {
                 /**
-                 * Retrieve message thread for a conversation.
-                 *
-                 * Path: conversationId [String] Conversation ID
-                 *
-                 * Responses:
-                 *   – 200 [ApiResponse<List<MessageItem>>] Thread message history.
-                 *   – 400 [ApiResponse<Unit>] Invalid conversation ID.
-                 *
-                 * Tags: Messages
+                 * Retrieve user's active message conversations list.
                  */
-                get("/messages") {
+                get {
                     val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                         HttpStatusCode.Unauthorized,
                     )
-                    val convId = call.parameters["conversationId"] ?: return@get call.respond(
-                        HttpStatusCode.BadRequest,
-                    )
-                    val messages = service.getMessages(convId, principal.uid)
-                    call.respond(ApiResponse(success = true, data = messages))
+                    val conversations = service.getConversations(principal.uid)
+                    call.respond(ApiResponse(success = true, data = conversations))
                 }
 
-                /**
-                 * Send a text message to a conversation thread.
-                 *
-                 * Path: conversationId [String] Conversation ID
-                 * Request: [SendMessageRequest] Message payload
-                 *
-                 * Responses:
-                 *   – 200 [ApiResponse<CommonResponse>] Message dispatched.
-                 *   – 400 [ApiResponse<Unit>] Invalid input parameters.
-                 *
-                 * Tags: Messages
-                 */
-                post("/send") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                        HttpStatusCode.Unauthorized,
-                    )
-                    val convId = call.parameters["conversationId"] ?: return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                    )
-                    val req = call.receive<SendMessageRequest>()
-                    val result = service.sendMessage(convId, principal.uid, req.text)
-                    call.respond(ApiResponse(success = true, data = result))
-                }
+                route("/{conversationId}") {
+                    /**
+                     * Retrieve message thread for a conversation with pagination limit.
+                     */
+                    get("/messages") {
+                        val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                            HttpStatusCode.Unauthorized,
+                        )
+                        val convId = call.parameters["conversationId"] ?: return@get call.respond(
+                            HttpStatusCode.BadRequest,
+                        )
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 50
+                        val messages = service.getMessages(convId, principal.uid, limit)
+                        call.respond(ApiResponse(success = true, data = messages))
+                    }
 
-                /**
-                 * Mark conversation thread messages as read.
-                 *
-                 * Path: conversationId [String] Conversation ID
-                 *
-                 * Responses:
-                 *   – 200 [ApiResponse<CommonResponse>] Thread marked read.
-                 *
-                 * Tags: Messages
-                 */
-                post("/read") {
-                    val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                        HttpStatusCode.Unauthorized,
-                    )
-                    val convId = call.parameters["conversationId"] ?: return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                    )
-                    val result = service.markRead(convId, principal.uid)
-                    call.respond(ApiResponse(success = true, data = result))
+                    /**
+                     * Send a text/attachment message via REST API.
+                     */
+                    post("/send") {
+                        val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                            HttpStatusCode.Unauthorized,
+                        )
+                        val convId = call.parameters["conversationId"] ?: return@post call.respond(
+                            HttpStatusCode.BadRequest,
+                        )
+                        val req = call.receive<SendMessageRequest>()
+                        val result = service.sendMessage(
+                            conversationId = convId,
+                            senderId = principal.uid,
+                            text = req.text,
+                            attachmentUrl = req.attachmentUrl,
+                            attachmentType = req.attachmentType,
+                            attachmentName = req.attachmentName,
+                            attachmentSizeBytes = req.attachmentSizeBytes,
+                            replyToMessageId = req.replyToMessageId
+                        )
+                        call.respond(ApiResponse(success = true, data = result))
+                    }
+
+                    /**
+                     * Mark all conversation thread messages as read.
+                     */
+                    post("/read") {
+                        val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                            HttpStatusCode.Unauthorized,
+                        )
+                        val convId = call.parameters["conversationId"] ?: return@post call.respond(
+                            HttpStatusCode.BadRequest,
+                        )
+                        val result = service.markAllRead(convId, principal.uid)
+                        call.respond(ApiResponse(success = true, data = result))
+                    }
+
+                    /**
+                     * Toggle emoji reaction on a message.
+                     */
+                    post("/messages/{messageId}/react") {
+                        val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                            HttpStatusCode.Unauthorized,
+                        )
+                        val convId = call.parameters["conversationId"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+                        val messageId = call.parameters["messageId"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+                        val emoji = call.request.queryParameters["emoji"] ?: "👍"
+
+                        service.handleReact(convId, principal.uid, messageId, emoji)
+                        call.respond(ApiResponse(success = true, data = CommonResponse(success = true, message = "Reaction updated.")))
+                    }
+
+                    /**
+                     * Edit message text.
+                     */
+                    put("/messages/{messageId}") {
+                        val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                        val convId = call.parameters["conversationId"] ?: return@put call.respond(HttpStatusCode.BadRequest)
+                        val messageId = call.parameters["messageId"] ?: return@put call.respond(HttpStatusCode.BadRequest)
+                        val req = call.receive<SendMessageRequest>()
+
+                        service.handleEditMessage(convId, principal.uid, messageId, req.text)
+                        call.respond(ApiResponse(success = true, data = CommonResponse(success = true, message = "Message edited.")))
+                    }
+
+                    /**
+                     * Delete message.
+                     */
+                    delete("/messages/{messageId}") {
+                        val principal = call.principal<UserPrincipal>() ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+                        val convId = call.parameters["conversationId"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+                        val messageId = call.parameters["messageId"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+
+                        service.handleDeleteMessage(convId, principal.uid, messageId)
+                        call.respond(ApiResponse(success = true, data = CommonResponse(success = true, message = "Message deleted.")))
+                    }
                 }
             }
         }
     }
 }
-
-
