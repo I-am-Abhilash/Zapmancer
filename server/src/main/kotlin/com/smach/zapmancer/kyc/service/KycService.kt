@@ -7,14 +7,18 @@ import com.smach.zapmancer.core.common.dto.KycInitResponse
 import com.smach.zapmancer.core.common.dto.KycReceiptResponse
 import com.smach.zapmancer.core.common.dto.KycStatus
 import com.smach.zapmancer.core.common.dto.KycStatusResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsCapabilitiesResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsPassiveLivenessResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsWatchlistSearchResponse
+import com.smach.zapmancer.core.common.dto.WatchlistDto
 import com.smach.zapmancer.core.framework.storage.StorageService
 import com.smach.zapmancer.kyc.client.OpenBiometricsClient
 import com.smach.zapmancer.kyc.repository.KycRepository
 import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
+import kotlin.time.Clock.System
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
-import kotlin.time.Clock.System
 
 @Serializable
 data class CanonicalKycReceiptData(
@@ -64,7 +68,7 @@ class KycService(
     }
 
     /**
-     * Complete pipeline: Upload -> OCR -> Face Match -> Active Liveness -> Decision -> Ed25519 Receipt -> DB
+     * Complete pipeline: Upload -> OCR -> Face Match -> Active Liveness -> Fraud Watchlist -> Decision -> Ed25519 Receipt -> DB
      */
     suspend fun processKycSubmission(
         userId: String,
@@ -101,8 +105,10 @@ class KycService(
         // 4. Verify Active Liveness & Anti-spoofing
         val livenessResponse = openBiometricsClient.evaluateLiveness(livenessSessionId, selfieBytes)
 
-        // 5. Fraud and Integrity Checks
-        val isTampered = ocrResponse.confidence < 0.50
+        // 5. Fraud Watchlist and Tamper Analysis (1:N Biometric Check against banned fraudsters)
+        val watchlistCheck = openBiometricsClient.searchWatchlist(selfieBytes)
+        val isBlacklisted = watchlistCheck.is_listed
+        val isTampered = ocrResponse.confidence < 0.50 || ocrResponse.tampering_detected
 
         // 6. Name match evaluation
         val isNameMatched = if (!extractedName.isNullOrBlank() && registeredUsername.isNotBlank()) {
@@ -113,12 +119,16 @@ class KycService(
             true
         }
 
-        // 7. Decision rule engine
-        val decision = evaluateDecision(
-            similarity = faceMatchResponse.similarity,
-            livenessPassed = livenessResponse.passed && livenessResponse.anti_spoof_passed && !isTampered,
-            isNameMatched = isNameMatched
-        )
+        // 7. Decision rule engine (auto-rejects blacklisted fraudsters immediately)
+        val decision = if (isBlacklisted) {
+            KycStatus.FAILED
+        } else {
+            evaluateDecision(
+                similarity = faceMatchResponse.similarity,
+                livenessPassed = livenessResponse.passed && livenessResponse.anti_spoof_passed && !isTampered,
+                isNameMatched = isNameMatched
+            )
+        }
 
         // 8. Generate Ed25519 Cryptographic Receipt
         val nowUtc = System.now().toString()
@@ -163,6 +173,30 @@ class KycService(
         }
 
         return result ?: kycRepository.getVerificationById(verificationId)!!
+    }
+
+    suspend fun evaluatePassiveLiveness(imageBytes: ByteArray): OpenBiometricsPassiveLivenessResponse {
+        return openBiometricsClient.evaluatePassiveLiveness(imageBytes)
+    }
+
+    suspend fun searchWatchlist(faceBytes: ByteArray): OpenBiometricsWatchlistSearchResponse {
+        return openBiometricsClient.searchWatchlist(faceBytes)
+    }
+
+    suspend fun getWatchlists(): List<WatchlistDto> {
+        return openBiometricsClient.getWatchlists()
+    }
+
+    suspend fun createWatchlist(name: String, description: String = ""): WatchlistDto? {
+        return openBiometricsClient.createWatchlist(name, description)
+    }
+
+    suspend fun addFaceToWatchlist(watchlistId: String, name: String, faceBytes: ByteArray): Boolean {
+        return openBiometricsClient.addFaceToWatchlist(watchlistId, name, faceBytes)
+    }
+
+    suspend fun getCapabilities(): OpenBiometricsCapabilitiesResponse {
+        return openBiometricsClient.getCapabilities()
     }
 
     suspend fun getKycStatus(userId: String): KycStatusResponse? {

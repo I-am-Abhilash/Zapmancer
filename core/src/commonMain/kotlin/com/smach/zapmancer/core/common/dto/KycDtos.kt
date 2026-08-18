@@ -99,3 +99,49 @@ data class KycAdminReviewRequest(
     val decision: KycStatus, // VERIFIED or FAILED
     val notes: String? = null
 )
+
+@Serializable
+data class OpenBiometricsPassiveLivenessResponse(
+    val passed: Boolean = false,
+    val score: Double = 0.0,
+    val anti_spoof_passed: Boolean = false,
+    val screen_glare_detected: Boolean = false,
+    val moire_pattern_detected: Boolean = false,
+    val deepfake_probability: Double = 0.0,
+    val reason: String? = null
+)
+
+@Serializable
+data class WatchlistSearchMatch(
+    val face_id: String,
+    val name: String,
+    val similarity: Double,
+    val watchlist_id: String,
+    val matched_at: String
+)
+
+@Serializable
+data class OpenBiometricsWatchlistSearchResponse(
+    val is_listed: Boolean = false,
+    val highest_similarity: Double = 0.0,
+    val matches: List<WatchlistSearchMatch> = emptyList()
+)
+
+@Serializable
+data class WatchlistDto(
+    val id: String,
+    val name: String,
+    val description: String = "",
+    val face_count: Int = 0,
+    val created_at: String = ""
+)
+
+@Serializable
+data class OpenBiometricsCapabilitiesResponse(
+    val engine: String = "OpenBiometrics",
+    val version: String = "2.0.0",
+    val supported_presets: List<String> = emptyList(),
+    val supported_documents: List<String> = emptyList(),
+    val features: Map<String, Boolean> = emptyMap()
+)
+

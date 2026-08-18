@@ -54,6 +54,14 @@ fun Route.kycRouting() {
             call.respond(ApiResponse(success = true, data = receipt))
         }
 
+        /**
+         * Retrieve active OpenBiometrics capabilities and supported presets.
+         */
+        get("/capabilities") {
+            val capabilities = kycService.getCapabilities()
+            call.respond(ApiResponse(success = true, data = capabilities))
+        }
+
         // -------------------------------------------------------------------
         // Authenticated Endpoints
         // -------------------------------------------------------------------
@@ -150,6 +158,58 @@ fun Route.kycRouting() {
                     )
 
                 call.respond(ApiResponse(success = true, data = status))
+            }
+
+            /**
+             * Single-frame passive liveness evaluation (anti-spoofing).
+             */
+            post("/passive-liveness") {
+                val principal = call.principal<UserPrincipal>()
+                    ?: return@post call.respond(HttpStatusCode.Unauthorized)
+
+                val multipart = call.receiveMultipart()
+                var imageBytes: ByteArray? = null
+
+                multipart.forEachPart { part ->
+                    if (part is PartData.FileItem && part.name == "image") {
+                        imageBytes = part.provider().readRemaining().readByteArray()
+                    }
+                    part.dispose()
+                }
+
+                val bytes = imageBytes ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing image file"))
+                )
+
+                val result = kycService.evaluatePassiveLiveness(bytes)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * 1:N Fraud watchlist face search.
+             */
+            post("/watchlists/search") {
+                val principal = call.principal<UserPrincipal>()
+                    ?: return@post call.respond(HttpStatusCode.Unauthorized)
+
+                val multipart = call.receiveMultipart()
+                var imageBytes: ByteArray? = null
+
+                multipart.forEachPart { part ->
+                    if (part is PartData.FileItem && part.name == "image") {
+                        imageBytes = part.provider().readRemaining().readByteArray()
+                    }
+                    part.dispose()
+                }
+
+                val bytes = imageBytes ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing image file"))
+                )
+
+                val result = kycService.searchWatchlist(bytes)
+                call.respond(ApiResponse(success = true, data = result))
             }
 
             // ---------------------------------------------------------------
