@@ -1,0 +1,307 @@
+/* OpenBiometrics & KYC Verification Design Tokens & Component Styles */
+
+.kyc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.kyc-main {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.kyc-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-hairline);
+  padding-bottom: 24px;
+}
+
+.kyc-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+.kyc-subtitle {
+  font-size: 14px;
+  color: var(--color-steel);
+  line-height: 1.5;
+}
+
+/* Stepper Track */
+.kyc-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.kyc-stepper::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 32px;
+  right: 32px;
+  height: 2px;
+  background: var(--color-hairline);
+  z-index: 1;
+}
+
+.kyc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+  background: var(--color-canvas);
+  padding: 0 8px;
+}
+
+.kyc-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  background-color: var(--color-surface-elevated);
+  border: 2px solid var(--color-hairline);
+  color: var(--color-steel);
+  transition: all 0.2s ease;
+}
+
+.kyc-step.active .kyc-step-circle {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.kyc-step.completed .kyc-step-circle {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.kyc-step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-steel);
+}
+
+.kyc-step.active .kyc-step-label {
+  color: var(--color-ink);
+}
+
+/* Card Shell */
+.kyc-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Document Option Selection */
+.kyc-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.kyc-doc-option {
+  border: 2px solid var(--color-hairline);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  background: var(--color-surface-elevated);
+  transition: all 0.2s ease;
+}
+
+.kyc-doc-option:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.kyc-doc-option.selected {
+  border-color: var(--color-primary);
+  background: rgba(34, 197, 94, 0.06);
+}
+
+/* Upload Dropzone */
+.kyc-dropzone {
+  border: 2px dashed var(--color-hairline-strong);
+  border-radius: 12px;
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  background-color: var(--color-surface-elevated);
+  transition: all 0.2s ease;
+}
+
+.kyc-dropzone:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.kyc-preview-img {
+  max-height: 180px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-hairline);
+}
+
+/* Camera & Active Liveness Frame */
+.kyc-camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #090d0b;
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 24px rgba(34, 197, 94, 0.2);
+}
+
+.kyc-camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.kyc-reticle-oval {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 260px;
+  border: 2px dashed var(--color-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  animation: pulse-reticle 2s infinite ease-in-out;
+}
+
+@keyframes pulse-reticle {
+  0%, 100% { border-color: var(--color-primary); opacity: 0.9; }
+  50% { border-color: #6ee7b7; opacity: 0.6; }
+}
+
+.kyc-challenge-banner {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Actions Row */
+.kyc-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.kyc-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-surface-elevated);
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kyc-btn-secondary:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-hairline-strong);
+}
+
+.kyc-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  border: none;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kyc-btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.kyc-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Cryptographic Receipt Inspector */
+.kyc-receipt-box {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  color: var(--color-ink);
+  line-height: 1.6;
+}

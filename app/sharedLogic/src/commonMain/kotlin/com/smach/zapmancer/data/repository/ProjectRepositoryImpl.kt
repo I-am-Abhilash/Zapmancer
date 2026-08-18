@@ -3,6 +3,10 @@ package com.smach.zapmancer.data.repository
 import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.SaveProjectRequest
+import com.smach.zapmancer.core.common.dto.UpdateProjectRequest
+import com.smach.zapmancer.core.common.dto.UpdateProjectStatusRequest
+import io.ktor.client.request.delete
+import io.ktor.client.request.put
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -57,6 +61,15 @@ class ProjectRepositoryImpl(
         }
     }
 
+    override suspend fun getMyProjects(): Result<List<Project>, DataError.Network> = safeApiCall<List<ProjectDto>> {
+        client.get("projects/my-projects")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> result
+        }
+    }
+
     override suspend fun saveProject(
         id: String,
         isSaved: Boolean,
@@ -84,6 +97,42 @@ class ProjectRepositoryImpl(
                     estStart = null,
                 ),
             )
+        }
+    }.toUnitResult()
+
+    override suspend fun updateProject(
+        id: String,
+        params: CreateProjectParams,
+    ): Result<Project, DataError.Network> = safeApiCall<ProjectDto> {
+        client.put("projects/$id") {
+            setBody(
+                UpdateProjectRequest(
+                    category = params.category,
+                    title = params.title,
+                    budgetRange = params.budgetRange,
+                    projectScope = params.description,
+                    deliverables = params.deliverables,
+                    skills = params.skills,
+                    timeline = params.timeline,
+                ),
+            )
+        }
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
+        }
+    }
+
+    override suspend fun deleteProject(id: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.delete("projects/$id") }.toUnitResult()
+
+    override suspend fun updateProjectStatus(
+        id: String,
+        status: String,
+    ): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.put("projects/$id/status") {
+            setBody(UpdateProjectStatusRequest(status = status))
         }
     }.toUnitResult()
 }

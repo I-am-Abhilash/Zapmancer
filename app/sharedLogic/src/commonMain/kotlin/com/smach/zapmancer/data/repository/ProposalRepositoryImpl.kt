@@ -44,6 +44,21 @@ class ProposalRepositoryImpl(
             is Result.Error -> result
         }
     }
+
+    override suspend fun getMyProposals(): Result<List<Proposal>, DataError.Network> = safeApiCall<List<ProposalDto>> {
+        client.get("proposals/my")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> result
+        }
+    }
+
+    override suspend fun acceptProposal(id: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("proposals/$id/accept") }.toUnitResult()
+
+    override suspend fun rejectProposal(id: String): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.post("proposals/$id/reject") }.toUnitResult()
 }
 
 private fun ProposalDto.toDomain(): Proposal = Proposal(

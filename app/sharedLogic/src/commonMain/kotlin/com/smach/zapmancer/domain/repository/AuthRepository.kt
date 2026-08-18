@@ -24,6 +24,7 @@ interface AuthRepository {
 
     suspend fun requestPasswordReset(email: String): Result<Unit, DataError.Network>
     suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network>
+    suspend fun resetPassword(email: String, code: String, newPassword: String): Result<Unit, DataError.Network>
 
     suspend fun logout(): Result<Unit, DataError.Network>
 }

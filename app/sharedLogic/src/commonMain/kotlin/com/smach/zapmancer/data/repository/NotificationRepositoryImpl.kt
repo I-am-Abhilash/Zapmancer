@@ -48,6 +48,16 @@ class NotificationRepositoryImpl(
             setBody(SendQuickReplyRequest(replyText = replyText))
         }
     }.toUnitResult()
+
+    override suspend fun markAsRead(
+        notificationId: String,
+    ): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("notifications/$notificationId/read")
+    }.toUnitResult()
+
+    override suspend fun markAllAsRead(): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("notifications/read-all")
+    }.toUnitResult()
 }
 
 private fun NotificationItemDto.toDomain(): NotificationItem = NotificationItem(

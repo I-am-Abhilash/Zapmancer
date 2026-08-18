@@ -1,6 +1,8 @@
 package com.smach.zapmancer.data.repository
 
 import com.smach.zapmancer.core.common.dto.CommonResponse
+import com.smach.zapmancer.core.common.dto.CreateReviewRequest
+import com.smach.zapmancer.core.common.dto.Review
 import com.smach.zapmancer.core.common.dto.UpdateProfileRequest
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
@@ -10,6 +12,7 @@ import com.smach.zapmancer.domain.model.UpdateProfileParams
 import com.smach.zapmancer.domain.model.UserProfile
 import com.smach.zapmancer.domain.repository.ProfileRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -54,6 +57,32 @@ class ProfileRepositoryImpl(
         when (result) {
             is Result.Success -> Result.Success(result.data.toDomain())
             is Result.Error -> result
+        }
+    }
+
+    override suspend fun deleteAccount(): Result<Unit, DataError.Network> =
+        safeApiCall<CommonResponse> { client.delete("users/account") }.toUnitResult()
+
+    override suspend fun submitReview(
+        userId: String,
+        content: String,
+        rating: Int,
+    ): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("users/$userId/reviews") {
+            setBody(CreateReviewRequest(content = content, rating = rating))
+        }
+    }.toUnitResult()
+
+    override suspend fun getReviews(
+        userId: String,
+        page: Int?,
+        limit: Int?,
+    ): Result<List<Review>, DataError.Network> = safeApiCall<List<Review>> {
+        client.get("users/$userId/reviews") {
+            url {
+                page?.let { parameters.append("page", it.toString()) }
+                limit?.let { parameters.append("limit", it.toString()) }
+            }
         }
     }
 }

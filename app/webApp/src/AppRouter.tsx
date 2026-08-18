@@ -30,6 +30,8 @@ import { EditProfilePage } from './features/profile/EditProfilePage';
 import { MessagesPage } from './features/messages/MessagesPage';
 import { NotificationPage } from './features/notifications/NotificationPage';
 import { SettingsPage } from './features/settings/SettingsPage';
+import { KycVerificationPage } from './features/kyc/KycVerificationPage';
+import { KycReceiptPage } from './features/kyc/KycReceiptPage';
 
 export const AppRouter: React.FC = () => {
   return (
@@ -76,6 +78,13 @@ export const AppRouter: React.FC = () => {
                     <>
                       <SEO title="Engineer Profile — Zapmancer" />
                       <ProfilePage />
+                    </>
+                  } />
+
+                  <Route path="/kyc/receipt/:id" element={
+                    <>
+                      <SEO title="KYC Cryptographic Audit Receipt — Zapmancer" />
+                      <KycReceiptPage />
                     </>
                   } />
 
@@ -185,6 +194,13 @@ export const AppRouter: React.FC = () => {
                       <>
                         <SEO title="Settings & Escrow — Zapmancer" />
                         <SettingsPage />
+                      </>
+                    } />
+
+                    <Route path="/kyc" element={
+                      <>
+                        <SEO title="Biometric Identity Verification — Zapmancer" />
+                        <KycVerificationPage />
                       </>
                     } />
                   </Route>

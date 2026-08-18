@@ -63,6 +63,26 @@ export const AccountTab: React.FC = () => {
         </div>
       </div>
 
+      <div className="settings-section">
+        <div className="settings-section-header">
+          <ShieldCheck size={15} style={{ color: 'var(--color-primary)' }} />
+          <div>
+            <p className="settings-section-title">OpenBiometrics Identity Verification</p>
+            <p className="settings-section-sub">Verify your passport or government ID with active neural liveness to get the KYC Verified badge.</p>
+          </div>
+        </div>
+        <div className="settings-section-body">
+          <div className="settings-note-mint">
+            Identity verification generates an offline-verifiable <strong>Ed25519 cryptographic receipt</strong> required for enterprise contracts.
+          </div>
+          <div>
+            <a href="/kyc" className="settings-btn-primary" style={{ textDecoration: 'none', display: 'inline-flex' }}>
+              <ShieldCheck size={14} /> Verify Identity via OpenBiometrics
+            </a>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

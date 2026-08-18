@@ -15,4 +15,7 @@ interface NotificationRepository {
         notificationId: String,
         replyText: String,
     ): Result<Unit, DataError.Network>
+
+    suspend fun markAsRead(notificationId: String): Result<Unit, DataError.Network>
+    suspend fun markAllAsRead(): Result<Unit, DataError.Network>
 }

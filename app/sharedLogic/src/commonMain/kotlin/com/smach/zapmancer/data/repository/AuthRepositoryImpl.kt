@@ -4,6 +4,7 @@ import com.smach.zapmancer.core.common.dto.AuthResponse
 import com.smach.zapmancer.core.common.dto.CommonResponse
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
+import com.smach.zapmancer.core.common.dto.ResetPasswordRequest
 import com.smach.zapmancer.core.common.dto.SignUpRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
 import com.smach.zapmancer.core.common.utils.DataError
@@ -92,6 +93,16 @@ class AuthRepositoryImpl(
     override suspend fun verifyOtp(email: String, code: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
         client.post("auth/verify-otp") {
             setBody(VerifyOtpRequest(email = email, code = code))
+        }
+    }.toUnitResult()
+
+    override suspend fun resetPassword(
+        email: String,
+        code: String,
+        newPassword: String,
+    ): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> {
+        client.post("auth/reset-password") {
+            setBody(ResetPasswordRequest(email = email, code = code, newPassword = newPassword))
         }
     }.toUnitResult()
 
