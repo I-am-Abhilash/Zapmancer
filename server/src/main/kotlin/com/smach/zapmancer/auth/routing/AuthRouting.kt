@@ -144,7 +144,7 @@ fun Route.authRouting() {
                     val result = service.resetPassword(
                         email = req.email,
                         code = req.code,
-                        newPassword = req.newPassword
+                        newPassword = req.newPassword,
                     )
                     call.respond(ApiResponse(success = true, data = result))
                 }

@@ -25,7 +25,7 @@ class AuthVerificationFlowTest {
     private val authService = AuthService(
         repository = repository,
         resendEmailService = resendEmailService,
-        telnyxSmsService = telnyxSmsService
+        telnyxSmsService = telnyxSmsService,
     )
 
     @Test
@@ -35,7 +35,7 @@ class AuthVerificationFlowTest {
             username = "alex_dev",
             email = "alex@zapmancer.com",
             passwordHash = "hash",
-            isDeleted = false
+            isDeleted = false,
         )
         coEvery { repository.findById("user_123") } returns user
         coEvery { repository.saveOtp(any(), any()) } returns Unit
@@ -55,7 +55,7 @@ class AuthVerificationFlowTest {
             username = "alex_dev",
             email = "alex@zapmancer.com",
             passwordHash = "hash",
-            isDeleted = false
+            isDeleted = false,
         )
         coEvery { repository.findById("user_123") } returns user
         coEvery { repository.verifyAndConsumeOtp("alex@zapmancer.com", "123456") } returns true
@@ -74,7 +74,7 @@ class AuthVerificationFlowTest {
             username = "alex_dev",
             email = "alex@zapmancer.com",
             passwordHash = "hash",
-            isDeleted = false
+            isDeleted = false,
         )
         coEvery { repository.findById("user_123") } returns user
         coEvery { repository.verifyAndConsumeOtp("alex@zapmancer.com", "999999") } returns false

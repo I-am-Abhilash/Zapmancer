@@ -11,10 +11,8 @@ import org.koin.core.annotation.Single
 @Single
 class SettingsService(private val repository: SettingsRepository) {
 
-    suspend fun getSettings(userId: String): SettingsData {
-        return repository.getSettings(userId)
-            ?: throw ApiException(ErrorCode.NOT_FOUND, "User not found.")
-    }
+    suspend fun getSettings(userId: String): SettingsData = repository.getSettings(userId)
+        ?: throw ApiException(ErrorCode.NOT_FOUND, "User not found.")
 
     suspend fun toggle2fa(userId: String, enabled: Boolean): CommonResponse {
         repository.updateToggle(userId, SettingsField.TWO_FA, enabled)
@@ -43,4 +41,3 @@ class SettingsService(private val repository: SettingsRepository) {
         )
     }
 }
-

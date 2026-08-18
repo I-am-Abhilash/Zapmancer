@@ -19,32 +19,34 @@ import org.slf4j.LoggerFactory
 data class TelnyxSendSmsRequest(
     val from: String,
     val to: String,
-    val text: String
+    val text: String,
 )
 
 @Serializable
 data class TelnyxSendSmsResponse(
-    val data: TelnyxMessageData? = null
+    val data: TelnyxMessageData? = null,
 )
 
 @Serializable
 data class TelnyxMessageData(
     val id: String? = null,
-    val record_type: String? = null
+    val record_type: String? = null,
 )
 
 class TelnyxSmsService(
     private val apiKey: String? = null,
-    private val fromNumber: String = "+18005550199"
+    private val fromNumber: String = "+18005550199",
 ) {
     private val logger = LoggerFactory.getLogger(TelnyxSmsService::class.java)
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-            })
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                },
+            )
         }
     }
 
@@ -72,8 +74,8 @@ class TelnyxSmsService(
                     TelnyxSendSmsRequest(
                         from = fromNumber,
                         to = normalizedNumber,
-                        text = messageText
-                    )
+                        text = messageText,
+                    ),
                 )
             }
 

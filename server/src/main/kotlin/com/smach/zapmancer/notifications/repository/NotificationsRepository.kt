@@ -20,7 +20,7 @@ class NotificationsRepository {
             .map { row ->
                 val notifId = row[NotificationsTable.id]
                 val actions = NotificationActionsTable.selectAll()
-                .where { NotificationActionsTable.notificationId eq notifId }
+                    .where { NotificationActionsTable.notificationId eq notifId }
                     .map { a ->
                         NotificationAction(
                             label = a[NotificationActionsTable.label],

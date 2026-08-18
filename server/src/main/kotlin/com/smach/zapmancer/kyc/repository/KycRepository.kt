@@ -28,7 +28,7 @@ class KycRepository {
         documentFrontUrl: String,
         documentBackUrl: String?,
         selfieUrl: String,
-        status: KycStatus = KycStatus.PENDING
+        status: KycStatus = KycStatus.PENDING,
     ): KycStatusResponse = dbQuery {
         val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.insert {
@@ -58,7 +58,7 @@ class KycRepository {
         isNameMatched: Boolean,
         receiptSignature: String?,
         receiptHash: String?,
-        reviewerNotes: String? = null
+        reviewerNotes: String? = null,
     ): KycStatusResponse? = dbQuery {
         val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.update({ KycVerificationsTable.id eq id }) {
@@ -118,7 +118,7 @@ class KycRepository {
                     livenessPassed = row[KycVerificationsTable.livenessPassed],
                     isNameMatched = row[KycVerificationsTable.isNameMatched],
                     status = KycStatus.valueOf(row[KycVerificationsTable.status]),
-                    createdAt = row[KycVerificationsTable.createdAt].toString()
+                    createdAt = row[KycVerificationsTable.createdAt].toString(),
                 )
             }
     }
@@ -127,7 +127,7 @@ class KycRepository {
         id: String,
         adminUserId: String,
         decision: KycStatus,
-        notes: String?
+        notes: String?,
     ): KycStatusResponse? = dbQuery {
         val now = System.now().toLocalDateTime(TimeZone.UTC)
         KycVerificationsTable.update({ KycVerificationsTable.id eq id }) {
@@ -162,6 +162,6 @@ class KycRepository {
         receiptHash = row[KycVerificationsTable.receiptHash],
         reviewerNotes = row[KycVerificationsTable.reviewerNotes],
         createdAt = row[KycVerificationsTable.createdAt].toString(),
-        updatedAt = row[KycVerificationsTable.updatedAt].toString()
+        updatedAt = row[KycVerificationsTable.updatedAt].toString(),
     )
 }

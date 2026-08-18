@@ -60,7 +60,6 @@ object PhoneOtpSessionsTable : Table("phone_otp_sessions") {
     override val primaryKey = PrimaryKey(id)
 }
 
-
 // ---------------------------------------------------------------------------
 // User Profile (extended details, 1:1 with UsersTable)
 // ---------------------------------------------------------------------------
@@ -222,7 +221,6 @@ object MessageReactionsTable : Table("message_reactions") {
     override val primaryKey = PrimaryKey(id)
 }
 
-
 // ---------------------------------------------------------------------------
 // Notifications
 // ---------------------------------------------------------------------------
@@ -282,4 +280,3 @@ object KycVerificationsTable : Table("kyc_verifications") {
     val updatedAt = datetime("updated_at")
     override val primaryKey = PrimaryKey(id)
 }
-

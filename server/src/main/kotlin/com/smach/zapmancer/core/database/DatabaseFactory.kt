@@ -44,9 +44,11 @@ object DatabaseFactory {
         Database.connect(ds)
         logger.info("Database initialized and Flyway migrations applied successfully.")
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            close()
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                close()
+            },
+        )
     }
 
     /**

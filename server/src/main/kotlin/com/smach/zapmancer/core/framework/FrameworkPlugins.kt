@@ -1,7 +1,7 @@
 package com.smach.zapmancer.core.framework
 
-import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.ApiError
+import com.smach.zapmancer.core.common.ApiException
 import com.smach.zapmancer.core.common.ApiResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -103,7 +103,6 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         masking = false
     }
 
-
     install(ContentNegotiation) {
         json(
             Json {
@@ -190,11 +189,9 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
     }
 
     routing {
-
         get("/openapi.json") {
             val doc = OpenApiDoc(info = OpenApiInfo("My API", "1.0")) + call.application.routingRoot.descendants()
             call.respond(doc)
-
         }
 
         openAPI("/openApi")

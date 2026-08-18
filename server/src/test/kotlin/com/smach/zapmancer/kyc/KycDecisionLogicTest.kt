@@ -12,7 +12,7 @@ class KycDecisionLogicTest {
         val decision = KycService.evaluateDecision(
             similarity = 0.91,
             livenessPassed = true,
-            isNameMatched = true
+            isNameMatched = true,
         )
         assertEquals(KycStatus.VERIFIED, decision)
     }
@@ -22,7 +22,7 @@ class KycDecisionLogicTest {
         val decision = KycService.evaluateDecision(
             similarity = 0.72,
             livenessPassed = true,
-            isNameMatched = true
+            isNameMatched = true,
         )
         assertEquals(KycStatus.MANUAL_REVIEW, decision)
     }
@@ -32,7 +32,7 @@ class KycDecisionLogicTest {
         val decision = KycService.evaluateDecision(
             similarity = 0.95,
             livenessPassed = false,
-            isNameMatched = true
+            isNameMatched = true,
         )
         assertEquals(KycStatus.FAILED, decision)
     }
@@ -42,7 +42,7 @@ class KycDecisionLogicTest {
         val decision = KycService.evaluateDecision(
             similarity = 0.45,
             livenessPassed = true,
-            isNameMatched = true
+            isNameMatched = true,
         )
         assertEquals(KycStatus.FAILED, decision)
     }

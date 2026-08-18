@@ -53,9 +53,7 @@ class ProposalsService(private val repository: ProposalsRepository) {
         return repository.getByProject(projectId)
     }
 
-    suspend fun getMyProposals(freelancerId: String): List<Proposal> {
-        return repository.getByFreelancer(freelancerId)
-    }
+    suspend fun getMyProposals(freelancerId: String): List<Proposal> = repository.getByFreelancer(freelancerId)
 
     suspend fun acceptProposal(clientId: String, proposalId: Int): CommonResponse {
         val proposal = repository.getProposalById(proposalId)

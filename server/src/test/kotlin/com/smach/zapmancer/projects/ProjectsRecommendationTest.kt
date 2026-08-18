@@ -28,7 +28,7 @@ class ProjectsRecommendationTest {
                 budgetRange = "$2000 - $4000",
                 projectType = "Fixed",
                 skills = listOf("Kotlin", "Compose Multiplatform", "Ktor"),
-                isSaved = false
+                isSaved = false,
             ),
             Project(
                 id = "proj_2",
@@ -40,8 +40,8 @@ class ProjectsRecommendationTest {
                 budgetRange = "$1500 - $3000",
                 projectType = "Fixed",
                 skills = listOf("Kotlin", "PostgreSQL", "Redis"),
-                isSaved = true
-            )
+                isSaved = true,
+            ),
         )
 
         coEvery { repository.getRecommendedProjects("user_123", 10) } returns mockProjects

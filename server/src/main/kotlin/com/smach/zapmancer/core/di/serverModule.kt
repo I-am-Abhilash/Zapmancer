@@ -2,9 +2,16 @@ package com.smach.zapmancer.core.di
 
 import com.smach.zapmancer.auth.repository.AuthRepository
 import com.smach.zapmancer.auth.service.AuthService
+import com.smach.zapmancer.core.verification.ResendEmailService
+import com.smach.zapmancer.core.verification.TelnyxSmsService
 import com.smach.zapmancer.home.repository.HomeRepository
 import com.smach.zapmancer.home.service.HomeService
+import com.smach.zapmancer.kyc.client.OpenBiometricsClient
+import com.smach.zapmancer.kyc.repository.KycRepository
+import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
+import com.smach.zapmancer.kyc.service.KycService
 import com.smach.zapmancer.landingpage.service.LandingPageService
+import com.smach.zapmancer.messages.redis.RedisClientService
 import com.smach.zapmancer.messages.repository.MessageRepository
 import com.smach.zapmancer.messages.service.ConnectionManager
 import com.smach.zapmancer.messages.service.MessageService
@@ -19,17 +26,10 @@ import com.smach.zapmancer.settings.service.SettingsService
 import com.smach.zapmancer.users.repository.UsersRepository
 import com.smach.zapmancer.users.service.UsersService
 import com.smach.zapmancer.users.service.UsersServiceImpl
-import com.smach.zapmancer.messages.redis.RedisClientService
-import com.smach.zapmancer.kyc.client.OpenBiometricsClient
-import com.smach.zapmancer.kyc.repository.KycRepository
-import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
-import com.smach.zapmancer.kyc.service.KycService
 import io.ktor.server.application.Application
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import com.smach.zapmancer.core.verification.ResendEmailService
-import com.smach.zapmancer.core.verification.TelnyxSmsService
 
 val authModule = module {
     single {
@@ -49,11 +49,10 @@ val authModule = module {
         AuthService(
             repository = get(),
             resendEmailService = get(),
-            telnyxSmsService = get()
+            telnyxSmsService = get(),
         )
     }
 }
-
 
 val homeModule = module {
     singleOf(::HomeRepository)
@@ -77,11 +76,10 @@ val messagesModule = module {
             repository = get(),
             connectionManager = get(),
             storageService = getOrNull(),
-            bucketName = bucketName
+            bucketName = bucketName,
         )
     }
 }
-
 
 val notificationsModule = module {
     singleOf(::NotificationsRepository)
@@ -133,8 +131,7 @@ val kycModule = module {
             openBiometricsClient = get(),
             receiptService = get(),
             storageService = get(),
-            bucketName = bucketName
+            bucketName = bucketName,
         )
     }
 }
-

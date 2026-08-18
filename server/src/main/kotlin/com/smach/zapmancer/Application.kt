@@ -5,6 +5,8 @@ import com.smach.zapmancer.core.database.DatabaseConfig
 import com.smach.zapmancer.core.database.DatabaseFactory
 import com.smach.zapmancer.core.di.authModule
 import com.smach.zapmancer.core.di.homeModule
+import com.smach.zapmancer.core.di.kycModule
+import com.smach.zapmancer.core.di.landingPageModule
 import com.smach.zapmancer.core.di.messagesModule
 import com.smach.zapmancer.core.di.notificationsModule
 import com.smach.zapmancer.core.di.projectsModule
@@ -14,8 +16,6 @@ import com.smach.zapmancer.core.di.usersModule
 import com.smach.zapmancer.core.framework.configureFramework
 import com.smach.zapmancer.core.framework.di.storageModule
 import com.smach.zapmancer.core.security.configureSecurity
-import com.smach.zapmancer.core.di.landingPageModule
-import com.smach.zapmancer.core.di.kycModule
 import com.smach.zapmancer.home.routing.homeRouting
 import com.smach.zapmancer.kyc.routing.kycRouting
 import com.smach.zapmancer.landingpage.routing.landingPageRouting
@@ -73,4 +73,3 @@ fun Application.module() {
         kycRouting()
     }
 }
-

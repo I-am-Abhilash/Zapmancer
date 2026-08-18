@@ -46,7 +46,7 @@ class VerificationPayloadTest {
             isPhoneVerified = true,
             isIdentityVerified = false,
             email = "alex@zapmancer.com",
-            phoneNumber = "+14155552671"
+            phoneNumber = "+14155552671",
         )
         val statusJson = json.encodeToString(status)
         assertTrue(statusJson.contains("alex@zapmancer.com"))

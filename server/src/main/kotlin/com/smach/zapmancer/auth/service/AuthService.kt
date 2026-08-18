@@ -22,7 +22,7 @@ import java.util.UUID
 class AuthService(
     private val repository: AuthRepository,
     private val resendEmailService: ResendEmailService? = null,
-    private val telnyxSmsService: TelnyxSmsService? = null
+    private val telnyxSmsService: TelnyxSmsService? = null,
 ) {
     private val secureRandom = SecureRandom()
 
@@ -152,7 +152,7 @@ class AuthService(
         }
 
         val newHash = BCrypt.withDefaults().hashToString(12, newPassword.toCharArray())
-        val updated = repository.updatePassword(userId, newHash)
+        val updated = repository.updatePasswordById(userId, newHash)
         if (!updated) {
             throw ApiException(ErrorCode.NOT_FOUND, "Failed to update password.")
         }
@@ -200,7 +200,7 @@ class AuthService(
         }
 
         val passwordHash = BCrypt.withDefaults().hashToString(12, newPassword.toCharArray())
-        val updated = repository.updatePassword(normalizedEmail, passwordHash)
+        val updated = repository.updatePasswordByEmail(normalizedEmail, passwordHash)
         if (!updated) {
             throw ApiException(ErrorCode.NOT_FOUND, "User account not found.")
         }
@@ -265,8 +265,6 @@ class AuthService(
     // Verification Status
     // ------------------------------------------------------------------
 
-    suspend fun getVerificationStatus(userId: String): VerificationStatusResponse {
-        return repository.getVerificationStatus(userId)
-            ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
-    }
+    suspend fun getVerificationStatus(userId: String): VerificationStatusResponse = repository.getVerificationStatus(userId)
+        ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
 }

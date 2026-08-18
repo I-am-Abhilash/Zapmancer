@@ -131,7 +131,7 @@ class ProposalsRepository {
         proposalId: Int,
         clientId: String,
         freelancerId: String,
-        projectId: String
+        projectId: String,
     ): Boolean = dbQuery {
         val updated = ProposalsTable.update({ ProposalsTable.id eq proposalId }) {
             it[status] = "ACCEPTED"
@@ -145,7 +145,7 @@ class ProposalsRepository {
             val convExists = ConversationsTable.selectAll()
                 .where {
                     ((ConversationsTable.user1Id eq clientId) and (ConversationsTable.user2Id eq freelancerId)) or
-                    ((ConversationsTable.user1Id eq freelancerId) and (ConversationsTable.user2Id eq clientId))
+                        ((ConversationsTable.user1Id eq freelancerId) and (ConversationsTable.user2Id eq clientId))
                 }
                 .count() > 0
 

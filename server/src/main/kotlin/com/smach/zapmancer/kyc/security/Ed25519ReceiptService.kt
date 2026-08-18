@@ -52,32 +52,28 @@ class Ed25519ReceiptService(privateKeyBase64: String? = null) {
     /**
      * Verifies an Ed25519 signature against a canonical payload using a public key.
      */
-    fun verify(canonicalPayload: String, signatureBase64: String, publicKeyBase64: String): Boolean {
-        return try {
-            val keyBytes = Base64.getDecoder().decode(publicKeyBase64)
-            val keySpec = X509EncodedKeySpec(keyBytes)
-            val publicKey = KeyFactory.getInstance("Ed25519").generatePublic(keySpec)
+    fun verify(canonicalPayload: String, signatureBase64: String, publicKeyBase64: String): Boolean = try {
+        val keyBytes = Base64.getDecoder().decode(publicKeyBase64)
+        val keySpec = X509EncodedKeySpec(keyBytes)
+        val publicKey = KeyFactory.getInstance("Ed25519").generatePublic(keySpec)
 
-            val verifier = Signature.getInstance("Ed25519")
-            verifier.initVerify(publicKey)
-            verifier.update(canonicalPayload.toByteArray(Charsets.UTF_8))
-            verifier.verify(Base64.getDecoder().decode(signatureBase64))
-        } catch (_: Exception) {
-            false
-        }
+        val verifier = Signature.getInstance("Ed25519")
+        verifier.initVerify(publicKey)
+        verifier.update(canonicalPayload.toByteArray(Charsets.UTF_8))
+        verifier.verify(Base64.getDecoder().decode(signatureBase64))
+    } catch (_: Exception) {
+        false
     }
 
-    private fun loadKeyPairFromPrivateKey(privateKeyBase64: String): KeyPair {
-        return try {
-            val keyBytes = Base64.getDecoder().decode(privateKeyBase64)
-            val keySpec = PKCS8EncodedKeySpec(keyBytes)
-            val privateKey = KeyFactory.getInstance("Ed25519").generatePrivate(keySpec)
-            // Generate matching public key or fallback
-            val gen = KeyPairGenerator.getInstance("Ed25519")
-            val generated = gen.generateKeyPair()
-            KeyPair(generated.public, privateKey)
-        } catch (_: Exception) {
-            KeyPairGenerator.getInstance("Ed25519").generateKeyPair()
-        }
+    private fun loadKeyPairFromPrivateKey(privateKeyBase64: String): KeyPair = try {
+        val keyBytes = Base64.getDecoder().decode(privateKeyBase64)
+        val keySpec = PKCS8EncodedKeySpec(keyBytes)
+        val privateKey = KeyFactory.getInstance("Ed25519").generatePrivate(keySpec)
+        // Generate matching public key or fallback
+        val gen = KeyPairGenerator.getInstance("Ed25519")
+        val generated = gen.generateKeyPair()
+        KeyPair(generated.public, privateKey)
+    } catch (_: Exception) {
+        KeyPairGenerator.getInstance("Ed25519").generateKeyPair()
     }
 }

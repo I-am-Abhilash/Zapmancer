@@ -21,7 +21,7 @@ class MessageWorkflowTest {
 
     private val messageService = MessageService(
         repository = repository,
-        connectionManager = connectionManager
+        connectionManager = connectionManager,
     )
 
     @Test
@@ -35,7 +35,7 @@ class MessageWorkflowTest {
                 attachmentType = null,
                 attachmentName = null,
                 attachmentSizeBytes = null,
-                replyToMessageId = null
+                replyToMessageId = null,
             )
         } returns "msg_100"
 
@@ -47,14 +47,14 @@ class MessageWorkflowTest {
             timestamp = "2026-08-17 17:00",
             isFromMe = true,
             status = "SENT",
-            avatarUrl = null
+            avatarUrl = null,
         )
         coEvery { repository.getMessage("msg_100", any()) } returns sampleMsg
 
         val response = messageService.sendMessage(
             conversationId = "conv_1",
             senderId = "user_A",
-            text = "Hello B!"
+            text = "Hello B!",
         )
 
         assertTrue(response.success)
@@ -72,7 +72,7 @@ class MessageWorkflowTest {
         coVerify(exactly = 1) {
             connectionManager.sendToUser(
                 "user_B",
-                match<ChatFrame.ServerToClient.TypingUpdate> { it.isTyping && it.userId == "user_A" }
+                match<ChatFrame.ServerToClient.TypingUpdate> { it.isTyping && it.userId == "user_A" },
             )
         }
     }
@@ -101,7 +101,7 @@ class MessageWorkflowTest {
         coVerify(exactly = 1) {
             connectionManager.sendToUser(
                 "user_A",
-                match<ChatFrame.ServerToClient.MessageEdited> { it.newText == "Edited text" }
+                match<ChatFrame.ServerToClient.MessageEdited> { it.newText == "Edited text" },
             )
         }
     }
@@ -117,7 +117,7 @@ class MessageWorkflowTest {
         coVerify(exactly = 1) {
             connectionManager.sendToUser(
                 "user_B",
-                match<ChatFrame.ServerToClient.MessageDeleted> { it.isDeleted }
+                match<ChatFrame.ServerToClient.MessageDeleted> { it.isDeleted },
             )
         }
     }
@@ -132,7 +132,7 @@ class MessageWorkflowTest {
         coVerify(exactly = 1) {
             connectionManager.sendToUser(
                 "user_A",
-                match<ChatFrame.ServerToClient.MessageStatusUpdate> { it.status == "READ" }
+                match<ChatFrame.ServerToClient.MessageStatusUpdate> { it.status == "READ" },
             )
         }
     }

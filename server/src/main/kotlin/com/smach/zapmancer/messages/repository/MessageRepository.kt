@@ -68,7 +68,7 @@ class MessageRepository {
     suspend fun getMessages(
         conversationId: String,
         userId: String,
-        limit: Int = 50
+        limit: Int = 50,
     ): List<MessageItem> = dbQuery {
         val messages = MessagesTable
             .selectAll()
@@ -87,7 +87,9 @@ class MessageRepository {
             val replySnippet = if (replyId != null) {
                 MessagesTable.selectAll().where { MessagesTable.id eq replyId }
                     .singleOrNull()?.get(MessagesTable.text)?.take(50)
-            } else null
+            } else {
+                null
+            }
 
             val reactions = fetchReactionsForMessage(msgId, userId)
 
@@ -121,7 +123,7 @@ class MessageRepository {
         attachmentType: String? = null,
         attachmentName: String? = null,
         attachmentSizeBytes: Long? = null,
-        replyToMessageId: String? = null
+        replyToMessageId: String? = null,
     ): String = dbQuery {
         val id = UUID.randomUUID().toString()
         MessagesTable.insert {
@@ -145,21 +147,21 @@ class MessageRepository {
     suspend fun toggleReaction(
         messageId: String,
         userId: String,
-        emoji: String
+        emoji: String,
     ): List<MessageReactionItem> = dbQuery {
         val existing = MessageReactionsTable.selectAll()
             .where {
                 (MessageReactionsTable.messageId eq messageId) and
-                (MessageReactionsTable.userId eq userId) and
-                (MessageReactionsTable.emoji eq emoji)
+                    (MessageReactionsTable.userId eq userId) and
+                    (MessageReactionsTable.emoji eq emoji)
             }
             .singleOrNull()
 
         if (existing != null) {
             MessageReactionsTable.deleteWhere {
                 (MessageReactionsTable.messageId eq messageId) and
-                (MessageReactionsTable.userId eq userId) and
-                (MessageReactionsTable.emoji eq emoji)
+                    (MessageReactionsTable.userId eq userId) and
+                    (MessageReactionsTable.emoji eq emoji)
             }
         } else {
             MessageReactionsTable.insert {
@@ -176,7 +178,7 @@ class MessageRepository {
     suspend fun editMessage(
         messageId: String,
         senderId: String,
-        newText: String
+        newText: String,
     ): Boolean = dbQuery {
         val updatedRows = MessagesTable.update({
             (MessagesTable.id eq messageId) and (MessagesTable.senderId eq senderId) and (MessagesTable.isDeleted eq false)
@@ -189,7 +191,7 @@ class MessageRepository {
 
     suspend fun deleteMessage(
         messageId: String,
-        senderId: String
+        senderId: String,
     ): Boolean = dbQuery {
         val updatedRows = MessagesTable.update({
             (MessagesTable.id eq messageId) and (MessagesTable.senderId eq senderId)
@@ -218,8 +220,8 @@ class MessageRepository {
         val currentTime = now()
         MessagesTable.update({
             (MessagesTable.conversationId eq conversationId) and
-            (MessagesTable.senderId neq userId) and
-            (MessagesTable.status neq "READ")
+                (MessagesTable.senderId neq userId) and
+                (MessagesTable.status neq "READ")
         }) {
             it[MessagesTable.status] = "READ"
             it[MessagesTable.readAt] = currentTime
@@ -246,7 +248,9 @@ class MessageRepository {
                 val replySnippet = if (replyId != null) {
                     MessagesTable.selectAll().where { MessagesTable.id eq replyId }
                         .singleOrNull()?.get(MessagesTable.text)?.take(50)
-                } else null
+                } else {
+                    null
+                }
 
                 val reactions = fetchReactionsForMessage(messageId, userId)
                 val isDeleted = row[MessagesTable.isDeleted]
@@ -284,7 +288,7 @@ class MessageRepository {
                     emoji = emoji,
                     count = list.size,
                     userIds = userIds,
-                    isMine = userIds.contains(currentUserId)
+                    isMine = userIds.contains(currentUserId),
                 )
             }
     }

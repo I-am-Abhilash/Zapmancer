@@ -18,7 +18,7 @@ class MessageService(
     private val repository: MessageRepository,
     private val connectionManager: ConnectionManager,
     private val storageService: StorageService? = null,
-    private val bucketName: String = "zapmancer-assets"
+    private val bucketName: String = "zapmancer-assets",
 ) {
 
     suspend fun getConversations(userId: String): List<ConversationItem> {
@@ -27,7 +27,9 @@ class MessageService(
             val participants = repository.getConversationParticipants(conv.id)
             val otherId = if (participants != null) {
                 if (userId == participants.first) participants.second else participants.first
-            } else null
+            } else {
+                null
+            }
 
             val isOnline = if (otherId != null) connectionManager.isUserOnline(otherId) else false
             conv.copy(isOnline = isOnline)
@@ -37,7 +39,7 @@ class MessageService(
     suspend fun getMessages(
         conversationId: String,
         userId: String,
-        limit: Int = 50
+        limit: Int = 50,
     ): List<MessageItem> {
         val participants = repository.getConversationParticipants(conversationId)
             ?: throw ApiException(ErrorCode.NOT_FOUND, "Conversation not found.")
@@ -56,7 +58,7 @@ class MessageService(
         attachmentType: String? = null,
         attachmentName: String? = null,
         attachmentSizeBytes: Long? = null,
-        replyToMessageId: String? = null
+        replyToMessageId: String? = null,
     ): CommonResponse {
         val participants = repository.getConversationParticipants(conversationId)
             ?: throw ApiException(ErrorCode.NOT_FOUND, "Conversation not found.")
@@ -73,9 +75,8 @@ class MessageService(
             attachmentType = attachmentType,
             attachmentName = attachmentName,
             attachmentSizeBytes = attachmentSizeBytes,
-            replyToMessageId = replyToMessageId
+            replyToMessageId = replyToMessageId,
         )
-
 
         val recipientId = if (senderId == participants.first) participants.second else participants.first
 
@@ -106,7 +107,7 @@ class MessageService(
             val recipientId = if (senderId == participants.first) participants.second else participants.first
             connectionManager.sendToUser(
                 recipientId,
-                ChatFrame.ServerToClient.TypingUpdate(conversationId, senderId, isTyping)
+                ChatFrame.ServerToClient.TypingUpdate(conversationId, senderId, isTyping),
             )
         }
     }
@@ -152,7 +153,7 @@ class MessageService(
             val nowTime = Clock.System.now().toString().take(16).replace("T", " ")
             connectionManager.sendToUser(
                 senderId,
-                ChatFrame.ServerToClient.MessageStatusUpdate(conversationId, messageId, "READ", readAt = nowTime)
+                ChatFrame.ServerToClient.MessageStatusUpdate(conversationId, messageId, "READ", readAt = nowTime),
             )
         }
         return CommonResponse(success = true, message = "Message marked as read.")
@@ -176,12 +177,11 @@ class MessageService(
         return CommonResponse(success = true, message = "Conversation marked as read.")
     }
 
-
     suspend fun uploadAttachment(
         userId: String,
         fileName: String,
         fileBytes: ByteArray,
-        contentType: String
+        contentType: String,
     ): AttachmentUploadResponse {
         val ext = fileName.substringAfterLast(".", "")
         val path = "attachments/$userId/${UUID.randomUUID()}.$ext"
@@ -199,10 +199,9 @@ class MessageService(
             url = publicUrl,
             fileName = fileName,
             fileType = type,
-            sizeBytes = fileBytes.size.toLong()
+            sizeBytes = fileBytes.size.toLong(),
         )
     }
 
-    suspend fun getConversationParticipants(conversationId: String): Pair<String, String>? =
-        repository.getConversationParticipants(conversationId)
+    suspend fun getConversationParticipants(conversationId: String): Pair<String, String>? = repository.getConversationParticipants(conversationId)
 }

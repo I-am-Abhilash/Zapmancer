@@ -25,9 +25,9 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.websocket.webSocket
+import io.ktor.utils.io.readRemaining
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
-import io.ktor.utils.io.readRemaining
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
@@ -96,21 +96,26 @@ fun Route.messageRouting() {
                                         attachmentType = clientFrame.attachmentType,
                                         attachmentName = clientFrame.attachmentName,
                                         attachmentSizeBytes = clientFrame.attachmentSizeBytes,
-                                        replyToMessageId = clientFrame.replyToMessageId
+                                        replyToMessageId = clientFrame.replyToMessageId,
                                     )
                                 }
+
                                 is ChatFrame.ClientToServer.Typing -> {
                                     service.handleTyping(clientFrame.conversationId, userId, clientFrame.isTyping)
                                 }
+
                                 is ChatFrame.ClientToServer.MarkRead -> {
                                     service.markMessageRead(clientFrame.conversationId, userId, clientFrame.messageId)
                                 }
+
                                 is ChatFrame.ClientToServer.React -> {
                                     service.handleReact(clientFrame.conversationId, userId, clientFrame.messageId, clientFrame.emoji)
                                 }
+
                                 is ChatFrame.ClientToServer.EditMessage -> {
                                     service.handleEditMessage(clientFrame.conversationId, userId, clientFrame.messageId, clientFrame.newText)
                                 }
+
                                 is ChatFrame.ClientToServer.DeleteMessage -> {
                                     service.handleDeleteMessage(clientFrame.conversationId, userId, clientFrame.messageId)
                                 }
@@ -168,7 +173,7 @@ fun Route.messageRouting() {
                 if (fileBytes == null) {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, error = com.smach.zapmancer.core.network.ktor.ApiError("BAD_REQUEST", "Missing file payload"))
+                        ApiResponse<Unit>(success = false, error = com.smach.zapmancer.core.network.ktor.ApiError("BAD_REQUEST", "Missing file payload")),
                     )
                 }
 
@@ -223,7 +228,7 @@ fun Route.messageRouting() {
                             attachmentType = req.attachmentType,
                             attachmentName = req.attachmentName,
                             attachmentSizeBytes = req.attachmentSizeBytes,
-                            replyToMessageId = req.replyToMessageId
+                            replyToMessageId = req.replyToMessageId,
                         )
                         call.respond(ApiResponse(success = true, data = result))
                     }

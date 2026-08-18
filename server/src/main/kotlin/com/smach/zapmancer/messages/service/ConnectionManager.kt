@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 @Single
 class ConnectionManager(
-    private val redisClientService: RedisClientService? = null
+    private val redisClientService: RedisClientService? = null,
 ) {
     private val logger = LoggerFactory.getLogger(ConnectionManager::class.java)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())

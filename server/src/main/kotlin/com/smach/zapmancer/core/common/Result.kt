@@ -31,4 +31,3 @@ enum class ErrorCode(val httpStatusCode: HttpStatusCode) {
 typealias ApiResponse<T> = ApiResponse<T>
 typealias ApiError = ApiError
 typealias CommonResponse = CommonResponse
-

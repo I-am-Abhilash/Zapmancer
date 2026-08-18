@@ -132,4 +132,3 @@ fun Application.configureSecurity() {
         }
     }
 }
-

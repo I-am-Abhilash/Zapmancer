@@ -15,10 +15,10 @@ import com.smach.zapmancer.core.framework.storage.StorageService
 import com.smach.zapmancer.kyc.client.OpenBiometricsClient
 import com.smach.zapmancer.kyc.repository.KycRepository
 import com.smach.zapmancer.kyc.security.Ed25519ReceiptService
-import kotlin.time.Clock.System
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
+import kotlin.time.Clock.System
 
 @Serializable
 data class CanonicalKycReceiptData(
@@ -31,7 +31,7 @@ data class CanonicalKycReceiptData(
     val faceSimilarityScore: Double?,
     val livenessScore: Double?,
     val decision: String,
-    val timestampUtc: String
+    val timestampUtc: String,
 )
 
 class KycService(
@@ -39,7 +39,7 @@ class KycService(
     private val openBiometricsClient: OpenBiometricsClient,
     private val receiptService: Ed25519ReceiptService,
     private val storageService: StorageService,
-    private val bucketName: String = "zapmancer-assets"
+    private val bucketName: String = "zapmancer-assets",
 ) {
     /**
      * Initializes a KYC session and returns an active liveness gesture challenge.
@@ -55,7 +55,7 @@ class KycService(
             documentFrontUrl = "",
             documentBackUrl = null,
             selfieUrl = "",
-            status = KycStatus.PENDING
+            status = KycStatus.PENDING,
         )
 
         return KycInitResponse(
@@ -63,7 +63,7 @@ class KycService(
             livenessSessionId = livenessInit.session_id,
             instruction = livenessInit.instruction,
             preset = livenessInit.preset,
-            expiresAtUtc = livenessInit.expires_at
+            expiresAtUtc = livenessInit.expires_at,
         )
     }
 
@@ -78,7 +78,7 @@ class KycService(
         frontBytes: ByteArray,
         backBytes: ByteArray?,
         selfieBytes: ByteArray,
-        registeredUsername: String = ""
+        registeredUsername: String = "",
     ): KycStatusResponse {
         // 1. Upload files to Object Storage
         val frontPath = "kyc/$userId/$verificationId/front.jpg"
@@ -126,7 +126,7 @@ class KycService(
             evaluateDecision(
                 similarity = faceMatchResponse.similarity,
                 livenessPassed = livenessResponse.passed && livenessResponse.anti_spoof_passed && !isTampered,
-                isNameMatched = isNameMatched
+                isNameMatched = isNameMatched,
             )
         }
 
@@ -145,7 +145,7 @@ class KycService(
             faceSimilarityScore = faceMatchResponse.similarity,
             livenessScore = livenessResponse.score,
             decision = decision.name,
-            timestampUtc = nowUtc
+            timestampUtc = nowUtc,
         )
         val canonicalJson = Json.encodeToString(receiptData)
         val signature = receiptService.sign(canonicalJson)
@@ -164,7 +164,7 @@ class KycService(
             livenessPassed = livenessResponse.passed,
             isNameMatched = isNameMatched,
             receiptSignature = signature,
-            receiptHash = receiptHash
+            receiptHash = receiptHash,
         )
 
         // 10. If verified, update project and user identity status
@@ -175,33 +175,19 @@ class KycService(
         return result ?: kycRepository.getVerificationById(verificationId)!!
     }
 
-    suspend fun evaluatePassiveLiveness(imageBytes: ByteArray): OpenBiometricsPassiveLivenessResponse {
-        return openBiometricsClient.evaluatePassiveLiveness(imageBytes)
-    }
+    suspend fun evaluatePassiveLiveness(imageBytes: ByteArray): OpenBiometricsPassiveLivenessResponse = openBiometricsClient.evaluatePassiveLiveness(imageBytes)
 
-    suspend fun searchWatchlist(faceBytes: ByteArray): OpenBiometricsWatchlistSearchResponse {
-        return openBiometricsClient.searchWatchlist(faceBytes)
-    }
+    suspend fun searchWatchlist(faceBytes: ByteArray): OpenBiometricsWatchlistSearchResponse = openBiometricsClient.searchWatchlist(faceBytes)
 
-    suspend fun getWatchlists(): List<WatchlistDto> {
-        return openBiometricsClient.getWatchlists()
-    }
+    suspend fun getWatchlists(): List<WatchlistDto> = openBiometricsClient.getWatchlists()
 
-    suspend fun createWatchlist(name: String, description: String = ""): WatchlistDto? {
-        return openBiometricsClient.createWatchlist(name, description)
-    }
+    suspend fun createWatchlist(name: String, description: String = ""): WatchlistDto? = openBiometricsClient.createWatchlist(name, description)
 
-    suspend fun addFaceToWatchlist(watchlistId: String, name: String, faceBytes: ByteArray): Boolean {
-        return openBiometricsClient.addFaceToWatchlist(watchlistId, name, faceBytes)
-    }
+    suspend fun addFaceToWatchlist(watchlistId: String, name: String, faceBytes: ByteArray): Boolean = openBiometricsClient.addFaceToWatchlist(watchlistId, name, faceBytes)
 
-    suspend fun getCapabilities(): OpenBiometricsCapabilitiesResponse {
-        return openBiometricsClient.getCapabilities()
-    }
+    suspend fun getCapabilities(): OpenBiometricsCapabilitiesResponse = openBiometricsClient.getCapabilities()
 
-    suspend fun getKycStatus(userId: String): KycStatusResponse? {
-        return kycRepository.getLatestVerificationForUser(userId)
-    }
+    suspend fun getKycStatus(userId: String): KycStatusResponse? = kycRepository.getLatestVerificationForUser(userId)
 
     suspend fun getReceipt(verificationId: String): KycReceiptResponse? {
         val record = kycRepository.getVerificationById(verificationId) ?: return null
@@ -218,7 +204,7 @@ class KycService(
             faceSimilarityScore = record.faceSimilarityScore,
             livenessScore = record.livenessScore,
             decision = record.status.name,
-            timestampUtc = record.createdAt
+            timestampUtc = record.createdAt,
         )
         val canonicalJson = Json.encodeToString(canonicalData)
         val isValid = receiptService.verify(canonicalJson, sig, receiptService.publicKeyBase64)
@@ -231,19 +217,17 @@ class KycService(
             ed25519SignatureBase64 = sig,
             receiptHashSha256 = rHash,
             publicKeyBase64 = receiptService.publicKeyBase64,
-            verifiedAtUtc = record.updatedAt
+            verifiedAtUtc = record.updatedAt,
         )
     }
 
-    suspend fun getAdminQueue(): List<KycAdminQueueItem> {
-        return kycRepository.getAdminReviewQueue()
-    }
+    suspend fun getAdminQueue(): List<KycAdminQueueItem> = kycRepository.getAdminReviewQueue()
 
     suspend fun reviewKycSubmission(
         verificationId: String,
         adminUserId: String,
         decision: KycStatus,
-        notes: String?
+        notes: String?,
     ): KycStatusResponse? {
         val updated = kycRepository.updateAdminReview(verificationId, adminUserId, decision, notes)
         if (updated != null && decision == KycStatus.VERIFIED) {

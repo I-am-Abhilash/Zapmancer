@@ -98,7 +98,7 @@ class ProjectsRepository {
         val savedSet = SavedProjectsTable.selectAll()
             .where {
                 (SavedProjectsTable.userId eq userId) and
-                (SavedProjectsTable.projectId inList projectIds)
+                    (SavedProjectsTable.projectId inList projectIds)
             }
             .map { it[SavedProjectsTable.projectId] }
             .toSet()
@@ -142,7 +142,7 @@ class ProjectsRepository {
                 ProjectsTable.selectAll()
                     .where {
                         (ProjectsTable.clientId neq userId) and
-                        (ProjectsTable.id inList matchingProjectIds)
+                            (ProjectsTable.id inList matchingProjectIds)
                     }
                     .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
                     .limit(limit)
@@ -173,7 +173,7 @@ class ProjectsRepository {
         val savedSet = SavedProjectsTable.selectAll()
             .where {
                 (SavedProjectsTable.userId eq userId) and
-                (SavedProjectsTable.projectId inList projectIds)
+                    (SavedProjectsTable.projectId inList projectIds)
             }
             .map { it[SavedProjectsTable.projectId] }
             .toSet()
@@ -315,7 +315,7 @@ class ProjectsRepository {
         val savedSet = SavedProjectsTable.selectAll()
             .where {
                 (SavedProjectsTable.userId eq clientId) and
-                (SavedProjectsTable.projectId inList projectIds)
+                    (SavedProjectsTable.projectId inList projectIds)
             }
             .map { it[SavedProjectsTable.projectId] }
             .toSet()
@@ -351,7 +351,7 @@ class ProjectsRepository {
     suspend fun update(
         projectId: String,
         clientId: String,
-        request: UpdateProjectRequest
+        request: UpdateProjectRequest,
     ): Boolean = dbQuery {
         val updated = ProjectsTable.update({ (ProjectsTable.id eq projectId) and (ProjectsTable.clientId eq clientId) }) { row ->
             request.category?.let { row[category] = it }

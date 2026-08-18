@@ -140,14 +140,22 @@ class AuthRepository {
         true
     }
 
-    /** Updates user's password hash following successful OTP verification. */
-    suspend fun updatePassword(email: String, passwordHash: String): Boolean = dbQuery {
+    /** Updates user's password hash following successful OTP verification (by email). */
+    suspend fun updatePassword(email: String, passwordHash: String): Boolean = updatePasswordByEmail(email, passwordHash)
+
+    suspend fun updatePasswordByEmail(email: String, passwordHash: String): Boolean = dbQuery {
         val normalizedEmail = email.trim().lowercase()
         UsersTable.update({ UsersTable.email eq normalizedEmail }) {
             it[UsersTable.passwordHash] = passwordHash
         } > 0
     }
 
+    /** Updates user's password hash for an authenticated user (by userId). */
+    suspend fun updatePasswordById(userId: String, passwordHash: String): Boolean = dbQuery {
+        UsersTable.update({ UsersTable.id eq userId }) {
+            it[UsersTable.passwordHash] = passwordHash
+        } > 0
+    }
 
     suspend fun setUserEmailVerified(userId: String): Boolean = dbQuery {
         UsersTable.update({ UsersTable.id eq userId }) {
@@ -184,7 +192,7 @@ class AuthRepository {
             Triple(
                 row[PhoneOtpSessionsTable.id],
                 row[PhoneOtpSessionsTable.expiresAt],
-                row[PhoneOtpSessionsTable.phoneNumber]
+                row[PhoneOtpSessionsTable.phoneNumber],
             )
         }.firstOrNull() ?: return@dbQuery null
 
@@ -226,15 +234,8 @@ class AuthRepository {
             isPhoneVerified = user[UsersTable.isPhoneVerified],
             isIdentityVerified = isIdentityVerified,
             email = user[UsersTable.email],
-            phoneNumber = user[UsersTable.phoneNumber]
+            phoneNumber = user[UsersTable.phoneNumber],
         )
-    }
-
-    /** Update password hash for an authenticated user (by id or email). */
-    suspend fun updatePassword(identifier: String, passwordHash: String): Boolean = dbQuery {
-        UsersTable.update({ (UsersTable.id eq identifier) or (UsersTable.email eq identifier) }) {
-            it[UsersTable.passwordHash] = passwordHash
-        } > 0
     }
 }
 
@@ -250,4 +251,3 @@ data class AuthUserRecord(
     val isPhoneVerified: Boolean = false,
     val isDeleted: Boolean = false,
 )
-

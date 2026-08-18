@@ -20,28 +20,30 @@ data class ResendSendEmailRequest(
     val from: String,
     val to: List<String>,
     val subject: String,
-    val html: String
+    val html: String,
 )
 
 @Serializable
 data class ResendSendEmailResponse(
     val id: String? = null,
     val message: String? = null,
-    val name: String? = null
+    val name: String? = null,
 )
 
 class ResendEmailService(
     private val apiKey: String? = null,
-    private val fromEmail: String = "Zapmancer <noreply@zapmancer.com>"
+    private val fromEmail: String = "Zapmancer <noreply@zapmancer.com>",
 ) {
     private val logger = LoggerFactory.getLogger(ResendEmailService::class.java)
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-            })
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                },
+            )
         }
     }
 
@@ -83,8 +85,8 @@ class ResendEmailService(
                         from = fromEmail,
                         to = listOf(toEmail),
                         subject = subject,
-                        html = html
-                    )
+                        html = html,
+                    ),
                 )
             }
 
@@ -102,8 +104,7 @@ class ResendEmailService(
         }
     }
 
-    private fun buildVerificationEmailHtml(code: String, username: String): String {
-        return """
+    private fun buildVerificationEmailHtml(code: String, username: String): String = """
         <!DOCTYPE html>
         <html>
         <head>
@@ -129,11 +130,9 @@ class ResendEmailService(
             </div>
         </body>
         </html>
-        """.trimIndent()
-    }
+    """.trimIndent()
 
-    private fun buildPasswordResetHtml(code: String): String {
-        return """
+    private fun buildPasswordResetHtml(code: String): String = """
         <!DOCTYPE html>
         <html>
         <head>
@@ -159,6 +158,5 @@ class ResendEmailService(
             </div>
         </body>
         </html>
-        """.trimIndent()
-    }
+    """.trimIndent()
 }

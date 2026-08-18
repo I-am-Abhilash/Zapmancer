@@ -51,8 +51,8 @@ class HomeService(private val repository: HomeRepository) {
                         sanitizeCsv(a.categoryTag),
                         sanitizeCsv(a.status),
                         sanitizeCsv(a.date),
-                        sanitizeCsv(a.value)
-                    ).joinToString(",")
+                        sanitizeCsv(a.value),
+                    ).joinToString(","),
                 )
             }
         }
@@ -69,5 +69,3 @@ class HomeService(private val repository: HomeRepository) {
         return "\"$str\""
     }
 }
-
-

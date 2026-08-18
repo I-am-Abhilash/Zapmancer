@@ -33,14 +33,10 @@ class ProjectsService(
         limit = limit,
     )
 
-    suspend fun getRecommendedProjects(userId: String, limit: Int = 10): List<Project> {
-        return repository.getRecommendedProjects(userId = userId, limit = limit)
-    }
+    suspend fun getRecommendedProjects(userId: String, limit: Int = 10): List<Project> = repository.getRecommendedProjects(userId = userId, limit = limit)
 
-    suspend fun getProjectById(projectId: String, userId: String): ProjectDetail {
-        return repository.findById(projectId, userId)
-            ?: throw ApiException(ErrorCode.NOT_FOUND, "Project not found.")
-    }
+    suspend fun getProjectById(projectId: String, userId: String): ProjectDetail = repository.findById(projectId, userId)
+        ?: throw ApiException(ErrorCode.NOT_FOUND, "Project not found.")
 
     suspend fun saveProject(
         userId: String,
@@ -62,9 +58,7 @@ class ProjectsService(
         )
     }
 
-    suspend fun getMyProjects(clientId: String): List<Project> {
-        return repository.getMyProjects(clientId)
-    }
+    suspend fun getMyProjects(clientId: String): List<Project> = repository.getMyProjects(clientId)
 
     suspend fun createProject(
         clientId: String,
@@ -111,7 +105,7 @@ class ProjectsService(
         if (normalizedStatus !in VALID_PROJECT_STATUSES) {
             throw ApiException(
                 ErrorCode.BAD_REQUEST,
-                "Invalid project status '$newStatus'. Allowed values: ${VALID_PROJECT_STATUSES.joinToString(", ")}."
+                "Invalid project status '$newStatus'. Allowed values: ${VALID_PROJECT_STATUSES.joinToString(", ")}.",
             )
         }
 

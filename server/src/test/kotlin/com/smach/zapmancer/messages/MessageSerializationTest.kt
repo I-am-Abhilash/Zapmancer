@@ -25,7 +25,7 @@ class MessageSerializationTest {
             attachmentType = "FILE",
             attachmentName = "contract.pdf",
             attachmentSizeBytes = 1048576,
-            replyToMessageId = "msg-0"
+            replyToMessageId = "msg-0",
         )
         val sendEncoded = json.encodeToString(sendFrame)
         assertNotNull(sendEncoded)
@@ -39,7 +39,7 @@ class MessageSerializationTest {
         val reactFrame: ChatFrame.ClientToServer = ChatFrame.ClientToServer.React(
             conversationId = "conv-1",
             messageId = "msg-123",
-            emoji = "🔥"
+            emoji = "🔥",
         )
         val reactEncoded = json.encodeToString(reactFrame)
         val decodedReact = json.decodeFromString<ChatFrame.ClientToServer>(reactEncoded)
@@ -63,12 +63,12 @@ class MessageSerializationTest {
             reactions = listOf(MessageReactionItem(emoji = "👍", count = 3, isMine = true)),
             isEdited = true,
             isDeleted = false,
-            readAt = "2026-08-17 15:31"
+            readAt = "2026-08-17 15:31",
         )
 
         val newMsgFrame: ChatFrame.ServerToClient = ChatFrame.ServerToClient.NewMessage(
             conversationId = "conv-1",
-            message = messageItem
+            message = messageItem,
         )
         val encoded = json.encodeToString(newMsgFrame)
         assertTrue(encoded.contains("👍"))
@@ -87,7 +87,7 @@ class MessageSerializationTest {
 
         val envelope = RedisChatEnvelope(
             targetUserId = "user-456",
-            frameJson = """{"conversationId":"c1","isTyping":true}"""
+            frameJson = """{"conversationId":"c1","isTyping":true}""",
         )
         val encoded = json.encodeToString(envelope)
         val decoded = json.decodeFromString<RedisChatEnvelope>(encoded)

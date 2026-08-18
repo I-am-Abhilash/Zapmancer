@@ -15,15 +15,11 @@ class UsersServiceImpl(
     private val repository: UsersRepository,
 ) : UsersService {
 
-    override suspend fun getOwnProfile(userId: String): UserProfile {
-        return repository.findProfile(userId)
-            ?: throw ApiException(ErrorCode.NOT_FOUND, "Profile not found.")
-    }
+    override suspend fun getOwnProfile(userId: String): UserProfile = repository.findProfile(userId)
+        ?: throw ApiException(ErrorCode.NOT_FOUND, "Profile not found.")
 
-    override suspend fun getPublicProfile(userId: String): UserProfile {
-        return repository.findProfile(userId)
-            ?: throw ApiException(ErrorCode.NOT_FOUND, "Profile not found.")
-    }
+    override suspend fun getPublicProfile(userId: String): UserProfile = repository.findProfile(userId)
+        ?: throw ApiException(ErrorCode.NOT_FOUND, "Profile not found.")
 
     override suspend fun updateProfile(
         userId: String,

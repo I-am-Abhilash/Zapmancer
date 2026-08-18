@@ -239,4 +239,3 @@ class UsersRepository {
         } > 0
     }
 }
-

@@ -16,13 +16,13 @@ import java.io.Closeable
 @Serializable
 data class RedisChatEnvelope(
     val targetUserId: String?, // null means broadcast
-    val frameJson: String
+    val frameJson: String,
 )
 
 class RedisClientService(
     private val host: String = "localhost",
     private val port: Int = 6379,
-    private val password: String? = null
+    private val password: String? = null,
 ) : Closeable {
     private val logger = LoggerFactory.getLogger(RedisClientService::class.java)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -55,18 +55,21 @@ class RedisClientService(
             try {
                 pool?.resource?.use { jedis ->
                     logger.info("Subscribing to Redis channel '$channelName'")
-                    jedis.subscribe(object : JedisPubSub() {
-                        override fun onMessage(channel: String?, message: String?) {
-                            if (message != null) {
-                                try {
-                                    val envelope = Json.decodeFromString<RedisChatEnvelope>(message)
-                                    onMessageReceived(envelope.targetUserId, envelope.frameJson)
-                                } catch (e: Exception) {
-                                    logger.error("Failed to decode Redis chat envelope: ${e.message}")
+                    jedis.subscribe(
+                        object : JedisPubSub() {
+                            override fun onMessage(channel: String?, message: String?) {
+                                if (message != null) {
+                                    try {
+                                        val envelope = Json.decodeFromString<RedisChatEnvelope>(message)
+                                        onMessageReceived(envelope.targetUserId, envelope.frameJson)
+                                    } catch (e: Exception) {
+                                        logger.error("Failed to decode Redis chat envelope: ${e.message}")
+                                    }
                                 }
                             }
-                        }
-                    }, channelName)
+                        },
+                        channelName,
+                    )
                 }
             } catch (e: Exception) {
                 logger.warn("Redis subscription disconnected: ${e.message}")
@@ -128,14 +131,12 @@ class RedisClientService(
     /**
      * Check if a user is online across the cluster.
      */
-    fun isUserOnline(userId: String): Boolean {
-        return try {
-            pool?.resource?.use { jedis ->
-                jedis.exists("presence:$userId")
-            } ?: false
-        } catch (_: Exception) {
-            false
-        }
+    fun isUserOnline(userId: String): Boolean = try {
+        pool?.resource?.use { jedis ->
+            jedis.exists("presence:$userId")
+        } ?: false
+    } catch (_: Exception) {
+        false
     }
 
     override fun close() {
