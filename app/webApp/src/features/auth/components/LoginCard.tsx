@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 
 interface LoginCardProps {
   onNavigateToForgot?: () => void;
@@ -8,19 +9,27 @@ interface LoginCardProps {
 }
 
 export const LoginCard: React.FC<LoginCardProps> = ({ onNavigateToForgot, onNavigateToSignup, onLoginSuccess }) => {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) { setError('Please enter your email address'); return; }
     if (!password) { setError('Please enter your password'); return; }
     setError(null);
     setLoading(true);
-    setTimeout(() => { setLoading(false); onLoginSuccess?.(); }, 1000);
+    try {
+      await login(email, password);
+      onLoginSuccess?.();
+    } catch (err: any) {
+      setError(err?.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

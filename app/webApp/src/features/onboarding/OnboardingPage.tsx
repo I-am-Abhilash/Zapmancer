@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
 import { Zap, CheckCircle2, UserCheck, Briefcase, ArrowRight, DollarSign, Sparkles } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { switchRole } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [role, setRole] = useState<'freelancer' | 'client'>('freelancer');
   const [selectedSkills, setSelectedSkills] = useState<string[]>(['Kotlin Multiplatform', 'React & Vite']);
@@ -27,14 +27,17 @@ export const OnboardingPage: React.FC = () => {
   };
 
   const handleFinish = () => {
-    navigate('/home');
+    if (role === 'client') {
+      switchRole('company');
+      navigate('/company/dashboard');
+    } else {
+      switchRole('freelancer');
+      navigate('/home');
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
-      <Header />
-
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-12">
+    <div className="flex-1 max-w-4xl w-full mx-auto px-4 py-12">
         {/* Progress Bar */}
         <div className="mb-10 text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
@@ -201,9 +204,6 @@ export const OnboardingPage: React.FC = () => {
             </div>
           </div>
         )}
-      </main>
-
-      <Footer />
     </div>
   );
 };

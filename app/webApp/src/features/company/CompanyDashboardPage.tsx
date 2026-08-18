@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './company.css';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
-import { Building2, Users, Layers, Plus, ShieldCheck, UserPlus, CheckCircle2, Clock, X, Check, Activity, Zap, MapPin, Globe, CreditCard } from 'lucide-react';
+import { Building2, Users, Layers, Plus, ShieldCheck, UserPlus, CheckCircle2, Clock, X, Activity, Zap, MapPin, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type TabId = 'roster' | 'sprints' | 'telemetry' | 'payroll';

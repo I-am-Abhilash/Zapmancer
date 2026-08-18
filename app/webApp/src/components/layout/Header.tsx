@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Search, Plus, MessageSquare, Bell, User, Settings, LogOut, ChevronDown, Zap, Building2, Briefcase, RefreshCw, Layers } from 'lucide-react';
+import { Sun, Moon, Search, Plus, MessageSquare, Bell, User, Settings, LogOut, ChevronDown, Zap, Building2, Briefcase, RefreshCw } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export type UserAccountContext = 'company' | 'freelancer' | 'guest';
 
@@ -9,24 +10,30 @@ interface HeaderProps {
   isLoggedIn?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
+export const Header: React.FC<HeaderProps> = ({ isLoggedIn }) => {
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, role, switchRole, logout } = useAuth();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  
-  const [activeAccountType, setActiveAccountType] = useState<UserAccountContext>(
-    isLoggedIn ? 'company' : 'guest'
-  );
+
+  const effectiveLoggedIn = isLoggedIn !== undefined ? isLoggedIn : isAuthenticated;
+  const activeAccountType: UserAccountContext = effectiveLoggedIn ? role : 'guest';
 
   const toggleAccountContext = () => {
     const nextType: UserAccountContext = activeAccountType === 'company' ? 'freelancer' : 'company';
-    setActiveAccountType(nextType);
+    switchRole(nextType);
     setShowProfileMenu(false);
     if (nextType === 'company') {
       navigate('/company/dashboard');
     } else {
       navigate('/home');
     }
+  };
+
+  const handleSignOut = () => {
+    setShowProfileMenu(false);
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -152,10 +159,10 @@ export const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
                   >
                     <div className="px-4 py-3 border-b border-hairline space-y-0.5">
                       <p className="text-sm font-bold text-ink">
-                        {activeAccountType === 'company' ? 'Acme AI Systems' : 'Alex Morgan'}
+                        {user?.username || (activeAccountType === 'company' ? 'Acme AI Systems' : 'Alex Morgan')}
                       </p>
                       <p className="text-xs text-primary font-semibold">
-                        {activeAccountType === 'company' ? 'Company Workspace Admin' : 'Verified Talent'}
+                        {user?.email || (activeAccountType === 'company' ? 'Company Workspace Admin' : 'Verified Talent')}
                       </p>
                     </div>
 
@@ -201,10 +208,7 @@ export const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
                     <div className="border-t border-hairline my-1"></div>
 
                     <button
-                      onClick={() => {
-                        setShowProfileMenu(false);
-                        navigate('/login');
-                      }}
+                      onClick={handleSignOut}
                       className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 text-left transition-colors font-medium"
                     >
                       <LogOut className="w-4 h-4" /> Sign Out

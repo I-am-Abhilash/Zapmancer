@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, User } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 
 interface SignupCardProps {
   onNavigateToLogin?: () => void;
@@ -7,19 +8,27 @@ interface SignupCardProps {
 }
 
 export const SignupCard: React.FC<SignupCardProps> = ({ onNavigateToLogin, onSignupSuccess }) => {
+  const { signup } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) { setError('Please enter your email address'); return; }
     if (!password || password.length < 6) { setError('Password must be at least 6 characters'); return; }
     setError(null);
     setLoading(true);
-    setTimeout(() => { setLoading(false); onSignupSuccess?.(email); }, 1000);
+    try {
+      await signup(username || email.split('@')[0], email, password);
+      onSignupSuccess?.(email);
+    } catch (err: any) {
+      setError(err?.message || 'Account registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

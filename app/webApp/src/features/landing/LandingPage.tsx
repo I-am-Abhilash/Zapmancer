@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { Footer } from '../../components/layout/Footer';
 import {
-  ShieldCheck, ArrowRight, Code, Smartphone, CheckCircle2, Lock,
+  Code, Smartphone, CheckCircle2,
   ChevronDown, ChevronUp, Palette, Terminal, Database, Bot,
-  Users, Building2, PenTool, TrendingUp, Sliders
+  PenTool, TrendingUp, Sliders
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {

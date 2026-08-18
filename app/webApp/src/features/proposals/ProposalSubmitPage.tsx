@@ -51,7 +51,7 @@ export const ProposalSubmitPage: React.FC = () => {
         <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--color-hairline)' }}>
           <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.4px', color: 'var(--color-ink)', lineHeight: 1.2 }}>Submit proposal</h1>
           <p style={{ fontSize: 14, color: 'var(--color-steel)', marginTop: 4 }}>
-            Applying for: <strong style={{ color: 'var(--color-ink)' }}>Compose Multiplatform Desktop App for Ktor Analytics</strong>
+            Applying for: <strong style={{ color: 'var(--color-ink)' }}>Contract #{id || '1'} · Compose Multiplatform Desktop App for Ktor Analytics</strong>
           </p>
         </div>
 
