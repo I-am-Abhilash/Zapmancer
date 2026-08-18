@@ -59,8 +59,8 @@ fun Route.notificationsRouting() {
                     )
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(
-                            HttpStatusCode.BadRequest,
-                            ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid notification id")),
+                            HttpStatusCode.NotFound,
+                            ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Notification not found")),
                         )
                     val result = service.markAsRead(notifId, principal.uid)
                     call.respond(ApiResponse(success = true, data = result))
@@ -76,8 +76,8 @@ fun Route.notificationsRouting() {
                     )
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(
-                            HttpStatusCode.BadRequest,
-                            ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid notification id")),
+                            HttpStatusCode.NotFound,
+                            ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Notification not found")),
                         )
                     val req = call.receive<ExecuteActionRequest>()
                     val result = service.executeAction(
@@ -89,7 +89,7 @@ fun Route.notificationsRouting() {
                 }
 
                 /**
-                 * Submit a quick inline reply to a notification.
+                 * Quick reply to a notification.
                  */
                 post("/reply") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -98,8 +98,8 @@ fun Route.notificationsRouting() {
                     )
                     val notifId = call.parameters["notificationId"]?.toIntOrNull()
                         ?: return@post call.respond(
-                            HttpStatusCode.BadRequest,
-                            ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid notification id")),
+                            HttpStatusCode.NotFound,
+                            ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Notification not found")),
                         )
                     val req = call.receive<SendQuickReplyRequest>()
                     val result = service.sendQuickReply(

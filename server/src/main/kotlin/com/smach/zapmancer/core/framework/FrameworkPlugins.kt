@@ -57,9 +57,13 @@ val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
  */
 @Suppress("LongMethod")
 fun Application.configureFramework(modules: List<Module> = emptyList()) {
+    val app = this
+    val appModule = org.koin.dsl.module {
+        single<Application> { app }
+    }
     install(Koin) {
         slf4jLogger()
-        modules(modules)
+        modules(listOf(appModule) + modules)
     }
 
     install(CallId) {
@@ -159,6 +163,28 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
             )
         }
 
+        exception<kotlinx.serialization.SerializationException> { call, cause ->
+            logger.warn("Serialization error: ${cause.message}")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(
+                    false,
+                    error = ApiError("BAD_REQUEST", cause.message ?: "Invalid request payload format"),
+                ),
+            )
+        }
+
+        exception<IllegalArgumentException> { call, cause ->
+            logger.warn("Invalid argument: ${cause.message}")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(
+                    false,
+                    error = ApiError("BAD_REQUEST", cause.message ?: "Invalid argument provided"),
+                ),
+            )
+        }
+
         exception<ApiException> { call, cause ->
             call.respond(
                 status = cause.code.httpStatusCode,
@@ -173,6 +199,42 @@ fun Application.configureFramework(modules: List<Module> = emptyList()) {
         }
 
         exception<Throwable> { call, cause ->
+            // Recursively inspect the cause chain for database/SQL exceptions
+            val sqlEx = generateSequence(cause) { it.cause }
+                .filterIsInstance<org.postgresql.util.PSQLException>()
+                .firstOrNull()
+
+            if (sqlEx != null) {
+                logger.warn("Database exception [${sqlEx.sqlState}]: ${sqlEx.message}")
+                when (sqlEx.sqlState) {
+                    "22021", "22P05" -> call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(false, error = ApiError("INVALID_ENCODING", "Invalid character encoding in input payload.")),
+                    )
+                    "22001" -> call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(false, error = ApiError("VALUE_TOO_LONG", "Input string exceeds maximum allowed field length.")),
+                    )
+                    "23503" -> call.respond(
+                        HttpStatusCode.NotFound,
+                        ApiResponse<Unit>(false, error = ApiError("NOT_FOUND", "Referenced entity does not exist.")),
+                    )
+                    "23505" -> call.respond(
+                        HttpStatusCode.Conflict,
+                        ApiResponse<Unit>(false, error = ApiError("CONFLICT", "Resource with this identifier already exists.")),
+                    )
+                    "23502" -> call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(false, error = ApiError("MISSING_FIELD", "Required database field is missing.")),
+                    )
+                    else -> call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(false, error = ApiError("BAD_REQUEST", "Invalid database input format.")),
+                    )
+                }
+                return@exception
+            }
+
             logger.error("Unhandled exception: ${cause.message}", cause)
 
             val message = if (this@configureFramework.developmentMode) {

@@ -1,0 +1,17 @@
+# Schemathesis v4 configuration file
+
+base-url = "http://localhost:8080"
+request-timeout = 5.0
+workers = 4
+
+[headers]
+Accept = "application/json"
+Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6InphcG1hbmNlci1iYWNrZW5kIiwiYXVkIjoiemFwbWFuY2VyLXVzZXJzIiwidXNlcl9pZCI6InVzZXJfYWRtaW5fMSIsImVtYWlsIjoiYWRtaW5AemFwbWFuY2VyLmNvbSIsInJvbGUiOiJBRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJleHAiOjIxMDIzOTY1MDJ9.lZ5OKO-ujXiClMC5ooFULeG-bu1mtcUwtNjl0ECEpdI"
+
+[generation]
+max-examples = 50
+allow-x00 = false
+
+[checks.not-a-server-error]
+[checks.response-schema-conformance]
+[checks.content-type-conformance]

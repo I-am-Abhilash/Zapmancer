@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemathesis.io/schema/config.json",
+  "base_url": "http://localhost:9090",
+  "schema": "http://localhost:9090/openapi.json",
+  "checks": [
+    "not_a_server_error",
+    "status_code_conformance",
+    "content_type_conformance",
+    "response_schema_conformance"
+  ],
+  "generation": {
+    "mode": "all",
+    "max_examples": 50,
+    "allow_x00": false
+  },
+  "phases": [
+    "examples",
+    "fuzzing",
+    "coverage"
+  ],
+  "workers": 4,
+  "max_response_time": 2000,
+  "headers": {
+    "Accept": "application/json",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6InphcG1hbmNlci1iYWNrZW5kIiwiYXVkIjoiemFwbWFuY2VyLXVzZXJzIiwidXNlcl9pZCI6InVzcl9zY2hlbWF0aGVzaXNfZGV2IiwiZW1haWwiOiJkZXZAemFwbWFuY2VyLmNvbSIsInJvbGUiOiJBRE1JTiIsInR5cGUiOiJhY2Nlc3MiLCJleHAiOjIxMDIzOTU1Nzh9.3GVxeZFUE5oY47qA6Yc0_uHmA16nqRDVoiVxdV6Vf9A"
+  },
+  "telemetry": false
+}

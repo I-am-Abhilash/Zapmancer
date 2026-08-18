@@ -28,8 +28,8 @@ class UsersServiceImpl(
         repository.updateProfile(userId, request)
         return repository.findProfile(userId)
             ?: throw ApiException(
-                ErrorCode.INTERNAL_SERVER_ERROR,
-                "Failed to load updated profile.",
+                ErrorCode.NOT_FOUND,
+                "User profile not found.",
             )
     }
 

@@ -58,8 +58,8 @@ fun Route.proposalsRouting() {
                 )
                 val proposalId = call.parameters["id"]?.toIntOrNull()
                     ?: return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                        HttpStatusCode.NotFound,
+                        ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Proposal not found")),
                     )
                 val result = service.acceptProposal(principal.uid, proposalId)
                 call.respond(ApiResponse(success = true, data = result))
@@ -75,8 +75,8 @@ fun Route.proposalsRouting() {
                 )
                 val proposalId = call.parameters["id"]?.toIntOrNull()
                     ?: return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                        HttpStatusCode.NotFound,
+                        ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Proposal not found")),
                     )
                 val result = service.rejectProposal(principal.uid, proposalId)
                 call.respond(ApiResponse(success = true, data = result))
@@ -92,8 +92,8 @@ fun Route.proposalsRouting() {
                 )
                 val proposalId = call.parameters["id"]?.toIntOrNull()
                     ?: return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                        HttpStatusCode.NotFound,
+                        ApiResponse<Unit>(success = false, error = ApiError("NOT_FOUND", "Proposal not found")),
                     )
                 val result = service.withdrawProposal(principal.uid, proposalId)
                 call.respond(ApiResponse(success = true, data = result))
