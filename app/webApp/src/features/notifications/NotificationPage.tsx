@@ -1,58 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './notifications.css';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { DollarSign, ShieldCheck, Bell, FileText } from 'lucide-react';
-
-const NOTIFICATIONS = [
-  {
-    id: '1',
-    title: 'Milestone escrow released',
-    desc: 'Acme AI Systems approved your milestone 1 deliverable. $4,500.00 has been released to your Stripe wallet.',
-    time: '15 min ago',
-    unread: true,
-    icon: DollarSign,
-    iconClass: 'notification-icon-mint',
-  },
-  {
-    id: '2',
-    title: 'New contract proposal invite',
-    desc: 'Fintech Core invited you to submit a proposal for "High Concurrency Exposed ORM Migration".',
-    time: '2 hours ago',
-    unread: true,
-    icon: FileText,
-    iconClass: 'notification-icon-sky',
-  },
-  {
-    id: '3',
-    title: 'KYC verification approved',
-    desc: 'Your identity and work eligibility documents have been verified. Your profile now shows the KYC badge.',
-    time: 'Yesterday',
-    unread: false,
-    icon: ShieldCheck,
-    iconClass: 'notification-icon-lavender',
-  },
-  {
-    id: '4',
-    title: 'New message from David Chen',
-    desc: 'David sent a message: "Can you check the Ktor WebSocket channel handler when you get a chance?"',
-    time: 'Yesterday',
-    unread: false,
-    icon: Bell,
-    iconClass: 'notification-icon-peach',
-  },
-];
+import { Loader2 } from 'lucide-react';
+import { notificationService, AppNotification } from '../../services/notificationService';
 
 export const NotificationPage: React.FC = () => {
-  const [items, setItems] = useState(NOTIFICATIONS);
+  const [items, setItems] = useState<AppNotification[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAllRead = () => setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    notificationService.getNotifications().then((data) => {
+      if (isMounted) {
+        setItems(data);
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (isMounted) setLoading(false);
+    });
+
+    return () => { isMounted = false; };
+  }, []);
+
+  const markAllRead = () => {
+    setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
+    notificationService.markAsRead();
+  };
+
+  const markItemRead = (id: string) => {
+    setItems((prev) => prev.map((n) => n.id === id ? { ...n, unread: false } : n));
+    notificationService.markAsRead(id);
+  };
+
   const unreadCount = items.filter((n) => n.unread).length;
 
   return (
     <div className="notifications-page">
-      <Header isLoggedIn={true} />
-
       <main className="notifications-main">
         <div className="notifications-header">
           <div>
@@ -66,14 +49,23 @@ export const NotificationPage: React.FC = () => {
           )}
         </div>
 
-        {items.length === 0 ? (
+        {loading ? (
+          <div className="min-h-[300px] flex flex-col items-center justify-center gap-3 bg-surface-elevated rounded-xl border border-hairline p-12">
+            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            <p className="text-xs font-semibold text-mute">Loading notification feed...</p>
+          </div>
+        ) : items.length === 0 ? (
           <div className="notifications-empty">No notifications yet.</div>
         ) : (
           <div className="notifications-list">
             {items.map((n) => {
               const Icon = n.icon;
               return (
-                <div key={n.id} className={`notification-item${n.unread ? ' unread' : ''}`}>
+                <div
+                  key={n.id}
+                  onClick={() => markItemRead(n.id)}
+                  className={`notification-item${n.unread ? ' unread' : ''}`}
+                >
                   <div className={`notification-icon ${n.iconClass}`}>
                     <Icon size={16} />
                   </div>
@@ -91,8 +83,6 @@ export const NotificationPage: React.FC = () => {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

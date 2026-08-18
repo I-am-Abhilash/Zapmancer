@@ -1,95 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './projects.css';
 import { Link } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { Search, ShieldCheck, ArrowRight, Plus, Bookmark, Clock, Award, Layers, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { Search, ShieldCheck, ArrowRight, Plus, Bookmark, Clock, Award, Layers, ChevronDown, ChevronUp, RotateCcw, Loader2 } from 'lucide-react';
+import { projectService, ProjectItem } from '../../services/projectService';
 
 type ProjectType = 'All' | 'Fixed' | 'Hourly';
 type SmartPreset = 'all' | 'best_match' | 'newest' | 'high_budget' | 'low_competition' | 'verified_only';
 
 const AVAILABLE_SKILLS = ['Kotlin', 'Compose', 'Ktor', 'Desktop', 'SQLDelight', 'PostgreSQL', 'Exposed', 'SQL', 'HikariCP', 'Wasm', 'WebAudio', 'Android', 'Jetpack Compose', 'Material 3', 'Docker'];
 
-const PROJECTS = [
-  {
-    id: '1',
-    title: 'Compose Multiplatform Desktop App for Ktor Analytics',
-    client: 'Acme AI Systems',
-    clientAvatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80',
-    projectType: 'Fixed' as ProjectType,
-    budgetValue: 3200,
-    budgetDisplay: '$3,200',
-    duration: '3 weeks',
-    level: 'Intermediate',
-    proposals: 8,
-    postedHours: 2,
-    postedDisplay: '2 hours ago',
-    verified: true,
-    clientSpent: 42000,
-    clientRating: 4.9,
-    description: 'Desktop management dashboard with Compose Multiplatform for Kotlin, integrating Ktor backend REST API and WebSocket streaming endpoints.',
-    skills: ['Kotlin', 'Compose', 'Ktor', 'Desktop', 'SQLDelight'],
-  },
-  {
-    id: '2',
-    title: 'High-Concurrency PostgreSQL Exposed ORM Migration',
-    client: 'Fintech Core',
-    clientAvatar: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=120&q=80',
-    projectType: 'Fixed' as ProjectType,
-    budgetValue: 1800,
-    budgetDisplay: '$1,800',
-    duration: '10 days',
-    level: 'Expert',
-    proposals: 14,
-    postedHours: 5,
-    postedDisplay: '5 hours ago',
-    verified: true,
-    clientSpent: 12500,
-    clientRating: 4.8,
-    description: 'Refactor legacy SQL queries into Exposed ORM DSL with HikariCP pooling, automated migrations, and multi-region read replica fallback.',
-    skills: ['PostgreSQL', 'Exposed', 'Ktor', 'SQL', 'HikariCP'],
-  },
-  {
-    id: '3',
-    title: 'WebAssembly Component for Real-Time Audio Processing',
-    client: 'AudioCraft Labs',
-    clientAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
-    projectType: 'Fixed' as ProjectType,
-    budgetValue: 4500,
-    budgetDisplay: '$4,500',
-    duration: '1 month',
-    level: 'Expert',
-    proposals: 4,
-    postedHours: 24,
-    postedDisplay: '1 day ago',
-    verified: true,
-    clientSpent: 8200,
-    clientRating: 5.0,
-    description: 'High-performance Wasm module compiled from Kotlin Native to process web audio streams in real-time with zero latency drops.',
-    skills: ['Wasm', 'Kotlin', 'WebAudio', 'Desktop'],
-  },
-  {
-    id: '4',
-    title: 'Native Android Material 3 Design Overhaul',
-    client: 'HealthSync Mobile',
-    clientAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80',
-    projectType: 'Hourly' as ProjectType,
-    budgetValue: 65,
-    budgetDisplay: '$65 / hr',
-    duration: '2–3 weeks',
-    level: 'Entry',
-    proposals: 19,
-    postedHours: 48,
-    postedDisplay: '2 days ago',
-    verified: false,
-    clientSpent: 1500,
-    clientRating: 4.2,
-    description: 'Modernize Android app views to Material 3, Jetpack Compose adaptive layouts, and dynamic theme switching support.',
-    skills: ['Android', 'Jetpack Compose', 'Kotlin', 'Material 3'],
-  },
-];
-
 export const ProjectListPage: React.FC = () => {
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'newest' | 'highest_budget' | 'proposals'>('newest');
   const [preset, setPreset] = useState<SmartPreset>('all');
@@ -105,6 +27,23 @@ export const ProjectListPage: React.FC = () => {
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [maxHours, setMaxHours] = useState<string>('all');
   const [saved, setSaved] = useState<string[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    projectService.getProjects({ query: search, sortBy: sort })
+      .then((data) => {
+        if (isMounted) {
+          setProjects(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [search, sort]);
 
   const toggleBookmark = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -136,7 +75,7 @@ export const ProjectListPage: React.FC = () => {
     setPreset('all');
   };
 
-  const filtered = PROJECTS.filter((p) => {
+  const filtered = projects.filter((p) => {
     // Text search
     const q = search.toLowerCase();
     if (q && !(p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.skills.some((s) => s.toLowerCase().includes(q)))) {
@@ -186,8 +125,6 @@ export const ProjectListPage: React.FC = () => {
 
   return (
     <div className="projects-page">
-      <Header isLoggedIn={true} />
-
       <main className="projects-main">
 
         {/* Header */}
@@ -415,7 +352,12 @@ export const ProjectListPage: React.FC = () => {
             </div>
 
             {/* Listings Grid */}
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="min-h-[300px] flex flex-col items-center justify-center gap-3 bg-surface-elevated rounded-xl border border-hairline p-12">
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                <p className="text-xs font-semibold text-mute">Loading active bounties & contracts...</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="projects-empty">
                 No contracts match your selected filters. Try adjusting your skills or budget criteria.
                 <div style={{ marginTop: 12 }}>
@@ -445,7 +387,9 @@ export const ProjectListPage: React.FC = () => {
                             <span>·</span>
                             <span>{p.postedDisplay}</span>
                           </div>
-                          <p className="project-card-title" style={{ marginTop: 6 }}>{p.title}</p>
+                          <Link to={`/projects/${p.id}`} className="block">
+                            <p className="project-card-title hover:text-primary transition-colors" style={{ marginTop: 6 }}>{p.title}</p>
+                          </Link>
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -496,8 +440,6 @@ export const ProjectListPage: React.FC = () => {
         </div>
 
       </main>
-
-      <Footer />
     </div>
   );
 };

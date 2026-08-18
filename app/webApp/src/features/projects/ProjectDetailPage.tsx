@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, ArrowLeft, MessageSquare, FileText, Lock, Star, MapPin, Clock, DollarSign } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, MessageSquare, FileText, Lock, Star, MapPin, Clock, DollarSign, Loader2 } from 'lucide-react';
+import { projectService, ProjectDetailData } from '../../services/projectService';
 
 const field: React.CSSProperties = {
   fontSize: 11, fontWeight: 600, color: 'var(--color-steel)',
@@ -15,35 +14,37 @@ const value: React.CSSProperties = {
 
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams();
+  const [project, setProject] = useState<ProjectDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const project = {
-    id: id || '1',
-    title: 'Compose Multiplatform Desktop App for Ktor Analytics',
-    client: 'Acme AI Systems',
-    clientRating: 4.9,
-    clientSpent: '$42,000+',
-    location: 'San Francisco, CA',
-    budget: '$3,200',
-    budgetType: 'Fixed-price',
-    duration: '3–4 weeks',
-    experience: 'Intermediate',
-    posted: '2 hours ago',
-    proposalsCount: 8,
-    description: `We are seeking an experienced Kotlin Multiplatform engineer to develop a high-performance desktop application targeting macOS and Windows using Compose Multiplatform.
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    projectService.getProjectDetail(id || '1')
+      .then((data) => {
+        if (isMounted) {
+          setProject(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoading(false);
+      });
 
-Key deliverables:
-1. Setup KMP module sharing architecture with JVM desktop target.
-2. Connect to existing Ktor REST backend and WebSockets stream.
-3. Implement interactive charts, metrics grid, and CSV export.
-4. Provide automated UI tests and build pipeline configuration.`,
-    skills: ['Kotlin Multiplatform', 'Compose Desktop', 'Ktor Client', 'Coroutines', 'SQLDelight'],
-  };
+    return () => { isMounted = false; };
+  }, [id]);
+
+  if (loading || !project) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <p className="text-sm font-semibold text-mute">Loading contract specifications...</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
-      <Header isLoggedIn={true} />
-
-      <main style={{ flex: 1, maxWidth: 960, width: '100%', margin: '0 auto', padding: '40px 24px 64px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ maxWidth: 960, width: '100%', margin: '0 auto', padding: '40px 24px 64px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* Back */}
         <Link to="/projects" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-steel)', textDecoration: 'none', fontWeight: 500 }}>
@@ -59,7 +60,7 @@ Key deliverables:
             {/* Header card */}
             <div style={{ border: '1px solid var(--color-hairline)', borderRadius: 12, padding: '20px 24px', backgroundColor: 'var(--color-canvas)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--color-steel)', marginBottom: 10 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> Posted {project.posted}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} /> Posted {project.postedDisplay}</span>
                 <span>·</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#1aae39', fontWeight: 600 }}>
                   <ShieldCheck size={12} /> Verified client
@@ -72,8 +73,8 @@ Key deliverables:
               {/* Spec chips */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, border: '1px solid var(--color-hairline)', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-hairline)', textAlign: 'center' }}>
                 {[
-                  { label: 'Budget', val: project.budget },
-                  { label: 'Type', val: project.budgetType },
+                  { label: 'Budget', val: project.budgetDisplay },
+                  { label: 'Type', val: project.projectType === 'Fixed' ? 'Fixed-price' : 'Hourly rate' },
                   { label: 'Duration', val: project.duration },
                 ].map((s) => (
                   <div key={s.label} style={{ backgroundColor: 'var(--color-canvas)', padding: '12px 8px' }}>
@@ -122,7 +123,7 @@ Key deliverables:
                 <FileText size={14} /> Submit proposal
               </Link>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid var(--color-hairline)', fontSize: 12, color: 'var(--color-steel)' }}>
-                <span>{project.proposalsCount} proposals</span>
+                <span>{project.proposals} proposals</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#1aae39', fontWeight: 600 }}>
                   <Lock size={12} /> Escrow protected
                 </span>
@@ -139,7 +140,7 @@ Key deliverables:
                   <Star size={11} fill="#f59e0b" style={{ color: '#f59e0b' }} /> {project.clientRating} rating
                 </p>
                 <p style={{ fontSize: 12, color: 'var(--color-steel)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <DollarSign size={11} /> <strong style={{ color: 'var(--color-ink)' }}>{project.clientSpent}</strong> total spent
+                  <DollarSign size={11} /> <strong style={{ color: 'var(--color-ink)' }}>${project.clientSpent.toLocaleString()}+</strong> total spent
                 </p>
               </div>
               <div style={{ paddingTop: 10, borderTop: '1px solid var(--color-hairline)' }}>
@@ -151,9 +152,6 @@ Key deliverables:
 
           </div>
         </div>
-      </main>
-
-      <Footer />
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { Send, ShieldCheck, Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { Send, ShieldCheck, Plus, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
+import { proposalService } from '../../services/proposalService';
 
 const inputStyle: React.CSSProperties = {
   width: '100%', height: 40, padding: '0 12px',
@@ -30,17 +29,37 @@ export const ProposalSubmitPage: React.FC = () => {
     { title: 'Compose UI Desktop Views & Analytics Charts', amount: '1200' },
     { title: 'Testing, Polishing & Final Delivery', amount: '800' },
   ]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const addMilestone = () => setMilestones([...milestones, { title: 'New milestone', amount: '500' }]);
   const removeMilestone = (i: number) => setMilestones(milestones.filter((_, idx) => idx !== i));
 
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); navigate('/home'); };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await proposalService.submitProposal({
+        projectId: id || '1',
+        bidAmount: Number(bidAmount) || 0,
+        deliveryDays: Number(deliveryDays) || 0,
+        coverLetter,
+        milestones: milestones.map((m) => ({
+          title: m.title,
+          amount: Number(m.amount) || 0,
+        })),
+      });
+      navigate('/home');
+    } catch (err: any) {
+      setError(err?.message || 'Failed to submit proposal. Please verify the terms.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
-      <Header isLoggedIn={true} />
-
-      <main style={{ flex: 1, maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div style={{ maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Back */}
         <button onClick={() => navigate(-1)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-steel)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)', padding: 0 }}>
@@ -135,6 +154,12 @@ export const ProposalSubmitPage: React.FC = () => {
             </div>
           </div>
 
+          {error && (
+            <div style={{ padding: '10px 14px', borderRadius: 8, backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', fontSize: 13, fontWeight: 500 }}>
+              {error}
+            </div>
+          )}
+
           {/* Submit row */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, paddingTop: 4 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#1aae39', fontWeight: 600 }}>
@@ -142,16 +167,29 @@ export const ProposalSubmitPage: React.FC = () => {
             </div>
             <button
               type="submit"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'var(--color-primary)', color: '#ffffff', fontSize: 14, fontWeight: 500, padding: '10px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}
+              disabled={loading}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: 'var(--color-primary)', color: '#ffffff',
+                fontSize: 14, fontWeight: 500, padding: '10px 20px',
+                borderRadius: 8, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                fontFamily: 'var(--font-sans)',
+              }}
             >
-              Submit proposal <Send size={14} />
+              {loading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Submitting...
+                </>
+              ) : (
+                <>
+                  Submit proposal <Send size={14} />
+                </>
+              )}
             </button>
           </div>
 
         </form>
-      </main>
-
-      <Footer />
     </div>
   );
 };

@@ -112,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({ isLoggedIn }) => {
             {theme === 'light' ? <Moon className="w-4 h-4 text-primary" /> : <Sun className="w-4 h-4 text-primary" />}
           </button>
 
-          {isLoggedIn ? (
+          {effectiveLoggedIn ? (
             <>
               {/* Messages shortcut */}
               <Link

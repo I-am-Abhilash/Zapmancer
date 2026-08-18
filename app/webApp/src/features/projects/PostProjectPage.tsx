@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { ShieldCheck, ArrowRight, Plus, X, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Plus, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { projectService } from '../../services/projectService';
 
 export const PostProjectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +13,8 @@ export const PostProjectPage: React.FC = () => {
   const [budgetAmount, setBudgetAmount] = useState('3500');
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills] = useState(['TypeScript', 'React', 'Node.js']);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const addSkill = () => {
     const s = skillInput.trim();
@@ -22,9 +23,25 @@ export const PostProjectPage: React.FC = () => {
 
   const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/projects');
+    setError(null);
+    setLoading(true);
+    try {
+      await projectService.postProject({
+        title,
+        description,
+        category,
+        budgetType,
+        budgetAmount: Number(budgetAmount) || 0,
+        skills,
+      });
+      navigate('/projects');
+    } catch (err: any) {
+      setError(err?.message || 'Failed to publish contract. Please check your inputs.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const field: React.CSSProperties = {
@@ -40,10 +57,7 @@ export const PostProjectPage: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink)', fontFamily: 'var(--font-sans)', WebkitFontSmoothing: 'antialiased' }}>
-      <Header isLoggedIn={true} />
-
-      <main style={{ flex: 1, maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px' }}>
+    <div style={{ maxWidth: 720, width: '100%', margin: '0 auto', padding: '40px 24px 64px' }}>
 
         {/* Page header */}
         <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--color-hairline)', marginBottom: 32 }}>
@@ -219,6 +233,12 @@ export const PostProjectPage: React.FC = () => {
             </div>
           </div>
 
+          {error && (
+            <div style={{ padding: '10px 14px', borderRadius: 8, backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', fontSize: 13, fontWeight: 500 }}>
+              {error}
+            </div>
+          )}
+
           {/* Footer */}
           <div style={{ paddingTop: 16, borderTop: '1px solid var(--color-hairline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--color-steel)' }}>
@@ -226,22 +246,29 @@ export const PostProjectPage: React.FC = () => {
             </span>
             <button
               type="submit"
+              disabled={loading}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: 'var(--color-primary)', color: '#ffffff',
                 fontSize: 14, fontWeight: 500, padding: '10px 20px',
-                borderRadius: 8, border: 'none', cursor: 'pointer',
+                borderRadius: 8, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
                 fontFamily: 'var(--font-sans)',
               }}
             >
-              Publish contract <ArrowRight size={15} />
+              {loading ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" /> Publishing...
+                </>
+              ) : (
+                <>
+                  Publish contract <ArrowRight size={15} />
+                </>
+              )}
             </button>
           </div>
 
         </form>
-      </main>
-
-      <Footer />
     </div>
   );
 };

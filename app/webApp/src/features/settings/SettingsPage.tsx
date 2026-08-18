@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import './settings.css';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
 import { Lock, User, CreditCard, Bell, Shield } from 'lucide-react';
 import { AccountTab } from './components/AccountTab';
 import { ProfileTab } from './components/ProfileTab';
@@ -24,8 +22,6 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div className="settings-page">
-      <Header isLoggedIn={true} />
-
       <main className="settings-main">
         <div className="settings-page-header">
           <h1 className="settings-page-title">Settings</h1>
@@ -60,8 +56,6 @@ export const SettingsPage: React.FC = () => {
           </section>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

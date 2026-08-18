@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './search.css';
 import { Link } from 'react-router-dom';
-import { Header } from '../../components/layout/Header';
-import { Footer } from '../../components/layout/Footer';
-import { Search, ShieldCheck, Star, MapPin, MessageSquare, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { Search, ShieldCheck, Star, MapPin, MessageSquare, ChevronDown, ChevronUp, RotateCcw, Loader2 } from 'lucide-react';
+import { userService, TalentProfile } from '../../services/userService';
 
 type TalentCategory = 'All' | 'Dev' | 'AI' | 'Design' | 'DevOps' | 'Growth';
 type TalentSmartPreset = 'all' | 'top_rated' | 'available_now' | 'high_earners' | 'verified_kyc' | 'agencies';
@@ -19,86 +18,9 @@ const CATEGORIES: { id: TalentCategory; label: string }[] = [
 
 const AVAILABLE_SKILLS = ['TypeScript', 'React', 'Node.js', 'Wasm', 'PostgreSQL', 'Docker', 'Python', 'OpenAI', 'LangChain', 'PGVector', 'Gorse AI', 'PyTorch', 'Figma', 'UI/UX Design', 'Design Tokens', 'Tailwind', 'DevOps', 'Kubernetes', 'Ktor', 'AWS'];
 
-const TALENTS = [
-  {
-    id: 't1',
-    name: 'Elena Rostova',
-    title: 'Senior Full-Stack & WebAssembly Lead',
-    specialty: 'Dev' as TalentCategory,
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-    rating: 5.0,
-    reviews: 42,
-    rateNum: 85,
-    rateDisplay: '$85 / hr',
-    successRate: '100% Success',
-    location: 'Berlin, Germany',
-    region: 'Europe',
-    availableNow: true,
-    talentType: 'Individual',
-    totalEarned: 68000,
-    bio: 'Architected high-throughput backend microservices, React web applications, and WebAssembly audio processing components for enterprise clients.',
-    skills: ['TypeScript', 'React', 'Node.js', 'Wasm', 'PostgreSQL', 'Docker'],
-  },
-  {
-    id: 't2',
-    name: 'Dr. Lucas Meyer',
-    title: 'AI Agent & RAG Pipeline Specialist',
-    specialty: 'AI' as TalentCategory,
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-    rating: 5.0,
-    reviews: 38,
-    rateNum: 95,
-    rateDisplay: '$95 / hr',
-    successRate: '100% Success',
-    location: 'Zurich, Switzerland',
-    region: 'Europe',
-    availableNow: true,
-    talentType: 'Individual',
-    totalEarned: 84000,
-    bio: 'Specialized in vector embeddings, LangChain RAG pipelines, LLM fine-tuning, and Gorse AI recommendation clusters for enterprise-scale deployments.',
-    skills: ['Python', 'OpenAI', 'LangChain', 'PGVector', 'Gorse AI', 'PyTorch'],
-  },
-  {
-    id: 't3',
-    name: 'Sophia Al-Mansoor',
-    title: 'Principal UI/UX & Design Systems Lead',
-    specialty: 'Design' as TalentCategory,
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
-    rating: 4.9,
-    reviews: 51,
-    rateNum: 80,
-    rateDisplay: '$80 / hr',
-    successRate: '100% Success',
-    location: 'London, UK',
-    region: 'Europe',
-    availableNow: false,
-    talentType: 'Agency',
-    totalEarned: 112000,
-    bio: 'Crafts responsive multiplatform design systems in Figma with dynamic Light & Dark themes, custom canvas animations, and fluid micro-interactions.',
-    skills: ['Figma', 'UI/UX Design', 'Design Tokens', 'Tailwind', 'Prototyping'],
-  },
-  {
-    id: 't4',
-    name: 'Marcus Vance',
-    title: 'DevOps, Ktor & Cloud Systems Engineer',
-    specialty: 'DevOps' as TalentCategory,
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
-    rating: 4.8,
-    reviews: 29,
-    rateNum: 90,
-    rateDisplay: '$90 / hr',
-    successRate: '100% Success',
-    location: 'Austin, TX, USA',
-    region: 'North America',
-    availableNow: true,
-    talentType: 'Individual',
-    totalEarned: 45000,
-    bio: 'Cloud infra maintainer and backend WebSockets engineer. Expert in Kubernetes, CI/CD pipelines, database connection pooling, and Dockerized deployments.',
-    skills: ['DevOps', 'Kubernetes', 'Ktor', 'PostgreSQL', 'Docker', 'AWS'],
-  },
-];
-
 export const SearchPage: React.FC = () => {
+  const [talents, setTalents] = useState<TalentProfile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<'highest_rating' | 'highest_rate' | 'lowest_rate' | 'reviews'>('highest_rating');
   const [preset, setPreset] = useState<TalentSmartPreset>('all');
@@ -114,6 +36,23 @@ export const SearchPage: React.FC = () => {
   const [region, setRegion] = useState<string>('all');
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [minEarnings, setMinEarnings] = useState<string>('all');
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    userService.searchTalent({ query, category })
+      .then((data) => {
+        if (isMounted) {
+          setTalents(data);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [query, category]);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -135,7 +74,7 @@ export const SearchPage: React.FC = () => {
     setPreset('all');
   };
 
-  const filtered = TALENTS.filter((t) => {
+  const filtered = talents.filter((t) => {
     // Keyword search
     const q = query.toLowerCase();
     if (q && !(t.name.toLowerCase().includes(q) || t.title.toLowerCase().includes(q) || t.bio.toLowerCase().includes(q) || t.skills.some((s) => s.toLowerCase().includes(q)))) {
@@ -188,8 +127,6 @@ export const SearchPage: React.FC = () => {
 
   return (
     <div className="search-page">
-      <Header isLoggedIn={true} />
-
       <main className="search-main">
 
         {/* Header */}
@@ -415,7 +352,12 @@ export const SearchPage: React.FC = () => {
             <p className="search-count">{filtered.length} talent{filtered.length !== 1 ? 's' : ''} found</p>
 
             {/* List */}
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="min-h-[300px] flex flex-col items-center justify-center gap-3 bg-surface-elevated rounded-xl border border-hairline p-12">
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                <p className="text-xs font-semibold text-mute">Searching vetted talent & AI builders...</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="search-empty">
                 No talent matches your selected criteria. Try adjusting your rate or skill filters.
                 <div style={{ marginTop: 12 }}>
@@ -434,7 +376,7 @@ export const SearchPage: React.FC = () => {
                         <img src={t.avatar} alt={t.name} className="talent-avatar" />
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <Link to="/profile/1" className="talent-name">{t.name}</Link>
+                            <Link to={`/profile/${t.id}`} className="talent-name hover:text-primary transition-colors">{t.name}</Link>
                             <span className="talent-verified"><ShieldCheck size={11} /> KYC</span>
                           </div>
                           <p className="talent-title-text">{t.title}</p>
@@ -470,7 +412,7 @@ export const SearchPage: React.FC = () => {
                         {t.skills.map((s) => <span key={s} className="talent-skill-tag">{s}</span>)}
                       </div>
                       <div className="talent-card-actions">
-                        <Link to="/profile/1" className="talent-link-secondary">View profile</Link>
+                        <Link to={`/profile/${t.id}`} className="talent-link-secondary">View profile</Link>
                         <Link to="/messages" className="talent-btn-primary">
                           <MessageSquare size={13} /> Contact
                         </Link>
@@ -486,8 +428,6 @@ export const SearchPage: React.FC = () => {
         </div>
 
       </main>
-
-      <Footer />
     </div>
   );
 };
