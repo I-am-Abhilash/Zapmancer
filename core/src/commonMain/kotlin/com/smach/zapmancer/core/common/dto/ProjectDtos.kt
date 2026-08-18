@@ -14,6 +14,7 @@ data class Project(
     val projectType: String,
     val skills: List<String>,
     val isSaved: Boolean,
+    val status: String = "OPEN",
 )
 
 @Serializable
@@ -40,6 +41,7 @@ data class ProjectDetail(
     val isClientActive: Boolean,
     val isIdentityVerified: Boolean,
     val isPhoneVerified: Boolean,
+    val status: String = "OPEN",
 )
 
 @Serializable
@@ -57,4 +59,23 @@ data class CreateProjectRequest(
     val skills: List<String> = emptyList(),
     val timeline: String? = null,
     val estStart: String? = null,
+)
+
+@Serializable
+data class UpdateProjectRequest(
+    val category: String? = null,
+    val title: String? = null,
+    val location: String? = null,
+    val budgetRange: String? = null,
+    val projectType: String? = null,
+    val projectScope: String? = null,
+    val deliverables: List<String>? = null,
+    val skills: List<String>? = null,
+    val timeline: String? = null,
+    val estStart: String? = null,
+)
+
+@Serializable
+data class UpdateProjectStatusRequest(
+    val status: String,
 )

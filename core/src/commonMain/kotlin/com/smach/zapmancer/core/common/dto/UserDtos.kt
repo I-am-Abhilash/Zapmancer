@@ -49,3 +49,10 @@ data class UpdateProfileRequest(
     val skills: List<String>? = null,
     val avatarUrl: String? = null,
 )
+
+@Serializable
+data class CreateReviewRequest(
+    val content: String,
+    val rating: Int,
+)
+

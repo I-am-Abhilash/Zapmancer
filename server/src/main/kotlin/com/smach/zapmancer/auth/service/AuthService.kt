@@ -66,7 +66,7 @@ class AuthService(
         repository.saveOtp(normalizedEmail, code)
         resendEmailService?.sendVerificationOtp(normalizedEmail, code, normalizedUsername)
 
-        val tokens = JwtConfig.generateTokens(id, normalizedEmail)
+        val tokens = JwtConfig.generateTokens(id, normalizedEmail, "FREELANCER")
         return AuthResponse(
             id = id,
             email = normalizedEmail,
@@ -98,7 +98,7 @@ class AuthService(
             repository.reactivateAccount(user.id)
         }
 
-        val tokens = JwtConfig.generateTokens(user.id, user.email)
+        val tokens = JwtConfig.generateTokens(user.id, user.email, user.role)
         return AuthResponse(
             id = user.id,
             email = user.email,
@@ -122,13 +122,42 @@ class AuthService(
         val user = repository.findById(userId)
             ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
 
-        val tokens = JwtConfig.generateTokens(user.id, user.email)
+        val tokens = JwtConfig.generateTokens(user.id, user.email, user.role)
         return AuthResponse(
             id = user.id,
             email = user.email,
             accessToken = tokens.accessToken,
             refreshToken = tokens.refreshToken,
         )
+    }
+
+    // ------------------------------------------------------------------
+    // Authenticated Password Change
+    // ------------------------------------------------------------------
+
+    suspend fun changePassword(userId: String, currentPassword: String, newPassword: String): CommonResponse {
+        if (newPassword.length < 8) {
+            throw ApiException(ErrorCode.BAD_REQUEST, "New password must be at least 8 characters.")
+        }
+
+        val user = repository.findById(userId)
+            ?: throw ApiException(ErrorCode.UNAUTHORIZED, "User not found.")
+
+        val hash = user.passwordHash
+            ?: throw ApiException(ErrorCode.BAD_REQUEST, "No existing password hash set.")
+
+        val verified = BCrypt.verifyer().verify(currentPassword.toCharArray(), hash).verified
+        if (!verified) {
+            throw ApiException(ErrorCode.UNAUTHORIZED, "Current password is incorrect.")
+        }
+
+        val newHash = BCrypt.withDefaults().hashToString(12, newPassword.toCharArray())
+        val updated = repository.updatePassword(userId, newHash)
+        if (!updated) {
+            throw ApiException(ErrorCode.NOT_FOUND, "Failed to update password.")
+        }
+
+        return CommonResponse(success = true, message = "Password changed successfully.")
     }
 
     // ------------------------------------------------------------------

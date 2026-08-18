@@ -3,6 +3,7 @@ package com.smach.zapmancer.projects.repository
 import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.Project
 import com.smach.zapmancer.core.common.dto.ProjectDetail
+import com.smach.zapmancer.core.common.dto.UpdateProjectRequest
 import com.smach.zapmancer.core.database.DatabaseFactory.dbQuery
 import com.smach.zapmancer.core.database.ProfileSkillsTable
 import com.smach.zapmancer.core.database.ProjectApplicationsTable
@@ -27,6 +28,7 @@ import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 import kotlin.time.Clock.System
 
@@ -114,6 +116,7 @@ class ProjectsRepository {
                 projectType = row[ProjectsTable.projectType],
                 skills = skillsMap[projectId] ?: emptyList(),
                 isSaved = savedSet.contains(projectId),
+                status = row[ProjectsTable.status],
             )
         }
     }
@@ -188,6 +191,7 @@ class ProjectsRepository {
                 projectType = row[ProjectsTable.projectType],
                 skills = skillsMap[projectId] ?: emptyList(),
                 isSaved = savedSet.contains(projectId),
+                status = row[ProjectsTable.status],
             )
         }
     }
@@ -229,6 +233,7 @@ class ProjectsRepository {
             isClientActive = row[ProjectsTable.isClientActive],
             isIdentityVerified = row[ProjectsTable.isIdentityVerified],
             isPhoneVerified = row[ProjectsTable.isPhoneVerified],
+            status = row[ProjectsTable.status],
         )
     }
 
@@ -292,6 +297,106 @@ class ProjectsRepository {
             }
         }
         id
+    }
+
+    suspend fun getMyProjects(clientId: String): List<Project> = dbQuery {
+        val rows = ProjectsTable.selectAll()
+            .where { ProjectsTable.clientId eq clientId }
+            .orderBy(ProjectsTable.createdAt, SortOrder.DESC)
+            .toList()
+
+        if (rows.isEmpty()) return@dbQuery emptyList()
+
+        val projectIds = rows.map { it[ProjectsTable.id] }
+        val skillsMap = ProjectSkillsTable.selectAll()
+            .where { ProjectSkillsTable.projectId inList projectIds }
+            .groupBy({ it[ProjectSkillsTable.projectId] }, { it[ProjectSkillsTable.skill] })
+
+        val savedSet = SavedProjectsTable.selectAll()
+            .where {
+                (SavedProjectsTable.userId eq clientId) and
+                (SavedProjectsTable.projectId inList projectIds)
+            }
+            .map { it[SavedProjectsTable.projectId] }
+            .toSet()
+
+        rows.map { row ->
+            val projectId = row[ProjectsTable.id]
+            Project(
+                id = projectId,
+                category = row[ProjectsTable.category],
+                title = row[ProjectsTable.title],
+                postedTime = row[ProjectsTable.postedTime],
+                location = row[ProjectsTable.location],
+                isPaymentVerified = row[ProjectsTable.isPaymentVerified],
+                budgetRange = row[ProjectsTable.budgetRange],
+                projectType = row[ProjectsTable.projectType],
+                skills = skillsMap[projectId] ?: emptyList(),
+                isSaved = savedSet.contains(projectId),
+                status = row[ProjectsTable.status],
+            )
+        }
+    }
+
+    suspend fun updateStatus(
+        projectId: String,
+        clientId: String,
+        newStatus: String,
+    ): Boolean = dbQuery {
+        ProjectsTable.update({ (ProjectsTable.id eq projectId) and (ProjectsTable.clientId eq clientId) }) {
+            it[status] = newStatus
+        } > 0
+    }
+
+    suspend fun update(
+        projectId: String,
+        clientId: String,
+        request: UpdateProjectRequest
+    ): Boolean = dbQuery {
+        val updated = ProjectsTable.update({ (ProjectsTable.id eq projectId) and (ProjectsTable.clientId eq clientId) }) { row ->
+            request.category?.let { row[category] = it }
+            request.title?.let { row[title] = it }
+            request.location?.let { row[location] = it }
+            request.budgetRange?.let { row[budgetRange] = it }
+            request.projectType?.let { row[projectType] = it }
+            request.projectScope?.let { row[projectScope] = it }
+            request.timeline?.let { row[timeline] = it }
+            request.estStart?.let { row[estStart] = it }
+        } > 0
+
+        if (updated) {
+            request.skills?.let { skills ->
+                ProjectSkillsTable.deleteWhere { ProjectSkillsTable.projectId eq projectId }
+                skills.forEach { skill ->
+                    ProjectSkillsTable.insert {
+                        it[ProjectSkillsTable.projectId] = projectId
+                        it[ProjectSkillsTable.skill] = skill
+                    }
+                }
+            }
+            request.deliverables?.let { deliverables ->
+                ProjectDeliverablesTable.deleteWhere { ProjectDeliverablesTable.projectId eq projectId }
+                deliverables.forEach { d ->
+                    ProjectDeliverablesTable.insert {
+                        it[ProjectDeliverablesTable.projectId] = projectId
+                        it[ProjectDeliverablesTable.deliverable] = d
+                    }
+                }
+            }
+        }
+        updated
+    }
+
+    suspend fun delete(projectId: String, clientId: String): Boolean = dbQuery {
+        val project = ProjectsTable.selectAll()
+            .where { (ProjectsTable.id eq projectId) and (ProjectsTable.clientId eq clientId) }
+            .singleOrNull() ?: return@dbQuery false
+
+        ProjectSkillsTable.deleteWhere { ProjectSkillsTable.projectId eq projectId }
+        ProjectDeliverablesTable.deleteWhere { ProjectDeliverablesTable.projectId eq projectId }
+        SavedProjectsTable.deleteWhere { SavedProjectsTable.projectId eq projectId }
+        ProjectApplicationsTable.deleteWhere { ProjectApplicationsTable.projectId eq projectId }
+        ProjectsTable.deleteWhere { (ProjectsTable.id eq projectId) and (ProjectsTable.clientId eq clientId) } > 0
     }
 
     private fun getSkills(projectId: String): List<String> = ProjectSkillsTable.selectAll()

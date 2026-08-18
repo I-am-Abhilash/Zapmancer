@@ -217,21 +217,33 @@ fun Route.kycRouting() {
             // ---------------------------------------------------------------
 
             /**
-             * Get list of pending verifications requiring manual review.
+             * Get list of pending verifications requiring manual review (Admin only).
              */
             get("/admin/queue") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                if (principal.role != "ADMIN") {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        ApiResponse<Unit>(success = false, error = ApiError("FORBIDDEN", "Admin privileges required."))
+                    )
+                }
                 val queue = kycService.getAdminQueue()
                 call.respond(ApiResponse(success = true, data = queue))
             }
 
             /**
-             * Submit a manual review decision.
+             * Submit a manual review decision (Admin only).
              */
             post("/admin/{id}/review") {
                 val principal = call.principal<UserPrincipal>()
                     ?: return@post call.respond(HttpStatusCode.Unauthorized)
+                if (principal.role != "ADMIN") {
+                    return@post call.respond(
+                        HttpStatusCode.Forbidden,
+                        ApiResponse<Unit>(success = false, error = ApiError("FORBIDDEN", "Admin privileges required."))
+                    )
+                }
                 val verificationId = call.parameters["id"]
                     ?: return@post call.respond(
                         HttpStatusCode.BadRequest,

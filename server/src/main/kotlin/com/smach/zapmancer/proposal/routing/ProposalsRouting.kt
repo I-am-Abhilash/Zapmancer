@@ -3,6 +3,7 @@ package com.smach.zapmancer.proposal.routing
 import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.Proposal
 import com.smach.zapmancer.core.common.dto.SubmitProposalRequest
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.proposal.service.ProposalsService
@@ -21,17 +22,82 @@ fun Route.proposalsRouting() {
     val service by inject<ProposalsService>()
 
     authenticate("local-jwt") {
-        /**
-         * Submit a proposal bid for a project.
-         */
-        post("/proposals") {
-            val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
-                HttpStatusCode.Unauthorized,
-                "Missing or invalid token",
-            )
-            val req = call.receive<SubmitProposalRequest>()
-            val result = service.submitProposal(principal.uid, req)
-            call.respond(HttpStatusCode.Created, ApiResponse(success = true, data = result))
+        route("/proposals") {
+            /**
+             * Submit a proposal bid for a project.
+             */
+            post {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val req = call.receive<SubmitProposalRequest>()
+                val result = service.submitProposal(principal.uid, req)
+                call.respond(HttpStatusCode.Created, ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Retrieve all proposals submitted by the authenticated freelancer.
+             */
+            get("/my") {
+                val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val result = service.getMyProposals(principal.uid)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Accept a proposal bid (Project Owner only).
+             */
+            post("/{id}/accept") {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val proposalId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                    )
+                val result = service.acceptProposal(principal.uid, proposalId)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Reject a proposal bid (Project Owner only).
+             */
+            post("/{id}/reject") {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val proposalId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                    )
+                val result = service.rejectProposal(principal.uid, proposalId)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
+             * Withdraw a proposal bid (Freelancer owner only).
+             */
+            post("/{id}/withdraw") {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val proposalId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Invalid proposal id")),
+                    )
+                val result = service.withdrawProposal(principal.uid, proposalId)
+                call.respond(ApiResponse(success = true, data = result))
+            }
         }
 
         route("/projects/{projectId}") {
@@ -41,11 +107,11 @@ fun Route.proposalsRouting() {
             get("/proposals") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
-                    "Missing or invalid token",
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val projectId = call.parameters["projectId"] ?: return@get call.respond(
                     HttpStatusCode.BadRequest,
-                    "Project ID is missing from the URL",
+                    ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing project id")),
                 )
                 val result = service.getProposalsForProject(principal.uid, projectId)
                 call.respond(ApiResponse(success = true, data = result))

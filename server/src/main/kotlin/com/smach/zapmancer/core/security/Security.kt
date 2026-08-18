@@ -16,7 +16,7 @@ import kotlin.text.get
 /**
  * UserPrincipal holds the authenticated user's identity extracted from the JWT.
  */
-class UserPrincipal(val uid: String, val email: String?)
+class UserPrincipal(val uid: String, val email: String?, val role: String = "FREELANCER")
 
 data class Tokens(val accessToken: String, val refreshToken: String)
 
@@ -40,13 +40,14 @@ object JwtConfig {
 
     fun getAlgorithm(): Algorithm = algorithm
 
-    fun generateTokens(uid: String, email: String): Tokens {
+    fun generateTokens(uid: String, email: String, role: String = "FREELANCER"): Tokens {
         val accessToken = JWT.create()
             .withSubject("Authentication")
             .withIssuer(ISSUER)
             .withAudience(AUDIENCE)
             .withClaim("user_id", uid)
             .withClaim("email", email)
+            .withClaim("role", role)
             .withClaim("type", "access")
             .withExpiresAt(Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_MS))
             .sign(algorithm)
@@ -56,6 +57,7 @@ object JwtConfig {
             .withIssuer(ISSUER)
             .withAudience(AUDIENCE)
             .withClaim("user_id", uid)
+            .withClaim("role", role)
             .withClaim("type", "refresh")
             .withExpiresAt(Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY_MS))
             .sign(algorithm)
@@ -118,7 +120,8 @@ fun Application.configureSecurity() {
             validate { credential ->
                 val userId = credential.payload.getClaim("user_id").asString()
                 val email = credential.payload.getClaim("email").asString()
-                if (userId != null) UserPrincipal(userId, email) else null
+                val role = credential.payload.getClaim("role")?.asString() ?: "FREELANCER"
+                if (userId != null) UserPrincipal(userId, email, role) else null
             }
             challenge { _, _ ->
                 call.respond(
@@ -129,3 +132,4 @@ fun Application.configureSecurity() {
         }
     }
 }
+

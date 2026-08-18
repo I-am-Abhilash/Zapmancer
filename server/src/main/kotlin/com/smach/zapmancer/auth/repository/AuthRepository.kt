@@ -41,6 +41,7 @@ class AuthRepository {
                 username = row[UsersTable.username],
                 email = row[UsersTable.email],
                 passwordHash = row[UsersTable.passwordHash],
+                role = row[UsersTable.role],
                 phoneNumber = row[UsersTable.phoneNumber],
                 isEmailVerified = row[UsersTable.isEmailVerified],
                 isPhoneVerified = row[UsersTable.isPhoneVerified],
@@ -58,6 +59,7 @@ class AuthRepository {
                     username = row[UsersTable.username],
                     email = row[UsersTable.email],
                     passwordHash = row[UsersTable.passwordHash],
+                    role = row[UsersTable.role],
                     phoneNumber = row[UsersTable.phoneNumber],
                     isEmailVerified = row[UsersTable.isEmailVerified],
                     isPhoneVerified = row[UsersTable.isPhoneVerified],
@@ -227,6 +229,13 @@ class AuthRepository {
             phoneNumber = user[UsersTable.phoneNumber]
         )
     }
+
+    /** Update password hash for an authenticated user (by id or email). */
+    suspend fun updatePassword(identifier: String, passwordHash: String): Boolean = dbQuery {
+        UsersTable.update({ (UsersTable.id eq identifier) or (UsersTable.email eq identifier) }) {
+            it[UsersTable.passwordHash] = passwordHash
+        } > 0
+    }
 }
 
 /** Minimal user record used internally by AuthService. */
@@ -235,8 +244,10 @@ data class AuthUserRecord(
     val username: String,
     val email: String,
     val passwordHash: String?,
+    val role: String = "FREELANCER",
     val phoneNumber: String? = null,
     val isEmailVerified: Boolean = false,
     val isPhoneVerified: Boolean = false,
     val isDeleted: Boolean = false,
 )
+

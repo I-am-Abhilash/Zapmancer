@@ -129,6 +129,7 @@ object ProjectsTable : Table("projects") {
     val isIdentityVerified = bool("is_identity_verified").default(false)
     val isPhoneVerified = bool("is_phone_verified").default(false)
     val isClientActive = bool("is_client_active").default(true)
+    val status = varchar("status", 30).default("OPEN")
     val createdAt = datetime("created_at")
     override val primaryKey = PrimaryKey(id)
 }
@@ -175,6 +176,7 @@ object ProposalsTable : Table("proposals") {
     val budget = varchar("budget", 50)
     val timelineDays = varchar("timeline_days", 20)
     val projectType = varchar("project_type", 50).default("Fixed Price")
+    val status = varchar("status", 30).default("PENDING")
     val createdAt = datetime("created_at")
     override val primaryKey = PrimaryKey(id)
 }

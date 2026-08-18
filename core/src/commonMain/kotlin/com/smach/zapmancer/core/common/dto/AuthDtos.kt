@@ -49,3 +49,10 @@ data class VerificationStatusResponse(
     val email: String?,
     val phoneNumber: String?,
 )
+
+@Serializable
+data class ChangePasswordRequest(
+    val currentPassword: String,
+    val newPassword: String,
+)
+

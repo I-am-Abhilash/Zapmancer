@@ -48,7 +48,7 @@ class ProposalRepositoryImpl(
 
 private fun ProposalDto.toDomain(): Proposal = Proposal(
     id = id.toString(),
-    projectId = "",
+    projectId = projectId,
     freelancerName = freelancerName,
     freelancerRole = freelancerRole,
     pitchContent = pitchContent,

@@ -3,6 +3,7 @@ package com.smach.zapmancer.auth.routing
 import com.smach.zapmancer.auth.service.AuthService
 import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.AuthResponse
+import com.smach.zapmancer.core.common.dto.ChangePasswordRequest
 import com.smach.zapmancer.core.common.dto.ForgotPasswordRequest
 import com.smach.zapmancer.core.common.dto.LoginRequest
 import com.smach.zapmancer.core.common.dto.RefreshTokenRequest
@@ -14,6 +15,7 @@ import com.smach.zapmancer.core.common.dto.VerificationStatusResponse
 import com.smach.zapmancer.core.common.dto.VerifyEmailRequest
 import com.smach.zapmancer.core.common.dto.VerifyOtpRequest
 import com.smach.zapmancer.core.common.dto.VerifyPhoneOtpRequest
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import io.ktor.http.Cookie
@@ -174,11 +176,25 @@ fun Route.authRouting() {
             }
 
             /**
+             * Change password for authenticated user.
+             */
+            post("/change-password") {
+                val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                )
+                val req = call.receive<ChangePasswordRequest>()
+                val result = service.changePassword(principal.uid, req.currentPassword, req.newPassword)
+                call.respond(ApiResponse(success = true, data = result))
+            }
+
+            /**
              * Get user email, phone, and identity verification status.
              */
             get("/verification-status") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val status = service.getVerificationStatus(principal.uid)
                 call.respond(ApiResponse(success = true, data = status))
@@ -191,6 +207,7 @@ fun Route.authRouting() {
                 post("/phone/send-otp") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                     )
                     val req = call.receive<SendPhoneOtpRequest>()
                     val result = service.sendPhoneOtp(principal.uid, req.phoneNumber)
@@ -203,6 +220,7 @@ fun Route.authRouting() {
                 post("/phone/verify") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                     )
                     val req = call.receive<VerifyPhoneOtpRequest>()
                     val result = service.verifyPhoneOtp(principal.uid, req.code)
@@ -215,6 +233,7 @@ fun Route.authRouting() {
                 post("/email/send-verification") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                     )
                     val result = service.sendEmailVerification(principal.uid)
                     call.respond(ApiResponse(success = true, data = result))
@@ -226,6 +245,7 @@ fun Route.authRouting() {
                 post("/email/verify") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
                         HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                     )
                     val req = call.receive<VerifyEmailRequest>()
                     val result = service.verifyEmail(principal.uid, req.code)

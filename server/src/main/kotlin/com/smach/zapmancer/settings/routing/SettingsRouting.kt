@@ -3,6 +3,7 @@ package com.smach.zapmancer.settings.routing
 import com.smach.zapmancer.core.common.CommonResponse
 import com.smach.zapmancer.core.common.dto.SettingsData
 import com.smach.zapmancer.core.common.dto.ToggleRequest
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.settings.service.SettingsService
@@ -24,17 +25,11 @@ fun Route.settingsRouting() {
         route("/settings") {
             /**
              * Retrieve authenticated user's account settings preferences.
-             *
-             * Responses:
-             *   – 200 [ApiResponse<SettingsData>] Settings data.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *   – 404 [ApiResponse<Unit>] User settings not found.
-             *
-             * Tags: Settings
              */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
                     HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val result = service.getSettings(principal.uid)
                 call.respond(ApiResponse(success = true, data = result))
@@ -42,18 +37,11 @@ fun Route.settingsRouting() {
 
             /**
              * Toggle Two-Factor Authentication setting.
-             *
-             * Request: [ToggleRequest] Target toggle status
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] 2FA status updated.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *
-             * Tags: Settings
              */
             put("/2fa") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
                     HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val req = call.receive<ToggleRequest>()
                 val result = service.toggle2fa(principal.uid, req.enabled)
@@ -62,18 +50,11 @@ fun Route.settingsRouting() {
 
             /**
              * Toggle Email Notification preferences.
-             *
-             * Request: [ToggleRequest] Target toggle status
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] Email notification status updated.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *
-             * Tags: Settings
              */
             put("/email-notifications") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
                     HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val req = call.receive<ToggleRequest>()
                 val result = service.toggleEmailNotifications(principal.uid, req.enabled)
@@ -82,18 +63,11 @@ fun Route.settingsRouting() {
 
             /**
              * Toggle Client Mode UI preference.
-             *
-             * Request: [ToggleRequest] Target toggle status
-             *
-             * Responses:
-             *   – 200 [ApiResponse<CommonResponse>] Client mode status updated.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *
-             * Tags: Settings
              */
             put("/client-mode") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
                     HttpStatusCode.Unauthorized,
+                    ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
                 )
                 val req = call.receive<ToggleRequest>()
                 val result = service.toggleClientMode(principal.uid, req.enabled)
@@ -102,5 +76,3 @@ fun Route.settingsRouting() {
         }
     }
 }
-
-
