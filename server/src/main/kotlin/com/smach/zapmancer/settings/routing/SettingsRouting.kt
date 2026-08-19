@@ -18,13 +18,23 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * User Account Settings and Preferences routing module.
+ */
 fun Route.settingsRouting() {
     val service by inject<SettingsService>()
 
     authenticate("local-jwt") {
         route("/settings") {
             /**
-             * Retrieve authenticated user's account settings preferences.
+             * Fetch user account settings and preferences
+             *
+             * Retrieves security flags (2FA enabled), email notification toggles, and client mode UI preferences for the authenticated user.
+             *
+             * @tags Settings & Preferences
+             * @security BearerAuth
+             * @response 200 Account settings preferences. [SettingsData]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -36,7 +46,14 @@ fun Route.settingsRouting() {
             }
 
             /**
-             * Toggle Two-Factor Authentication setting.
+             * Toggle two-factor authentication
+             *
+             * Enables or disables two-factor authentication enforcement on the user account.
+             *
+             * @tags Settings & Preferences
+             * @security BearerAuth
+             * @response 200 Two-factor setting updated. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             put("/2fa") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
@@ -49,7 +66,14 @@ fun Route.settingsRouting() {
             }
 
             /**
-             * Toggle Email Notification preferences.
+             * Toggle email notification preferences
+             *
+             * Enables or disables transactional and marketing email notifications.
+             *
+             * @tags Settings & Preferences
+             * @security BearerAuth
+             * @response 200 Email notifications setting updated. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             put("/email-notifications") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
@@ -62,7 +86,14 @@ fun Route.settingsRouting() {
             }
 
             /**
-             * Toggle Client Mode UI preference.
+             * Toggle client mode workspace view
+             *
+             * Switches default workspace interface between Freelancer Mode and Client Hiring Mode.
+             *
+             * @tags Settings & Preferences
+             * @security BearerAuth
+             * @response 200 Client mode toggle updated. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             put("/client-mode") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(

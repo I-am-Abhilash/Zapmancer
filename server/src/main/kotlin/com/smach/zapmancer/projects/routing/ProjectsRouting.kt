@@ -24,14 +24,28 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * Projects and Bounties marketplace routing module.
+ */
 fun Route.projectsRouting() {
     val service by inject<ProjectsService>()
 
     authenticate("local-jwt") {
         route("/projects") {
             /**
-             * Browse and filter available project postings.
-             * Supports both 'limit' and 'pageSize' query parameters for client compatibility.
+             * Browse and search projects
+             *
+             * Fetches a paginated list of project contracts with filtering by keyword search, category, and sorting criteria.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @query query Keyword search string for project title or description.
+             * @query category Category filter (e.g. Mobile, Backend, AI).
+             * @query sortBy Sorting order (e.g. newest, budget_high, budget_low).
+             * @query page The page index to fetch (1-indexed).
+             * @query limit Maximum number of project records per page.
+             * @response 200 Paginated list of projects. [List<Project>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -56,7 +70,14 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Retrieve projects created/posted by the authenticated client.
+             * Fetch projects created by authenticated client
+             *
+             * Retrieves all active, draft, and completed projects posted by the authenticated client.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @response 200 List of client posted projects. [List<Project>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/my") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -68,7 +89,15 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Retrieve personalized project recommendations based on user skills.
+             * Fetch recommended projects for freelancer
+             *
+             * Generates personalized project contract recommendations based on the user's verified skills and past contract history.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @query limit Maximum number of recommendations to return.
+             * @response 200 List of recommended projects. [List<Project>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/recommended") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -83,7 +112,17 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Retrieve detailed project specification by ID.
+             * Fetch project details by ID
+             *
+             * Retrieves the full specification, deliverables, milestones, and proposal count for a single project posting.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Detailed project specification. [ProjectDetail]
+             * @response 400 Missing project id parameter. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 404 Project record not found. [ApiError]
              */
             get("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -99,7 +138,16 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Update an existing project posting (Client owner only).
+             * Update project posting
+             *
+             * Modifies the title, description, budget, category, or milestone list of an existing project posting. Restricted to the project owner.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Project updated successfully. [ProjectDetail]
+             * @response 400 Invalid update payload or missing id. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             put("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
@@ -116,7 +164,16 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Transition project status (e.g. OPEN, IN_PROGRESS, COMPLETED, CLOSED) (Client owner only).
+             * Update project status
+             *
+             * Transitions the lifecycle status of a project posting (e.g. OPEN, IN_PROGRESS, COMPLETED, CANCELLED). Restricted to project owner.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Project status updated successfully. [CommonResponse]
+             * @response 400 Missing id or invalid status value. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/{id}/status") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -133,7 +190,16 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Delete or close an existing project posting (Client owner only).
+             * Delete project posting
+             *
+             * Permanently deletes or cancels an open project contract. Restricted to project owner.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Project deleted successfully. [CommonResponse]
+             * @response 400 Missing project id parameter. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             delete("/{id}") {
                 val principal = call.principal<UserPrincipal>() ?: return@delete call.respond(
@@ -149,7 +215,16 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Save or remove a project from bookmarked/saved list.
+             * Bookmark or un-save project
+             *
+             * Toggles the saved bookmark status of a project for the authenticated user.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Bookmark state updated successfully. [CommonResponse]
+             * @response 400 Missing project id parameter. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/{id}/save") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -166,7 +241,16 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Submit application interest to a project.
+             * Submit quick application interest
+             *
+             * Expresses one-click application interest on a project bounty before submitting full proposal details.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @path id The unique project identifier.
+             * @response 200 Application interest registered. [CommonResponse]
+             * @response 400 Missing project id parameter. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/{id}/apply") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -182,7 +266,15 @@ fun Route.projectsRouting() {
             }
 
             /**
-             * Post a new project (Client mode).
+             * Post a new project bounty
+             *
+             * Creates and publishes a new project contract bounty on the marketplace with milestone breakdown and budget requirements.
+             *
+             * @tags Projects & Bounties
+             * @security BearerAuth
+             * @response 201 Project created and published successfully. [ProjectDetail]
+             * @response 400 Validation failure or missing required fields. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(

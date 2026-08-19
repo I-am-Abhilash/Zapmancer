@@ -6,6 +6,7 @@ import com.smach.zapmancer.core.common.dto.ChatFrame
 import com.smach.zapmancer.core.common.dto.ConversationItem
 import com.smach.zapmancer.core.common.dto.MessageItem
 import com.smach.zapmancer.core.common.dto.SendMessageRequest
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.messages.service.ConnectionManager
@@ -35,11 +36,22 @@ import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 
+/**
+ * Real-time WebSocket and REST Direct Messaging routing module.
+ */
 fun Route.messageRouting() {
     val service by inject<MessageService>()
     val connectionManager by inject<ConnectionManager>()
 
     authenticate("local-jwt") {
+        /**
+         * Real-time bidirectional chat WebSocket
+         *
+         * Establishes persistent WebSocket connection for real-time instant messaging, typing presence, read receipts, and live emoji reactions.
+         *
+         * @tags Direct Messaging
+         * @security BearerAuth
+         */
         webSocket("/messages/chat") {
             val principal = call.principal<UserPrincipal>() ?: return@webSocket close(
                 CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Unauthorized"),
@@ -150,7 +162,15 @@ fun Route.messageRouting() {
 
         route("/messages") {
             /**
-             * Upload an attachment (image, pdf, document, audio clip).
+             * Upload chat file attachment
+             *
+             * Uploads a multi-part binary file (image, PDF, archive, audio) to secure cloud storage and returns the CDN public URL.
+             *
+             * @tags Direct Messaging
+             * @security BearerAuth
+             * @response 200 File uploaded successfully. [AttachmentUploadResponse]
+             * @response 400 Missing file binary payload. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/attachment") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -173,7 +193,7 @@ fun Route.messageRouting() {
                 if (fileBytes == null) {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
-                        ApiResponse<Unit>(success = false, error = com.smach.zapmancer.core.network.ktor.ApiError("BAD_REQUEST", "Missing file payload")),
+                        ApiResponse<Unit>(success = false, error = ApiError("BAD_REQUEST", "Missing file payload")),
                     )
                 }
 
@@ -183,7 +203,14 @@ fun Route.messageRouting() {
 
             route("/conversations") {
                 /**
-                 * Retrieve user's active message conversations list.
+                 * Fetch user active conversations
+                 *
+                 * Retrieves a list of all active 1-on-1 message conversations for the authenticated user, including unread counts and last message previews.
+                 *
+                 * @tags Direct Messaging
+                 * @security BearerAuth
+                 * @response 200 List of conversation items. [List<ConversationItem>]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
                  */
                 get {
                     val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -195,7 +222,17 @@ fun Route.messageRouting() {
 
                 route("/{conversationId}") {
                     /**
-                     * Retrieve message thread for a conversation with pagination limit.
+                     * Fetch conversation message thread
+                     *
+                     * Retrieves paginated historical message items for a specific conversation thread.
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @query limit Maximum number of historical messages to retrieve.
+                     * @response 200 List of thread messages. [List<MessageItem>]
+                     * @response 400 Missing conversation id parameter. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     get("/messages") {
                         val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -210,7 +247,16 @@ fun Route.messageRouting() {
                     }
 
                     /**
-                     * Send a text/attachment message via REST API.
+                     * Send message via REST API
+                     *
+                     * Sends a text or attachment message to a conversation thread via REST (alternative to WebSocket).
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @response 200 Message dispatched successfully. [MessageItem]
+                     * @response 400 Missing required parameters or empty message. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     post("/send") {
                         val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -234,7 +280,16 @@ fun Route.messageRouting() {
                     }
 
                     /**
-                     * Mark all conversation thread messages as read.
+                     * Mark conversation messages as read
+                     *
+                     * Marks all messages in the conversation thread as read for the authenticated user.
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @response 200 All messages marked as read. [CommonResponse]
+                     * @response 400 Missing conversation id. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     post("/read") {
                         val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -248,7 +303,18 @@ fun Route.messageRouting() {
                     }
 
                     /**
-                     * Toggle emoji reaction on a message.
+                     * Toggle emoji reaction on message
+                     *
+                     * Adds or removes an emoji reaction on a specific chat message.
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @path messageId The unique message identifier.
+                     * @query emoji Unicode emoji character string.
+                     * @response 200 Reaction updated successfully. [CommonResponse]
+                     * @response 400 Missing conversation or message id. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     post("/messages/{messageId}/react") {
                         val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -263,7 +329,17 @@ fun Route.messageRouting() {
                     }
 
                     /**
-                     * Edit message text.
+                     * Edit sent message text
+                     *
+                     * Edits the text content of a previously sent chat message. Restricted to the original sender.
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @path messageId The unique message identifier.
+                     * @response 200 Message updated successfully. [CommonResponse]
+                     * @response 400 Missing conversation or message id. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     put("/messages/{messageId}") {
                         val principal = call.principal<UserPrincipal>() ?: return@put call.respond(HttpStatusCode.Unauthorized)
@@ -276,7 +352,17 @@ fun Route.messageRouting() {
                     }
 
                     /**
-                     * Delete message.
+                     * Delete sent message
+                     *
+                     * Soft-deletes or removes a sent message from the conversation thread. Restricted to the original sender.
+                     *
+                     * @tags Direct Messaging
+                     * @security BearerAuth
+                     * @path conversationId The unique conversation identifier.
+                     * @path messageId The unique message identifier.
+                     * @response 200 Message deleted successfully. [CommonResponse]
+                     * @response 400 Missing conversation or message id. [ApiError]
+                     * @response 401 Missing or invalid authentication token. [ApiError]
                      */
                     delete("/messages/{messageId}") {
                         val principal = call.principal<UserPrincipal>() ?: return@delete call.respond(HttpStatusCode.Unauthorized)

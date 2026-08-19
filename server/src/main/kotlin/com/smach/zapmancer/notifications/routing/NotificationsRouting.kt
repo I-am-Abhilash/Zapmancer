@@ -19,13 +19,23 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * Notifications and Actionable Alerts routing module.
+ */
 fun Route.notificationsRouting() {
     val service by inject<NotificationsService>()
 
     authenticate("local-jwt") {
         route("/notifications") {
             /**
-             * Retrieve user's system notifications feed.
+             * Fetch user notifications feed
+             *
+             * Retrieves the reverse-chronological notifications feed for the authenticated user.
+             *
+             * @tags Notifications
+             * @security BearerAuth
+             * @response 200 List of user notification items. [List<NotificationItem>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -37,7 +47,14 @@ fun Route.notificationsRouting() {
             }
 
             /**
-             * Mark all notifications as read for the authenticated user.
+             * Mark all notifications as read
+             *
+             * Marks all unread notifications in the user feed as read.
+             *
+             * @tags Notifications
+             * @security BearerAuth
+             * @response 200 All notifications marked read. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/read-all") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -50,7 +67,16 @@ fun Route.notificationsRouting() {
 
             route("/{notificationId}") {
                 /**
-                 * Mark a specific notification as read.
+                 * Mark notification as read
+                 *
+                 * Marks a specific notification item as read by its unique integer identifier.
+                 *
+                 * @tags Notifications
+                 * @security BearerAuth
+                 * @path notificationId The integer notification identifier.
+                 * @response 200 Notification marked as read. [CommonResponse]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
+                 * @response 404 Notification not found. [ApiError]
                  */
                 post("/read") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -67,7 +93,16 @@ fun Route.notificationsRouting() {
                 }
 
                 /**
-                 * Execute an action on a specific notification item.
+                 * Execute notification interactive action
+                 *
+                 * Executes an inline contextual action (e.g. Accept, Review, Reject) on a notification item.
+                 *
+                 * @tags Notifications
+                 * @security BearerAuth
+                 * @path notificationId The integer notification identifier.
+                 * @response 200 Action executed successfully. [CommonResponse]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
+                 * @response 404 Notification not found. [ApiError]
                  */
                 post("/action") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -89,7 +124,16 @@ fun Route.notificationsRouting() {
                 }
 
                 /**
-                 * Quick reply to a notification.
+                 * Send quick reply from notification
+                 *
+                 * Dispatches a quick reply message in response to a contextual message or notification prompt.
+                 *
+                 * @tags Notifications
+                 * @security BearerAuth
+                 * @path notificationId The integer notification identifier.
+                 * @response 200 Quick reply dispatched. [CommonResponse]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
+                 * @response 404 Notification not found. [ApiError]
                  */
                 post("/reply") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(

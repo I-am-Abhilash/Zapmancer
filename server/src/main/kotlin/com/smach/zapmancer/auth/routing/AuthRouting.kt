@@ -34,20 +34,7 @@ import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 
 /**
- * Authentication and Verification routes for Zapmancer:
- *   POST /auth/login
- *   POST /auth/web/login
- *   POST /auth/register
- *   POST /auth/forgot-password
- *   POST /auth/verify-otp
- *   POST /auth/reset-password
- *   POST /auth/refresh
- *   POST /auth/logout (authenticated)
- *   GET  /auth/verification-status (authenticated)
- *   POST /auth/phone/send-otp (authenticated)
- *   POST /auth/phone/verify (authenticated)
- *   POST /auth/email/send-verification (authenticated)
- *   POST /auth/email/verify (authenticated)
+ * Authentication and Verification routes for Zapmancer.
  */
 fun Route.authRouting() {
     val service by inject<AuthService>()
@@ -55,8 +42,13 @@ fun Route.authRouting() {
     rateLimit(RateLimitName("auth")) {
         route("/auth") {
             /**
-             * Authenticate a
-             * user with email and password (Mobile/API).
+             * Authenticate user credentials
+             *
+             * Authenticates a user with email and password for Mobile and API clients, returning JWT access and refresh tokens.
+             *
+             * @tags Authentication
+             * @response 200 Successful authentication returning JWT tokens. [AuthResponse]
+             * @response 400 Invalid credentials or malformed payload. [ApiError]
              */
             post("/login") {
                 val req = call.receive<LoginRequest>()
@@ -68,7 +60,13 @@ fun Route.authRouting() {
             }
 
             /**
-             * Authenticate a web application user and attach HttpOnly refresh cookie.
+             * Authenticate web client with HttpOnly cookie
+             *
+             * Authenticates web browser clients and sets a secure HttpOnly refresh token cookie while returning the short-lived access token in the payload.
+             *
+             * @tags Authentication
+             * @response 200 Successfully authenticated with HttpOnly cookie set. [WebLoginResponse]
+             * @response 400 Invalid credentials or malformed payload. [ApiError]
              */
             post("/web/login") {
                 val req = call.receive<LoginRequest>()
@@ -103,7 +101,13 @@ fun Route.authRouting() {
             }
 
             /**
-             * Register a new user account.
+             * Register a new user account
+             *
+             * Registers a new user account with email, username, and password, returning initial JWT authentication credentials.
+             *
+             * @tags Authentication
+             * @response 201 Account registered successfully. [AuthResponse]
+             * @response 400 Validation failure or account identifier conflict. [ApiError]
              */
             post("/register") {
                 val req = call.receive<SignUpRequest>()
@@ -117,7 +121,13 @@ fun Route.authRouting() {
 
             rateLimit(RateLimitName("otp")) {
                 /**
-                 * Request password reset OTP via Resend.
+                 * Request password reset OTP
+                 *
+                 * Initiates the password recovery workflow by dispatching a 6-digit one-time verification code to the registered email address.
+                 *
+                 * @tags Authentication
+                 * @response 200 Reset OTP dispatched successfully. [CommonResponse]
+                 * @response 400 Invalid email address format. [ApiError]
                  */
                 post("/forgot-password") {
                     val req = call.receive<ForgotPasswordRequest>()
@@ -126,7 +136,13 @@ fun Route.authRouting() {
                 }
 
                 /**
-                 * Verify password reset OTP code.
+                 * Verify password reset OTP code
+                 *
+                 * Verifies whether the provided 6-digit OTP code matches the active challenge for the email address.
+                 *
+                 * @tags Authentication
+                 * @response 200 OTP code verified successfully. [CommonResponse]
+                 * @response 400 Invalid or expired OTP verification code. [ApiError]
                  */
                 post("/verify-otp") {
                     val req = call.receive<VerifyOtpRequest>()
@@ -138,7 +154,13 @@ fun Route.authRouting() {
                 }
 
                 /**
-                 * Set new password using verified OTP code.
+                 * Reset account password with OTP
+                 *
+                 * Sets a new account password using the verified one-time code.
+                 *
+                 * @tags Authentication
+                 * @response 200 Password reset successfully. [CommonResponse]
+                 * @response 400 Invalid code or weak password. [ApiError]
                  */
                 post("/reset-password") {
                     val req = call.receive<ResetPasswordRequest>()
@@ -152,7 +174,13 @@ fun Route.authRouting() {
             }
 
             /**
-             * Refresh JWT access token.
+             * Refresh JWT access token
+             *
+             * Exchanges an unexpired refresh token for a newly signed JWT access token.
+             *
+             * @tags Authentication
+             * @response 200 Tokens refreshed successfully. [AuthResponse]
+             * @response 401 Invalid or revoked refresh token. [ApiError]
              */
             post("/refresh") {
                 val req = call.receive<RefreshTokenRequest>()
@@ -165,7 +193,14 @@ fun Route.authRouting() {
     authenticate("local-jwt") {
         route("/auth") {
             /**
-             * Logout user session.
+             * Terminate authenticated session
+             *
+             * Invalidates the active user session and revokes authentication credentials.
+             *
+             * @tags Authentication
+             * @security BearerAuth
+             * @response 200 Session terminated successfully. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/logout") {
                 call.respond(
@@ -177,7 +212,15 @@ fun Route.authRouting() {
             }
 
             /**
-             * Change password for authenticated user.
+             * Change user password
+             *
+             * Updates the authenticated user password after verifying current credentials.
+             *
+             * @tags Authentication
+             * @security BearerAuth
+             * @response 200 Password updated successfully. [CommonResponse]
+             * @response 400 Current password incorrect or new password validation failed. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/change-password") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -190,7 +233,14 @@ fun Route.authRouting() {
             }
 
             /**
-             * Get user email, phone, and identity verification status.
+             * Fetch identity verification status
+             *
+             * Retrieves verification status flags for email, phone number, and government KYC identity.
+             *
+             * @tags Authentication, Identity Verification
+             * @security BearerAuth
+             * @response 200 Verification status flags. [VerificationStatusResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/verification-status") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -203,7 +253,15 @@ fun Route.authRouting() {
 
             rateLimit(RateLimitName("otp")) {
                 /**
-                 * Dispatch an SMS verification OTP to a user's phone via Telnyx.
+                 * Dispatch SMS phone verification OTP
+                 *
+                 * Sends a 6-digit verification code via SMS to the provided phone number.
+                 *
+                 * @tags Authentication, Identity Verification
+                 * @security BearerAuth
+                 * @response 200 SMS OTP dispatched successfully. [CommonResponse]
+                 * @response 400 Invalid phone number format. [ApiError]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
                  */
                 post("/phone/send-otp") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -216,7 +274,15 @@ fun Route.authRouting() {
                 }
 
                 /**
-                 * Verify phone SMS OTP code.
+                 * Verify phone number OTP
+                 *
+                 * Confirms the SMS verification code and marks the user phone number as verified.
+                 *
+                 * @tags Authentication, Identity Verification
+                 * @security BearerAuth
+                 * @response 200 Phone number verified successfully. [CommonResponse]
+                 * @response 400 Invalid or expired verification code. [ApiError]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
                  */
                 post("/phone/verify") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -229,7 +295,14 @@ fun Route.authRouting() {
                 }
 
                 /**
-                 * Dispatch an email verification OTP via Resend.
+                 * Dispatch email verification code
+                 *
+                 * Sends an email verification OTP code to the authenticated user registered address.
+                 *
+                 * @tags Authentication, Identity Verification
+                 * @security BearerAuth
+                 * @response 200 Verification email sent successfully. [CommonResponse]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
                  */
                 post("/email/send-verification") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -241,7 +314,15 @@ fun Route.authRouting() {
                 }
 
                 /**
-                 * Verify email OTP code.
+                 * Verify email address OTP
+                 *
+                 * Confirms the email verification code and marks the user email as verified.
+                 *
+                 * @tags Authentication, Identity Verification
+                 * @security BearerAuth
+                 * @response 200 Email address verified successfully. [CommonResponse]
+                 * @response 400 Invalid or expired verification code. [ApiError]
+                 * @response 401 Missing or invalid authentication token. [ApiError]
                  */
                 post("/email/verify") {
                     val principal = call.principal<UserPrincipal>() ?: return@post call.respond(

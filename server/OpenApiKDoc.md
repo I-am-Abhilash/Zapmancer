@@ -1,143 +1,249 @@
-Yes, you definitely need Ktor to use this approach. The Ktor OpenAPI compiler plugin is deeply integrated with the framework: it traverses your Ktor routing { ... } trees, correlates your KDocs with specific get(), post(), and call.respond() expressions, and extracts schemas from your data classes. [1, 2, 3, 4, 5]
-Scalar is a highly modern, beautiful, and interactive API documentation renderer. Because Scalar relies strictly on Markdown for rendering text and handles structured JSON/YAML seamlessly, your KDocs must be cleanly divided into standard Markdown text and Ktor-recognized block tags. [3, 6]
-The best strategies to write robust, production-grade KDocs for Ktor that look flawless in Scalar include:
-------------------------------
-## 1. Structure the KDoc: Header vs. Body Breakdown
-Scalar uses the very first line of your text block as the endpoint summary, and the rest as the description. Use a clean Markdown format inside the comment block:
+# Universal KDoc Standard for Ktor OpenAPI & Scalar UI
 
-* Line 1 (Summary): Keep it short, actionable, and capitalized.
-* Paragraphs (Description): Use native Markdown (bullet points, bolding, code blocks).
-* Block Tags: Place your custom tags (e.g., @query, @response, @security) at the absolute bottom. [3]
+> **Target Audience**: AI Agents & Backend Engineers  
+> **Purpose**: Standardize KDoc formatting across any Ktor project to generate flawless, interactive, and beautifully categorized OpenAPI 3.0+ specifications rendered with **Scalar UI** and **Swagger UI**.
 
-## 2. Complete Blueprint Example (Optimized for Scalar)
+---
 
-routing {
+## 1. How It Works
+
+The **Ktor OpenAPI Compiler Plugin** (`io.ktor.plugin.openapi`) traverses your `routing { ... }` trees during compilation, parses KDocs directly preceding HTTP verb blocks (`get`, `post`, `put`, `delete`, `patch`, `webSocket`), correlates request/response types with Kotlin `@Serializable` data classes, and compiles a complete `openapi.json` specification.
+
+**Scalar UI** parses this specification and converts:
+1. **Line 1 of KDoc** $\rightarrow$ Endpoint Title / Summary (displayed in navigation sidebars and command palette `Ctrl+K`).
+2. **Markdown Body** $\rightarrow$ In-depth description panel (renders headers, lists, code blocks, and markdown callouts).
+3. **Block Tags** (`@tags`, `@security`, `@path`, `@query`, `@response`) $\rightarrow$ Structured OpenAPI metadata, interactive auth panels, parameter sidebars, and component schemas.
+
+---
+
+## 2. Anatomical Blueprint of a Production KDoc
+
+Every route KDoc **must** follow this strict top-to-bottom layout:
+
+```kotlin
 /**
-* Fetch user profile details
-*
-* Retrieves the granular profile data for a specific user within the system.
-* If the requested user is an administrator, additional audit logging metadata
-* will be included in the payload.
-*
-* ### Access Control
-* * Requires a valid `Bearer` JSON Web Token.
-* * Users can only read their own profiles unless they possess the `admin` scope.
-*
-* @query detailed Determines if deep relational telemetry data is appended.
-* @path userId The unique UUIDv4 string matching a user record.
-* @response 200 Success. Returns the fully populated user profile object. [UserProfileDto]
-* @response 401 Unauthorized. The provided JWT token is missing, expired, or malformed.
-* @response 404 Not Found. No matching active user account was found. [ErrorResponseDto]
-* @security BearerAuth
-*/
-get("/users/{userId}") {
-val userId = call.parameters["userId"]
-val detailed = call.request.queryParameters["detailed"]?.toBoolean() ?: false
+ * Short Actionable Summary
+ *
+ * Detailed Markdown description explaining route behavior, business logic,
+ * authorization requirements, and edge cases.
+ *
+ * ### Access Control & Constraints
+ * * Requires a valid `Bearer` JSON Web Token.
+ * * Rate-limited to 30 requests/min.
+ *
+ * @tags Primary Tag, Secondary Tag
+ * @security BearerAuth
+ * @path resourceId The unique UUID or string identifier of the entity.
+ * @query page The page index to fetch (1-indexed).
+ * @query limit Maximum number of records returned per page (default: 20).
+ * @response 200 Entity retrieved successfully. [EntityResponseDto]
+ * @response 400 Invalid query parameter or malformed identifier. [ApiError]
+ * @response 401 Missing or expired authentication token. [ApiError]
+ * @response 404 Entity not found for the given identifier. [ApiError]
+ */
+get("/resources/{resourceId}") { ... }
+```
 
-        // Code inference matches the types here to generate component schemas
-        call.respond(HttpStatusCode.OK, UserProfileDto(id = userId!!, name = "Alex"))
-    }
+---
+
+## 3. Tag Directives Reference
+
+| Tag | Purpose | Best Practices & Rules | Example |
+| :--- | :--- | :--- | :--- |
+| **`Line 1`** | **Operation Summary** | • Capitalized, actionable sentence.<br>• Keep under 60 characters.<br>• Do NOT include markdown styling or punctuation at the end. | `Fetch authenticated user profile` |
+| **`Markdown Body`** | **Operation Description** | • Use standard Markdown (bold, lists, backticks).<br>• Split into sections (`### Access Control`, `### Notes`).<br>• Document required headers or workflow context. | `Retrieves the full profile details including skills and portfolio.` |
+| **`@tags`** | **Feature Categorization** | • Groups endpoints into collapsible categories in the Scalar sidebar.<br>• Use PascalCase with spaces (e.g. `Users & Profiles`, `Authentication`).<br>• Comma-separate multiple tags if an endpoint belongs to multiple domains. | `@tags Authentication, Identity Verification` |
+| **`@security`** | **Security Schemes** | • Activates the interactive **Authorize** modal in Scalar.<br>• Match the exact security scheme name configured in Ktor (e.g., `BearerAuth`, `AdminAuth`, `ApiKeyAuth`).<br>• Omit on public routes. | `@security BearerAuth` |
+| **`@path`** | **Path Parameters** | • Document every `{param}` in the route path.<br>• Keep explanations short (< 15 words) for Scalar's compact parameter table. | `@path userId The unique user identifier.` |
+| **`@query`** | **Query Parameters** | • Document all supported query parameters.<br>• Mention default values or boundaries if applicable.<br>• Keep explanations short (< 15 words). | `@query limit Maximum records to return (default: 20).` |
+| **`@response`** | **HTTP Status & Schema** | • Format: `@response <StatusCode> <Description>. [DtoClassName]`<br>• Always wrap data class names in brackets `[ClassName]`.<br>• For collections, use `[List<DtoClassName>]`.<br>• Document unique business responses (200, 201, 400, 404, 403). | `@response 200 User profile payload. [UserProfileDto]` |
+
+---
+
+## 4. DTO Reference & Schema Generation Rules
+
+### 1. Bracket Notation `[ClassName]`
+Do **not** write raw JSON examples in the KDoc text. When you reference a class in brackets (e.g., `[UserProfileDto]`), the Ktor OpenAPI plugin extracts the class properties, nullability, and serializers to generate interactive JSON examples and component schema tables automatically.
+
+```kotlin
+// ✅ CORRECT: Scalar renders dynamic JSON playground and model schema
+@response 200 Successful response. [UserProfileDto]
+
+// ❌ WRONG: Hardcoded text that breaks when the model changes
+@response 200 Returns {"id": "123", "name": "John"}
+```
+
+### 2. Multi-Part & Binary Uploads
+For multipart endpoints (file uploads, image verifications), document the accepted parts in the description and use `[ResponseDto]` for the response:
+
+```kotlin
+/**
+ * Upload chat file attachment
+ *
+ * Accepts a multi-part binary payload containing `file`, `filename`, and `content_type`.
+ * Uploads payload to secure object storage and returns the CDN URL.
+ *
+ * @tags Direct Messaging
+ * @security BearerAuth
+ * @response 200 File uploaded successfully. [AttachmentUploadResponse]
+ * @response 400 Missing file binary payload. [ApiError]
+ * @response 401 Missing or invalid authentication token. [ApiError]
+ */
+post("/attachment") { ... }
+```
+
+### 3. WebSocket Endpoints
+Document WebSocket routes with `@tags` and `@security` so developers know the connection requirements and protocol:
+
+```kotlin
+/**
+ * Real-time chat WebSocket
+ *
+ * Establishes persistent bidirectional WebSocket connection for instant messaging,
+ * typing indicators, presence events, and read receipts.
+ *
+ * @tags Direct Messaging
+ * @security BearerAuth
+ */
+webSocket("/chat") { ... }
+```
+
+---
+
+## 5. Universal Rules of Thumb for AI Agents
+
+1. **Every Route Must Have a KDoc**: Never leave a route undocumented. If a route exists in the routing tree, add a complete KDoc.
+2. **First Line is Summary**: Never put `@tags` or paragraphs on line 1. Line 1 is strictly the summary title.
+3. **Group by Feature Tags**: Always assign consistent `@tags` to cluster related routes together (e.g. all auth routes under `@tags Authentication`).
+4. **Use `@security BearerAuth` on Protected Routes**: Any route wrapped in `authenticate("local-jwt")` or equivalent must have `@security BearerAuth`.
+5. **Concise Parameter Explanations**: Keep `@path` and `@query` descriptions under 15 words to avoid layout wrapping in Scalar UI.
+6. **Consistent Error Modeling**: Reference a common error schema (e.g. `[ApiError]`) across 400/401/403/404 responses.
+
+---
+
+## 6. Complete Real-World Route Patterns
+
+### Pattern A: Public Search & Filter Route (GET)
+```kotlin
+/**
+ * Browse and search projects
+ *
+ * Fetches a paginated list of project contracts with filtering by keyword search, category, and sorting criteria.
+ *
+ * @tags Projects & Bounties
+ * @query query Keyword search string for project title or description.
+ * @query category Category filter (e.g. Mobile, Backend, AI).
+ * @query sortBy Sorting order (e.g. newest, budget_high, budget_low).
+ * @query page The page index to fetch (1-indexed).
+ * @query limit Maximum number of project records per page.
+ * @response 200 Paginated list of projects. [List<ProjectDto>]
+ * @response 400 Invalid filter parameters. [ApiError]
+ */
+get("/projects") { ... }
+```
+
+### Pattern B: Authenticated Resource Creation (POST with 201)
+```kotlin
+/**
+ * Submit proposal bid for project
+ *
+ * Submits a formal freelancer proposal bid for a project posting with cover letter, milestone budget breakdown, and estimated delivery days.
+ *
+ * @tags Proposals & Escrow
+ * @security BearerAuth
+ * @response 201 Proposal created and submitted. [ProposalDto]
+ * @response 400 Invalid proposal payload or duplicate submission. [ApiError]
+ * @response 401 Missing or invalid authentication token. [ApiError]
+ */
+post("/proposals") { ... }
+```
+
+### Pattern C: Entity Mutation by ID (PUT / PATCH)
+```kotlin
+/**
+ * Update project posting
+ *
+ * Modifies the title, description, budget, category, or milestone list of an existing project posting. Restricted to the project owner.
+ *
+ * @tags Projects & Bounties
+ * @security BearerAuth
+ * @path id The unique project identifier.
+ * @response 200 Project updated successfully. [ProjectDetailDto]
+ * @response 400 Invalid update payload or missing id. [ApiError]
+ * @response 401 Missing or invalid authentication token. [ApiError]
+ * @response 404 Project record not found. [ApiError]
+ */
+put("/projects/{id}") { ... }
+```
+
+### Pattern D: Soft / Hard Deletion by ID (DELETE)
+```kotlin
+/**
+ * Deactivate user account
+ *
+ * Deactivates and soft-deletes the authenticated user account and revokes active sessions.
+ *
+ * @tags Users & Profiles
+ * @security BearerAuth
+ * @response 200 Account deactivated successfully. [CommonResponse]
+ * @response 401 Missing or invalid authentication token. [ApiError]
+ */
+delete("/users/account") { ... }
+```
+
+### Pattern E: Role-Restricted Admin Route
+```kotlin
+/**
+ * Submit KYC manual review decision
+ *
+ * Records an administrative approval or rejection decision with reviewer audit notes. Restricted to administrators.
+ *
+ * @tags OpenBiometrics KYC, Admin Operations
+ * @security BearerAuth
+ * @path id The unique verification session identifier.
+ * @response 200 Updated verification status. [KycStatusResponse]
+ * @response 400 Missing verification id. [ApiError]
+ * @response 401 Missing or invalid authentication token. [ApiError]
+ * @response 403 Admin privileges required. [ApiError]
+ * @response 404 Verification record not found. [ApiError]
+ */
+post("/kyc/admin/{id}/review") { ... }
+```
+
+---
+
+## 7. Mounting Scalar UI in Ktor
+
+To serve this documentation interactively with Scalar in your Ktor application:
+
+```kotlin
+// build.gradle.kts
+dependencies {
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("io.ktor:ktor-server-swagger:$ktor_version")
+    implementation(files("libs/ktor-server-scalar-jvm-3.6.0-SNAPSHOT.jar")) // or official scalar dependency
 }
 
-------------------------------
-## 3. Key Design Tactics for Perfect Scalar Rendering## Use Type References for Auto-Generated Examples
-Do not manually type out JSON examples in your KDoc text. Scalar shines when it generates interactive code playgrounds using clean schema models. Reference your Kotlin classes directly using brackets ([ClassName]) in your responses: [3]
+ktor {
+    openApi {
+        enabled = true
+        codeInferenceEnabled = true
+        onlyCommented = false
+    }
+}
+```
 
-* @response 200 Success payload. [UserProfileDto]
-
-The Ktor compiler plugin reads this, finds UserProfileDto, generates the OpenAPI components/schemas, and passes it to Scalar, which will automatically render an interactive JSON example tab. [2]
-## Inject Explicit Markdown Sections
-Scalar perfectly converts Markdown syntax within descriptions. Use headers to split complex paths into digestible sub-sections:
-
-* ### Request Headers
-* Ensure your client sends the `X-Correlation-ID` header for distributed tracing.
-
-## Keep Tag Descriptions Short
-Scalar displays @query and @path documentation in a tight side-by-side metadata column alongside the variable name. Do not write full paragraphs next to @query. Keep them under 15 words:
-
-* @query page The page index to fetch (zero-indexed).
-
-## Leverage @security Safely
-If your route is protected, add the @security tag specifying your security scheme name. Scalar reads this and displays a prominent "Authorize" button next to the endpoint, enabling users to insert their mock tokens directly into the documentation browser: [3]
-
-* @security BearerAuth
-
-------------------------------
-If you'd like, let me know:
-
-* What your data classes look like (so we can check if they require kotlinx.serialization annotations to render properties correctly)
-* If your API utilizes nested route structures or Type-safe Resources
-* If you need the exact Gradle configuration to route the generated file directly into Scalar's HTML CDN setup [2, 7]
-
-
-[1] [https://ktor.io](https://ktor.io/docs/whats-new-330.html)
-[2] [https://ktor.io](https://ktor.io/docs/whats-new-330.html)
-[3] [https://youtrack.jetbrains.com](https://youtrack.jetbrains.com/projects/KTOR/issues/KTOR-8721/OpenAPI-generation-build-extension-preview)
-[4] [https://ktor.io](https://ktor.io/docs/server-swagger-ui.html)
-[5] [https://ktor.io](https://ktor.io/docs/openapi-spec-generation.html)
-[6] [https://kotlinlang.org](https://kotlinlang.org/docs/kotlin-doc.html)
-[7] [https://ktor.io](https://ktor.io/docs/whats-new-330.html)
-
-An API endpoint can technically have an unlimited number of response types, though a typical production endpoint usually has between 3 to 6 distinct responses representing different HTTP status codes.
-You do not need to document every single possible error if it creates too much boilerplate code. Instead, you can rely on global documentation and focus your KDocs only on what is unique to that specific route.
-------------------------------
-## The Categories of Responses An Endpoint Can Have
-
-1. Success Responses (2xx): Usually 1 or 2 types (e.g., 200 OK with data, or 201 Created).
-2. Client Errors (4xx): Usually 2 to 4 types (e.g., 400 Bad Request for validation failures, 401 Unauthorized for bad tokens, 403 Forbidden for poor permissions, 404 Not Found).
-3. Server Errors (5xx): Usually 1 generic type (e.g., 500 Internal Server Error).
-
-------------------------------
-## Do You Need to Mention All of Them in Every KDoc?
-No. Documenting common errors like 401 Unauthorized or 500 Internal Server Error on every single endpoint creates massive boilerplate.
-To eliminate this noise while keeping Scalar looking clean, use this rule of thumb:
-
-* DO document: Responses unique to that route's logic. (e.g., 200 OK success payload, 404 Not Found if a specific ID isn't in the database, 422 Unprocessable for business logic failures).
-* DON'T document: Standard, system-wide errors that behave exactly the same way everywhere.
-
-------------------------------
-## How to Avoid the Boilerplate
-To stop copying and pasting the same responses across dozens of KDocs, use these two strategies in Ktor:
-## 1. Use Global OpenApi Extensions for System-Wide Errors
-Instead of forcing the compiler plugin to read KDocs for shared errors, you can inject global responses programmatically in your build.gradle.kts configuration or via a custom OpenAPI filter if your plugin version supports it. This injects 401, 403, or 500 status codes into every path automatically behind the scenes.
-## 2. Group Global Errors in Your Scalar UI Intro
-Scalar allows you to customize the Overview/Introduction page of your API documentation. Instead of littering your endpoint sidebars with generic 500 or 401 errors, document them once at the very top of your API.
-You can add this to your main root KDoc configuration (usually on your Application.module or inside the ktor gradle configuration block):
-
-/**
-* # My Core API Documentation
-*
-* ## Global Error Handling
-* All endpoints may return the following standard error formats:
-* * **401 Unauthorized**: The authentication token is missing or invalid.
-* * **503 Service Unavailable**: The database or a downstream service is down.
-* * **500 Internal Server Error**: An unhandled system exception occurred.
-    */fun Application.module() { ... }
-
-By keeping these system-wide errors in the introduction, your route KDocs stay incredibly small and focused—usually containing only a @response 200 and a @response 404.
-------------------------------
-If you'd like, let me know:
-
-* What common errors your app throws most often (e.g., validation errors, authentication failures)
-* If you are using a centralized exception handler like Ktor's StatusPages plugin
-
-I can show you how to structure a single, shared ErrorResponse data class that Scalar can render globally.
-
-
-also we can use the tags to organize the routes
-
-/**
-* Create a new user profile.
-*
-* @tags Users
-* @response 201 User created successfully. [UserResponseDto]
-  */
-  post("/users") { ... }
-
-/**
-* Suspend a user account.
-*
-* @tags Admin Operations, Users
-* @security AdminAuth
-  */
-  post("/users/{id}/suspend") { ... }
+```kotlin
+// Application routing configuration
+routing {
+    scalarUI("/scalarUI") {
+        info = OpenApiInfo("Zapmancer Platform API", "1.0.0")
+        source = OpenApiDocSource.Routing(
+            contentType = ContentType.Application.Json,
+        )
+        theme = "purple"
+        layout = "modern"
+    }
+}
+```
+Access the interactive documentation playground at **`http://localhost:8080/scalarUI`**.

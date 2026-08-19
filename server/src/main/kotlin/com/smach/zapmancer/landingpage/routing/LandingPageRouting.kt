@@ -9,17 +9,20 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * Public Marketing Landing Page routing module.
+ */
 fun Route.landingPageRouting() {
     val service by inject<LandingPageService>()
 
     route("/landing-page") {
         /**
-         * Retrieve public landing page marketing content and showcase metrics.
+         * Fetch public marketing landing page data
          *
-         * Responses:
-         *   – 200 [ApiResponse<LandingPageDto>] Complete landing page payload.
+         * Retrieves marketplace hero showcase metrics, supported discipline categories, 3-step escrow walkthrough, and dynamic FAQ answers.
          *
-         * Tags: Landing Page
+         * @tags Landing Page
+         * @response 200 Complete landing page marketing payload. [LandingPageDto]
          */
         get("/data") {
             val result = service.getLandingPageData()

@@ -23,14 +23,7 @@ import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
 /**
- * Profile and User routes:
- *   GET    /users/profile           – own profile (authenticated)
- *   PUT    /users/profile           – update own profile (authenticated)
- *   DELETE /users/account           – deactivate account (authenticated)
- *   GET    /users/profile/{userId}  – any user's public profile
- *   POST   /users/{userId}/hire     – dispatch hire notification (authenticated)
- *   POST   /users/{userId}/reviews  – submit rating review (authenticated)
- *   GET    /users/{userId}/reviews  – list paginated reviews (authenticated)
+ * Profile and User management routing module.
  */
 fun Route.usersRouting() {
     val service by inject<UsersService>()
@@ -38,7 +31,14 @@ fun Route.usersRouting() {
     route("/users") {
         authenticate("local-jwt") {
             /**
-             * Retrieve authenticated user's own profile.
+             * Fetch authenticated user profile
+             *
+             * Retrieves the complete profile details of the currently authenticated user, including portfolio items and reviews.
+             *
+             * @tags Users & Profiles
+             * @security BearerAuth
+             * @response 200 Successfully retrieved user profile. [UserProfile]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/profile") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -50,7 +50,15 @@ fun Route.usersRouting() {
             }
 
             /**
-             * Update authenticated user's profile.
+             * Update user profile
+             *
+             * Updates the authenticated user profile information such as display name, role title, bio, skills, and avatar URL.
+             *
+             * @tags Users & Profiles
+             * @security BearerAuth
+             * @response 200 Profile updated successfully. [UserProfile]
+             * @response 400 Invalid profile payload. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             put("/profile") {
                 val principal = call.principal<UserPrincipal>() ?: return@put call.respond(
@@ -63,7 +71,14 @@ fun Route.usersRouting() {
             }
 
             /**
-             * Deactivate/soft-delete authenticated user's own account.
+             * Deactivate user account
+             *
+             * Deactivates and soft-deletes the authenticated user account and revokes active sessions.
+             *
+             * @tags Users & Profiles
+             * @security BearerAuth
+             * @response 200 Account deactivated successfully. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             delete("/account") {
                 val principal = call.principal<UserPrincipal>() ?: return@delete call.respond(
@@ -75,7 +90,15 @@ fun Route.usersRouting() {
             }
 
             /**
-             * Retrieve public user profile by ID.
+             * Fetch public user profile
+             *
+             * Retrieves the public profile data of any registered user by their unique user identifier.
+             *
+             * @tags Users & Profiles
+             * @path userId The unique user identifier.
+             * @response 200 Successfully retrieved public profile. [UserProfile]
+             * @response 400 Missing or invalid user id. [ApiError]
+             * @response 404 User account not found. [ApiError]
              */
             get("/profile/{userId}") {
                 val userId = call.parameters["userId"] ?: return@get call.respond(
@@ -87,7 +110,16 @@ fun Route.usersRouting() {
             }
 
             /**
-             * Send a hire offer notification to a freelancer.
+             * Send hire proposal notification
+             *
+             * Dispatches a direct hire proposal notification to a target freelancer.
+             *
+             * @tags Users & Profiles
+             * @security BearerAuth
+             * @path userId The unique freelancer user identifier.
+             * @response 200 Hire proposal dispatched successfully. [CommonResponse]
+             * @response 400 Missing target freelancer id. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/{userId}/hire") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -103,7 +135,16 @@ fun Route.usersRouting() {
             }
 
             /**
-             * Submit a review and rating for a user.
+             * Submit user review and rating
+             *
+             * Submits a star rating and written testimonial review for a target user profile.
+             *
+             * @tags Users & Profiles
+             * @security BearerAuth
+             * @path userId The unique target user identifier.
+             * @response 201 Review created successfully. [Review]
+             * @response 400 Invalid rating value or missing fields. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/{userId}/reviews") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -120,7 +161,16 @@ fun Route.usersRouting() {
             }
 
             /**
-             * List paginated reviews for a user.
+             * List user reviews and ratings
+             *
+             * Retrieves a paginated list of reviews and star ratings received by the specified user.
+             *
+             * @tags Users & Profiles
+             * @path userId The unique target user identifier.
+             * @query page The page index to fetch (1-indexed).
+             * @query limit Maximum number of reviews per page.
+             * @response 200 List of reviews. [List<Review>]
+             * @response 400 Missing target user id. [ApiError]
              */
             get("/{userId}/reviews") {
                 val subjectId = call.parameters["userId"] ?: return@get call.respond(

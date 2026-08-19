@@ -3,6 +3,7 @@ package com.smach.zapmancer.home.routing
 import com.smach.zapmancer.core.common.dto.ExportActivitiesRequest
 import com.smach.zapmancer.core.common.dto.ExportActivitiesResponse
 import com.smach.zapmancer.core.common.dto.HomeDashboard
+import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
 import com.smach.zapmancer.home.service.HomeService
@@ -17,40 +18,50 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * Talent Workspace Dashboard and Activity Logs routing module.
+ */
 fun Route.homeRouting() {
     val service by inject<HomeService>()
 
     authenticate("local-jwt") {
         route("/home") {
             /**
-             * Fetch authenticated user's dashboard metrics and activity feed.
+             * Fetch talent workspace dashboard metrics
              *
-             * Responses:
-             *   – 200 [ApiResponse<HomeDashboard>] Dashboard metrics data.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *   – 404 [ApiResponse<Unit>] User context not found.
+             * Retrieves weekly earnings, active contracts count, hours logged, and real-time recent project activities for the authenticated user.
              *
-             * Tags: Home
+             * @tags Talent Workspace
+             * @security BearerAuth
+             * @response 200 Dashboard metrics and activity telemetry. [HomeDashboard]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/dashboard") {
                 val principal = call.principal<UserPrincipal>()
-                    ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                    ?: return@get call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                    )
                 val result = service.getDashboard(principal.uid)
                 call.respond(ApiResponse(success = true, data = result))
             }
 
             /**
-             * Export user recent activities to CSV file.
+             * Export activity logs to CSV format
              *
-             * Request: [ExportActivitiesRequest] List of activity objects to export
+             * Exports recent work sessions and billing activities to a downloadable CSV spreadsheet file.
              *
-             * Responses:
-             *   – 200 [ApiResponse<ExportActivitiesResponse>] CSV file path.
-             *   – 401 [ApiResponse<Unit>] Unauthorized.
-             *
-             * Tags: Home
+             * @tags Talent Workspace
+             * @security BearerAuth
+             * @response 200 CSV file generated successfully. [ExportActivitiesResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/activities/export") {
+                val principal = call.principal<UserPrincipal>()
+                    ?: return@post call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ApiResponse<Unit>(success = false, error = ApiError("UNAUTHORIZED", "Missing or invalid token")),
+                    )
                 val request = call.receive<ExportActivitiesRequest>()
                 val result = service.exportActivities(request.activities)
                 call.respond(ApiResponse(success = true, data = result))

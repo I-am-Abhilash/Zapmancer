@@ -7,6 +7,9 @@ import com.smach.zapmancer.core.common.dto.KycInitRequest
 import com.smach.zapmancer.core.common.dto.KycInitResponse
 import com.smach.zapmancer.core.common.dto.KycReceiptResponse
 import com.smach.zapmancer.core.common.dto.KycStatusResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsCapabilitiesResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsPassiveLivenessResponse
+import com.smach.zapmancer.core.common.dto.OpenBiometricsWatchlistSearchResponse
 import com.smach.zapmancer.core.network.ktor.ApiError
 import com.smach.zapmancer.core.network.ktor.ApiResponse
 import com.smach.zapmancer.core.security.UserPrincipal
@@ -28,6 +31,9 @@ import io.ktor.utils.io.readRemaining
 import kotlinx.io.readByteArray
 import org.koin.ktor.ext.inject
 
+/**
+ * OpenBiometrics KYC verification and audit routing module.
+ */
 fun Route.kycRouting() {
     val kycService by inject<KycService>()
 
@@ -37,7 +43,15 @@ fun Route.kycRouting() {
         // -------------------------------------------------------------------
 
         /**
-         * Offline-verifiable public receipt verification for legal and contract audits.
+         * Fetch public cryptographic KYC audit receipt
+         *
+         * Retrieves the offline-verifiable Ed25519 digital signature and canonical hash proof for third-party legal, contract, and escrow audits.
+         *
+         * @tags OpenBiometrics KYC
+         * @path id The unique verification session identifier.
+         * @response 200 Cryptographic verification receipt. [KycReceiptResponse]
+         * @response 400 Missing verification id. [ApiError]
+         * @response 404 Verification receipt not found. [ApiError]
          */
         get("/receipt/{id}") {
             val verificationId = call.parameters["id"]
@@ -55,7 +69,12 @@ fun Route.kycRouting() {
         }
 
         /**
-         * Retrieve active OpenBiometrics capabilities and supported presets.
+         * Fetch OpenBiometrics active engine capabilities
+         *
+         * Queries supported biometric challenge presets (EYE, HEAD_TURN, SMILE) and accepted government document types.
+         *
+         * @tags OpenBiometrics KYC
+         * @response 200 Engine capabilities and supported presets. [OpenBiometricsCapabilitiesResponse]
          */
         get("/capabilities") {
             val capabilities = kycService.getCapabilities()
@@ -68,7 +87,14 @@ fun Route.kycRouting() {
 
         authenticate("local-jwt") {
             /**
-             * Initialize KYC verification and receive active liveness challenge.
+             * Initialize KYC verification session
+             *
+             * Starts an identity verification session and retrieves an active liveness challenge motion instruction.
+             *
+             * @tags OpenBiometrics KYC
+             * @security BearerAuth
+             * @response 200 Session initialized with active challenge. [KycInitResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/init") {
                 val principal = call.principal<UserPrincipal>()
@@ -79,7 +105,15 @@ fun Route.kycRouting() {
             }
 
             /**
-             * Submit ID documents and live video selfie for AI verification and Ed25519 signing.
+             * Submit multipart KYC documents and live selfie
+             *
+             * Processes multi-part binary payload with front/back government ID scans and live selfie video frame for neural anti-spoofing and OCR extraction.
+             *
+             * @tags OpenBiometrics KYC
+             * @security BearerAuth
+             * @response 200 Verification processed with confidence score. [KycStatusResponse]
+             * @response 400 Missing required multipart fields or invalid images. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/submit") {
                 val principal = call.principal<UserPrincipal>()
@@ -150,7 +184,15 @@ fun Route.kycRouting() {
             }
 
             /**
-             * Retrieve latest verification status for the authenticated user.
+             * Fetch user KYC verification status
+             *
+             * Retrieves the latest verification status, match similarity score, and cryptographic audit signature for the authenticated user.
+             *
+             * @tags OpenBiometrics KYC
+             * @security BearerAuth
+             * @response 200 Latest KYC status and confidence scores. [KycStatusResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 404 No KYC record found. [ApiError]
              */
             get("/status") {
                 val principal = call.principal<UserPrincipal>()
@@ -165,7 +207,15 @@ fun Route.kycRouting() {
             }
 
             /**
-             * Single-frame passive liveness evaluation (anti-spoofing).
+             * Evaluate passive liveness anti-spoofing
+             *
+             * Performs single-frame neural anti-spoofing evaluation on a submitted face image.
+             *
+             * @tags OpenBiometrics KYC
+             * @security BearerAuth
+             * @response 200 Passive liveness confidence score. [OpenBiometricsPassiveLivenessResponse]
+             * @response 400 Missing image binary payload. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/passive-liveness") {
                 val principal = call.principal<UserPrincipal>()
@@ -191,7 +241,15 @@ fun Route.kycRouting() {
             }
 
             /**
-             * 1:N Fraud watchlist face search.
+             * Screen face against fraud watchlist
+             *
+             * Performs 1:N biometric face search against known identity fraud and watchlist databases.
+             *
+             * @tags OpenBiometrics KYC
+             * @security BearerAuth
+             * @response 200 Watchlist screening result. [OpenBiometricsWatchlistSearchResponse]
+             * @response 400 Missing image binary payload. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post("/watchlists/search") {
                 val principal = call.principal<UserPrincipal>()
@@ -221,7 +279,15 @@ fun Route.kycRouting() {
             // ---------------------------------------------------------------
 
             /**
-             * Get list of pending verifications requiring manual review (Admin only).
+             * Fetch pending KYC moderation queue
+             *
+             * Retrieves the list of verification submissions flagged for manual human review. Restricted to administrators.
+             *
+             * @tags OpenBiometrics KYC, Admin Operations
+             * @security BearerAuth
+             * @response 200 Queue of pending verification submissions. [List<KycAdminQueueItem>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 403 Admin privileges required. [ApiError]
              */
             get("/admin/queue") {
                 val principal = call.principal<UserPrincipal>()
@@ -237,7 +303,18 @@ fun Route.kycRouting() {
             }
 
             /**
-             * Submit a manual review decision (Admin only).
+             * Submit KYC manual review decision
+             *
+             * Records an administrative approval or rejection decision with reviewer audit notes. Restricted to administrators.
+             *
+             * @tags OpenBiometrics KYC, Admin Operations
+             * @security BearerAuth
+             * @path id The unique verification session identifier.
+             * @response 200 Updated verification status. [KycStatusResponse]
+             * @response 400 Missing verification id. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 403 Admin privileges required. [ApiError]
+             * @response 404 Verification record not found. [ApiError]
              */
             post("/admin/{id}/review") {
                 val principal = call.principal<UserPrincipal>()

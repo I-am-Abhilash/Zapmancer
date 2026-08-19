@@ -18,13 +18,24 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
+/**
+ * Proposals and Milestone Escrow routing module.
+ */
 fun Route.proposalsRouting() {
     val service by inject<ProposalsService>()
 
     authenticate("local-jwt") {
         route("/proposals") {
             /**
-             * Submit a proposal bid for a project.
+             * Submit proposal bid for project
+             *
+             * Submits a formal freelancer proposal bid for a project posting with cover letter, milestone budget breakdown, and estimated delivery days.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @response 201 Proposal created and submitted. [Proposal]
+             * @response 400 Invalid proposal payload or duplicate submission. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             post {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -37,7 +48,14 @@ fun Route.proposalsRouting() {
             }
 
             /**
-             * Retrieve all proposals submitted by the authenticated freelancer.
+             * Fetch freelancer submitted proposals
+             *
+             * Retrieves all proposal bids submitted by the authenticated freelancer across all projects.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @response 200 List of submitted proposals. [List<Proposal>]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/my") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
@@ -49,7 +67,16 @@ fun Route.proposalsRouting() {
             }
 
             /**
-             * Accept a proposal bid (Project Owner only).
+             * Accept candidate proposal bid
+             *
+             * Accepts a freelancer proposal bid and initializes the milestone escrow contract. Restricted to project owner.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @path id The integer proposal identifier.
+             * @response 200 Proposal accepted successfully. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 404 Proposal not found. [ApiError]
              */
             post("/{id}/accept") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -66,7 +93,16 @@ fun Route.proposalsRouting() {
             }
 
             /**
-             * Reject a proposal bid (Project Owner only).
+             * Decline candidate proposal bid
+             *
+             * Declines a candidate proposal bid for a project. Restricted to project owner.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @path id The integer proposal identifier.
+             * @response 200 Proposal declined successfully. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 404 Proposal not found. [ApiError]
              */
             post("/{id}/reject") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -83,7 +119,16 @@ fun Route.proposalsRouting() {
             }
 
             /**
-             * Withdraw a proposal bid (Freelancer owner only).
+             * Withdraw submitted proposal
+             *
+             * Withdraws an active proposal bid from consideration. Restricted to the submitting freelancer.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @path id The integer proposal identifier.
+             * @response 200 Proposal withdrawn successfully. [CommonResponse]
+             * @response 401 Missing or invalid authentication token. [ApiError]
+             * @response 404 Proposal not found. [ApiError]
              */
             post("/{id}/withdraw") {
                 val principal = call.principal<UserPrincipal>() ?: return@post call.respond(
@@ -102,7 +147,16 @@ fun Route.proposalsRouting() {
 
         route("/projects/{projectId}") {
             /**
-             * Retrieve proposals submitted for a specific project (Project Owner only).
+             * Fetch proposals submitted for project
+             *
+             * Retrieves all candidate proposals and bids submitted for a specific project. Restricted to project owner.
+             *
+             * @tags Proposals & Escrow
+             * @security BearerAuth
+             * @path projectId The unique project identifier.
+             * @response 200 List of candidate proposals. [List<Proposal>]
+             * @response 400 Missing project id parameter. [ApiError]
+             * @response 401 Missing or invalid authentication token. [ApiError]
              */
             get("/proposals") {
                 val principal = call.principal<UserPrincipal>() ?: return@get call.respond(
