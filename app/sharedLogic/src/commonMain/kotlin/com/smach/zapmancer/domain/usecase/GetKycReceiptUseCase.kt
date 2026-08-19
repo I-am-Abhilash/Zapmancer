@@ -10,6 +10,5 @@ import org.koin.core.annotation.Factory
 class GetKycReceiptUseCase(
     private val repository: KycRepository,
 ) {
-    suspend operator fun invoke(verificationId: String): Result<KycReceiptResponse, DataError.Network> =
-        repository.getReceipt(verificationId)
+    suspend operator fun invoke(verificationId: String): Result<KycReceiptResponse, DataError.Network> = repository.getReceipt(verificationId)
 }

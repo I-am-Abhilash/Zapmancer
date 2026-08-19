@@ -8,13 +8,10 @@ import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
-
 @Module
 @Configuration
 @ComponentScan("com.smach.zapmancer.data")
 class DataModule {
     @Single
-    fun provideHttpClient(sessionManager: SessionManager) : HttpClient {
-        return ktorClient(sessionManager)
-    }
+    fun provideHttpClient(sessionManager: SessionManager): HttpClient = ktorClient(sessionManager)
 }

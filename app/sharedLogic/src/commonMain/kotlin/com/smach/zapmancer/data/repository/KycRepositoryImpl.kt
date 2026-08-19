@@ -31,15 +31,13 @@ class KycRepositoryImpl(
     private val client: HttpClient,
 ) : KycRepository {
 
-    override suspend fun getReceipt(verificationId: String): Result<KycReceiptResponse, DataError.Network> =
-        safeApiCall<KycReceiptResponse> {
-            client.get("kyc/receipt/$verificationId")
-        }
+    override suspend fun getReceipt(verificationId: String): Result<KycReceiptResponse, DataError.Network> = safeApiCall<KycReceiptResponse> {
+        client.get("kyc/receipt/$verificationId")
+    }
 
-    override suspend fun getCapabilities(): Result<OpenBiometricsCapabilitiesResponse, DataError.Network> =
-        safeApiCall<OpenBiometricsCapabilitiesResponse> {
-            client.get("kyc/capabilities")
-        }
+    override suspend fun getCapabilities(): Result<OpenBiometricsCapabilitiesResponse, DataError.Network> = safeApiCall<OpenBiometricsCapabilitiesResponse> {
+        client.get("kyc/capabilities")
+    }
 
     override suspend fun initializeKyc(
         documentType: KycDocumentType,
@@ -94,53 +92,49 @@ class KycRepositoryImpl(
         )
     }
 
-    override suspend fun getKycStatus(): Result<KycStatusResponse, DataError.Network> =
-        safeApiCall<KycStatusResponse> {
-            client.get("kyc/status")
-        }
+    override suspend fun getKycStatus(): Result<KycStatusResponse, DataError.Network> = safeApiCall<KycStatusResponse> {
+        client.get("kyc/status")
+    }
 
     override suspend fun evaluatePassiveLiveness(
         imageBytes: ByteArray,
-    ): Result<OpenBiometricsPassiveLivenessResponse, DataError.Network> =
-        safeApiCall<OpenBiometricsPassiveLivenessResponse> {
-            client.submitFormWithBinaryData(
-                url = "kyc/passive-liveness",
-                formData = formData {
-                    append(
-                        "image",
-                        imageBytes,
-                        Headers.build {
-                            append(HttpHeaders.ContentType, "image/jpeg")
-                            append(HttpHeaders.ContentDisposition, "filename=\"image.jpg\"")
-                        },
-                    )
-                },
-            )
-        }
+    ): Result<OpenBiometricsPassiveLivenessResponse, DataError.Network> = safeApiCall<OpenBiometricsPassiveLivenessResponse> {
+        client.submitFormWithBinaryData(
+            url = "kyc/passive-liveness",
+            formData = formData {
+                append(
+                    "image",
+                    imageBytes,
+                    Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"image.jpg\"")
+                    },
+                )
+            },
+        )
+    }
 
     override suspend fun searchWatchlist(
         imageBytes: ByteArray,
-    ): Result<OpenBiometricsWatchlistSearchResponse, DataError.Network> =
-        safeApiCall<OpenBiometricsWatchlistSearchResponse> {
-            client.submitFormWithBinaryData(
-                url = "kyc/watchlists/search",
-                formData = formData {
-                    append(
-                        "image",
-                        imageBytes,
-                        Headers.build {
-                            append(HttpHeaders.ContentType, "image/jpeg")
-                            append(HttpHeaders.ContentDisposition, "filename=\"image.jpg\"")
-                        },
-                    )
-                },
-            )
-        }
+    ): Result<OpenBiometricsWatchlistSearchResponse, DataError.Network> = safeApiCall<OpenBiometricsWatchlistSearchResponse> {
+        client.submitFormWithBinaryData(
+            url = "kyc/watchlists/search",
+            formData = formData {
+                append(
+                    "image",
+                    imageBytes,
+                    Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"image.jpg\"")
+                    },
+                )
+            },
+        )
+    }
 
-    override suspend fun getAdminQueue(): Result<List<KycAdminQueueItem>, DataError.Network> =
-        safeApiCall<List<KycAdminQueueItem>> {
-            client.get("kyc/admin/queue")
-        }
+    override suspend fun getAdminQueue(): Result<List<KycAdminQueueItem>, DataError.Network> = safeApiCall<List<KycAdminQueueItem>> {
+        client.get("kyc/admin/queue")
+    }
 
     override suspend fun reviewKycSubmission(
         verificationId: String,

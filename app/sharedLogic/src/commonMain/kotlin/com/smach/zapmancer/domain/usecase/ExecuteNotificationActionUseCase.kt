@@ -5,7 +5,6 @@ import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.domain.repository.NotificationRepository
 import org.koin.core.annotation.Factory
 
-
 @Factory
 class ExecuteNotificationActionUseCase(
     private val repository: NotificationRepository,

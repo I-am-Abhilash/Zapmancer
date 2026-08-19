@@ -6,7 +6,6 @@ import com.smach.zapmancer.domain.model.HomeDashboard
 import com.smach.zapmancer.domain.repository.HomeRepository
 import org.koin.core.annotation.Factory
 
-
 @Factory
 class GetHomeDashboardUseCase(
     private val repository: HomeRepository,

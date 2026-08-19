@@ -54,11 +54,9 @@ class ProposalRepositoryImpl(
         }
     }
 
-    override suspend fun acceptProposal(id: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.post("proposals/$id/accept") }.toUnitResult()
+    override suspend fun acceptProposal(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("proposals/$id/accept") }.toUnitResult()
 
-    override suspend fun rejectProposal(id: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.post("proposals/$id/reject") }.toUnitResult()
+    override suspend fun rejectProposal(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.post("proposals/$id/reject") }.toUnitResult()
 }
 
 private fun ProposalDto.toDomain(): Proposal = Proposal(

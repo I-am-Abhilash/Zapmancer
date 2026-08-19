@@ -15,7 +15,7 @@ A step-by-step technical and operational playbook for launching **Zapmancer** in
    ```bash
    npm run build
    ```
-   This generates an optimized `dist/` directory (static HTML, JS, CSS).
+   This generates an optimized `../app/webApp/dist` directory (static HTML, JS, CSS).
 3. Connect the repository to **Vercel**, **Netlify**, or **Cloudflare Pages**:
    - **Framework Preset**: Vite / React
    - **Build Command**: `npm run build`
@@ -25,7 +25,7 @@ A step-by-step technical and operational playbook for launching **Zapmancer** in
 ---
 
 ### Step 2: Backend Infrastructure & Docker Deployment
-Deploy the backend services via `docker-compose.yml` to an AWS EC2 instance, Hetzner Cloud, or DigitalOcean Droplet:
+Deploy the backend services via `../docker-compose.yml` to an AWS EC2 instance, Hetzner Cloud, or DigitalOcean Droplet:
 
 ```bash
 # Clone the repository on your production Linux server

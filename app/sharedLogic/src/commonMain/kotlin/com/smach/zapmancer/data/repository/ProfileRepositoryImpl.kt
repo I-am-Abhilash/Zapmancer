@@ -60,8 +60,7 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override suspend fun deleteAccount(): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.delete("users/account") }.toUnitResult()
+    override suspend fun deleteAccount(): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.delete("users/account") }.toUnitResult()
 
     override suspend fun submitReview(
         userId: String,

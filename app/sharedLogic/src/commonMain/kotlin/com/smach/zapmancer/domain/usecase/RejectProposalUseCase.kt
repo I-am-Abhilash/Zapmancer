@@ -9,6 +9,5 @@ import org.koin.core.annotation.Factory
 class RejectProposalUseCase(
     private val repository: ProposalRepository,
 ) {
-    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> =
-        repository.rejectProposal(id)
+    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> = repository.rejectProposal(id)
 }

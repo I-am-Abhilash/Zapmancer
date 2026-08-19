@@ -15,6 +15,5 @@ class ReviewKycSubmissionUseCase(
         verificationId: String,
         decision: KycStatus,
         notes: String? = null,
-    ): Result<KycStatusResponse, DataError.Network> =
-        repository.reviewKycSubmission(verificationId, decision, notes)
+    ): Result<KycStatusResponse, DataError.Network> = repository.reviewKycSubmission(verificationId, decision, notes)
 }

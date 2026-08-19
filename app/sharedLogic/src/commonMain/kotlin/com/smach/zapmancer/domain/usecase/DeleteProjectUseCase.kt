@@ -9,6 +9,5 @@ import org.koin.core.annotation.Factory
 class DeleteProjectUseCase(
     private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> =
-        repository.deleteProject(id)
+    suspend operator fun invoke(id: String): Result<Unit, DataError.Network> = repository.deleteProject(id)
 }

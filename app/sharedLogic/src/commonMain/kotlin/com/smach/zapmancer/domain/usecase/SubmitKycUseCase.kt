@@ -18,13 +18,12 @@ class SubmitKycUseCase(
         frontBytes: ByteArray,
         backBytes: ByteArray? = null,
         selfieBytes: ByteArray,
-    ): Result<KycStatusResponse, DataError.Network> =
-        repository.submitKyc(
-            verificationId = verificationId,
-            livenessSessionId = livenessSessionId,
-            documentType = documentType,
-            frontBytes = frontBytes,
-            backBytes = backBytes,
-            selfieBytes = selfieBytes,
-        )
+    ): Result<KycStatusResponse, DataError.Network> = repository.submitKyc(
+        verificationId = verificationId,
+        livenessSessionId = livenessSessionId,
+        documentType = documentType,
+        frontBytes = frontBytes,
+        backBytes = backBytes,
+        selfieBytes = selfieBytes,
+    )
 }

@@ -13,6 +13,5 @@ class ResetPasswordUseCase(
         email: String,
         code: String,
         newPassword: String,
-    ): Result<Unit, DataError.Network> =
-        repository.resetPassword(email, code, newPassword)
+    ): Result<Unit, DataError.Network> = repository.resetPassword(email, code, newPassword)
 }

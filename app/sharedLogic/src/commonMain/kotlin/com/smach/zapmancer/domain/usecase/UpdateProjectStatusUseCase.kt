@@ -9,6 +9,5 @@ import org.koin.core.annotation.Factory
 class UpdateProjectStatusUseCase(
     private val repository: ProjectRepository,
 ) {
-    suspend operator fun invoke(id: String, status: String): Result<Unit, DataError.Network> =
-        repository.updateProjectStatus(id, status)
+    suspend operator fun invoke(id: String, status: String): Result<Unit, DataError.Network> = repository.updateProjectStatus(id, status)
 }

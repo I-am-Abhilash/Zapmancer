@@ -10,6 +10,5 @@ import org.koin.core.annotation.Factory
 class GetMyProposalsUseCase(
     private val repository: ProposalRepository,
 ) {
-    suspend operator fun invoke(): Result<List<Proposal>, DataError.Network> =
-        repository.getMyProposals()
+    suspend operator fun invoke(): Result<List<Proposal>, DataError.Network> = repository.getMyProposals()
 }

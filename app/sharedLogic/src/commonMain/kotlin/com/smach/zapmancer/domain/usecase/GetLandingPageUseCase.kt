@@ -10,7 +10,5 @@ import org.koin.core.annotation.Factory
 class GetLandingPageUseCase(
     private val repository: LandingPageRepository,
 ) {
-    suspend operator fun invoke(): Result<LandingPageData, DataError.Network> {
-        return repository.getLandingPageData()
-    }
+    suspend operator fun invoke(): Result<LandingPageData, DataError.Network> = repository.getLandingPageData()
 }

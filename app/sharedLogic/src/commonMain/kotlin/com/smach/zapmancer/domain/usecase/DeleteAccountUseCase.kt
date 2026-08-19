@@ -9,6 +9,5 @@ import org.koin.core.annotation.Factory
 class DeleteAccountUseCase(
     private val repository: ProfileRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit, DataError.Network> =
-        repository.deleteAccount()
+    suspend operator fun invoke(): Result<Unit, DataError.Network> = repository.deleteAccount()
 }

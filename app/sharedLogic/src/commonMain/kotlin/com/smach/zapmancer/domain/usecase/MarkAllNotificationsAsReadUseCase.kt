@@ -9,6 +9,5 @@ import org.koin.core.annotation.Factory
 class MarkAllNotificationsAsReadUseCase(
     private val repository: NotificationRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit, DataError.Network> =
-        repository.markAllAsRead()
+    suspend operator fun invoke(): Result<Unit, DataError.Network> = repository.markAllAsRead()
 }

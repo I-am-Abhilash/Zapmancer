@@ -26,14 +26,12 @@ class LandingPageRepositoryImpl(
     private val client: HttpClient,
 ) : LandingPageRepository {
 
-    override suspend fun getLandingPageData(): Result<LandingPageData, DataError.Network> {
-        return safeApiCall<LandingPageDto> {
-            client.get("landing-page/data")
-        }.let { result ->
-            when (result) {
-                is Result.Success -> Result.Success(result.data.toDomain())
-                is Result.Error -> Result.Success(getFallbackLandingPageData())
-            }
+    override suspend fun getLandingPageData(): Result<LandingPageData, DataError.Network> = safeApiCall<LandingPageDto> {
+        client.get("landing-page/data")
+    }.let { result ->
+        when (result) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> Result.Success(getFallbackLandingPageData())
         }
     }
 }

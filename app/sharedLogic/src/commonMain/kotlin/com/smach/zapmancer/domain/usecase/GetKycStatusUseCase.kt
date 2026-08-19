@@ -10,6 +10,5 @@ import org.koin.core.annotation.Factory
 class GetKycStatusUseCase(
     private val repository: KycRepository,
 ) {
-    suspend operator fun invoke(): Result<KycStatusResponse, DataError.Network> =
-        repository.getKycStatus()
+    suspend operator fun invoke(): Result<KycStatusResponse, DataError.Network> = repository.getKycStatus()
 }

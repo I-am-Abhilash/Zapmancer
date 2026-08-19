@@ -10,6 +10,5 @@ import org.koin.core.annotation.Factory
 class GetKycAdminQueueUseCase(
     private val repository: KycRepository,
 ) {
-    suspend operator fun invoke(): Result<List<KycAdminQueueItem>, DataError.Network> =
-        repository.getAdminQueue()
+    suspend operator fun invoke(): Result<List<KycAdminQueueItem>, DataError.Network> = repository.getAdminQueue()
 }

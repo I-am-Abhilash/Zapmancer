@@ -29,7 +29,7 @@ We are progressively building a unified ecosystem across mobile and desktop/web:
 - 🚀 **Ktor Backend Server**: Asynchronous REST API, WebSockets & PostgreSQL database.
 - 📱 **Android Application**: Native experience powered by Compose Multiplatform & Material 3.
 - 🍏 **iOS Application**: Native iOS client using Compose Multiplatform & Kotlin Multiplatform shared core.
-- 💻 **Web & Desktop Application**: Web/Desktop platform supporting Company OS and Marketplace operations ([ZAPMANCER_HYBRID_ARCHITECTURE.md](app/webApp/ZAPMANCER_HYBRID_ARCHITECTURE.md)).
+- 💻 **Web & Desktop Application**: Web/Desktop platform supporting Company OS and Marketplace operations ([ZAPMANCER_HYBRID_ARCHITECTURE.md](docs/ZAPMANCER_HYBRID_ARCHITECTURE.md)).
 
 ---
 

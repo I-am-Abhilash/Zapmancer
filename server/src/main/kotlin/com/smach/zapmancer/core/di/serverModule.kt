@@ -2,6 +2,7 @@ package com.smach.zapmancer.core.di
 
 import com.smach.zapmancer.auth.repository.AuthRepository
 import com.smach.zapmancer.auth.service.AuthService
+import com.smach.zapmancer.core.framework.storage.StorageService
 import com.smach.zapmancer.core.verification.ResendEmailService
 import com.smach.zapmancer.core.verification.TelnyxSmsService
 import com.smach.zapmancer.home.repository.HomeRepository
@@ -35,13 +36,15 @@ val authModule = module {
     single {
         val config = getOrNull<Application>()?.environment?.config
         val apiKey = config?.propertyOrNull("resend.apiKey")?.getString() ?: System.getenv("RESEND_API_KEY")
-        val fromEmail = config?.propertyOrNull("resend.fromEmail")?.getString() ?: System.getenv("RESEND_FROM_EMAIL") ?: "Zapmancer <noreply@zapmancer.com>"
+        val fromEmail = config?.propertyOrNull("resend.fromEmail")?.getString() ?: System.getenv("RESEND_FROM_EMAIL")
+        ?: "Zapmancer <noreply@zapmancer.com>"
         ResendEmailService(apiKey, fromEmail)
     }
     single {
         val config = getOrNull<Application>()?.environment?.config
         val apiKey = config?.propertyOrNull("telnyx.apiKey")?.getString() ?: System.getenv("TELNYX_API_KEY")
-        val fromNumber = config?.propertyOrNull("telnyx.fromNumber")?.getString() ?: System.getenv("TELNYX_FROM_NUMBER") ?: "+18005550199"
+        val fromNumber = config?.propertyOrNull("telnyx.fromNumber")?.getString() ?: System.getenv("TELNYX_FROM_NUMBER")
+        ?: "+18005550199"
         TelnyxSmsService(apiKey, fromNumber)
     }
     singleOf(::AuthRepository)
@@ -63,7 +66,8 @@ val messagesModule = module {
     single {
         val config = getOrNull<Application>()?.environment?.config
         val host = config?.propertyOrNull("redis.host")?.getString() ?: System.getenv("REDIS_HOST") ?: "localhost"
-        val port = config?.propertyOrNull("redis.port")?.getString()?.toIntOrNull() ?: System.getenv("REDIS_PORT")?.toIntOrNull() ?: 6379
+        val port = config?.propertyOrNull("redis.port")?.getString()?.toIntOrNull() ?: System.getenv("REDIS_PORT")
+            ?.toIntOrNull() ?: 6379
         val password = config?.propertyOrNull("redis.password")?.getString() ?: System.getenv("REDIS_PASSWORD")
         RedisClientService(host, port, password)
     }
@@ -71,7 +75,8 @@ val messagesModule = module {
     single { ConnectionManager(redisClientService = get()) }
     single {
         val config = getOrNull<Application>()?.environment?.config
-        val bucketName = config?.propertyOrNull("storage.bucket")?.getString() ?: System.getenv("STORAGE_BUCKET") ?: "zapmancer-assets"
+        val bucketName = config?.propertyOrNull("storage.bucket")?.getString() ?: System.getenv("STORAGE_BUCKET")
+        ?: "zapmancer-assets"
         MessageService(
             repository = get(),
             connectionManager = get(),
@@ -113,35 +118,30 @@ val landingPageModule = module {
 val kycModule = module {
     single {
         val config = getOrNull<Application>()?.environment?.config
-        val baseUrl = config?.propertyOrNull("openbiometrics.baseUrl")?.getString() ?: System.getenv("OPENBIOMETRICS_BASE_URL") ?: "http://localhost:8000"
-        val apiKey = config?.propertyOrNull("openbiometrics.apiKey")?.getString() ?: System.getenv("OPENBIOMETRICS_API_KEY")
+        val baseUrl =
+            config?.propertyOrNull("openbiometrics.baseUrl")?.getString() ?: System.getenv("OPENBIOMETRICS_BASE_URL")
+            ?: "http://localhost:8000"
+        val apiKey =
+            config?.propertyOrNull("openbiometrics.apiKey")?.getString() ?: System.getenv("OPENBIOMETRICS_API_KEY")
         OpenBiometricsClient(baseUrl, apiKey)
     }
     single {
         val config = getOrNull<Application>()?.environment?.config
-        val privateKey = config?.propertyOrNull("kyc.ed25519PrivateKey")?.getString() ?: System.getenv("KYC_ED25519_PRIVATE_KEY")
+        val privateKey =
+            config?.propertyOrNull("kyc.ed25519PrivateKey")?.getString() ?: System.getenv("KYC_ED25519_PRIVATE_KEY")
         Ed25519ReceiptService(privateKey)
     }
     singleOf(::KycRepository)
     single {
         val config = getOrNull<Application>()?.environment?.config
-        val bucketName = config?.propertyOrNull("storage.bucket")?.getString() ?: System.getenv("STORAGE_BUCKET") ?: "zapmancer-assets"
+        val bucketName = config?.propertyOrNull("storage.bucket")?.getString() ?: System.getenv("STORAGE_BUCKET")
+        ?: "zapmancer-assets"
         KycService(
             kycRepository = get(),
             openBiometricsClient = get(),
             receiptService = get(),
-            storageService = getOrNull() ?: StorageServiceStub(),
+            storageService = get(),
             bucketName = bucketName,
         )
     }
-}
-
-// Fallback stub if cloud storage is omitted in dev mode
-private class StorageServiceStub : com.smach.zapmancer.core.framework.storage.StorageService {
-    override suspend fun uploadFile(bucketName: String, objectName: String, data: ByteArray, contentType: String): String =
-        "http://localhost:8080/storage/$bucketName/$objectName"
-    override suspend fun downloadFile(bucketName: String, objectName: String): ByteArray = ByteArray(0)
-    override suspend fun generateSignedUrl(bucketName: String, objectName: String, durationMinutes: Long): String =
-        "http://localhost:8080/storage/$bucketName/$objectName"
-    override suspend fun deleteFile(bucketName: String, objectName: String) = Unit
 }

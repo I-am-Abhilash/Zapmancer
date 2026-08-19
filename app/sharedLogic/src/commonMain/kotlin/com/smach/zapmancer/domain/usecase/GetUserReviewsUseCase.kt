@@ -14,6 +14,5 @@ class GetUserReviewsUseCase(
         userId: String,
         page: Int? = null,
         limit: Int? = null,
-    ): Result<List<Review>, DataError.Network> =
-        repository.getReviews(userId, page, limit)
+    ): Result<List<Review>, DataError.Network> = repository.getReviews(userId, page, limit)
 }

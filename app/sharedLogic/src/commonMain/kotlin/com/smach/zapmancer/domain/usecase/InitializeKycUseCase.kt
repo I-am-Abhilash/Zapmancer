@@ -15,6 +15,5 @@ class InitializeKycUseCase(
     suspend operator fun invoke(
         documentType: KycDocumentType,
         livenessPreset: KycLivenessPreset = KycLivenessPreset.EYE,
-    ): Result<KycInitResponse, DataError.Network> =
-        repository.initializeKyc(documentType, livenessPreset)
+    ): Result<KycInitResponse, DataError.Network> = repository.initializeKyc(documentType, livenessPreset)
 }

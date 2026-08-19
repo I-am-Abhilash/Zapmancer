@@ -13,6 +13,5 @@ class SubmitUserReviewUseCase(
         userId: String,
         content: String,
         rating: Int,
-    ): Result<Unit, DataError.Network> =
-        repository.submitReview(userId, content, rating)
+    ): Result<Unit, DataError.Network> = repository.submitReview(userId, content, rating)
 }

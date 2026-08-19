@@ -10,7 +10,7 @@ This document outlines the multi-phase implementation roadmap for **Zapmancer** 
 
 ### Phase 1: Core Company OS & 3-Dashboard Navigation (Current)
 - Topbar Mode Switcher (`Company OS`, `Talent Portal`, `Public Marketplace`).
-- `src/features/company/` feature module (`CompanyDashboardPage.tsx`, `company.css`).
+- `../app/webApp/src/features/company` feature module (`CompanyDashboardPage.tsx`, `company.css`).
 - **Team Roster & Employee Management**: Roles (`Owner`, `Manager`, `Dev`, `HR`), status, salary/rate.
 - **Sprint & Internal Task Management**: Task assignment, conversion of internal tasks to public bounties.
 - **"＋ Add Fellow Dev to Task" Modal**: Instant 1-click hire from the Zapmancer talent network into company tasks.

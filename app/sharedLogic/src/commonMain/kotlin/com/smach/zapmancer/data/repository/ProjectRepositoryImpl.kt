@@ -5,8 +5,6 @@ import com.smach.zapmancer.core.common.dto.CreateProjectRequest
 import com.smach.zapmancer.core.common.dto.SaveProjectRequest
 import com.smach.zapmancer.core.common.dto.UpdateProjectRequest
 import com.smach.zapmancer.core.common.dto.UpdateProjectStatusRequest
-import io.ktor.client.request.delete
-import io.ktor.client.request.put
 import com.smach.zapmancer.core.common.utils.DataError
 import com.smach.zapmancer.core.common.utils.Result
 import com.smach.zapmancer.core.common.utils.toUnitResult
@@ -17,8 +15,10 @@ import com.smach.zapmancer.domain.model.ProjectCategory
 import com.smach.zapmancer.domain.model.ProjectDetail
 import com.smach.zapmancer.domain.repository.ProjectRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import org.koin.core.annotation.Single
 import com.smach.zapmancer.core.common.dto.Project as ProjectDto
@@ -124,8 +124,7 @@ class ProjectRepositoryImpl(
         }
     }
 
-    override suspend fun deleteProject(id: String): Result<Unit, DataError.Network> =
-        safeApiCall<CommonResponse> { client.delete("projects/$id") }.toUnitResult()
+    override suspend fun deleteProject(id: String): Result<Unit, DataError.Network> = safeApiCall<CommonResponse> { client.delete("projects/$id") }.toUnitResult()
 
     override suspend fun updateProjectStatus(
         id: String,

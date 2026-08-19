@@ -55,7 +55,8 @@ fun Route.authRouting() {
     rateLimit(RateLimitName("auth")) {
         route("/auth") {
             /**
-             * Authenticate a user with email and password (Mobile/API).
+             * Authenticate a
+             * user with email and password (Mobile/API).
              */
             post("/login") {
                 val req = call.receive<LoginRequest>()
